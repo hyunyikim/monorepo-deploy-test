@@ -4,6 +4,12 @@
   ],
   "search.exclude": {
     "**/.yarn": true,
-    "**/.pnp.*": true
-  }
+    "**/.pnp.*": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/tsconfig.tsbuildinfo": true,
+    ".eslintcache": true
+  },
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
 }
