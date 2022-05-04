@@ -1,0 +1,14 @@
+{
+  "name": "vircle",
+  "author": {
+    "name": "mass-adoption",
+    "url": "https://www.mass-adoption.com",
+    "email": "it@mass-adoption.com"
+  },
+  "packageManager": "yarn@3.2.0",
+  "workspaces": [
+    "./packages/*"
+  ],
+  "private": true,
+  "script": {}
+}

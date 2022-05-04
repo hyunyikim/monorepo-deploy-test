@@ -1,0 +1,9 @@
+{
+  "cSpell.words": [
+    "vircle"
+  ],
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  }
+}
