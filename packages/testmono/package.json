@@ -1,0 +1,13 @@
+{
+	"name": "testmono",
+	"packageManager": "yarn@3.2.0",
+	"dependencies": {
+		"clsx": "^1.1.1",
+		"cuid": "^2.1.8",
+		"react": "^18.1.0"
+	},
+	"devDependencies": {
+		"@types/cuid": "^2",
+		"@types/react": "^18"
+	}
+}
