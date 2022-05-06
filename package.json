@@ -1,35 +1,41 @@
 {
-  "name": "vircle",
-  "author": {
-    "name": "mass-adoption",
-    "url": "https://www.mass-adoption.com",
-    "email": "it@mass-adoption.com"
-  },
-  "scripts": {
-    "lint": "eslint ./packages --ext .ts,.tsx,.js,.jsx --cache",
-    "format": "prettier ./packages -w"
-  },
-  "packageManager": "yarn@3.2.0",
-  "workspaces": [
-    "./packages/*"
-  ],
-  "private": true,
-  "devDependencies": {
-    "@types/eslint": "^8",
-    "@types/node": "^17.0.31",
-    "@types/prettier": "^2",
-    "@typescript-eslint/eslint-plugin": "^5.22.0",
-    "@typescript-eslint/parser": "^5.22.0",
-    "eslint": "^8.14.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-import-resolver-node": "^0.3.6",
-    "eslint-import-resolver-typescript": "^2.7.1",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.29.4",
-    "eslint-plugin-react-hooks": "^4.5.0",
-    "prettier": "^2.6.2",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.4"
-  }
+	"name": "vircle",
+	"author": {
+		"name": "mass-adoption",
+		"url": "https://www.mass-adoption.com",
+		"email": "it@mass-adoption.com"
+	},
+	"scripts": {
+		"lint": "eslint ./packages --ext .ts,.tsx,.js,.jsx --cache",
+		"format": "prettier ./packages -w",
+		"postinstall": "husky install"
+	},
+	"packageManager": "yarn@3.2.0",
+	"workspaces": [
+		"./packages/*"
+	],
+	"private": true,
+	"devDependencies": {
+		"@types/eslint": "^8",
+		"@types/node": "^17.0.31",
+		"@types/prettier": "^2",
+		"@typescript-eslint/eslint-plugin": "^5.22.0",
+		"@typescript-eslint/parser": "^5.22.0",
+		"eslint": "^8.14.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-import-resolver-node": "^0.3.6",
+		"eslint-import-resolver-typescript": "^2.7.1",
+		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"eslint-plugin-react": "^7.29.4",
+		"eslint-plugin-react-hooks": "^4.5.0",
+		"husky": ">=6",
+		"lint-staged": ">=10",
+		"prettier": "^2.6.2",
+		"ts-node": "^10.7.0",
+		"typescript": "^4.6.4"
+	},
+	"lint-staged": {
+		"*.{ts,tsx,js,jsx}": "eslint ./packages --fix"
+	}
 }
