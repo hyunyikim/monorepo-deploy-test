@@ -3,6 +3,7 @@
     "arcanis.vscode-zipfs",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "christian-kohler.path-intellisense"
+    "christian-kohler.path-intellisense",
+    "vivaxy.vscode-conventional-commits"
   ]
 }

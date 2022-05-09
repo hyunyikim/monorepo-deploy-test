@@ -17,6 +17,7 @@
   "eslint.nodePath": ".yarn/sdks",
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "conventionalCommits.scopes": [
-    "base"
+    "base",
+    "vscode"
   ]
 }
