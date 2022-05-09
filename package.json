@@ -1,5 +1,6 @@
 {
 	"name": "vircle",
+	"version": "0.0.0",
 	"author": {
 		"name": "mass-adoption",
 		"url": "https://www.mass-adoption.com",
@@ -8,7 +9,8 @@
 	"scripts": {
 		"lint": "eslint ./packages --ext .ts,.tsx,.js,.jsx --cache",
 		"format": "prettier ./packages -w",
-		"postinstall": "husky install"
+		"postinstall": "husky install",
+		"release": "standard-version"
 	},
 	"packageManager": "yarn@3.2.0",
 	"workspaces": [
@@ -34,6 +36,7 @@
 		"husky": ">=6",
 		"lint-staged": ">=10",
 		"prettier": "^2.6.2",
+		"standard-version": "^9.3.2",
 		"ts-node": "^10.7.0",
 		"typescript": "^4.6.4"
 	},
