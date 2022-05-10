@@ -1,5 +1,4 @@
 import {forwardRef, PropsWithChildren} from 'react';
-
 export interface PaperProps {
 	className?: string;
 	disablePadding?: boolean;

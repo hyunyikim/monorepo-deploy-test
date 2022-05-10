@@ -38,6 +38,7 @@ module.exports = {
 				'no-useless-constructor': 'off',
 				'@typescript-eslint/no-useless-constructor': 'error',
 				'@typescript-eslint/no-floating-promises': 'off',
+				'@typescript-eslint/no-use-before-define': 'off',
 			},
 			parserOptions: {
 				project: [
