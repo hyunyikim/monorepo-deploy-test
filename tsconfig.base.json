@@ -98,7 +98,14 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "references": [],
+  "references": [
+    {
+      "path": "./packages/entity"
+    },
+    {
+      "path": "./packages/web-utils"
+    }
+  ],
   "include": [],
   "exclude": ["packages/**/dist/**"]
 }
