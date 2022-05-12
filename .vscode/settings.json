@@ -20,6 +20,7 @@
   "conventionalCommits.scopes": [
     "base",
     "vscode",
-    "entity"
+    "entity",
+    "web-util"
   ]
 }
