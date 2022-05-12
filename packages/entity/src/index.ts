@@ -7,3 +7,4 @@ export * from './product.entity';
 export * from './user.entity';
 export * from './virtualBankCode.entity';
 export * from './slack.entity';
+export * from './client.entity';
