@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "commitlint",
+    "nestjs",
     "vbank",
     "vircle"
   ],
@@ -21,6 +22,7 @@
     "base",
     "vscode",
     "entity",
-    "web-util"
+    "web-util",
+    "admin"
   ]
 }
