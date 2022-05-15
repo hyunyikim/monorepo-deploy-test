@@ -2886,6 +2886,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vircle/admin-api@workspace:packages/admin-api":
+  version: 0.0.0-use.local
+  resolution: "@vircle/admin-api@workspace:packages/admin-api"
+  dependencies:
+    "@nestjs/cli": ^8.0.0
+    "@nestjs/common": ^8.0.0
+    "@nestjs/core": ^8.0.0
+    "@nestjs/platform-express": ^8.0.0
+    "@nestjs/schematics": ^8.0.0
+    "@nestjs/testing": ^8.0.0
+    "@types/express": ^4.17.13
+    "@types/jest": 27.4.1
+    "@types/node": ^16.0.0
+    "@types/supertest": ^2.0.11
+    "@vircle/entity": "workspace:*"
+    jest: ^27.2.5
+    reflect-metadata: ^0.1.13
+    rimraf: ^3.0.2
+    rxjs: ^7.2.0
+    source-map-support: ^0.5.20
+    supertest: ^6.1.3
+    ts-jest: ^27.0.3
+    ts-loader: ^9.2.3
+    ts-node: ^10.0.0
+    tsconfig-paths: ^3.10.1
+    typescript: ^4.3.5
+  languageName: unknown
+  linkType: soft
+
 "@vircle/entity@workspace:*, @vircle/entity@workspace:packages/entity":
   version: 0.0.0-use.local
   resolution: "@vircle/entity@workspace:packages/entity"
@@ -3203,35 +3232,6 @@ __metadata:
   checksum: 3e9e8b0b8f0170406d7c3a9a39bfbdf419ccccb0fd2a396338c0fda0a339af73bf738ad414fc520741de74517acf0dd92b4a36fd3298a47fd5371eee8f2c5a06
   languageName: node
   linkType: hard
-
-"admin@workspace:packages/admin":
-  version: 0.0.0-use.local
-  resolution: "admin@workspace:packages/admin"
-  dependencies:
-    "@nestjs/cli": ^8.0.0
-    "@nestjs/common": ^8.0.0
-    "@nestjs/core": ^8.0.0
-    "@nestjs/platform-express": ^8.0.0
-    "@nestjs/schematics": ^8.0.0
-    "@nestjs/testing": ^8.0.0
-    "@types/express": ^4.17.13
-    "@types/jest": 27.4.1
-    "@types/node": ^16.0.0
-    "@types/supertest": ^2.0.11
-    "@vircle/entity": "workspace:*"
-    jest: ^27.2.5
-    reflect-metadata: ^0.1.13
-    rimraf: ^3.0.2
-    rxjs: ^7.2.0
-    source-map-support: ^0.5.20
-    supertest: ^6.1.3
-    ts-jest: ^27.0.3
-    ts-loader: ^9.2.3
-    ts-node: ^10.0.0
-    tsconfig-paths: ^3.10.1
-    typescript: ^4.3.5
-  languageName: unknown
-  linkType: soft
 
 "agent-base@npm:6, agent-base@npm:^6.0.2":
   version: 6.0.2

@@ -23,6 +23,6 @@
     "vscode",
     "entity",
     "web-util",
-    "admin"
+    "admin-api"
   ]
 }

@@ -5,3 +5,4 @@ node_modules
 .pnp.cjs
 .pnp.loager.mjs
 !.storybook
+**/*.e2e-spec.ts
