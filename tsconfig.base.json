@@ -104,6 +104,9 @@
     },
     {
       "path": "./packages/web-utils"
+    },
+    {
+      "path": "./packages/styles"
     }
   ],
   "include": [],
