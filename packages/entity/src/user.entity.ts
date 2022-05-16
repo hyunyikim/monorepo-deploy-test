@@ -6,6 +6,8 @@ import {
 	PrimaryColumn,
 } from 'typeorm';
 import {Flex} from './flex.entity';
+import {YN} from './inspection.entity';
+import {BLOCKCHAIN_PLATFORM, Nft} from './nft.entity';
 import {Product} from './product.entity';
 
 @Entity({name: 'TB_USER'})
@@ -30,6 +32,18 @@ export class User {
 		eager: false,
 	})
 	productList: Promise<Product[]>;
+
+	@OneToMany(() => Nft, (nft) => nft.owner, {
+		createForeignKeyConstraints: false,
+		eager: false,
+	})
+	nftList: Promise<Nft[]>;
+
+	@OneToMany(() => UserWallet, (wallet) => wallet.owner, {
+		createForeignKeyConstraints: false,
+		eager: false,
+	})
+	walletList: Promise<UserWallet[]>;
 }
 
 @Entity({name: 'TB_USER_BLOCK'})
@@ -39,6 +53,46 @@ export class UserBlock {
 
 	@PrimaryColumn({name: 'user_idx', type: 'int'})
 	userId: string;
+}
+
+@Entity({name: 'TB_USER_WALLET'})
+export class UserWallet {
+	@PrimaryColumn({name: 'wallet_idx', type: 'int'})
+	idx: number;
+
+	@Column({name: 'user_idx', type: 'int', unsigned: true, nullable: false})
+	ownerIdx: number;
+
+	@Column({name: 'user_idx', type: 'int'})
+	owner: User;
+
+	@Column({
+		name: 'blockchain_platform',
+		type: 'enum',
+		enum: BLOCKCHAIN_PLATFORM,
+	})
+	blockchainPlatform: BLOCKCHAIN_PLATFORM;
+
+	@Column({name: 'wallet_address', type: 'varchar', length: 50})
+	walletAddress: string;
+
+	@Column({name: 'pool_krn', type: 'varchar', length: 100})
+	poolKrn: string;
+
+	@Column({name: 'public_key', type: 'varchar', length: 200})
+	publicKey: string;
+
+	@Column({name: 'private_key_id', type: 'varchar', length: 200})
+	privateKeyId: string;
+
+	@Column({name: 'main_yn', type: 'enum', enum: YN})
+	mainYN: YN;
+
+	@Column({name: 'reg_dt', type: 'datetime'})
+	registered: Date;
+
+	@Column({name: 'mod_dt', type: 'datetime'})
+	modified: Date;
 }
 
 // @Entity({ name: "TB_USER_DELIVERY" })

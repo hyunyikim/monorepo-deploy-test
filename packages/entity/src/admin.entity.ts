@@ -9,6 +9,7 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+import {Nft} from './nft.entity';
 
 enum YN {
 	YES = 'Y',
@@ -365,4 +366,10 @@ export class Admin {
 		nullable: true,
 	})
 	subAccountRole: string;
+
+	@OneToMany(() => Nft, (nft) => nft.register, {
+		createForeignKeyConstraints: false,
+		eager: false,
+	})
+	nftList: Promise<Nft[]>;
 }

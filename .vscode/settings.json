@@ -1,9 +1,12 @@
 {
   "cSpell.words": [
     "commitlint",
+    "klaytn",
     "nestjs",
+    "Unipass",
     "vbank",
-    "vircle"
+    "vircle",
+    "zipcode"
   ],
   "search.exclude": {
     "**/.yarn": true,

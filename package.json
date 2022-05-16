@@ -7,7 +7,7 @@
 		"email": "it@mass-adoption.com"
 	},
 	"scripts": {
-		"lint": "eslint ./packages --ext .ts,.tsx,.js,.jsx --cache",
+		"lint": "eslint ./packages --ext .ts,.tsx,.js,.jsx --no-cache",
 		"format": "prettier ./packages -w",
 		"postinstall": "husky install",
 		"release": "standard-version"
