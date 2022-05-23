@@ -149,6 +149,9 @@ export class Product {
 	@Column({name: 'model_num', type: 'varchar', length: 250, nullable: true})
 	modelNumber: string;
 
+	@Column({name: 'origin', type: 'varchar', length: 250, nullable: true})
+	origin: string;
+
 	@Column({name: 'custom_field', type: 'json', nullable: true})
 	customField: JSON;
 
