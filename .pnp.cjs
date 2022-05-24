@@ -37,6 +37,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/testmono"\
       },\
       {\
+        "name": "@vircle/ui-component",\
+        "reference": "workspace:packages/ui-component"\
+      },\
+      {\
         "name": "@vircle/web-utils",\
         "reference": "workspace:packages/web-utils"\
       }\
@@ -48,6 +52,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@vircle/entity", ["workspace:packages/entity"]],\
       ["@vircle/styles", ["workspace:packages/styles"]],\
       ["@vircle/testmono", ["workspace:packages/testmono"]],\
+      ["@vircle/ui-component", ["workspace:packages/ui-component"]],\
       ["@vircle/web-utils", ["workspace:packages/web-utils"]],\
       ["vircle", ["workspace:."]]\
     ],\
@@ -2919,9 +2924,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@emotion/utils", "npm:1.1.0"],\
             ["@emotion/weak-memoize", "npm:0.2.5"],\
             ["@types/babel__core", null],\
-            ["@types/react", null],\
+            ["@types/react", "npm:17.0.45"],\
             ["hoist-non-react-statics", "npm:3.3.2"],\
-            ["react", null]\
+            ["react", "npm:17.0.2"]\
           ],\
           "packagePeers": [\
             "@babel/core",\
@@ -4320,6 +4325,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@types/react", [\
+        ["npm:17.0.45", {\
+          "packageLocation": "./.yarn/cache/@types-react-npm-17.0.45-09fff34e88-3cc13a0282.zip/node_modules/@types/react/",\
+          "packageDependencies": [\
+            ["@types/react", "npm:17.0.45"],\
+            ["@types/prop-types", "npm:15.7.5"],\
+            ["@types/scheduler", "npm:0.16.2"],\
+            ["csstype", "npm:3.0.11"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:18.0.8", {\
           "packageLocation": "./.yarn/cache/@types-react-npm-18.0.8-0373db5974-12d0e6bc39.zip/node_modules/@types/react/",\
           "packageDependencies": [\
@@ -4690,6 +4705,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@vircle/styles", "workspace:packages/styles"],\
             ["@emotion/react", "virtual:e35985f12cbe29572b32dbdb3be94dbefa472e341289cb9eeed2a51787e7f7089f1acedcc2faf2d41151ae8ecefff77651badddaff25492b22eeb9846007a516#npm:11.9.0"],\
+            ["@types/react", "npm:17.0.45"],\
+            ["react", "npm:17.0.2"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"],\
             ["typescript-styled-plugin", "npm:0.18.2"]\
           ],\
@@ -4707,6 +4724,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clsx", "npm:1.1.1"],\
             ["cuid", "npm:2.1.8"],\
             ["react", "npm:18.1.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@vircle/ui-component", [\
+        ["workspace:packages/ui-component", {\
+          "packageLocation": "./packages/ui-component/",\
+          "packageDependencies": [\
+            ["@vircle/ui-component", "workspace:packages/ui-component"],\
+            ["@emotion/react", "virtual:e35985f12cbe29572b32dbdb3be94dbefa472e341289cb9eeed2a51787e7f7089f1acedcc2faf2d41151ae8ecefff77651badddaff25492b22eeb9846007a516#npm:11.9.0"],\
+            ["@types/cuid", "npm:2.0.1"],\
+            ["@types/react", "npm:17.0.45"],\
+            ["@vircle/styles", "workspace:packages/styles"],\
+            ["clsx", "npm:1.1.1"],\
+            ["cuid", "npm:2.1.8"],\
+            ["react", "npm:17.0.2"],\
+            ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"],\
+            ["typescript-styled-plugin", "npm:0.18.2"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -12437,6 +12472,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["react", [\
+        ["npm:17.0.2", {\
+          "packageLocation": "./.yarn/cache/react-npm-17.0.2-99ba37d931-b254cc17ce.zip/node_modules/react/",\
+          "packageDependencies": [\
+            ["react", "npm:17.0.2"],\
+            ["loose-envify", "npm:1.4.0"],\
+            ["object-assign", "npm:4.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:18.1.0", {\
           "packageLocation": "./.yarn/cache/react-npm-18.1.0-d66a868dc8-5bb296b561.zip/node_modules/react/",\
           "packageDependencies": [\

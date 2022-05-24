@@ -2829,6 +2829,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react@npm:^17":
+  version: 17.0.45
+  resolution: "@types/react@npm:17.0.45"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 3cc13a02824c13f6fa4807a83abd065ac1d9943359e76bd995cc7cd2b4148c1176ebd54a30a9f4eb8a0f141ff359d712876f256c4fee707e4290607ef8410b3e
+  languageName: node
+  linkType: hard
+
 "@types/react@npm:^18":
   version: 18.0.8
   resolution: "@types/react@npm:18.0.8"
@@ -3090,11 +3101,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vircle/styles@workspace:packages/styles":
+"@vircle/styles@workspace:*, @vircle/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@vircle/styles@workspace:packages/styles"
   dependencies:
     "@emotion/react": ^11.9.0
+    "@types/react": ^17
+    react: 17
     typescript: ^4.6.4
     typescript-styled-plugin: ^0.18.2
   languageName: unknown
@@ -3110,6 +3123,22 @@ __metadata:
     clsx: ^1.1.1
     cuid: ^2.1.8
     react: ^18.1.0
+  languageName: unknown
+  linkType: soft
+
+"@vircle/ui-component@workspace:packages/ui-component":
+  version: 0.0.0-use.local
+  resolution: "@vircle/ui-component@workspace:packages/ui-component"
+  dependencies:
+    "@emotion/react": ^11.9.0
+    "@types/cuid": ^2
+    "@types/react": ^17
+    "@vircle/styles": "workspace:*"
+    clsx: ^1.1.1
+    cuid: ^2.1.8
+    react: 17
+    typescript: ^4.6.4
+    typescript-styled-plugin: ^0.18.2
   languageName: unknown
   linkType: soft
 
@@ -9749,6 +9778,16 @@ __metadata:
   version: 18.1.0
   resolution: "react-is@npm:18.1.0"
   checksum: d206a0fe6790851bff168727bfb896de02c5591695afb0c441163e8630136a3e13ee1a7ddd59fdccddcc93968b4721ae112c10f790b194b03b35a3dc13a355ef
+  languageName: node
+  linkType: hard
+
+"react@npm:17":
+  version: 17.0.2
+  resolution: "react@npm:17.0.2"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
   languageName: node
   linkType: hard
 

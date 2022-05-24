@@ -107,6 +107,9 @@
     },
     {
       "path": "./packages/styles"
+    },
+    {
+      "path": "./packages/ui-component"
     }
   ],
   "include": [],

@@ -28,6 +28,8 @@
     "entity",
     "web-util",
     "admin-api",
+    "admin-web",
+    "ui-component",
     "styles"
   ]
 }
