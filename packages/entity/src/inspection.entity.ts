@@ -27,6 +27,7 @@ export enum DELIVERY_TYPE {
 	PRE_PAY = 1,
 	DEFERRED_PAY = 2,
 	TAKE_OUT = 3,
+	QUICK = 4,
 }
 
 enum REGISTRANT_TYPE {
