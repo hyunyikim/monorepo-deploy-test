@@ -1,9 +1,12 @@
+import React from 'react';
 import {
 	ButtonHTMLAttributes,
 	forwardRef,
 	MouseEventHandler,
 	useMemo,
 } from 'react';
+/** @jsx jsx */
+import {jsx} from '@emotion/react';
 
 import {css, useTheme} from '@emotion/react';
 
@@ -19,7 +22,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const buttonStyle = css`
-	color: inherit;
+	color: 'inherit';
 	cursor: pointer;
 	border: none;
 	outline: none;
@@ -46,7 +49,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		ref
 	) => {
 		const theme = useTheme();
-
+		console.log(theme);
 		const colors = useMemo(
 			() => ({
 				primary: theme.color.gradient.primary,
@@ -118,4 +121,4 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	}
 );
 
-export default Button;
+export {Button};

@@ -65,5 +65,20 @@ module.exports = {
 				},
 			},
 		},
+		{
+			files: [
+				'packages/admin-web/**/*.ts?(x)',
+				'packages/admin-web/**/*.js?(x)',
+			],
+			settings: {
+				'import/resolver': {
+					node: {
+						project: path.resolve(
+							__dirname + '/packages/admin-web/tsconfig.json'
+						),
+					},
+				},
+			},
+		},
 	],
 };
