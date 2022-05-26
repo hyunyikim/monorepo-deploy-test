@@ -2926,30 +2926,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:b0d68736bbf98d74b48d36a75fcc702555cb2c8cf70639a1d773a9a650f8a7c1343e0e37b369afc2bcf151d31b754fd78b642a834360558bad18b34463831851#npm:11.9.0", {\
-          "packageLocation": "./.yarn/__virtual__/@emotion-react-virtual-66f945d570/0/cache/@emotion-react-npm-11.9.0-59b3a70c1e-4ceb004f94.zip/node_modules/@emotion/react/",\
-          "packageDependencies": [\
-            ["@emotion/react", "virtual:b0d68736bbf98d74b48d36a75fcc702555cb2c8cf70639a1d773a9a650f8a7c1343e0e37b369afc2bcf151d31b754fd78b642a834360558bad18b34463831851#npm:11.9.0"],\
-            ["@babel/core", null],\
-            ["@babel/runtime", "npm:7.17.9"],\
-            ["@emotion/babel-plugin", "virtual:e57955b66517159469e3932793491b161f62f23f48338ccab325b463b55370fbe41863a07acfddf263f9ec10c02c87777c1f6fe517582c1b89090449e333ca64#npm:11.9.2"],\
-            ["@emotion/cache", "npm:11.7.1"],\
-            ["@emotion/serialize", "npm:1.0.3"],\
-            ["@emotion/utils", "npm:1.1.0"],\
-            ["@emotion/weak-memoize", "npm:0.2.5"],\
-            ["@types/babel__core", null],\
-            ["@types/react", "npm:17.0.45"],\
-            ["hoist-non-react-statics", "npm:3.3.2"],\
-            ["react", "npm:17.0.2"]\
-          ],\
-          "packagePeers": [\
-            "@babel/core",\
-            "@types/babel__core",\
-            "@types/react",\
-            "react"\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["virtual:e35985f12cbe29572b32dbdb3be94dbefa472e341289cb9eeed2a51787e7f7089f1acedcc2faf2d41151ae8ecefff77651badddaff25492b22eeb9846007a516#npm:11.9.0", {\
           "packageLocation": "./.yarn/__virtual__/@emotion-react-virtual-e57955b665/0/cache/@emotion-react-npm-11.9.0-59b3a70c1e-4ceb004f94.zip/node_modules/@emotion/react/",\
           "packageDependencies": [\
@@ -14384,22 +14360,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["serialize-javascript", "npm:6.0.0"],\
             ["randombytes", "npm:2.1.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["serve-index", [\
-        ["npm:1.9.1", {\
-          "packageLocation": "./.yarn/cache/serve-index-npm-1.9.1-4927052df8-e2647ce133.zip/node_modules/serve-index/",\
-          "packageDependencies": [\
-            ["serve-index", "npm:1.9.1"],\
-            ["accepts", "npm:1.3.8"],\
-            ["batch", "npm:0.6.1"],\
-            ["debug", "virtual:0b386dabde2fdbb834079292c9449560776c56e685064a6aa42e23a0664f42222f0aa75635291ff7601dafe7d71144343d758bed9bdf8db27a064aa27f4e1ed9#npm:2.6.9"],\
-            ["escape-html", "npm:1.0.3"],\
-            ["http-errors", "npm:1.6.3"],\
-            ["mime-types", "npm:2.1.35"],\
-            ["parseurl", "npm:1.3.3"]\
           ],\
           "linkType": "HARD"\
         }]\
