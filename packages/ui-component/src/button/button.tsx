@@ -8,7 +8,7 @@ import React, {
 
 import {jsx, css, useTheme} from '@emotion/react';
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	className?: string;
 	type?: 'button' | 'reset' | 'submit';
 	variant?: 'contained' | 'outlined' | 'text';
@@ -16,8 +16,10 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	onClick?: MouseEventHandler<HTMLButtonElement>;
 	disabled?: boolean;
 	text?: string;
+	fullWidth?: boolean;
+
 	testId?: string;
-};
+}
 
 const buttonStyle = css`
 	color: 'inherit';
@@ -42,6 +44,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			disabled = false,
 			testId,
 			children,
+			fullWidth = false,
 			...props
 		},
 		ref
@@ -52,7 +55,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			() => ({
 				primary: theme.color.gradient.primary,
 				secondary: theme.color.gradient.secondary,
-				error: theme.color.gradient.secondary,
+				error: theme.color.gradient.error,
 				dark: theme.color.gradient.dark,
 				white: theme.color.white,
 			}),
@@ -61,6 +64,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 		const baseStyle = useMemo(
 			() => css`
+				width: ${fullWidth ? '100%' : 'auto'};
 				padding: 5px 15px;
 				border-radius: ${theme.radius.base};
 				letter-spacing: ${theme.typo.letterSpacing.tight};

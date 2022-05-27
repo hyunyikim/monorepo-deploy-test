@@ -21,13 +21,23 @@ export default {
 } as Meta;
 
 export const Basic: Story<ButtonProps> = (args) => <Button {...args} />;
+
 Basic.args = {
 	text: '버튼',
-	color: 'error',
+	color: 'dark',
+	disabled: false,
 };
 
 export const Variant = () => (
 	<>
+		<div>
+			<h1>Replacing DocsPage with a custom component</h1>
+			<p>
+				The Docs page can be customized with your own custom content
+				written as a React Component.
+			</p>
+			<p>Write your own code here👇</p>
+		</div>
 		<Button text="꽉찬" />
 		<Button variant="outlined" text="테두리" />
 		<Button variant="text" text="글씨만" />
