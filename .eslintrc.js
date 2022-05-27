@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
 	extends: ['prettier'],
-	plugins: ['prettier', 'react-hooks'],
+	parser: '@typescript-eslint/parser',
+	plugins: ['prettier', 'react-hooks', 'jest', '@typescript-eslint'],
 	env: {
 		browser: true,
 		jest: true,
@@ -65,6 +66,23 @@ module.exports = {
 				},
 			},
 		},
+
+		{
+			files: [
+				'packages/ui-component/**/*.ts?(x)',
+				'packages/ui-component/**/*.js?(x)',
+			],
+			settings: {
+				'import/resolver': {
+					node: {
+						project: path.resolve(
+							__dirname + '/packages/ui-component/tsconfig.json'
+						),
+					},
+				},
+			},
+		},
+
 		{
 			files: [
 				'packages/admin-web/**/*.ts?(x)',
@@ -81,4 +99,29 @@ module.exports = {
 			},
 		},
 	],
+	settings: {
+		'import/extensions': ['.js', '.jsx', '.ts', '.tsx', 'spec.js'],
+		'import/parsers': {
+			'@typescript-eslint/parser': [
+				'.ts',
+				'.tsx',
+				'.d.ts',
+				'.js',
+				'.jsx',
+			],
+		},
+		'import/resolver': {
+			node: {
+				extensions: ['.js', '.jsx', '.ts', '.tsx'],
+			},
+			typescript: {
+				alwaysTryTypes: true,
+			},
+		},
+	},
+	env: {
+		browser: true,
+		es6: true,
+		'jest/globals': true,
+	},
 };

@@ -1,12 +1,9 @@
-import React from 'react';
 import {
 	ButtonHTMLAttributes,
 	forwardRef,
 	MouseEventHandler,
 	useMemo,
 } from 'react';
-/** @jsx jsx */
-import {jsx} from '@emotion/react';
 
 import {css, useTheme} from '@emotion/react';
 
@@ -49,7 +46,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		ref
 	) => {
 		const theme = useTheme();
-		console.log(theme);
 		const colors = useMemo(
 			() => ({
 				primary: theme.color.gradient.primary,
@@ -63,6 +59,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 		const baseStyle = useMemo(
 			() => css`
+				padding: 5px 15px;
 				border-radius: ${theme.radius.base};
 				letter-spacing: ${theme.typo.letterSpacing.tight};
 				transition: 200ms opacity;
@@ -79,7 +76,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		const containedStyle = useMemo(
 			() => css`
 				color: ${theme.color.white};
-				background-color: ${colors[color]};
+				background: ${colors[color]};
 			`,
 			[theme, colors, color]
 		);
@@ -88,7 +85,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			() => css`
 				color: ${colors[color]};
 				border: ${variant === 'text' ? 0 : 1}px solid currentColor;
-				background-color: ${theme.color.white};
+				background: ${theme.color.white};
 				&:disabled {
 					color: ${theme.color.gray[500]};
 				}
