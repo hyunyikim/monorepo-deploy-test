@@ -1,7 +1,9 @@
+/** @jsx jsx */
+
 import React, {FC} from 'react';
-import {css, ThemeProvider} from '@emotion/react';
+import {jsx, css} from '@emotion/react';
 import {defaultTheme} from '@vircle/styles';
-import {Button} from '@vircle/ui-component';
+import {Button, ThemeProvider} from '@vircle/ui-component';
 
 const App: FC<{name: string}> = ({name}) => {
 	const styles = css`
@@ -11,7 +13,7 @@ const App: FC<{name: string}> = ({name}) => {
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
-			<Button color="error" text="ohelkdslkfjjhjkalfkdjfl" />
+			<Button color="error" text="버튼입니다." />
 			<div css={styles}>hello {name}</div>
 		</ThemeProvider>
 	);

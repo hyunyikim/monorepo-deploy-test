@@ -23,7 +23,7 @@ export default {
 export const Basic: Story<ButtonProps> = (args) => <Button {...args} />;
 Basic.args = {
 	text: '버튼',
-	color: 'dark',
+	color: 'error',
 };
 
 export const Variant = () => (
@@ -31,6 +31,8 @@ export const Variant = () => (
 		<Button text="꽉찬" />
 		<Button variant="outlined" text="테두리" />
 		<Button variant="text" text="글씨만" />
+		<Button variant="outlined" disabled text="비활성 outline" />
+		<Button variant="contained" disabled text="비활성 contain" />
 	</>
 );
 

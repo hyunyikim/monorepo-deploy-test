@@ -1,11 +1,12 @@
-import {
+/** @jsx jsx */
+import React, {
 	ButtonHTMLAttributes,
 	forwardRef,
 	MouseEventHandler,
 	useMemo,
 } from 'react';
 
-import {css, useTheme} from '@emotion/react';
+import {jsx, css, useTheme} from '@emotion/react';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	className?: string;
@@ -46,6 +47,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		ref
 	) => {
 		const theme = useTheme();
+
 		const colors = useMemo(
 			() => ({
 				primary: theme.color.gradient.primary,

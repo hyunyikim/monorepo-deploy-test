@@ -7,9 +7,6 @@
 		"storybook": "start-storybook -p 4000"
 	},
 	"dependencies": {
-		"@babel/plugin-proposal-private-methods": "^7.17.12",
-		"@babel/plugin-proposal-private-property-in-object": "^7.17.12",
-		"@babel/runtime": "^7.16.7",
 		"@emotion/react": "^11.9.0",
 		"@vircle/styles": "workspace:*",
 		"clsx": "^1.1.1",
