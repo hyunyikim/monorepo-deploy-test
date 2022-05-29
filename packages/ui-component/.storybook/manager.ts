@@ -1,8 +1,12 @@
-// .storybook/manager.js
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import {addons} from '@storybook/addons';
+import {addons, Config} from '@storybook/addons';
 import theme from './vircleTheme';
 
-addons.setConfig({
-	theme: theme,
-});
+const config: Config = {
+	theme,
+};
+
+addons.setConfig(config);

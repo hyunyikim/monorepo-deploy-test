@@ -1,5 +1,5 @@
 {
-	"name": "admin-web",
+	"name": "@vircle/admin-web",
 	"packageManager": "yarn@3.2.0",
 	"scripts": {
 		"dev": "webpack serve --config webpack.config.dev.js",
@@ -10,12 +10,12 @@
 		"@emotion/react": "^11.9.0",
 		"@vircle/styles": "workspace:*",
 		"@vircle/ui-component": "workspace:*",
-		"react": "17",
-		"react-dom": "17"
+		"react": "^18.1.0",
+		"react-dom": "^18.1.0"
 	},
 	"devDependencies": {
-		"@types/react": "^17",
-		"@types/react-dom": "^17",
+		"@types/react": "^18.0.9",
+		"@types/react-dom": "^18.0.5",
 		"esbuild-loader": "^2.19.0",
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.5.0",
