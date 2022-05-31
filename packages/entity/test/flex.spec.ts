@@ -1,5 +1,6 @@
-describe('First Test ', () => {
-	it('Test1', () => {
-		expect(1 + 1).toBe(2);
-	});
-});
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {dbMappingTest} from './mappingTestTemplate';
+
+import {Flex} from '../src';
+
+dbMappingTest(Flex);

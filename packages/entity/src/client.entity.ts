@@ -41,7 +41,7 @@ class Client {
 	created: Date;
 
 	@Column({
-		name: 'phone_number',
+		name: 'phone_num',
 		type: 'varchar',
 		length: 16,
 		nullable: false,
@@ -61,6 +61,15 @@ class Client {
 
 	@Column({name: 'zipcode', type: 'varchar', length: 8, nullable: false})
 	zipcode: string;
+
+	@Column({name: 'manager_name', type: 'varchar', length: 50})
+	managerName: string;
+
+	@Column({name: 'manager_phone_num', type: 'varchar', length: 16})
+	managerPhoneNum: string;
+
+	@Column({name: 'business_num', type: 'varchar', length: 50})
+	businessNum: string;
 }
 
 export {Client};

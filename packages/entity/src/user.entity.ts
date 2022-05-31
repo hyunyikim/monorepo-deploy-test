@@ -6,8 +6,8 @@ import {
 	PrimaryColumn,
 } from 'typeorm';
 import {Flex} from './flex.entity';
-import {YN} from './inspection.entity';
-import {BLOCKCHAIN_PLATFORM, Nft} from './nft.entity';
+import {YN, BLOCKCHAIN_PLATFORM} from './enums';
+import {Nft} from './nft.entity';
 import {Product} from './product.entity';
 
 @Entity({name: 'TB_USER'})
@@ -66,13 +66,6 @@ export class UserWallet {
 	@Column({name: 'user_idx', type: 'int'})
 	owner: User;
 
-	@Column({
-		name: 'blockchain_platform',
-		type: 'enum',
-		enum: BLOCKCHAIN_PLATFORM,
-	})
-	blockchainPlatform: BLOCKCHAIN_PLATFORM;
-
 	@Column({name: 'wallet_address', type: 'varchar', length: 50})
 	walletAddress: string;
 
@@ -87,6 +80,13 @@ export class UserWallet {
 
 	@Column({name: 'main_yn', type: 'enum', enum: YN})
 	mainYN: YN;
+
+	@Column({
+		name: 'blockchain_platform',
+		type: 'enum',
+		enum: BLOCKCHAIN_PLATFORM,
+	})
+	blockchainPlatform: BLOCKCHAIN_PLATFORM;
 
 	@Column({name: 'reg_dt', type: 'datetime'})
 	registered: Date;

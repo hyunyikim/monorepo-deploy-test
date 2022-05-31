@@ -10,11 +10,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import {User} from './user.entity';
-
-enum YN {
-	YES = 'Y',
-	NO = 'N',
-}
+import {YN} from './enums';
 
 enum FLEX_TYPE {
 	FLEX = '1',

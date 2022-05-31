@@ -9,6 +9,7 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+import {BLOCKCHAIN_PLATFORM} from './enums';
 import {Nft} from './nft.entity';
 
 enum YN {
@@ -76,6 +77,9 @@ export class Admin {
 	@Expose({groups: []})
 	@Column({name: 'use_yn', enum: YN, default: YN.YES})
 	used: YN;
+
+	@Column({name: 'reg_id', type: 'varchar'})
+	registrantIdx: string;
 
 	@ManyToOne(() => Admin, {
 		createForeignKeyConstraints: false,
@@ -372,4 +376,59 @@ export class Admin {
 		eager: false,
 	})
 	nftList: Promise<Nft[]>;
+
+	@Column({
+		name: 'exc_inspector_idx',
+		type: 'int',
+	})
+	excInspectorIdx: number;
+
+	@Column({
+		name: 'exc_repairer_idx',
+		type: 'int',
+	})
+	excRepairerIdx: number;
+
+	@Column({
+		name: 'brand_idx',
+		type: 'int',
+	})
+	brandIdx: string;
+
+	@Column({
+		name: 'warranty_dt',
+		type: 'varchar',
+		length: 250,
+	})
+	warrantyDate: string;
+
+	@Expose({groups: ['detail']})
+	@Column({
+		name: 'blockchain_platform',
+		enum: BLOCKCHAIN_PLATFORM,
+		default: BLOCKCHAIN_PLATFORM.KLAYTN_KLIP,
+	})
+	blockchainPlatform: BLOCKCHAIN_PLATFORM;
+
+	@Expose({groups: ['detail']})
+	@Column({
+		name: 'nft_custom_field',
+		type: 'varchar',
+		length: 100,
+	})
+	nftCustomField: string;
+
+	@Column({
+		name: 'webhook_api_transfer',
+		type: 'varchar',
+		length: 250,
+	})
+	webhookApiTransfer: string;
+
+	@Column({
+		name: 'webhook_api_wallet',
+		type: 'varchar',
+		length: 250,
+	})
+	webhookApiWallet: string;
 }

@@ -5,14 +5,13 @@ import {
 	OneToMany,
 	JoinColumn,
 	ManyToOne,
+	CreateDateColumn,
+	UpdateDateColumn,
 } from 'typeorm';
 import {Admin} from './admin.entity';
 import {Product} from './product.entity';
+import {YN} from './enums';
 
-enum YN {
-	YES = 'Y',
-	NO = 'N',
-}
 @Entity({name: 'TB_BRAND'})
 export class Brand {
 	@PrimaryGeneratedColumn({name: 'brand_idx', type: 'int'})
@@ -57,4 +56,19 @@ export class Brand {
 	})
 	@JoinColumn({name: 'reg_idx'})
 	registrant: Admin;
+
+	@CreateDateColumn({name: 'reg_dt', type: 'datetime'})
+	registerDate: Date;
+
+	@Column({name: 'mod_idx', type: 'int'})
+	modifierIdx: number;
+
+	@ManyToOne(() => Admin, {
+		createForeignKeyConstraints: false,
+		eager: true,
+	})
+	modifier: Admin;
+
+	@UpdateDateColumn({name: 'mod_dt', type: 'datetime'})
+	modifiedDate: Date;
 }

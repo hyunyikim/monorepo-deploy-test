@@ -12,48 +12,14 @@ import {
 import {Brand} from './brand.entity';
 import {Inspection} from './inspection.entity';
 import {User} from './user.entity';
-
-enum YN {
-	YES = 'Y',
-	NO = 'N',
-}
-
-export enum PRODUCT_LABEL {
-	BLACK = 'B',
-	WHITE = 'W',
-	SILVER = 'S',
-	GOLD = 'G',
-}
-
-export enum PRODUCT_QUALITY {
-	NEW = 'N',
-	S_PLUS = 'S+',
-	S = 'S',
-	A = 'A',
-	B = 'B',
-	C = 'C',
-	D = 'D',
-}
-
-export enum PRODUCT_STATUS {
-	'EMPTY_STATUS_1' = '1',
-	'EMPTY_STATUS_2' = '2',
-	'REGISTERED_DEFAULT' = '3',
-	'REGISTERED_SELLING' = '4',
-	'INSPECT_OR_REPAIR' = '5',
-	'PROVED' = '6',
-	'SOLD' = '7',
-	'RECEIVED' = '8',
-	'VGC_SENDED' = '9',
-	'SCANNED' = '10',
-}
-
-export enum PRODUCT_PERIOD {
-	ONE_YEAR_LESS = '1',
-	THREE_YEAR_LESS = '3',
-	FIVE_YEAR_LESS = '5',
-	TEN_YEAR_LESS = '10',
-}
+import {
+	YN,
+	PRODUCT_LABEL,
+	PRODUCT_PERIOD,
+	PRODUCT_QUALITY,
+	PRODUCT_STATUS,
+	NFC_TYPE,
+} from './enums';
 
 @Entity({name: 'TB_PRODUCT'})
 export class Product {
@@ -174,6 +140,30 @@ export class Product {
 		eager: false,
 	})
 	inspections: Promise<Inspection[]>;
+
+	@Column({name: 'sales_yn', enum: YN})
+	salesYN: YN;
+
+	@Column({name: 'sales_reg_dt', type: 'datetime'})
+	salesRegisterDate: Date;
+
+	@Column({name: 'nfc_type', enum: NFC_TYPE})
+	nfcType: NFC_TYPE;
+
+	@Column({name: 'nfc_mapping_yn', enum: YN})
+	nfcMappingYN: YN;
+
+	@Column({name: 'view_yn', enum: YN})
+	viewYN: YN;
+
+	@Column({name: 'del_yn', enum: YN})
+	delYN: YN;
+
+	@Column({name: 'soldout_yn', enum: YN})
+	soldOutYN: YN;
+
+	@Column({name: 'qr_key', enum: YN})
+	qrKey: YN;
 }
 
 @Entity({name: 'TB_PRODUCT_IMAGE'})
@@ -181,15 +171,19 @@ export class ProductImage {
 	@PrimaryGeneratedColumn({name: 'pro_img_idx', type: 'int'})
 	id: number;
 
+	@Column({name: 'pro_idx', type: 'int'})
+	productIdx: number;
+
 	@ManyToOne(() => Product, (product) => product.images, {
 		createForeignKeyConstraints: false,
 	})
+	@JoinColumn({name: 'pro_idx'})
 	product: Product;
 
 	@Column({name: 'img_detail', type: 'varchar', length: 250})
 	path: string;
 
-	@Column({name: ' img_sort', type: 'int', scale: 11})
+	@Column({name: 'img_sort', type: 'int'})
 	order: number;
 }
 

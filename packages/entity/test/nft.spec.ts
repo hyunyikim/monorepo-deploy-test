@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import TestSource, {ColumnInfo, InfoMap} from './connection';
-import {Payment} from '../src';
+import {Nft} from '../src';
 
 describe('Client Entity Test ', () => {
 	let testSource: TestSource;
@@ -10,7 +10,7 @@ describe('Client Entity Test ', () => {
 	});
 
 	it('Entity DB Hitting Test', async () => {
-		const adminRepo = testSource.src.getRepository(Payment);
+		const adminRepo = testSource.src.getRepository(Nft);
 
 		const {tableName, columns} = adminRepo.metadata;
 

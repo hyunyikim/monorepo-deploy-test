@@ -184,6 +184,12 @@ export class Payment {
 	@Column({name: 'vbank_holder', type: 'varchar', length: 20})
 	vbankHolder: string;
 
+	@Column({name: 'vbank_date', type: 'datetime'})
+	vbankDate: Date;
+
+	@Column({name: 'vbank_issued_at', type: 'datetime'})
+	vbankIssuedAt: Date;
+
 	@CreateDateColumn({name: 'reg_dt', type: 'datetime'})
 	registered: Date;
 
