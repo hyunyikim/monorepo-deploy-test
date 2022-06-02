@@ -1,5 +1,5 @@
-describe('First Test ', () => {
-	it('Test1', () => {
-		expect(1 + 1).toBe(2);
-	});
-});
+import {dbMappingTest} from './mappingTestTemplate';
+
+import {VirtualBankCode} from '../src';
+
+dbMappingTest(VirtualBankCode);

@@ -382,6 +382,11 @@ export class Inspection {
 	@Column({name: 'delivery_type', enum: DELIVERY_TYPE})
 	deliveryType: DELIVERY_TYPE;
 
+	@Expose()
+	get deliveryTypeStr(): string {
+		return DELIVERY_TYPE[this.deliveryType];
+	}
+
 	// 배송 완료시간
 	@Column({name: 'delivery_arrived', type: 'datetime'})
 	deliveryArrived: Date;
@@ -390,13 +395,21 @@ export class Inspection {
 	@Column({name: 'etc', type: 'varchar', length: 500})
 	etc: string;
 
+	// 배송비
 	@Column({name: 'delivery_fee', type: 'int', unsigned: true})
 	deliveryFee: number;
 
-	@Expose()
-	get deliveryTypeStr(): string {
-		return DELIVERY_TYPE[this.deliveryType];
-	}
+	// 감정사 고유 번호
+	@Column({name: 'ref_serial_num', type: 'varchar', length: 50})
+	inspectorSerialNum: string;
+
+	// 감정 소요 시간
+	@Column({name: 'estimated_time', type: 'varchar', length: 250})
+	estimatedTime: string;
+
+	// 견적서 등록 날짜
+	@Column({name: 'estimate_reg_dt', type: 'datetime'})
+	estimatedRegDate: string;
 }
 
 @Entity({name: 'TB_PRODUCT_INSPECTION_HISTORY'})

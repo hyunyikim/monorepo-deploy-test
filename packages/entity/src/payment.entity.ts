@@ -8,6 +8,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import {Product} from './product.entity';
+import {YN} from './enums';
 
 export enum PAY_TYPE {
 	ORDER = 'order',
@@ -20,11 +21,6 @@ export enum PAY_METHOD {
 	TRANSFER = 'trans',
 	VIRTUAL_BANK = 'vbank',
 	CASH = 'cash',
-}
-
-enum YN {
-	YES = 'Y',
-	NO = 'N',
 }
 
 @Entity({name: 'TB_PAYMENT'})

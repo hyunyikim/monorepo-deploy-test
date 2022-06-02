@@ -1,7 +1,4 @@
-import {Slack} from 'src/slack.entity';
+import {dbMappingTest} from './mappingTestTemplate';
+import {Slack} from '../src';
 
-describe('First Test ', () => {
-	it('Test1', () => {
-		expect(1 + 1).toBe(2);
-	});
-});
+dbMappingTest(Slack);

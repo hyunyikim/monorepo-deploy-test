@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import {User} from './user.entity';
 import {YN} from './enums';
+import {Product} from './product.entity';
 
 enum FLEX_TYPE {
 	FLEX = '1',
@@ -22,7 +23,7 @@ enum FLEX_TYPE {
 @Entity({name: 'TB_FLEX'})
 export class Flex {
 	@PrimaryGeneratedColumn({name: 'flex_idx', type: 'int'})
-	id: number;
+	idx: number;
 
 	@Column({name: 'flex_type', type: 'enum', enum: FLEX_TYPE})
 	type: FLEX_TYPE;
@@ -80,12 +81,31 @@ export class Flex {
 
 	@OneToMany(() => FlexPoll, (flexPoll) => flexPoll.flex)
 	polls: FlexPoll[];
+
+	@Column({name: 'pro_idx', type: 'int'})
+	productIdx: number;
+
+	@ManyToOne(() => Product, {
+		createForeignKeyConstraints: false,
+		eager: true,
+	})
+	@JoinColumn({name: 'pro_idx'})
+	product: Product;
+
+	@Column({name: 'view_cnt', type: 'int', default: 0})
+	viewCount: number;
+
+	@Column({name: 'top_yn', enum: YN})
+	topYN: YN;
+
+	@Column({name: 'del_yn', enum: YN})
+	deletedYN: YN;
 }
 
 @Entity({name: 'TB_FLEX_IMAGE'})
 export class FlexImage {
 	@PrimaryGeneratedColumn({name: 'flex_img_idx', type: 'int'})
-	id: number;
+	idx: number;
 
 	@ManyToOne(() => Flex, (flex) => flex.images, {
 		createForeignKeyConstraints: false,
@@ -104,7 +124,7 @@ export class FlexImage {
 @Entity({name: 'TB_FLEX_COMMENT'})
 export class FlexComment {
 	@PrimaryGeneratedColumn({name: 'flex_comment_idx', type: 'int'})
-	id: number;
+	idx: number;
 
 	@ManyToOne(() => Flex, (flex) => flex.comments, {
 		createForeignKeyConstraints: false,
@@ -126,6 +146,9 @@ export class FlexComment {
 	@CreateDateColumn({name: 'reg_dt', type: 'datetime'})
 	registered: Date;
 
+	@Column({name: 'mod_idx', type: 'int'})
+	modifierIdx: number;
+
 	@ManyToOne(() => User, {
 		createForeignKeyConstraints: false,
 		eager: true,
@@ -145,7 +168,7 @@ export enum LIKE_TYPE {
 @Entity({name: 'TB_FLEX_LIKE'})
 export class FlexLike {
 	@PrimaryGeneratedColumn({name: 'like_idx'})
-	id: number;
+	idx: number;
 
 	@ManyToOne(() => Flex)
 	@JoinColumn({name: 'flex_idx'})

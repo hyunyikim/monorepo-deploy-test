@@ -3,6 +3,17 @@ export enum YN {
 	NO = 'N',
 }
 
+export enum DELETE_STATE {
+	YES = 'Y',
+	NO = 'N',
+	TEMP = 'T',
+}
+
+export enum GENDER {
+	MALE = 'M',
+	FEMALE = 'F',
+}
+
 export enum BLOCKCHAIN_PLATFORM {
 	KLAYTN_KLIP = 'klaytn-klip',
 	KLAYTN_KAS = 'klaytn-kas',
@@ -13,6 +24,18 @@ export enum PRODUCT_LABEL {
 	WHITE = 'W',
 	SILVER = 'S',
 	GOLD = 'G',
+}
+
+export enum REGISTRATION_ROUTE {
+	KAKAO = 'K',
+	APPLE = 'A',
+	ETC = 'E',
+}
+
+export enum USER_TYPE {
+	USER = 'U',
+	STORE = 'S',
+	ADMIN = 'A',
 }
 
 export enum PRODUCT_QUALITY {
