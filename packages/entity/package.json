@@ -14,7 +14,7 @@
 		"test": "jest",
 		"test:clear": "jest --clearCache",
 		"test:watch": "jest --watch",
-		"test:cov": "jest --coverage"
+		"test:cov": "jest --coverage --no-cache"
 	},
 	"dependencies": {
 		"class-transformer": "^0.5.1",

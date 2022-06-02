@@ -64,7 +64,7 @@ export default class TestSource {
 
 		return new DataSource({
 			synchronize: false, // Don't Change this config!!
-			logging: true,
+			logging: false,
 			type: 'mysql',
 			host: MYSQL_HOST,
 			port: parseInt(MYSQL_PORT),

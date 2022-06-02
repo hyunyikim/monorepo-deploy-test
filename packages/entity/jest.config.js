@@ -1,8 +1,15 @@
-console.log('Jest Config load');
-
 module.exports = {
 	maxWorkers: 1,
 	preset: 'ts-jest',
-	testMatch: ['**/*.spec.[jt]s?(x)', '**/*.test.[jt]s?(x)'],
+	testMatch: ['**/*.spec.ts?(x)', '**/*.test.ts?(x)'],
 	testEnvironment: 'node',
+	coverageThreshold: {
+		global: {
+			branches: 90,
+			functions: 90,
+			lines: 90,
+			statements: -10,
+		},
+	},
+	coveragePathIgnorePatterns: ['./test/'],
 };
