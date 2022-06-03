@@ -9,3 +9,4 @@ export * from './virtualBankCode.entity';
 export * from './slack.entity';
 export * from './client.entity';
 export * from './nft.entity';
+export * from './auth.entity';

@@ -3,6 +3,7 @@ import {DataSource} from 'typeorm';
 import dotenv from 'dotenv';
 import {
 	Admin,
+	SimpleAuth,
 	User,
 	UserBlock,
 	UserWallet,
@@ -73,6 +74,7 @@ export default class TestSource {
 			database: MYSQL_DATABASE,
 			entities: [
 				Admin,
+				SimpleAuth,
 				User,
 				UserBlock,
 				UserWallet,
