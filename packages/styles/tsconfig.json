@@ -1,18 +1,18 @@
 {
-    "extends": "../../tsconfig.base.json",
-    "compilerOptions": {
-        "jsx": "react-jsx",
-        "jsxImportSource": "@emotion/react",
-        "baseUrl": ".",
-        "composite": true,
-        "declaration": true,
-        "types": [],
-        "plugins": [
-            {
-                "name": "typescript-styled-plugin",
-                "tags": ["styled", "css"]
-            }
-        ]
-    },
-    "include": ["src/**/*"]
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"jsxImportSource": "@emotion/react",
+		"baseUrl": ".",
+		"composite": true,
+		"declaration": true,
+		"types": [],
+		"plugins": [
+			{
+				"name": "typescript-styled-plugin",
+				"tags": ["styled", "css"]
+			}
+		]
+	},
+	"include": ["src/**/*"]
 }

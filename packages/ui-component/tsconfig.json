@@ -1,20 +1,19 @@
 {
-    "extends": "../../tsconfig.base.json",
-    "compilerOptions": {
-      "jsx": "react-jsx",
-      "jsxImportSource": "@emotion/react",
-      "baseUrl": ".",
-      "outDir": "./dist",
-      "composite": true,
-      "declaration": true,
-    //   "type" : ["jest"],s
-      "plugins": [
-        {
-          "name": "typescript-styled-plugin",
-          "tags": ["styled", "css"]
-        }
-      ]
-    },
-    "include": ["src/**/*", "./@types/*", ".storybook/*"]
-  }
-  
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"jsxImportSource": "@emotion/react",
+		"baseUrl": ".",
+		"outDir": "./dist",
+		"composite": true,
+		"declaration": true,
+		//   "type" : ["jest"],s
+		"plugins": [
+			{
+				"name": "typescript-styled-plugin",
+				"tags": ["styled", "css"]
+			}
+		]
+	},
+	"include": ["src/**/*", "./@types/*", ".storybook/*"]
+}

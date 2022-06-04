@@ -43,7 +43,10 @@
 		"typescript": "^4.6.4"
 	},
 	"lint-staged": {
-		"*.{ts,tsx,js,jsx}": "eslint ./packages --fix"
+		"*.{ts,tsx,js,jsx}": [
+			"prettier ./packages -w",
+			"eslint ./packages --fix"
+		]
 	},
 	"resolutions": {
 		"@storybook/core-common/webpack": "^5",
