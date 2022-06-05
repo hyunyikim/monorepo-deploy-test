@@ -1,35 +1,35 @@
 {
-  "cSpell.words": [
-    "commitlint",
-    "klaytn",
-    "nestjs",
-    "semibold",
-    "Unipass",
-    "vbank",
-    "vircle",
-    "zipcode"
-  ],
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true,
-    "**/dist": true,
-    "**/node_modules": true,
-    "**/tsconfig.tsbuildinfo": true,
-    ".eslintcache": true
-  },
-  "typescript.tsdk": ".yarn/sdks/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "editor.formatOnSave": true,
-  "eslint.nodePath": ".yarn/sdks",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
-  "conventionalCommits.scopes": [
-    "base",
-    "vscode",
-    "entity",
-    "web-util",
-    "admin-api",
-    "admin-web",
-    "ui-component",
-    "styles"
-  ]
+	"cSpell.words": [
+		"commitlint",
+		"klaytn",
+		"nestjs",
+		"semibold",
+		"Unipass",
+		"vbank",
+		"vircle",
+		"zipcode"
+	],
+	"search.exclude": {
+		"**/.yarn": true,
+		"**/.pnp.*": true,
+		"**/dist": true,
+		"**/node_modules": true,
+		"**/tsconfig.tsbuildinfo": true,
+		".eslintcache": true
+	},
+	"typescript.tsdk": ".yarn/sdks/typescript/lib",
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"editor.formatOnSave": true,
+	"eslint.nodePath": ".yarn/sdks",
+	"prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+	"conventionalCommits.scopes": [
+		"base",
+		"vscode",
+		"entity",
+		"web-util",
+		"admin-api",
+		"admin-web",
+		"ui-component",
+		"styles"
+	]
 }

@@ -6,5 +6,5 @@
 	"singleQuote": true,
 	"bracketSpacing": false,
 	"bracketSameLine": true,
-    "endOfLine": "lf"
+	"endOfLine": "lf"
 }

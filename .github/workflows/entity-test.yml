@@ -4,7 +4,7 @@ on:
         branches:
             - dev
         paths:
-            - "packages/entity/**"
+            - 'packages/entity/**'
 
 jobs:
     test-coverage:
@@ -22,7 +22,7 @@ jobs:
                   token: ${{ secrets.SECRET_TOKEN }}
             - uses: artiomtr/jest-coverage-report-action@v2
               with:
-                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                   package-manager: yarn
-                   test-script: yarn jest --silent --ci --coverage --testLocationInResults --json --outputFile="report.json"
-                   working-directory: ./packages/entity
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  package-manager: yarn
+                  test-script: yarn jest --silent --ci --coverage --testLocationInResults --json --outputFile="report.json"
+                  working-directory: ./packages/entity

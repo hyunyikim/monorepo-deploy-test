@@ -1,9 +1,9 @@
 {
-  "recommendations": [
-    "arcanis.vscode-zipfs",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint",
-    "christian-kohler.path-intellisense",
-    "vivaxy.vscode-conventional-commits"
-  ]
+	"recommendations": [
+		"arcanis.vscode-zipfs",
+		"esbenp.prettier-vscode",
+		"dbaeumer.vscode-eslint",
+		"christian-kohler.path-intellisense",
+		"vivaxy.vscode-conventional-commits"
+	]
 }
