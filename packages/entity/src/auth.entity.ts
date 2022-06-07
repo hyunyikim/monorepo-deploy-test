@@ -7,6 +7,7 @@ import {
 	DeleteDateColumn,
 	JoinColumn,
 } from 'typeorm';
+import {Exclude} from 'class-transformer';
 import {User} from './user.entity';
 
 @Entity({name: 'TB_SIMPLE_AUTH'})
@@ -28,8 +29,12 @@ export class SimpleAuth {
 	@JoinColumn({name: 'user_idx'})
 	user: Promise<User>;
 
+	@Exclude({toPlainOnly: true})
 	@Column({name: 'password', type: 'varchar', length: 128})
 	password: string;
+
+	@Column({name: 'biometric', type: 'boolean', default: false})
+	biometric: boolean;
 
 	@Column({name: 'fail_count', type: 'tinyint', unsigned: true, default: 0})
 	failCount: number;
@@ -47,6 +52,7 @@ export class SimpleAuth {
 	})
 	updated: Date;
 
+	@Exclude({toPlainOnly: true})
 	@DeleteDateColumn({name: 'deleted', type: 'datetime', nullable: true})
 	deleted: Date;
 }
