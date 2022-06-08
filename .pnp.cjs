@@ -17292,6 +17292,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vircle/web-utils", "workspace:packages/web-utils"],\
             ["@types/jest", "npm:27.5.1"],\
             ["@types/node", "npm:17.0.32"],\
+            ["axios", "npm:0.27.2"],\
             ["jest", "virtual:c375b94e356cd12d3624bdbf4f5fe42c846b1a47153a983f03024a58ef16b7eeb1e867419f9f4dcba7fb47b87a2c149719d64746c2dfd79c2c91482d47abb578#npm:28.1.0"],\
             ["ts-jest", "virtual:091932d59708c39fae93f108ac11bd713e118cf3a0de3426ade5e814eed8df6c8e29aa76ea00372d6128d8aa07a9db0793c30ffd9f24bc2ad3bbb0e6c87d35d6#npm:28.0.2"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"]\
