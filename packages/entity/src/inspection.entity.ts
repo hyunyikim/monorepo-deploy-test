@@ -91,7 +91,10 @@ export class Inspection {
 	@Column({name: 'pro_idx', type: 'int'})
 	productIdx: string;
 
-	@ManyToOne(() => Product, (product) => product.inspections)
+	@ManyToOne(() => Product, (product) => product.inspections, {
+		createForeignKeyConstraints: false,
+		eager: true,
+	})
 	@JoinColumn({name: 'pro_idx'})
 	product: Product;
 

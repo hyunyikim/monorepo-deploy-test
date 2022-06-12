@@ -8,6 +8,7 @@ import {
 	ManyToOne,
 	CreateDateColumn,
 	UpdateDateColumn,
+	Index,
 } from 'typeorm';
 import {BLOCKCHAIN_PLATFORM} from './enums';
 import {Nft} from './nft.entity';
@@ -64,7 +65,8 @@ export class Admin {
 	@Column({name: 'admin_nm', type: 'varchar', length: 30})
 	name: string;
 
-	@Column({name: 'admin_email', type: 'varchar', length: 50, unique: true})
+	@Index({unique: true})
+	@Column({name: 'admin_email', type: 'varchar', length: 50})
 	email: string;
 
 	@Exclude()
@@ -175,9 +177,6 @@ export class Admin {
 	@Column({name: 'main_yn', enum: YN, default: YN.NO})
 	mainYN: YN;
 
-	// ....
-
-	// ....
 	@Expose({groups: ['detail']})
 	@Column({
 		name: 'use_category',
