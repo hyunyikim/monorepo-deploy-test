@@ -9,7 +9,9 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 	Index,
+	OneToOne,
 } from 'typeorm';
+import {Brand} from './brand.entity';
 import {BLOCKCHAIN_PLATFORM} from './enums';
 import {Nft} from './nft.entity';
 
@@ -393,6 +395,10 @@ export class Admin {
 		type: 'int',
 	})
 	brandIdx: string;
+
+	@OneToOne(() => Brand, {createForeignKeyConstraints: false, eager: true})
+	@JoinColumn({name: 'brand_idx'})
+	brand: Brand;
 
 	@Column({
 		name: 'warranty_dt',
