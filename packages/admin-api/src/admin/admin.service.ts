@@ -2,7 +2,7 @@ import {Injectable, NotFoundException} from '@nestjs/common';
 import {CreateAdminDto} from './dto/create-admin.dto';
 import {UpdateAdminDto} from './dto/update-admin.dto';
 import {InjectRepository} from '@nestjs/typeorm';
-import {Admin} from '@vircle/entity';
+import {Admin, YN} from '@vircle/entity';
 import {Repository} from 'typeorm';
 import {FindAdminListDto} from './dto/find-admin.dto';
 import {plainToInstance} from 'class-transformer';
@@ -46,6 +46,12 @@ export class AdminService {
 
 	async remove(idx: number) {
 		const admin = await this.findOne(idx);
-		this.adminRepo.remove([admin]);
+		await this.adminRepo.remove([admin]);
+	}
+
+	async softRemove(idx: number) {
+		const admin = await this.findOne(idx);
+		admin.used = YN.NO;
+		await this.adminRepo.save(admin);
 	}
 }
