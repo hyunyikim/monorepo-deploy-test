@@ -192,4 +192,14 @@ export class Nft {
 		default: BLOCKCHAIN_PLATFORM.KLAYTN_KLIP,
 	})
 	blockchainPlatform: BLOCKCHAIN_PLATFORM;
+
+	@Column({
+		name: 'waiting_user_idx',
+		type: 'int',
+	})
+	waitingUserIdx: number;
+
+	@ManyToOne(() => User, {createForeignKeyConstraints: false, eager: false})
+	@JoinColumn({name: 'waiting_user_idx'})
+	waitingUser: Promise<User>;
 }

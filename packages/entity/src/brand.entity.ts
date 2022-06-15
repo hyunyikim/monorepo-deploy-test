@@ -52,7 +52,7 @@ export class Brand {
 
 	@ManyToOne(() => Admin, {
 		createForeignKeyConstraints: false,
-		eager: true,
+		eager: false,
 	})
 	@JoinColumn({name: 'reg_idx'})
 	registrant: Admin;
