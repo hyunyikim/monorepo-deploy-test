@@ -5,6 +5,7 @@ import {
 	OneToOne,
 	ManyToOne,
 	JoinColumn,
+	Index,
 } from 'typeorm';
 import {Product} from './product.entity';
 import {User} from './user.entity';
@@ -16,6 +17,8 @@ enum NFT_STATUS {
 	'REQUESTED' = '2',
 	'CONFIRMED' = '3',
 	'COMPLETED' = '4',
+	'WAITING_SEND' = '5',
+	'WAITING_RECEIVE' = '6',
 	'CANCELED' = '9',
 }
 
@@ -27,14 +30,14 @@ export enum BLOCKCHAIN_PLATFORM {
 enum NFT_TYPE {
 	'SELLER_GUARANTEE' = '1',
 	'INSPECT_GUARANTEE' = '2',
-	'REPIRE_GUARANTEE' = '3',
+	'REPAIR_GUARANTEE' = '3',
 	'BRAND_GUARANTEE' = '4',
 }
 
 @Entity({name: 'TB_NFT_REQ'})
 export class Nft {
 	@PrimaryGeneratedColumn({name: 'nft_req_idx', type: 'int'})
-	id: number;
+	idx: number;
 
 	@Column({name: 'nft_req_state', type: 'enum', enum: NFT_STATUS})
 	nftStatus: NFT_STATUS;
@@ -42,10 +45,10 @@ export class Nft {
 	@Column({name: 'cate_cd', type: 'varchar', length: 2, nullable: true})
 	categoryCode: string;
 
-	@ManyToOne(() => Brand, (brand) => brand.id, {
-		createForeignKeyConstraints: false,
-		eager: true,
-	})
+	@Column({name: 'brand_idx', type: 'int'})
+	brandIdx: number;
+
+	@ManyToOne(() => Brand, {createForeignKeyConstraints: false, eager: true})
 	@JoinColumn({name: 'brand_idx'})
 	brand: Brand;
 
@@ -70,7 +73,10 @@ export class Nft {
 	@Column({name: 'warranty_dt', type: 'varchar', length: 250, nullable: true})
 	warranty: string;
 
-	@ManyToOne(() => Admin, (admin) => admin.idx, {
+	@Column({name: 'platform_idx', type: 'int'})
+	platformIdx: number;
+
+	@ManyToOne(() => Admin, {
 		createForeignKeyConstraints: false,
 		eager: false,
 	})
@@ -111,12 +117,20 @@ export class Nft {
 	@Column({name: 'orderer_tel', type: 'varchar', length: 20, nullable: true})
 	ordererTel: string;
 
+	@Index()
+	@Column({name: 'user_idx', type: 'int'})
+	userIdx: number;
+
 	@ManyToOne(() => User, (user) => user.nftList, {
 		createForeignKeyConstraints: false,
 		eager: false,
 	})
 	@JoinColumn({name: 'user_idx'})
 	owner: User;
+
+	@Index()
+	@Column({name: 'admin_idx', type: 'int'})
+	adminIdx: number;
 
 	@ManyToOne(() => Admin, (admin) => admin.nftList, {
 		createForeignKeyConstraints: false,

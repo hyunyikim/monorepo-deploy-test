@@ -15,7 +15,7 @@ import {YN} from './enums';
 @Entity({name: 'TB_BRAND'})
 export class Brand {
 	@PrimaryGeneratedColumn({name: 'brand_idx', type: 'int'})
-	id: number;
+	idx: number;
 
 	@Column({name: 'brand_nm', type: 'varchar', length: 250})
 	name: string;
