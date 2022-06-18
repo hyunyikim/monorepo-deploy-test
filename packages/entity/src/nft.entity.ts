@@ -6,6 +6,8 @@ import {
 	ManyToOne,
 	JoinColumn,
 	Index,
+	Table,
+	OneToMany,
 } from 'typeorm';
 import {Product} from './product.entity';
 import {User} from './user.entity';
@@ -216,4 +218,77 @@ export class Nft {
 	@ManyToOne(() => User, {createForeignKeyConstraints: false, eager: false})
 	@JoinColumn({name: 'waiting_user_idx'})
 	waitingUser: Promise<User>;
+
+	@OneToMany(() => NtfHistory, (history) => history.nftRequest, {
+		eager: false,
+	})
+	history: Promise<NtfHistory[]>;
+}
+
+@Entity({name: 'TB_NFT_HISTORY'})
+export class NtfHistory {
+	@PrimaryGeneratedColumn({name: 'nft_his_idx', type: 'int'})
+	idx: number;
+
+	/** FK on TB_NFT_REQ */
+	@Column({name: 'nft_req_idx', type: 'int'})
+	nftRequestIdx: number;
+
+	@ManyToOne(() => Nft, {createForeignKeyConstraints: false, eager: false})
+	@JoinColumn({name: 'nft_req_idx'})
+	nftRequest: Promise<Nft>;
+
+	/** 토큰 ID (hex) */
+	@Column({name: 'token_id', type: 'varchar', length: 250})
+	tokenId: string;
+
+	/** 트랜잭션 해시 */
+	@Column({name: 'tx_hash', type: 'varchar', length: 250})
+	txHash: string;
+
+	/** 보낸 사람 지갑 주소 */
+	@Column({name: 'from_wallet', type: 'varchar', length: 250})
+	fromWallet: string;
+
+	/** 받는 사람 지갑 주소 */
+	@Column({name: 'to_wallet', type: 'varchar', length: 250})
+	toWallet: string;
+
+	/** 등록 IDX */
+	@Column({name: 'user_idx', type: 'int'})
+	userIdx: number;
+
+	@ManyToOne(() => User, {createForeignKeyConstraints: false, eager: false})
+	@JoinColumn({name: 'user_idx'})
+	registrant: User;
+
+	/** 블록 해시 값 */
+	@Column({name: 'block_hash', type: 'varchar', length: 250})
+	blockHash: string;
+
+	/** 수수료 대납 계정*/
+	@Column({name: 'fee_player_address', type: 'varchar', length: 250})
+	feePlayerAddress: string;
+
+	/** 가스 비용 (hex)*/
+	@Column({name: 'gas_price', type: 'varchar', length: 250})
+	gasPrice: string;
+
+	/** 가스 사용량 (hex)*/
+	@Column({name: 'gas_used', type: 'varchar', length: 250})
+	gasUsed: string;
+
+	/** 트렌잭션 수수료 */
+	@Column({name: 'tx_fee', type: 'decimal', precision: 27, scale: 18})
+	txFee: number;
+
+	/** 수수료 단위 */
+	@Column({name: 'fee_unit', type: 'varchar', length: 250})
+	feeUnit: string;
+
+	@Column({name: 'reg_dt', type: 'datetime'})
+	registered: Date;
+
+	@Column({name: 'mod_dt', type: 'datetime'})
+	modified: Date;
 }

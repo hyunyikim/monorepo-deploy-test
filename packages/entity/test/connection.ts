@@ -25,6 +25,7 @@ import {
 	Slack,
 	Client,
 	Nft,
+	NtfHistory,
 } from '../src';
 
 export type InfoMap = Record<string, {type: string; null: 'YES' | 'NO'}>;
@@ -96,6 +97,7 @@ export default class TestSource {
 				Slack,
 				Client,
 				Nft,
+				NtfHistory,
 			],
 		});
 	}
