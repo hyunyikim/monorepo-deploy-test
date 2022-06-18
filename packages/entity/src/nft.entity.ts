@@ -1,13 +1,14 @@
 import {
-	Entity,
 	PrimaryGeneratedColumn,
 	Column,
 	OneToOne,
 	ManyToOne,
 	JoinColumn,
 	Index,
-	Table,
 	OneToMany,
+	CreateDateColumn,
+	UpdateDateColumn,
+	Entity,
 } from 'typeorm';
 import {Product} from './product.entity';
 import {User} from './user.entity';
@@ -223,14 +224,18 @@ export class Nft {
 		eager: false,
 	})
 	history: Promise<NtfHistory[]>;
+
+	@OneToMany(() => NftImage, (image) => image.nft, {eager: true})
+	images: NftImage[];
 }
 
 @Entity({name: 'TB_NFT_HISTORY'})
 export class NtfHistory {
+	/** Primary Key */
 	@PrimaryGeneratedColumn({name: 'nft_his_idx', type: 'int'})
 	idx: number;
 
-	/** FK on TB_NFT_REQ */
+	/** FK, index of TB_NFT_REQ */
 	@Column({name: 'nft_req_idx', type: 'int'})
 	nftRequestIdx: number;
 
@@ -286,9 +291,35 @@ export class NtfHistory {
 	@Column({name: 'fee_unit', type: 'varchar', length: 250})
 	feeUnit: string;
 
-	@Column({name: 'reg_dt', type: 'datetime'})
+	/** 등록 일자 */
+	@CreateDateColumn({name: 'reg_dt', type: 'datetime'})
 	registered: Date;
 
-	@Column({name: 'mod_dt', type: 'datetime'})
+	/** 수정 일자 */
+	@UpdateDateColumn({name: 'mod_dt', type: 'datetime'})
 	modified: Date;
+}
+
+@Entity({name: 'TB_NFT_REQ_IMAGE'})
+export class NftImage {
+	/** Primary Key */
+	@PrimaryGeneratedColumn({name: 'nft_req_img_idx', type: 'int'})
+	idx: number;
+
+	/** FK, index of NFT_REQ */
+	@Column({name: 'nft_req_idx', type: 'int'})
+	nftReqIdx: number;
+
+	/** NFT Obj */
+	@ManyToOne(() => Nft, {createForeignKeyConstraints: false, eager: false})
+	@JoinColumn({name: 'nft_req_img_idx'})
+	nft: Nft;
+
+	/** image URL */
+	@Column({name: 'img_detail', type: 'varchar', length: 250})
+	path: string;
+
+	/** 이미지 순번 */
+	@Column({name: 'img_sort', type: 'int'})
+	sort: number;
 }

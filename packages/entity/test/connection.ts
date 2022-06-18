@@ -26,6 +26,7 @@ import {
 	Client,
 	Nft,
 	NtfHistory,
+	NftImage,
 } from '../src';
 
 export type InfoMap = Record<string, {type: string; null: 'YES' | 'NO'}>;
@@ -98,6 +99,7 @@ export default class TestSource {
 				Client,
 				Nft,
 				NtfHistory,
+				NftImage,
 			],
 		});
 	}
