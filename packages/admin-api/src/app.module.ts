@@ -22,6 +22,8 @@ import {
 	FlexLike,
 	FlexPoll,
 	UserWallet,
+	NftImage,
+	NtfHistory,
 } from '@vircle/entity';
 
 @Module({
@@ -29,7 +31,9 @@ import {
 		ConfigModule.forRoot({
 			cache: true,
 			envFilePath:
-				process.env.NODE_ENV === 'development' ? '.env' : '.env.prod',
+				process.env.NODE_ENV === 'development'
+					? './.env'
+					: './.env.prod',
 		}),
 		TypeOrmModule.forRoot({
 			type: process.env.DB_TYPE as 'mysql',
@@ -41,6 +45,8 @@ import {
 			entities: [
 				Admin,
 				Nft,
+				NftImage,
+				NtfHistory,
 				Brand,
 				Product,
 				ProductImage,
