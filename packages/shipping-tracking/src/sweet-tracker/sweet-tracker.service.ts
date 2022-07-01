@@ -1,106 +1,26 @@
-import {Injectable} from '@nestjs/common';
-import Axios, {AxiosInstance} from 'axios';
+import {
+	BadRequestException,
+	HttpException,
+	Injectable,
+	InternalServerErrorException,
+} from '@nestjs/common';
+import {Expose, plainToInstance, Type} from 'class-transformer';
+import Axios, {AxiosError, AxiosInstance} from 'axios';
 import {join} from 'path';
+import {TrackingInfo} from './type';
 
-/** 테바 */
-export enum THEME {
-	TROPICAL = 1,
-	SKY,
-	CYAN,
-	PINK,
-	GRAY,
-}
-
-/** 배송 진행 단계 */
-export enum TrackingStep {
-	/** 배송준비중 */
-	READY = 1,
-	/** 집하완료 */
-	PICK_UP,
-	/** 간선 배송중 */
-	SHIPPING_TRUNK_LINE,
-	/** 지점 경유중 */
-	STOPOVER,
-	/** 지선 배송중 */
-	SHIPPING_BRANCH_LINE,
-	/** 배송 완료 */
-	COMPLETE,
-}
-
-export interface TrackingInfo {
-	/** 죄회 결과 */
-	result: 'Y' | 'N';
-	/** 발송인 이름 */
-	senderName: string;
-	/** 수취인 이름 */
-	receiverName: string;
-	/** 상품 이름 */
-	itemName: string;
-	/** 운소장 번호 */
-	invoiceNo: string;
-	/** 배송지 주소 */
-	receiverAddr: string;
-	/** 주문 번호 */
-	orderNumber: number | null;
-	/** 택배사에서 광고용으로 사용하는 주소 */
-	adUrl: string | null;
-	/** 배송 예정 시간 */
-	estimate: string | null;
-	/** 진행단계 [level 1: 배송준비중, 2: 집화완료, 3: 배송중, 4: 지점 도착, 5: 배송출발, 6:배송 완료] */
-	level: TrackingStep;
-	/** 배송 완료 여부(true or false) */
-	complete: boolean;
-	/** 수취인 */
-	recipient: string;
-	/** 상품 이미지 */
-	itemImage: string | null;
-	/** 상품 정보 */
-	productInfo: string | null;
-	/** 우편 번호 */
-	zipCode: string | null;
-	/** 배송 완료 여부 (Y,N) */
-	completeYN: 'Y' | 'N';
-
-	firstDetail: TrackingDetail;
-
-	lastDetail: TrackingDetail;
-
-	trackingDetails: TrackingDetail[];
-}
-
-export interface TrackingDetail {
-	/** 진행시간 (number) */
-	time: number;
-	/** 진행시간 (string) */
-	timeString: string;
-	/** 배송 상태 코드 */
-	code: string | null;
-	/** 현제 위치 */
-	where: string;
-	/** 진행 상태 */
-	kind: string;
-	/** 배송 지점 전화번호 */
-	telno: string;
-	/** 배송기사 전화번호 */
-	telno2: string;
-	/** 비고 */
-	remark: string | null;
-	/** 진행단계 */
-	level: TrackingStep;
-	/** 배송기사 이름 */
-	manName: string;
-	/** 배송기사 전화번호 */
-	manPic: string;
-}
-
-export interface DeliveryCompanies {
+export class DeliveryCompanies {
+	@Expose({name: 'company'})
+	@Type(() => DeliveryCompanies)
 	Company: DeliveryCompany[];
 }
 
-export interface DeliveryCompany {
+export class DeliveryCompany {
 	/** 회사 이름 */
+	@Expose({name: 'name', toPlainOnly: true})
 	Name: string;
 	/** 회사 코드 */
+	@Expose({name: 'code', toPlainOnly: true})
 	Code: string;
 }
 
@@ -124,47 +44,54 @@ export class SweetTrackerService {
 			await this.httpClient.get<DeliveryCompanies>(url, {
 				params: query,
 			});
-		return companyList;
+		return plainToInstance(DeliveryCompanies, companyList);
 	}
 
-	async getRecommendCompanies(trackingNum: string) {
-		const url = join('api/v1', 'recommend');
-		const query = {
-			t_key: this.apiKey,
-			t_invoice: trackingNum,
-		};
-		const {data: companyList} =
-			await this.httpClient.get<DeliveryCompanies>(url, {params: query});
-		return companyList;
-	}
-
-	async getTrackingInfo(trackingNum: string, companyCode: string) {
-		const url = join('api/v1', 'trackingInfo');
-		const query = {
-			t_key: this.apiKey,
-			t_invoice: trackingNum,
-			t_code: companyCode,
-		};
-		const {data: tarckingInfo} = await this.httpClient.get<TrackingInfo>(
-			url,
-			{
-				params: query,
-			}
-		);
-		return tarckingInfo;
-	}
-
-	async getTrackingInfoHTML(
-		trackingNum: string,
-		companyCode: string,
-		theme: THEME = THEME.TROPICAL
-	) {
+	async getRecommendCompanies(trackingNo: string) {
 		try {
-			const url = join('tracking', String(theme));
+			const url = join('api/v1', 'recommend');
+			const query = {
+				t_key: this.apiKey,
+				t_invoice: trackingNo,
+			};
+			const {data: companyList} =
+				await this.httpClient.get<DeliveryCompanies>(url, {
+					params: query,
+				});
+			return plainToInstance(DeliveryCompanies, companyList);
+		} catch (error) {
+			this.invalidAPIKeyErrorHandle(error);
+		}
+	}
+
+	async getTrackingInfo(trackingNo: string, companyCode: string) {
+		try {
+			const url = join('api/v1', 'trackingInfo');
+			const query = {
+				t_key: this.apiKey,
+				t_invoice: trackingNo,
+				t_code: companyCode,
+			};
+			const res = await this.httpClient.get<TrackingInfo>(url, {
+				params: query,
+			});
+
+			if (res.data['code'] === '104') {
+				throw new InvalidTrackingInfo();
+			}
+			return plainToInstance(TrackingInfo, res.data);
+		} catch (error) {
+			this.invalidAPIKeyErrorHandle(error);
+		}
+	}
+
+	async getTrackingInfoHTML(trackingNo: string, companyCode: string) {
+		try {
+			const url = join('tracking', '1');
 
 			const params = new URLSearchParams();
 			params.append('t_key', this.apiKey);
-			params.append('t_invoice', trackingNum);
+			params.append('t_invoice', trackingNo);
 			params.append('t_code', companyCode);
 
 			const {data: html} = await this.httpClient.post<string>(
@@ -181,7 +108,33 @@ export class SweetTrackerService {
 			);
 			return html;
 		} catch (error) {
-			console.log(error);
+			this.invalidAPIKeyErrorHandle(error);
 		}
+	}
+
+	private invalidAPIKeyErrorHandle(error: unknown) {
+		if (error instanceof AxiosError && error.response.data) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			if (error.response.data['code'] === '101') {
+				throw new InvalidAPIKey();
+			}
+		} else if (error instanceof HttpException) {
+			throw error;
+		}
+		throw new InternalServerErrorException();
+	}
+}
+
+export class InvalidTrackingInfo extends BadRequestException {
+	constructor() {
+		super('유효하지 않은 운송장번호 이거나 택배사 코드 입니다.');
+		this.name = 'INVALID_TRACKING_INFO';
+	}
+}
+
+export class InvalidAPIKey extends InternalServerErrorException {
+	constructor() {
+		super('유효하지 않은 API KEY 입니다.');
+		this.name = 'INVALID_TRACKING_INFO';
 	}
 }

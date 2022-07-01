@@ -1275,6 +1275,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:0.0.29"\
       ],\
       [\
+        "@types/luxon",\
+        "npm:2.3.2"\
+      ],\
+      [\
         "@types/mdast",\
         "npm:3.0.10"\
       ],\
@@ -4313,6 +4317,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "lru-cache",\
         "npm:6.0.0"\
+      ],\
+      [\
+        "luxon",\
+        "npm:2.4.0"\
       ],\
       [\
         "macos-release",\
@@ -16768,6 +16776,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/luxon", [\
+        ["npm:2.3.2", {\
+          "packageLocation": "./.yarn/cache/@types-luxon-npm-2.3.2-955301ac71-b9fe791186.zip/node_modules/@types/luxon/",\
+          "packageDependencies": [\
+            ["@types/luxon", "npm:2.3.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/mdast", [\
         ["npm:3.0.10", {\
           "packageLocation": "./.yarn/cache/@types-mdast-npm-3.0.10-9e9c39e4a4-3f587bfc0a.zip/node_modules/@types/mdast/",\
@@ -17603,6 +17620,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/express", "npm:4.17.13"],\
             ["@types/hbs", "npm:4.0.1"],\
             ["@types/jest", "npm:27.4.1"],\
+            ["@types/luxon", "npm:2.3.2"],\
             ["@types/node", "npm:17.0.31"],\
             ["@types/supertest", "npm:2.0.12"],\
             ["axios", "npm:0.27.2"],\
@@ -17610,6 +17628,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["class-transformer", "npm:0.5.1"],\
             ["class-validator", "npm:0.13.2"],\
             ["jest", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:27.5.1"],\
+            ["luxon", "npm:2.4.0"],\
             ["reflect-metadata", "npm:0.1.13"],\
             ["rimraf", "npm:3.0.2"],\
             ["rxjs", "npm:7.5.5"],\
@@ -28780,6 +28799,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lru-cache-npm-7.9.0-d803108233-c91a293a10.zip/node_modules/lru-cache/",\
           "packageDependencies": [\
             ["lru-cache", "npm:7.9.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["luxon", [\
+        ["npm:2.4.0", {\
+          "packageLocation": "./.yarn/cache/luxon-npm-2.4.0-53e53c605a-6071028d65.zip/node_modules/luxon/",\
+          "packageDependencies": [\
+            ["luxon", "npm:2.4.0"]\
           ],\
           "linkType": "HARD"\
         }]\

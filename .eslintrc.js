@@ -50,23 +50,6 @@ module.exports = {
 			},
 		},
 
-		// for testmono package
-		{
-			files: [
-				'packages/testmono/**/*.ts?(x)',
-				'packages/testmono/**/*.js?(x)',
-			],
-			settings: {
-				'import/resolver': {
-					node: {
-						project: path.resolve(
-							__dirname + '/packages/testmono/tsconfig.json'
-						),
-					},
-				},
-			},
-		},
-
 		{
 			files: [
 				'packages/ui-component/**/*.ts?(x)',
