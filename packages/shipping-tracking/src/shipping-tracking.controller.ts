@@ -13,8 +13,7 @@ export class ShippingTrackingController {
 
 	@Get('companies')
 	@UseInterceptors(CacheInterceptor)
-	async getCompanyies() {
-		console.log('WORK');
+	async getCompanies() {
 		return await this.trackingService.getDeliveryCompanies();
 	}
 

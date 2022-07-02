@@ -4,7 +4,7 @@ import {join} from 'path';
 
 /** 테바 */
 export enum THEME {
-	TROPICLA = 1,
+	TROPICAL = 1,
 	SKY,
 	CYAN,
 	PINK,
@@ -120,11 +120,11 @@ export class SweetTrackerService {
 		const query = {
 			t_key: this.apiKey,
 		};
-		const {data: companylist} =
+		const {data: companyList} =
 			await this.httpClient.get<DeliveryCompanies>(url, {
 				params: query,
 			});
-		return companylist;
+		return companyList;
 	}
 
 	async getRecommendCompanies(trackingNum: string) {
@@ -133,9 +133,9 @@ export class SweetTrackerService {
 			t_key: this.apiKey,
 			t_invoice: trackingNum,
 		};
-		const {data: companylist} =
+		const {data: companyList} =
 			await this.httpClient.get<DeliveryCompanies>(url, {params: query});
-		return companylist;
+		return companyList;
 	}
 
 	async getTrackingInfo(trackingNum: string, companyCode: string) {
@@ -157,7 +157,7 @@ export class SweetTrackerService {
 	async getTrackingInfoHTML(
 		trackingNum: string,
 		companyCode: string,
-		theme: THEME = THEME.TROPICLA
+		theme: THEME = THEME.TROPICAL
 	) {
 		try {
 			const url = join('tracking', String(theme));

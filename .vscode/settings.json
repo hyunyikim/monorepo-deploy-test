@@ -4,6 +4,7 @@
 		"klaytn",
 		"nestjs",
 		"semibold",
+		"sweettracker",
 		"typeorm",
 		"Unipass",
 		"vbank",
@@ -31,6 +32,7 @@
 		"admin-api",
 		"admin-web",
 		"ui-component",
-		"styles"
+		"styles",
+		"shipping-tracking"
 	]
 }
