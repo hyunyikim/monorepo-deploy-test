@@ -80,8 +80,8 @@ export class TrackingInfo {
 	@Exclude()
 	adUrl: string | null;
 
-	@Exclude()
 	/** 배송 예정 시간 */
+	@Exclude()
 	estimate: string | null;
 
 	/** 진행단계 [level 1: 배송준비중, 2: 집화완료, 3: 배송중, 4: 지점 도착, 5: 배송출발, 6:배송 완료] */

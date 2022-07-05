@@ -10,7 +10,7 @@ import {join} from 'path';
 import {TrackingInfo} from './type';
 
 export class DeliveryCompanies {
-	@Expose({name: 'company'})
+	@Expose({name: 'companyList'})
 	@Type(() => DeliveryCompanies)
 	Company: DeliveryCompany[];
 }
