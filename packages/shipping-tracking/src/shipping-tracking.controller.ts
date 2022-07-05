@@ -1,17 +1,12 @@
 import {
 	CacheInterceptor,
-	ClassSerializerInterceptor,
 	Controller,
 	Get,
 	Query,
-	UseFilters,
 	UseInterceptors,
 } from '@nestjs/common';
-import {instanceToPlain} from 'class-transformer';
-import {HttpExceptionFilter} from './http-exception';
 import {SweetTrackerService} from './sweet-tracker/sweet-tracker.service';
 
-@UseFilters(new HttpExceptionFilter())
 @Controller('shipping-tracking')
 export class ShippingTrackingController {
 	constructor(private readonly trackingService: SweetTrackerService) {}
@@ -20,7 +15,7 @@ export class ShippingTrackingController {
 	@UseInterceptors(CacheInterceptor)
 	async getCompanies() {
 		const companyList = await this.trackingService.getDeliveryCompanies();
-		return instanceToPlain(companyList);
+		return companyList;
 	}
 
 	@Get('recommend')
@@ -29,7 +24,7 @@ export class ShippingTrackingController {
 		const companyList = await this.trackingService.getRecommendCompanies(
 			trackingNum
 		);
-		return instanceToPlain(companyList);
+		return companyList;
 	}
 
 	@Get('')
@@ -42,7 +37,7 @@ export class ShippingTrackingController {
 			trackingNum,
 			companyCode
 		);
-		return instanceToPlain(info);
+		return info;
 	}
 
 	@Get('/render')

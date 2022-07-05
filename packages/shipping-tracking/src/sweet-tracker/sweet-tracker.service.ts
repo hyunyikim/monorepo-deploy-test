@@ -1,28 +1,14 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	HttpException,
 	Injectable,
 	InternalServerErrorException,
 } from '@nestjs/common';
-import {Expose, plainToInstance, Type} from 'class-transformer';
+import {plainToInstance} from 'class-transformer';
 import Axios, {AxiosError, AxiosInstance} from 'axios';
 import {join} from 'path';
-import {TrackingInfo} from './type';
-
-export class DeliveryCompanies {
-	@Expose({name: 'companyList'})
-	@Type(() => DeliveryCompanies)
-	Company: DeliveryCompany[];
-}
-
-export class DeliveryCompany {
-	/** 회사 이름 */
-	@Expose({name: 'name', toPlainOnly: true})
-	Name: string;
-	/** 회사 코드 */
-	@Expose({name: 'code', toPlainOnly: true})
-	Code: string;
-}
+import {DeliveryCompanies, RecommendCompanies, TrackingInfo} from './type';
 
 @Injectable()
 export class SweetTrackerService {
@@ -35,16 +21,20 @@ export class SweetTrackerService {
 	}
 
 	async getDeliveryCompanies() {
-		const url = join('api/v1', 'companylist');
+		try {
+			const url = join('api/v1', 'companylist');
 
-		const query = {
-			t_key: this.apiKey,
-		};
-		const {data: companyList} =
-			await this.httpClient.get<DeliveryCompanies>(url, {
-				params: query,
-			});
-		return plainToInstance(DeliveryCompanies, companyList);
+			const query = {
+				t_key: this.apiKey,
+			};
+			const {data: companyList} =
+				await this.httpClient.get<DeliveryCompanies>(url, {
+					params: query,
+				});
+			return plainToInstance(DeliveryCompanies, companyList);
+		} catch (error) {
+			this.invalidAPIKeyErrorHandle(error);
+		}
 	}
 
 	async getRecommendCompanies(trackingNo: string) {
@@ -55,10 +45,10 @@ export class SweetTrackerService {
 				t_invoice: trackingNo,
 			};
 			const {data: companyList} =
-				await this.httpClient.get<DeliveryCompanies>(url, {
+				await this.httpClient.get<RecommendCompanies>(url, {
 					params: query,
 				});
-			return plainToInstance(DeliveryCompanies, companyList);
+			return plainToInstance(RecommendCompanies, companyList);
 		} catch (error) {
 			this.invalidAPIKeyErrorHandle(error);
 		}
@@ -76,9 +66,19 @@ export class SweetTrackerService {
 				params: query,
 			});
 
-			if (res.data['code'] === '104') {
-				throw new InvalidTrackingInfo();
+			switch (res.data['code']) {
+				case '101':
+					throw new InvalidAPIKey();
+				case '102':
+					throw new ExpiredAPIKey();
+				case '103':
+					throw new ExceedUsage();
+				case '104':
+					throw new InvalidTrackingInfo();
+				default:
+					break;
 			}
+
 			return plainToInstance(TrackingInfo, res.data);
 		} catch (error) {
 			this.invalidAPIKeyErrorHandle(error);
@@ -115,8 +115,17 @@ export class SweetTrackerService {
 	private invalidAPIKeyErrorHandle(error: unknown) {
 		if (error instanceof AxiosError && error.response.data) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			if (error.response.data['code'] === '101') {
-				throw new InvalidAPIKey();
+			switch (error.response.data['code']) {
+				case '101':
+					throw new InvalidAPIKey();
+				case '102':
+					throw new ExpiredAPIKey();
+				case '103':
+					throw new ExceedUsage();
+				case '104':
+					throw new InvalidTrackingInfo();
+				default:
+					break;
 			}
 		} else if (error instanceof HttpException) {
 			throw error;
@@ -125,6 +134,31 @@ export class SweetTrackerService {
 	}
 }
 
+/** CODE 101 */
+export class InvalidAPIKey extends InternalServerErrorException {
+	constructor() {
+		super('유효하지 않은 API KEY 입니다.');
+		this.name = 'INVALID_TRACKING_INFO';
+	}
+}
+
+/** CODE 102 */
+export class ExpiredAPIKey extends InternalServerErrorException {
+	constructor() {
+		super('만료된 API KEY 입니다.');
+		this.name = 'EXPIRED_API_KEY';
+	}
+}
+
+/** CODE 103 */
+export class ExceedUsage extends InternalServerErrorException {
+	constructor() {
+		super('사용량을 초과했습니다.');
+		this.name = 'EXCEED_CAPACITY';
+	}
+}
+
+/** CODE 104 */
 export class InvalidTrackingInfo extends BadRequestException {
 	constructor() {
 		super('유효하지 않은 운송장번호 이거나 택배사 코드 입니다.');
@@ -132,9 +166,9 @@ export class InvalidTrackingInfo extends BadRequestException {
 	}
 }
 
-export class InvalidAPIKey extends InternalServerErrorException {
+export class RequestLimitExceed extends ForbiddenException {
 	constructor() {
 		super('유효하지 않은 API KEY 입니다.');
-		this.name = 'INVALID_TRACKING_INFO';
+		this.name = 'REQUEST_LIMIT_EXCEED';
 	}
 }

@@ -5,7 +5,9 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
 
 @Module({
 	imports: [
-		ConfigModule.forRoot(),
+		ConfigModule.forRoot({
+			envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+		}),
 		CacheModule.registerAsync({
 			imports: [ConfigModule],
 			useFactory: (configService: ConfigService) => ({

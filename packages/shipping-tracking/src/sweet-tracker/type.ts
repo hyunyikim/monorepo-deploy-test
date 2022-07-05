@@ -1,6 +1,31 @@
 import {Exclude, Expose, Transform, Type} from 'class-transformer';
 import {DateTime} from 'luxon';
 
+export class DeliveryCompanies {
+	@Expose({name: 'companyList', toPlainOnly: true})
+	@Type(() => DeliveryCompany)
+	Company: DeliveryCompany[];
+}
+
+export class RecommendCompanies {
+	@Expose({name: 'recommendList', toPlainOnly: true})
+	@Type(() => DeliveryCompany)
+	Recommend: DeliveryCompany[];
+}
+
+export class DeliveryCompany {
+	/** International */
+	@Transform(({value}) => value === 'true', {toPlainOnly: true})
+	@Expose({name: 'international', toPlainOnly: true})
+	International: 'true' | 'false';
+	/** 회사 이름 */
+	@Expose({name: 'name', toPlainOnly: true})
+	Name: string;
+	/** 회사 코드 */
+	@Expose({name: 'code', toPlainOnly: true})
+	Code: string;
+}
+
 /** 배송 진행 단계 */
 export enum TrackingStep {
 	/** 배송준비중 */
