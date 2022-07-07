@@ -43,10 +43,7 @@ module.exports = {
 				'@typescript-eslint/no-explicit-any': 'off',
 			},
 			parserOptions: {
-				project: [
-					'./tsconfig.base.json',
-					'./packages/**/tsconfig.json',
-				],
+				project: ['./tsconfig.json', './packages/**/tsconfig.json'],
 			},
 		},
 
