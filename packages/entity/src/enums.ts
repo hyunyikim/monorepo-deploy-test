@@ -72,3 +72,34 @@ export enum PRODUCT_PERIOD {
 	FIVE_YEAR_LESS = '5',
 	TEN_YEAR_LESS = '10',
 }
+
+export enum CURRENCY {
+	KWR = 'KWR',
+}
+
+export enum PAYMENT_METHOD {
+	CARD = 1,
+	VIRTUAL_ACCOUNT,
+	MOBILE_PHONE,
+	TRANSFER,
+	EASY_PAY,
+}
+
+export enum ORDER_STATUS {
+	DONE = 1,
+	CANCELED,
+	WAITING_FOR_CANCEL,
+	WAITING_FOR_DEPOSIT,
+}
+
+export enum CREDIT_EVENT {
+	MINT = 1,
+	RECHARGE,
+	REFUND,
+}
+
+export enum NFT_REQ_TYPE {
+	MINT = 'MINT',
+	TRANSFER = 'TRANSFER',
+	BURN = 'BURN',
+}

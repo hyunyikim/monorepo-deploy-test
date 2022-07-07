@@ -10,3 +10,4 @@ export * from './slack.entity';
 export * from './client.entity';
 export * from './nft.entity';
 export * from './auth.entity';
+export * from './credit.entity';

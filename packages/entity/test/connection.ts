@@ -27,6 +27,9 @@ import {
 	Nft,
 	NtfHistory,
 	NftImage,
+	CreditHistory,
+	CreditOrder,
+	CreditPlan,
 } from '../src';
 
 export type InfoMap = Record<string, {type: string; null: 'YES' | 'NO'}>;
@@ -100,6 +103,9 @@ export default class TestSource {
 				Nft,
 				NtfHistory,
 				NftImage,
+				CreditOrder,
+				CreditHistory,
+				CreditPlan,
 			],
 		});
 	}

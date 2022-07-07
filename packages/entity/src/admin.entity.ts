@@ -111,6 +111,11 @@ export class Admin {
 	@Column({name: 'company_nm', type: 'varchar', length: 250})
 	companyName: string;
 
+	/** 노출되는 이름 (브랜드명) */
+	@Expose()
+	@Column({name: 'display_nm', type: 'varchar', length: 30})
+	displayName: string;
+
 	//사업자 번호
 	@Expose()
 	@Column({name: 'business_num', type: 'varchar', length: 250})

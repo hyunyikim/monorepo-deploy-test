@@ -14,6 +14,8 @@ import {Product} from './product.entity';
 import {User} from './user.entity';
 import {Admin} from './admin.entity';
 import {Brand} from './brand.entity';
+import {request} from 'http';
+import {NFT_REQ_TYPE} from './enums';
 
 enum NFT_STATUS {
 	'READY' = '1',
@@ -204,11 +206,21 @@ export class Nft {
 
 	@Column({
 		name: 'blockchain_platform',
-		type: 'enum',
 		enum: BLOCKCHAIN_PLATFORM,
 		default: BLOCKCHAIN_PLATFORM.KLAYTN_KLIP,
 	})
 	blockchainPlatform: BLOCKCHAIN_PLATFORM;
+
+	@Column({
+		name: 'contract_address',
+		type: 'varchar',
+		length: 250,
+		nullable: true,
+	})
+	contractAddress: string;
+
+	@Column({name: 'order_dt', type: 'datetime', nullable: true})
+	orderedAt: Date;
 
 	@Column({
 		name: 'waiting_user_idx',
@@ -266,6 +278,10 @@ export class NtfHistory {
 	@ManyToOne(() => User, {createForeignKeyConstraints: false, eager: false})
 	@JoinColumn({name: 'user_idx'})
 	registrant: User;
+
+	/** 상태(mint:발급, transfer:전달, burn:삭제) */
+	@Column({name: 'req_type', enum: NFT_REQ_TYPE})
+	requestType: NFT_REQ_TYPE;
 
 	/** 블록 해시 값 */
 	@Column({name: 'block_hash', type: 'varchar', length: 250})
