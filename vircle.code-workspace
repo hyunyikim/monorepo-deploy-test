@@ -33,6 +33,12 @@
 			"**/node_modules": true,
 			"tsconfig.tsbuildinfo": true
 		},
+		"jest.jestCommandLine": "yarn test",
+		"jest.autoRun": {
+			"watch": false,
+			"onStartup": [],
+			"onSave": "test-file"
+		},
 		"eslint.nodePath": "../../.yarn/sdks",
 		"typescript.tsdk": ".yarn/sdks/typescript/lib",
 		"typescript.enablePromptUseWorkspaceTsdk": true,

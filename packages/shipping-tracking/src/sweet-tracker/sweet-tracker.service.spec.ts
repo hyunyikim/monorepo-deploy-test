@@ -8,7 +8,7 @@ import {
 describe('Unit Test: SweetTrackerService', () => {
 	let service: SweetTrackerService;
 	let invalidKeyService: SweetTrackerService;
-	const TEST_API_KEY = 'x83AAYKy606RKk81KvlbgA';
+	const TEST_API_KEY = 'fntF44lJDP7rCv3nasZI1w';
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [

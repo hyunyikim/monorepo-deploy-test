@@ -2,7 +2,11 @@ import {CacheModule} from '@nestjs/common';
 import {Test, TestingModule} from '@nestjs/testing';
 import {ShippingTrackingController} from './shipping-tracking.controller';
 import {SweetTrackerService} from './sweet-tracker/sweet-tracker.service';
-import {DeliveryCompanies, TrackingInfo} from './sweet-tracker/type';
+import {
+	DeliveryCompanies,
+	RecommendCompanies,
+	TrackingInfo,
+} from './sweet-tracker/type';
 
 describe('AppController', () => {
 	let appController: ShippingTrackingController;
@@ -19,7 +23,7 @@ describe('AppController', () => {
 			providers: [
 				{
 					provide: SweetTrackerService,
-					useValue: new SweetTrackerService('x83AAYKy606RKk81KvlbgA'),
+					useValue: new SweetTrackerService('fntF44lJDP7rCv3nasZI1w'),
 				},
 			],
 		}).compile();
@@ -37,7 +41,7 @@ describe('AppController', () => {
 
 		it('should return "Hello World!"', async () => {
 			const response = await appController.getRecommend('513429365643');
-			expect(response).toBeInstanceOf(DeliveryCompanies);
+			expect(response).toBeInstanceOf(RecommendCompanies);
 		});
 
 		it('should return "Hello World!"', async () => {

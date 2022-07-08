@@ -33,7 +33,7 @@ export class SweetTrackerService {
 				});
 			return plainToInstance(DeliveryCompanies, companyList);
 		} catch (error) {
-			this.invalidAPIKeyErrorHandle(error);
+			this.errorHandle(error);
 		}
 	}
 
@@ -50,7 +50,7 @@ export class SweetTrackerService {
 				});
 			return plainToInstance(RecommendCompanies, companyList);
 		} catch (error) {
-			this.invalidAPIKeyErrorHandle(error);
+			this.errorHandle(error);
 		}
 	}
 
@@ -81,7 +81,7 @@ export class SweetTrackerService {
 
 			return plainToInstance(TrackingInfo, res.data);
 		} catch (error) {
-			this.invalidAPIKeyErrorHandle(error);
+			this.errorHandle(error);
 		}
 	}
 
@@ -108,11 +108,11 @@ export class SweetTrackerService {
 			);
 			return html;
 		} catch (error) {
-			this.invalidAPIKeyErrorHandle(error);
+			this.errorHandle(error);
 		}
 	}
 
-	private invalidAPIKeyErrorHandle(error: unknown) {
+	private errorHandle(error: unknown) {
 		if (error instanceof AxiosError && error.response.data) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 			switch (error.response.data['code']) {
