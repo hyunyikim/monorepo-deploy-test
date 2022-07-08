@@ -1,20 +1,28 @@
 {
 	"folders": [
 		{
+			"path": "./",
+			"name": "@vircle/root"
+		},
+		{
 			"path": "packages/admin-api",
 			"name": "@vircle/admin-api"
 		},
 		{
-			"path": "packages/admin-web"
+			"path": "packages/admin-web",
+			"name": "@vircle/admin-web"
 		},
 		{
-			"path": "packages/entity"
+			"path": "packages/entity",
+			"name": "@vircle/entity"
 		},
 		{
-			"path": "packages/shipping-tracking"
+			"path": "packages/shipping-tracking",
+			"name": "@vircle/shipping-tracking"
 		},
 		{
-			"path": "packages/ui-component"
+			"path": "packages/ui-component",
+			"name": "@vircle/ui-component"
 		}
 	],
 	"settings": {
@@ -26,7 +34,7 @@
 			"tsconfig.tsbuildinfo": true
 		},
 		"eslint.nodePath": "../../.yarn/sdks",
-		"typescript.tsdk": "../../.yarn/sdks/typescript/lib",
+		"typescript.tsdk": ".yarn/sdks/typescript/lib",
 		"typescript.enablePromptUseWorkspaceTsdk": true,
 		"prettier.prettierPath": "../../.yarn/sdks/prettier/index.js",
 		"cSpell.words": ["tosspayments"]
