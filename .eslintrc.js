@@ -78,6 +78,22 @@ module.exports = {
 				},
 			},
 		},
+
+		{
+			files: [
+				'packages/gateway-cafe24/**/*.ts?(x)',
+				'packages/gateway-cafe24/**/*.js?(x)',
+			],
+			settings: {
+				'import/resolver': {
+					node: {
+						project: path.resolve(
+							__dirname + '/packages/gateway-cafe24/tsconfig.json'
+						),
+					},
+				},
+			},
+		},
 	],
 	settings: {
 		'import/extensions': ['.js', '.jsx', '.ts', '.tsx', 'spec.js'],
