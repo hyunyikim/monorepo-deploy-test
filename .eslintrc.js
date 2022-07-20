@@ -81,8 +81,8 @@ module.exports = {
 
 		{
 			files: [
-				'packages/gateway-cafe24/**/*.ts?(x)',
-				'packages/gateway-cafe24/**/*.js?(x)',
+				'packages/cafe24-interwork/**/*.ts?(x)',
+				'packages/cafe24-interwork/**/*.js?(x)',
 			],
 			settings: {
 				'import/resolver': {

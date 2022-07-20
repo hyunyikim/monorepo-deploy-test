@@ -34,6 +34,7 @@
 		"admin-web",
 		"ui-component",
 		"styles",
-		"shipping-tracking"
+		"shipping-tracking",
+		"cafe24"
 	]
 }
