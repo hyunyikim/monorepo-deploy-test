@@ -16,9 +16,10 @@ import {Cafe24API} from './Cafe24ApiService/cafe24Api';
 		{
 			provide: Cafe24API,
 			useFactory: (configService: ConfigService) => {
-				const clientId = configService.get<string>('CAFE24_CLIENT_ID');
+				const clientId =
+					configService.getOrThrow<string>('CAFE24_CLIENT_ID');
 				const secretKey =
-					configService.get<string>('CAFE24_SECRET_KEY');
+					configService.getOrThrow<string>('CAFE24_SECRET_KEY');
 				return new Cafe24API(clientId, secretKey);
 			},
 			inject: [ConfigService],

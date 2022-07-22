@@ -88,7 +88,8 @@ module.exports = {
 				'import/resolver': {
 					node: {
 						project: path.resolve(
-							__dirname + '/packages/gateway-cafe24/tsconfig.json'
+							__dirname +
+								'/packages/cafe24-interwork/tsconfig.json'
 						),
 					},
 				},

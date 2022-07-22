@@ -1,19 +1,23 @@
-import {Inject, Injectable} from '@nestjs/common';
-import {Cafe24Interwork} from './interwork.entity';
-import {CreateNewInterwork} from './cafe24Interwork.dto';
+import {Inject, Injectable, NotFoundException} from '@nestjs/common';
+import {Cafe24Interwork, IssueSetting} from './interwork.entity';
 import {Cafe24API} from './Cafe24ApiService/cafe24Api';
-
+import {InterworkRepository} from './DynamoRepo/interwork.repository';
+import {DateTime} from 'luxon';
 @Injectable()
 export class Cafe24InterworkService {
-	constructor(@Inject() private cafe24Api: Cafe24API) {}
+	constructor(
+		@Inject() private cafe24Api: Cafe24API,
+		@Inject() private interworkRepo: InterworkRepository
+	) {}
 
 	/**
 	 *
-	 * @param partnerIdx 연동 정보를 얻고자 하는 파트너스의 인덱스 값
+	 * @param mallId 연동 정보를 얻고자 하는 파트너스의 인덱스 값
 	 * @returns
 	 */
-	getInterworkInfo(partnerIdx: number) {
-		return new Cafe24Interwork();
+
+	async getInterworkInfo(mallId: string) {
+		return await this.interworkRepo.getInterwork(mallId);
 	}
 
 	/**
@@ -21,8 +25,39 @@ export class Cafe24InterworkService {
 	 * @param partnerIdx Cafe24 Mall과 연동을 생성하고자 하는 파트너스의 인덱스 값
 	 * @returns 연동 정보를 담은 Interwork 객체
 	 */
-	createNewInterwork(partnerIdx: number, dto: CreateNewInterwork) {
-		return new Cafe24Interwork();
+	async createNewInterwork(mallId: string, authCode: string) {
+		const interwork = new Cafe24Interwork();
+
+		const accessToken = await this.cafe24Api.getAccessToken(
+			mallId,
+			authCode
+		);
+
+		const store = await this.cafe24Api.getStoreInfo(
+			mallId,
+			accessToken.access_token
+		);
+
+		interwork.mallId = mallId;
+		interwork.accessToken = accessToken;
+		interwork.store = store;
+		interwork.joinedAt = DateTime.now().toISO();
+		interwork.leavedAt = undefined;
+
+		await this.interworkRepo.putInterwork(interwork);
+
+		return interwork;
+	}
+
+	async completeInterwork(mallId: string, partnerIdx: number) {
+		const interwork = await this.getInterworkInfo(mallId);
+		if (interwork === null) {
+			throw new NotFoundException('The interwork dose not exist.');
+		}
+		interwork.partnerIdx = partnerIdx;
+		interwork.updatedAt = DateTime.now().toISO();
+		await this.interworkRepo.putInterwork(interwork);
+		return interwork;
 	}
 
 	/**
@@ -30,30 +65,51 @@ export class Cafe24InterworkService {
 	 * @param partnerIdx
 	 * @returns
 	 */
-	refreshAccessToken(partnerIdx: number) {
-		return 'refresh';
+	async refreshAccessToken(partnerIdx: number) {
+		const interwork = await this.interworkRepo.getInterworkByPartner(
+			partnerIdx
+		);
+
+		if (interwork === null) {
+			throw new NotFoundException('The interwork dose not exist.');
+		}
+
+		const {mallId, accessToken} = interwork;
+		const token = await this.cafe24Api.refreshAccessToken(
+			mallId,
+			accessToken.refresh_token
+		);
+		interwork.accessToken = token;
+		await this.interworkRepo.putInterwork(interwork);
+		return interwork;
 	}
 
 	/**
 	 * Cafe24 연동을 중지함
-	 * @param partnerIdx
+	 * @param mallId
 	 * @returns
 	 */
-	inactivateInterwork(partnerIdx: number) {
-		// REMOVE ACCESS & REFRESH TOKEN
-		return '';
+	async inactivateInterwork(mallId: string) {
+		const interwork = await this.interworkRepo.getInterwork(mallId);
+
+		if (interwork === null) {
+			throw new NotFoundException('The interwork dose not exist.');
+		}
+
+		interwork.leavedAt = DateTime.now().toISO();
+		await this.interworkRepo.putInterwork(interwork);
+		return interwork;
 	}
 
-	changeInterworkSetting() {
-		return new Cafe24Interwork();
-	}
+	async changeInterworkSetting(mallId: string, setting: IssueSetting) {
+		const interwork = await this.interworkRepo.getInterwork(mallId);
 
-	/**
-	 * Cafe24 API를 통해서 Access Token 과 Refresh Token을 획득한다.
-	 * @param authCode
-	 * @returns
-	 */
-	private requestAccessToken(authCode: string) {
-		return 'ACCESS TOKEN';
+		if (interwork === null) {
+			throw new NotFoundException('The interwork dose not exist.');
+		}
+		interwork.issueSetting = setting;
+		interwork.updatedAt = DateTime.now().toISO();
+		await this.interworkRepo.putInterwork(interwork);
+		return interwork;
 	}
 }

@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {} from 'src/interwork.entity';
 import {TransformPlainToInstance} from 'class-transformer';
 import {
 	AccessToken,
@@ -30,6 +29,9 @@ export class Cafe24API {
 
 		const auth = {username: this.clientId, password: this.clientSecret};
 		const {data} = await this.httpAgent.post<AccessToken>(url, body, {
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 			auth,
 		});
 		return data;
@@ -44,6 +46,9 @@ export class Cafe24API {
 			refresh_token: refreshToken,
 		};
 		const {data} = await this.httpAgent.post<AccessToken>(url, body, {
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 			auth,
 		});
 		return data;
@@ -55,6 +60,7 @@ export class Cafe24API {
 		const {data} = await this.httpAgent.get<{store: Store}>(url, {
 			headers: {
 				Authorization: `Bearer ${accessToken}`,
+				'Content-Type': 'application/json',
 			},
 		});
 		return data.store;
@@ -108,7 +114,7 @@ export class Cafe24API {
 			category_depth?: number;
 			offset?: number;
 			limit?: number;
-			parent_category_no: number;
+			parent_category_no?: number;
 		}
 	) {
 		const url = `https://${mallId}.${this.fixedURL}/admin/categories`;

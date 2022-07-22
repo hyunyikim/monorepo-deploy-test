@@ -15,9 +15,22 @@ export enum ISSUE_TIMING {
 	AFTER_SHIPPING = 'AFTER_SHIPPING',
 }
 
+export class IssueSetting {
+	@IsString()
+	issueTiming: 'AFTER_SHIPPING' | 'AFTER_DELIVERED';
+
+	@IsArray()
+	issueCategories: string[];
+
+	@IsArray()
+	issueProducts: string[];
+
+	@IsArray()
+	issueCustomerGroups: string[];
+}
 export class Cafe24Interwork {
 	@IsNumber()
-	partnershipIdx: number;
+	partnerIdx: number;
 
 	@IsString()
 	mallId: string;
@@ -40,21 +53,10 @@ export class Cafe24Interwork {
 	@IsDateString()
 	joinedAt: string;
 
+	@IsDateString()
+	updatedAt: string;
+
 	@IsOptional()
 	@IsDateString()
-	leavedAt: string;
-}
-
-export class IssueSetting {
-	@IsString()
-	issueTiming: 'AFTER_SHIPPING' | 'AFTER_DELIVERED';
-
-	@IsArray()
-	issueCategories: string[];
-
-	@IsArray()
-	issueProducts: string[];
-
-	@IsArray()
-	issueCustomerGroups: string[];
+	leavedAt?: string;
 }

@@ -6,6 +6,17 @@
 	"author": "yaeger",
 	"private": true,
 	"license": "UNLICENSED",
+	"scripts": {
+		"prebuild": "rimraf dist",
+		"build": "NODE_NO_WARNINGS=1 nest build",
+		"start": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start",
+		"start:dev": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start --watch",
+		"start:debug": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start --debug --watch",
+		"start:prod": "NODE_ENV=production node dist/main",
+		"test": "NODE_NO_WARNINGS=1 jest",
+		"test:watch": "jest --watch",
+		"test:cov": "jest --coverage"
+	},
 	"dependencies": {
 		"@nestjs/common": "^8.0.0",
 		"@nestjs/config": "^2.1.0",
@@ -17,6 +28,7 @@
 		"axios": "^0.27.2",
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.13.2",
+		"luxon": "^3.0.1",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",
 		"rxjs": "^7.2.0"
@@ -27,6 +39,7 @@
 		"@nestjs/testing": "^8.0.0",
 		"@types/express": "^4.17.13",
 		"@types/jest": "27.4.1",
+		"@types/luxon": "^3",
 		"@types/node": "^17.0.31",
 		"@types/supertest": "^2.0.11",
 		"jest": "^27.2.5",

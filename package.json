@@ -44,8 +44,8 @@
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx}": [
-			"prettier ./packages -w",
-			"eslint ./packages --fix"
+			"prettier ./ -w",
+			"eslint ./ --fix"
 		]
 	},
 	"resolutions": {

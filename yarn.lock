@@ -5955,6 +5955,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:^3":
+  version: 3.0.0
+  resolution: "@types/luxon@npm:3.0.0"
+  checksum: 7738d3f4b91097a8139eca966ab53c6b40bb417b2cc2014c3bbd0aee033d6ff54af14c62046c2eb042434923b6bf796874f24b2af90e07ef422e6d841463d4b2
+  languageName: node
+  linkType: hard
+
 "@types/mdast@npm:^3.0.0":
   version: 3.0.10
   resolution: "@types/mdast@npm:3.0.10"
@@ -6587,6 +6594,7 @@ __metadata:
     "@nestjs/testing": ^8.0.0
     "@types/express": ^4.17.13
     "@types/jest": 27.4.1
+    "@types/luxon": ^3
     "@types/node": ^17.0.31
     "@types/supertest": ^2.0.11
     "@vircle/entity": "workspace:*"
@@ -6595,6 +6603,7 @@ __metadata:
     class-transformer: ^0.5.1
     class-validator: ^0.13.2
     jest: ^27.2.5
+    luxon: ^3.0.1
     reflect-metadata: ^0.1.13
     rimraf: ^3.0.2
     rxjs: ^7.2.0
@@ -16181,6 +16190,13 @@ __metadata:
   version: 2.4.0
   resolution: "luxon@npm:2.4.0"
   checksum: 6071028d65cc3d3bdab5e6a3995dd97411c92bb3b3163a02deb7b7014318ad3a6fd750ae77131c42141b717c14aef8880d3130f265281d500ef2365f7265b3f3
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "luxon@npm:3.0.1"
+  checksum: aa966eb919bf95b1bd819cda784d1f6f66e3fb65bd9ec7bf68b6a978eeb4e3e14f7e2275021b473f93b15b6b7ba2e5a30471e53add3929a7e695fcfd6dd40ec8
   languageName: node
   linkType: hard
 

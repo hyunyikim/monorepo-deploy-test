@@ -17,6 +17,10 @@
 			"name": "@vircle/entity"
 		},
 		{
+			"path": "packages/cafe24-interwork",
+			"name": "@vircle/cafe24-interwork"
+		},
+		{
 			"path": "packages/shipping-tracking",
 			"name": "@vircle/shipping-tracking"
 		},
