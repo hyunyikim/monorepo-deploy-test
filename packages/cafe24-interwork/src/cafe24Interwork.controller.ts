@@ -18,8 +18,14 @@ export class Cafe24InterworkController {
 
 	@Version('1')
 	@Get('interwork')
-	getHello() {
-		return '';
+	getInterworkInfoByToken(partnerIdx: number) {
+		return this.cafe24InterworkService.getInterworkInfoByIdx(partnerIdx);
+	}
+
+	@Version('1')
+	@Get('interwork/:mallId')
+	getInterworkInfo(@Param('mallId') mallId: string) {
+		return this.cafe24InterworkService.getInterworkInfo(mallId);
 	}
 
 	@Post('interwork/:mallId/init')
