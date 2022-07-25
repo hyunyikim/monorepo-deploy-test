@@ -7,13 +7,13 @@ async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(
 		Cafe24InterworkModule
 	);
-	app.setGlobalPrefix('/cafe24');
+
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,
 		})
 	);
 
-	await app.listen(80);
+	await app.listen(3000);
 }
 bootstrap();

@@ -10,7 +10,7 @@ import {
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {IssueSetting} from './interwork.entity';
 
-@Controller()
+@Controller('cafe24')
 export class Cafe24InterworkController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService

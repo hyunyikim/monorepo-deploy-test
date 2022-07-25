@@ -5,6 +5,7 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
 import {Cafe24API} from './Cafe24ApiService/cafe24Api';
 import {InterworkRepository} from './DynamoRepo/interwork.repository';
 import {DynamoDB} from 'aws-sdk';
+import {HealthCheckController} from './healthcheck.controller';
 
 @Module({
 	imports: [
@@ -13,7 +14,7 @@ import {DynamoDB} from 'aws-sdk';
 				process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
 		}),
 	],
-	controllers: [Cafe24InterworkController],
+	controllers: [Cafe24InterworkController, HealthCheckController],
 	providers: [
 		{
 			provide: Cafe24API,
