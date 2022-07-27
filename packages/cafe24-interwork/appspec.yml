@@ -1,0 +1,15 @@
+version: 0.0
+os: linux
+files:
+    - source: /
+      destination: /root/server
+permissions:
+    - object: /root/server
+      owner: root
+      group: root
+      mode: 755
+hooks:
+    AfterInstall:
+        - location: start.sh
+          timeout: 60
+          runas: root

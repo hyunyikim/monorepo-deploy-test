@@ -30,7 +30,6 @@ import {HealthCheckController} from './healthcheck.controller';
 		{
 			provide: InterworkRepository,
 			useFactory: (configService: ConfigService) => {
-				console.log('INJECTT!!');
 				const tableName = configService.getOrThrow<string>(
 					'CAFE24_DDB_TABLE_NAME'
 				);

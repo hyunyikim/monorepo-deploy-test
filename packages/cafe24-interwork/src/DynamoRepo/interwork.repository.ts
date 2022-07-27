@@ -58,4 +58,8 @@ export class InterworkRepository {
 			})
 			.promise();
 	}
+
+	async getAll() {
+		return await this.ddbClient.scan({TableName: this.tableName}).promise();
+	}
 }

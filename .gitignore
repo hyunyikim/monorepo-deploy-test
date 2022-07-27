@@ -11,6 +11,7 @@
 #.pnp.*
 
 dist
+bundle
 .DS_Store
 node_modules
 

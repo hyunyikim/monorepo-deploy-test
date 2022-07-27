@@ -10,6 +10,10 @@ export class Cafe24InterworkService {
 		@Inject() private interworkRepo: InterworkRepository
 	) {}
 
+	async getAll() {
+		return await this.interworkRepo.getAll();
+	}
+
 	/**
 	 * cafe24 interwork 정보를 파트너 mallId 조회합니다.
 	 * @param mallId 연동 정보를 얻고자 하는 파트너스의 인덱스 값

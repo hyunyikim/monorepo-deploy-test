@@ -10,25 +10,28 @@ import {
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {IssueSetting} from './interwork.entity';
 
-@Controller('cafe24')
+@Controller({path: 'interwork'})
 export class Cafe24InterworkController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService
 	) {}
 
-	@Version('1')
-	@Get('interwork')
+	@Get()
 	getInterworkInfoByToken(partnerIdx: number) {
 		return this.cafe24InterworkService.getInterworkInfoByIdx(partnerIdx);
 	}
 
-	@Version('1')
-	@Get('interwork/:mallId')
+	@Get('all')
+	getInterworkAll() {
+		return this.cafe24InterworkService.getAll();
+	}
+
+	@Get(':mallId')
 	getInterworkInfo(@Param('mallId') mallId: string) {
 		return this.cafe24InterworkService.getInterworkInfo(mallId);
 	}
 
-	@Post('interwork/:mallId/init')
+	@Post(':mallId/init')
 	async initInterwork(
 		@Param('mallId') mallId: string,
 		@Body('authCode') authCode: string
@@ -40,7 +43,7 @@ export class Cafe24InterworkController {
 		return interwork;
 	}
 
-	@Patch('interwork/:mallId/partner')
+	@Patch(':mallId/partner')
 	async updateInterworkPartner(
 		@Param('mallId') mallId: string,
 		@Body('partnerIdx') idx: number
@@ -52,7 +55,7 @@ export class Cafe24InterworkController {
 		return interwork;
 	}
 
-	@Patch('interwork/:mallId/setting')
+	@Patch(':mallId/setting')
 	async updateInterworkSetting(
 		@Param('mallId') mallId: string,
 		@Body() setting: IssueSetting

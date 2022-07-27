@@ -1,0 +1,65 @@
+name: cafe24_interwork_workflow
+on:
+    push:
+        branches:
+            - dev
+        paths:
+            - 'packages/cafe24-interwork/**'
+
+jobs:
+    deploy_on_dev:
+        runs-on: ubuntu-18.04
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./packages/cafe24-interwork
+        steps:
+            - name: git Checkout
+              uses: actions/checkout@v2
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: 의존성 체크
+              run: yarn
+
+            - name: build 하기
+              run: yarn build
+
+            - name: bundle 하기
+              run: yarn bundle
+
+            - name: copy env file
+              run: cp .env.dev bundle/.env
+
+            - name: copy appspec file
+              run: cp appspec.yml bundle/appspec.yml
+
+            - name: copy shell file
+              run: cp start.sh bundle/start.sh
+
+            - name: aws 세팅
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ap-northeast-2
+
+            - name: aws s3 업로드
+              run: |
+                  aws deploy push \
+                    --application-name vircle \
+                    --description "git hash ${{ github.sha }}" \
+                    --no-ignore-hidden-files \
+                    --s3-location s3://vircle-app/cafe24-interwork/${{ github.head_ref }}.${{ github.sha }}.zip \
+                    --source ./bundle
+
+            - name: aws codedeploy create-deployment
+              run: |
+                  aws deploy create-deployment \
+                    --application-name vircle \
+                    --deployment-config-name CodeDeployDefault.OneAtATime \
+                    --deployment-group-name dev_cafe24_interwork \
+                    --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.head_ref }}.${{ github.sha }}.zip
