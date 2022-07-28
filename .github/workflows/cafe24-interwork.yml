@@ -10,7 +10,7 @@ on:
 
 jobs:
     deploy_on_dev:
-        if: ${{ github.base_ref == 'dev' }}
+        if: ${{ github.ref_name == 'dev' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
@@ -56,7 +56,7 @@ jobs:
                     --application-name vircle \
                     --description "git hash ${{ github.sha }}" \
                     --no-ignore-hidden-files \
-                    --s3-location s3://vircle-app/cafe24-interwork/${{ github.base_ref }}.${{ github.sha }}.zip \
+                    --s3-location s3://vircle-app/cafe24-interwork/${{ github.ref_name }}.${{ github.sha }}.zip \
                     --source ./bundle
 
             - name: aws codedeploy create-deployment
@@ -65,9 +65,9 @@ jobs:
                     --application-name vircle \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
                     --deployment-group-name dev_cafe24_interwork \
-                    --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.base_ref }}.${{ github.sha }}.zip
+                    --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.ref_name }}.${{ github.sha }}.zip
     deploy_on_prod:
-        if: ${{ github.base_ref == 'main' }}
+        if: ${{ github.ref_name == 'main' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
