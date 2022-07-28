@@ -6,10 +6,11 @@ on:
             - main
         paths:
             - 'packages/cafe24-interwork/**'
+            - '.github/workflows/cafe24-interwork.yml'
 
 jobs:
     deploy_on_dev:
-        if: github.base_ref == dev
+        if: ${{ github.base_ref == 'dev' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
@@ -66,7 +67,7 @@ jobs:
                     --deployment-group-name dev_cafe24_interwork \
                     --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.base_ref }}.${{ github.sha }}.zip
     deploy_on_prod:
-        if: github.base_ref == main
+        if: ${{ github.base_ref == 'main' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
