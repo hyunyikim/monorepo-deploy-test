@@ -12,7 +12,7 @@ async function bootstrap() {
 		}
 	);
 
-	app.use(morgan('tiny'));
+	app.use(morgan('common'));
 
 	app.useGlobalPipes(
 		new ValidationPipe({

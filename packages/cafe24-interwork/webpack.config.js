@@ -11,6 +11,6 @@ module.exports = {
 		filename: `server.js`,
 	},
 	optimization: {
-		minimize: true, // enabling this reduces file size and readability
+		minimize: false, // enabling this reduces file size and readability
 	},
 };

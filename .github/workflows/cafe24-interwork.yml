@@ -3,11 +3,13 @@ on:
     push:
         branches:
             - dev
+            - main
         paths:
             - 'packages/cafe24-interwork/**'
 
 jobs:
     deploy_on_dev:
+        if: github.base_ref == dev
         runs-on: ubuntu-18.04
         defaults:
             run:
@@ -15,7 +17,7 @@ jobs:
                 working-directory: ./packages/cafe24-interwork
         steps:
             - name: git Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: node 환경 설정
               uses: actions/setup-node@v3
@@ -53,7 +55,7 @@ jobs:
                     --application-name vircle \
                     --description "git hash ${{ github.sha }}" \
                     --no-ignore-hidden-files \
-                    --s3-location s3://vircle-app/cafe24-interwork/${{ github.head_ref }}.${{ github.sha }}.zip \
+                    --s3-location s3://vircle-app/cafe24-interwork/${{ github.base_ref }}.${{ github.sha }}.zip \
                     --source ./bundle
 
             - name: aws codedeploy create-deployment
@@ -62,4 +64,31 @@ jobs:
                     --application-name vircle \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
                     --deployment-group-name dev_cafe24_interwork \
-                    --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.head_ref }}.${{ github.sha }}.zip
+                    --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.base_ref }}.${{ github.sha }}.zip
+    deploy_on_prod:
+        if: github.base_ref == main
+        runs-on: ubuntu-18.04
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./packages/cafe24-interwork
+        steps:
+            - name: git Checkout
+              uses: actions/checkout@v3
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: 의존성 체크
+              run: yarn
+
+            - name: build 하기
+              run: yarn build
+
+            - name: bundle 하기
+              run: yarn bundle
+
+            - name: copy env file
+              run: cp .env.dev bundle/.env

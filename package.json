@@ -7,7 +7,7 @@
 		"email": "it@mass-adoption.com"
 	},
 	"scripts": {
-		"lint": "eslint ./packages --ext .ts,.tsx,.js,.jsx --no-cache",
+		"lint": "eslint -c .eslintrc.js --ignore-path .eslintignore ./ --ext .ts,.tsx,.js,.jsx",
 		"format": "prettier ./ -w",
 		"postinstall": "husky install",
 		"release": "standard-version"
@@ -44,8 +44,8 @@
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx}": [
-			"prettier ./ -w",
-			"eslint ./ --fix"
+			"yarn format",
+			"yarn lint"
 		]
 	},
 	"resolutions": {
