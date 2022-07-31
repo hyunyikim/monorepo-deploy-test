@@ -210,7 +210,7 @@ export class CustomerPrivacy {
 
 export class Store {
 	@IsNumber()
-	ship_no: number;
+	shop_no: number;
 
 	@IsNumber()
 	shop_name: number;

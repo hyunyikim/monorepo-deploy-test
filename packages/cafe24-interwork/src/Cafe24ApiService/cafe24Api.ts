@@ -8,12 +8,12 @@ import {
 	Shop,
 	Store,
 } from './type';
-import Axios, {AxiosInstance} from 'axios';
-
+import Axios, {AxiosError, AxiosInstance} from 'axios';
+import {stringify} from 'querystring';
 @Injectable()
 export class Cafe24API {
 	private httpAgent: AxiosInstance;
-	private fixedURL = 'cafe24api.com/api/v2/';
+	private fixedURL = 'cafe24api.com/api/v2';
 	constructor(private clientId: string, private clientSecret: string) {
 		this.httpAgent = Axios.create();
 	}
@@ -21,31 +21,43 @@ export class Cafe24API {
 	@TransformPlainToInstance(AccessToken)
 	async getAccessToken(mallId: string, authCode: string) {
 		const url = `https://${mallId}.${this.fixedURL}/oauth/token`;
-		const body = {
+
+		const bodyStr = stringify({
 			grant_type: 'authorization_code',
 			code: authCode,
-			redirect_uri: 'https://vircle.co.kr/',
-		};
+			redirect_uri: 'https://dev-partners.vircle.co.kr/cafe24/interwork',
+		});
 
 		const auth = {username: this.clientId, password: this.clientSecret};
-		const {data} = await this.httpAgent.post<AccessToken>(url, body, {
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
-			auth,
-		});
-		return data;
+		try {
+			const {data} = await this.httpAgent.post<AccessToken>(
+				url,
+				bodyStr,
+				{
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					auth,
+				}
+			);
+			return data;
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				console.log(error.response?.data);
+			}
+			return new AccessToken();
+		}
 	}
 
 	@TransformPlainToInstance(AccessToken)
 	async refreshAccessToken(mallId: string, refreshToken: string) {
 		const url = `https://${mallId}.${this.fixedURL}/oauth/token`;
 		const auth = {username: this.clientId, password: this.clientSecret};
-		const body = {
+		const bodyStr = stringify({
 			grant_type: 'refresh_token',
 			refresh_token: refreshToken,
-		};
-		const {data} = await this.httpAgent.post<AccessToken>(url, body, {
+		});
+		const {data} = await this.httpAgent.post<AccessToken>(url, bodyStr, {
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},

@@ -7,7 +7,7 @@
 	"private": true,
 	"license": "UNLICENSED",
 	"scripts": {
-		"prebuild": "rimraf dist",
+		"prebuild": "rimraf dist && rimraf bundle",
 		"bundle": "NODE_NO_WARNINGS=1 webpack",
 		"build": "NODE_NO_WARNINGS=1 nest build",
 		"start": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start",

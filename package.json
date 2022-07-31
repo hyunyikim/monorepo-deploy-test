@@ -54,6 +54,7 @@
 		"@storybook/react/webpack": "^5"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.17.8"
+		"@babel/runtime": "^7.17.8",
+		"@nestjs/jwt": "^9.0.0"
 	}
 }

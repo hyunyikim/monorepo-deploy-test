@@ -6916,6 +6916,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/runtime", "npm:7.18.3"],\
             ["@commitlint/cli", "npm:16.2.4"],\
             ["@commitlint/config-conventional", "npm:16.2.4"],\
+            ["@nestjs/jwt", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:9.0.0"],\
             ["@types/eslint", "npm:8.4.2"],\
             ["@types/node", "npm:17.0.31"],\
             ["@types/prettier", "npm:2.6.0"],\
@@ -13681,6 +13682,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@nestjs/jwt", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.0.0"],\
             ["@nestjs/common", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.4.5"],\
+            ["@types/jsonwebtoken", "npm:8.5.8"],\
+            ["@types/nestjs__common", null],\
+            ["jsonwebtoken", "npm:8.5.1"]\
+          ],\
+          "packagePeers": [\
+            "@nestjs/common",\
+            "@types/nestjs__common"\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:9.0.0", {\
+          "packageLocation": "./.yarn/__virtual__/@nestjs-jwt-virtual-b15e49b037/0/cache/@nestjs-jwt-npm-9.0.0-66a08763c1-c623bc710a.zip/node_modules/@nestjs/jwt/",\
+          "packageDependencies": [\
+            ["@nestjs/jwt", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:9.0.0"],\
+            ["@nestjs/common", null],\
             ["@types/jsonwebtoken", "npm:8.5.8"],\
             ["@types/nestjs__common", null],\
             ["jsonwebtoken", "npm:8.5.1"]\
@@ -38354,6 +38370,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/runtime", "npm:7.18.3"],\
             ["@commitlint/cli", "npm:16.2.4"],\
             ["@commitlint/config-conventional", "npm:16.2.4"],\
+            ["@nestjs/jwt", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:9.0.0"],\
             ["@types/eslint", "npm:8.4.2"],\
             ["@types/node", "npm:17.0.31"],\
             ["@types/prettier", "npm:2.6.0"],\

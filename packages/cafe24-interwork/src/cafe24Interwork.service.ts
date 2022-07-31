@@ -6,12 +6,23 @@ import {DateTime} from 'luxon';
 @Injectable()
 export class Cafe24InterworkService {
 	constructor(
-		@Inject() private cafe24Api: Cafe24API,
-		@Inject() private interworkRepo: InterworkRepository
+		@Inject() private readonly cafe24Api: Cafe24API,
+		@Inject() private readonly interworkRepo: InterworkRepository
 	) {}
 
 	async getAll() {
 		return await this.interworkRepo.getAll();
+	}
+
+	async isConfirmed(mallId: string) {
+		const interwork = await this.interworkRepo.getInterwork(mallId);
+		if (interwork === null) {
+			return false;
+		} else if (interwork.confirmedAt) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -28,8 +39,8 @@ export class Cafe24InterworkService {
 	 * @param idx
 	 * @returns
 	 */
-	async getInterworkInfoByIdx(idx: number) {
-		return await this.interworkRepo.getInterworkByPartner(idx);
+	async getInterworkInfoByIdx(partnerIdx: number) {
+		return await this.interworkRepo.getInterworkByPartner(partnerIdx);
 	}
 
 	/**
@@ -68,6 +79,14 @@ export class Cafe24InterworkService {
 		}
 		interwork.partnerIdx = partnerIdx;
 		interwork.updatedAt = DateTime.now().toISO();
+		interwork.confirmedAt = DateTime.now().toISO();
+		interwork.issueSetting = {
+			issueCategories: ['ALL'],
+			issueCustomerGroups: ['ALL'],
+			issueProducts: ['ALL'],
+			issueTiming: 'AFTER_DELIVERED',
+		};
+
 		await this.interworkRepo.putInterwork(interwork);
 		return interwork;
 	}

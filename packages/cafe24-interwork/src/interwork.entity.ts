@@ -54,6 +54,9 @@ export class Cafe24Interwork {
 	joinedAt: string;
 
 	@IsDateString()
+	confirmedAt: string;
+
+	@IsDateString()
 	updatedAt: string;
 
 	@IsOptional()

@@ -6,15 +6,29 @@ import {Cafe24API} from './Cafe24ApiService/cafe24Api';
 import {InterworkRepository} from './DynamoRepo/interwork.repository';
 import {DynamoDB} from 'aws-sdk';
 import {HealthCheckController} from './healthcheck.controller';
-
+import {VircleCoreAPI} from './vircleCoreApiService';
+import {Cafe24EventController} from './cafe24Event.controller';
+import {JwtModule} from '@nestjs/jwt';
+console.log(process.env.NODE_ENV);
 @Module({
 	imports: [
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			useFactory: (configService: ConfigService) => ({
+				secret: configService.getOrThrow('JWT_SECRET_KEY'),
+			}),
+			inject: [ConfigService],
+		}),
 		ConfigModule.forRoot({
 			envFilePath:
 				process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
 		}),
 	],
-	controllers: [Cafe24InterworkController, HealthCheckController],
+	controllers: [
+		Cafe24InterworkController,
+		HealthCheckController,
+		Cafe24EventController,
+	],
 	providers: [
 		{
 			provide: Cafe24API,
@@ -37,6 +51,16 @@ import {HealthCheckController} from './healthcheck.controller';
 					region: 'ap-northeast-2',
 				});
 				return new InterworkRepository(ddbClient, tableName);
+			},
+			inject: [ConfigService],
+		},
+		{
+			provide: VircleCoreAPI,
+			useFactory: (configService: ConfigService) => {
+				const baseURL =
+					configService.getOrThrow<string>('VIRCLE_API_URL');
+
+				return new VircleCoreAPI(baseURL);
 			},
 			inject: [ConfigService],
 		},

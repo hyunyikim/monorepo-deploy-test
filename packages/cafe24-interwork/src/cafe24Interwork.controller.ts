@@ -4,11 +4,14 @@ import {
 	Get,
 	Param,
 	Post,
-	Version,
 	Patch,
+	UseGuards,
+	Req,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
+import {GetToken, TokenInfo} from './getToken.decorator';
 import {IssueSetting} from './interwork.entity';
+import {JwtAuthGuard} from './jwtGuard/jwtAuth.guard';
 
 @Controller({path: 'interwork'})
 export class Cafe24InterworkController {
@@ -22,7 +25,9 @@ export class Cafe24InterworkController {
 	}
 
 	@Get('all')
-	getInterworkAll() {
+	@UseGuards(JwtAuthGuard)
+	getInterworkAll(@GetToken() token: TokenInfo) {
+		console.log(token);
 		return this.cafe24InterworkService.getAll();
 	}
 
@@ -31,7 +36,7 @@ export class Cafe24InterworkController {
 		return this.cafe24InterworkService.getInterworkInfo(mallId);
 	}
 
-	@Post(':mallId/init')
+	@Post(':mallId')
 	async initInterwork(
 		@Param('mallId') mallId: string,
 		@Body('authCode') authCode: string
@@ -43,19 +48,37 @@ export class Cafe24InterworkController {
 		return interwork;
 	}
 
-	@Patch(':mallId/partner')
-	async updateInterworkPartner(
+	/**
+	 *
+	 * @param mallId cafe24 Mall Id
+	 * @param token 파싱된 JWT 정보
+	 * @returns
+	 */
+	@Post(':mallId/confirm')
+	@UseGuards(JwtAuthGuard)
+	async confirmInterwork(
 		@Param('mallId') mallId: string,
-		@Body('partnerIdx') idx: number
+		@GetToken() token: TokenInfo
 	) {
 		const interwork = await this.cafe24InterworkService.completeInterwork(
 			mallId,
-			idx
+			token.partnerIdx
 		);
 		return interwork;
 	}
 
+	/**
+	 * 해당 mallId로 카페24와 연동하고 승인된 계정이 있는지 확인하는 엔드포인트 입니다.
+	 * @param mallId
+	 * @returns
+	 */
+	@Get(':mallId/confirm')
+	isConfirmedPartnership(@Param('mallId') mallId: string) {
+		return this.cafe24InterworkService.isConfirmed(mallId);
+	}
+
 	@Patch(':mallId/setting')
+	@UseGuards(JwtAuthGuard)
 	async updateInterworkSetting(
 		@Param('mallId') mallId: string,
 		@Body() setting: IssueSetting
