@@ -28,6 +28,9 @@ jobs:
             - name: 의존성 체크
               run: yarn
 
+            - name: entity 프로젝트 빌드하기
+              run: yarn workspace @vircle/entity build
+
             - name: build 하기
               run: yarn build
 
