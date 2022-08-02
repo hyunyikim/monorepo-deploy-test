@@ -48,7 +48,14 @@ export class Cafe24InterworkService {
 	 * @param partnerIdx Cafe24 Mall과 연동을 생성하고자 하는 파트너스의 인덱스 값
 	 * @returns 연동 정보를 담은 Interwork 객체
 	 */
-	async createNewInterwork(mallId: string, authCode: string) {
+	async requestNewInterwork(mallId: string, authCode: string) {
+		const result = await this.getInterworkInfo(mallId);
+
+		// 이미 연동을 완료했다면 기존의 연동 정보를 제공
+		if (result) {
+			return result;
+		}
+
 		const interwork = new Cafe24Interwork();
 
 		const accessToken = await this.cafe24Api.getAccessToken(

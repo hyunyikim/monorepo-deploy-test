@@ -41,7 +41,7 @@ export class Cafe24InterworkController {
 		@Param('mallId') mallId: string,
 		@Body('authCode') authCode: string
 	) {
-		const interwork = await this.cafe24InterworkService.createNewInterwork(
+		const interwork = await this.cafe24InterworkService.requestNewInterwork(
 			mallId,
 			authCode
 		);
