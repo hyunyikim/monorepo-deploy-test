@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {TransformPlainToInstance} from 'class-transformer';
 import {
 	AccessToken,
@@ -14,7 +14,11 @@ import {stringify} from 'querystring';
 export class Cafe24API {
 	private httpAgent: AxiosInstance;
 	private fixedURL = 'cafe24api.com/api/v2';
-	constructor(private clientId: string, private clientSecret: string) {
+	constructor(
+		private clientId: string,
+		private clientSecret: string,
+		private redirectURL: string
+	) {
 		this.httpAgent = Axios.create();
 	}
 
@@ -25,7 +29,7 @@ export class Cafe24API {
 		const bodyStr = stringify({
 			grant_type: 'authorization_code',
 			code: authCode,
-			redirect_uri: 'https://dev-partners.vircle.co.kr/cafe24/interwork',
+			redirect_uri: this.redirectURL,
 		});
 
 		const auth = {username: this.clientId, password: this.clientSecret};
@@ -41,11 +45,14 @@ export class Cafe24API {
 				}
 			);
 			return data;
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				console.log(error.response?.data);
-			}
-			return new AccessToken();
+		} catch (err) {
+			if (!(err instanceof AxiosError)) throw err;
+			if (!err.response?.data) throw err;
+			if (!('error' in err.response.data)) throw err;
+			if (!('error_description' in err.response.data)) throw err;
+
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+			throw new InvalidGrant(err.response.data.error_description);
 		}
 	}
 
@@ -168,5 +175,12 @@ export class Cafe24API {
 			},
 		});
 		return data.shops;
+	}
+}
+
+export class InvalidGrant extends BadRequestException {
+	constructor(msg: string) {
+		super(msg);
+		this.name = 'InvalidGrant';
 	}
 }

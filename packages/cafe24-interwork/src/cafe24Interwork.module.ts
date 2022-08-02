@@ -37,7 +37,11 @@ console.log(process.env.NODE_ENV);
 					configService.getOrThrow<string>('CAFE24_CLIENT_ID');
 				const secretKey =
 					configService.getOrThrow<string>('CAFE24_SECRET_KEY');
-				return new Cafe24API(clientId, secretKey);
+
+				const redirectURL = configService.getOrThrow<string>(
+					'CAFE24_REDIRECT_URL'
+				);
+				return new Cafe24API(clientId, secretKey, redirectURL);
 			},
 			inject: [ConfigService],
 		},

@@ -11,7 +11,7 @@ async function bootstrap() {
 			logger: ['log', 'error', 'warn', 'debug', 'verbose'],
 		}
 	);
-
+	app.enableCors();
 	app.use(morgan('common'));
 
 	app.useGlobalPipes(
