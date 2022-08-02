@@ -35,6 +35,10 @@ export class Cafe24Interwork {
 	@IsString()
 	mallId: string;
 
+	/** 최근 사용된 Auth Code */
+	@IsString()
+	authCode: string;
+
 	@IsObject()
 	@ValidateNested()
 	@Type(() => AccessToken)

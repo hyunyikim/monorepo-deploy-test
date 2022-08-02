@@ -51,8 +51,8 @@ export class Cafe24InterworkService {
 	async requestNewInterwork(mallId: string, authCode: string) {
 		const result = await this.getInterworkInfo(mallId);
 
-		// 이미 연동을 완료했다면 기존의 연동 정보를 제공
-		if (result) {
+		// 중복된 연동 프로세스를 방지
+		if (result && result.authCode === authCode) {
 			return result;
 		}
 
@@ -68,6 +68,7 @@ export class Cafe24InterworkService {
 			accessToken.access_token
 		);
 
+		interwork.authCode = authCode;
 		interwork.mallId = mallId;
 		interwork.accessToken = accessToken;
 		interwork.store = store;
