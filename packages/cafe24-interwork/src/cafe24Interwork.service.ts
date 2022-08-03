@@ -3,11 +3,13 @@ import {Cafe24Interwork, IssueSetting} from './interwork.entity';
 import {Cafe24API} from './Cafe24ApiService/cafe24Api';
 import {InterworkRepository} from './DynamoRepo/interwork.repository';
 import {DateTime} from 'luxon';
+import {VircleCoreAPI} from './vircleCoreApiService';
 @Injectable()
 export class Cafe24InterworkService {
 	constructor(
 		@Inject() private readonly cafe24Api: Cafe24API,
-		@Inject() private readonly interworkRepo: InterworkRepository
+		@Inject() private readonly interworkRepo: InterworkRepository,
+		@Inject() private readonly vircleCoreApi: VircleCoreAPI
 	) {}
 
 	async getAll() {

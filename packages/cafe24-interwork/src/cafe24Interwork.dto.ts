@@ -1,16 +1,6 @@
 import {} from 'class-transformer';
 import {IsISO8601, IsNumber, IsObject, IsString} from 'class-validator';
 
-export class CreateNewInterwork {
-	@IsString()
-	authCode: string;
-
-	@IsString()
-	mallId: string;
-}
-
-export class UpdateInterwork {}
-
 export class WebHookBody<T> {
 	@IsNumber()
 	event_no: number;
@@ -33,7 +23,7 @@ abstract class App extends Resource {
 
 export class EventAppDelete extends App {
 	@IsISO8601()
-	'deleted_date': string;
+	deleted_date: string;
 }
 
 export class EventAppExpire extends App {

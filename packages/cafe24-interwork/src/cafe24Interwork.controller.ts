@@ -20,14 +20,16 @@ export class Cafe24InterworkController {
 	) {}
 
 	@Get()
-	getInterworkInfoByToken(partnerIdx: number) {
-		return this.cafe24InterworkService.getInterworkInfoByIdx(partnerIdx);
+	@UseGuards(JwtAuthGuard)
+	getInterworkInfoByToken(@GetToken() token: TokenInfo) {
+		return this.cafe24InterworkService.getInterworkInfoByIdx(
+			token.partnerIdx
+		);
 	}
 
 	@Get('all')
 	@UseGuards(JwtAuthGuard)
 	getInterworkAll(@GetToken() token: TokenInfo) {
-		console.log(token);
 		return this.cafe24InterworkService.getAll();
 	}
 

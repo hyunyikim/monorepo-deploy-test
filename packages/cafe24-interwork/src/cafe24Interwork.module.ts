@@ -70,10 +70,14 @@ console.log(process.env.NODE_ENV);
 		},
 		{
 			provide: Cafe24InterworkService,
-			useFactory: (cafe24Api: Cafe24API, repo: InterworkRepository) => {
-				return new Cafe24InterworkService(cafe24Api, repo);
+			useFactory: (
+				cafe24Api: Cafe24API,
+				repo: InterworkRepository,
+				vircleApi: VircleCoreAPI
+			) => {
+				return new Cafe24InterworkService(cafe24Api, repo, vircleApi);
 			},
-			inject: [Cafe24API, InterworkRepository],
+			inject: [Cafe24API, InterworkRepository, VircleCoreAPI],
 		},
 	],
 })

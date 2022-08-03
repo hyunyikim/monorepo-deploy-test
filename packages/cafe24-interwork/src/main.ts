@@ -11,6 +11,9 @@ async function bootstrap() {
 			logger: ['log', 'error', 'warn', 'debug', 'verbose'],
 		}
 	);
+	if (process.env.NODE_ENV === 'development') {
+		app.setGlobalPrefix('cafe24');
+	}
 	app.enableCors();
 	app.use(morgan('common'));
 
