@@ -153,4 +153,16 @@ export class Cafe24InterworkService {
 		await this.interworkRepo.putInterwork(interwork);
 		return interwork;
 	}
+
+	async changeLeaveReason(mallId: string, reasons: string[]) {
+		const info = await this.getInterworkInfo(mallId);
+
+		if (!info) {
+			throw new NotFoundException('The interwork dose not exist.');
+		}
+
+		info.reasonForLeave = reasons;
+		await this.interworkRepo.putInterwork(info);
+		return info;
+	}
 }

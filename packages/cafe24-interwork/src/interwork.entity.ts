@@ -2,7 +2,6 @@ import {Type} from 'class-transformer';
 import {
 	IsArray,
 	IsDateString,
-	IsNotEmpty,
 	IsNumber,
 	IsObject,
 	IsOptional,
@@ -10,10 +9,6 @@ import {
 	ValidateNested,
 } from 'class-validator';
 import {AccessToken, Store} from './Cafe24ApiService';
-
-export enum ISSUE_TIMING {
-	AFTER_SHIPPING = 'AFTER_SHIPPING',
-}
 
 export class IssueSetting {
 	@IsString()
@@ -66,4 +61,8 @@ export class Cafe24Interwork {
 	@IsOptional()
 	@IsDateString()
 	leavedAt?: string;
+
+	@IsOptional()
+	@IsString()
+	reasonForLeave: string[];
 }

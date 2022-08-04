@@ -6,7 +6,6 @@ import {
 	Post,
 	Patch,
 	UseGuards,
-	Req,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {GetToken, TokenInfo} from './getToken.decorator';
@@ -25,12 +24,6 @@ export class Cafe24InterworkController {
 		return this.cafe24InterworkService.getInterworkInfoByIdx(
 			token.partnerIdx
 		);
-	}
-
-	@Get('all')
-	@UseGuards(JwtAuthGuard)
-	getInterworkAll(@GetToken() token: TokenInfo) {
-		return this.cafe24InterworkService.getAll();
 	}
 
 	@Get(':mallId')
@@ -91,5 +84,15 @@ export class Cafe24InterworkController {
 				setting
 			);
 		return interwork;
+	}
+
+	@Patch(':mallId/leave-reason')
+	@UseGuards(JwtAuthGuard)
+	async updateLeaveReason(
+		@Param('mallId') mallId: string,
+		@Body('reasons') reasons: string[]
+	) {
+		await this.cafe24InterworkService.changeLeaveReason(mallId, reasons);
+		return;
 	}
 }
