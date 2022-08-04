@@ -11,6 +11,7 @@ export class HealthCheckController {
 	healthCheck() {
 		return {
 			hostname: hostname(),
+			mode: process.env.NODE_ENV,
 			userInfo: this.devMode ? userInfo() : undefined,
 			type: this.devMode ? type() : undefined,
 			cpuArchitecture: this.devMode ? arch() : undefined,
