@@ -19,7 +19,8 @@ export class VircleCoreAPI {
 			'/v1/admin/partnerships',
 			{
 				headers: {
-					Authentication: `Bearer ${token}`,
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json;charset=UTF-8',
 				},
 			}
 		);
@@ -72,7 +73,7 @@ export class VircleCoreAPI {
 			},
 			{
 				headers: {
-					Authentication: `Bearer ${token}`,
+					Authorization: `Bearer ${token}`,
 				},
 			}
 		);
