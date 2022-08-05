@@ -32,11 +32,7 @@ export class Cafe24EventController {
 
 	@Post('app/delete')
 	@UseGuards(ApiKeyGuard)
-	async handleAppDeleteEvent(
-		@Headers('X-API-Key') key: string,
-		@Headers('X-Trace-ID') traceId: string,
-		@Body() webHook: WebHookBody<EventAppDelete>
-	) {
+	async handleAppDeleteEvent(@Body() webHook: WebHookBody<EventAppDelete>) {
 		const mallId = webHook.resource.mall_id;
 		await this.cafe24InterworkService.inactivateInterwork(mallId);
 		return 'OK';
@@ -45,9 +41,10 @@ export class Cafe24EventController {
 	@Post('order/shipping')
 	@UseGuards(ApiKeyGuard)
 	async handleOrderShippingEvent(
+		@Headers('x-trace-id') traceId: string,
 		@Body() webHook: WebHookBody<EventOrderShipping>
 	) {
-		await this.cafe24EventService.handleShippingEvent(webHook);
+		await this.cafe24EventService.handleShippingEvent(traceId, webHook);
 
 		return 'OK';
 	}

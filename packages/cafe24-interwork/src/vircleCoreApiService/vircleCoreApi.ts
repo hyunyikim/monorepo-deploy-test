@@ -20,7 +20,6 @@ export class VircleCoreAPI {
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,
-					'Content-Type': 'application/json;charset=UTF-8',
 				},
 			}
 		);
@@ -74,6 +73,8 @@ export class VircleCoreAPI {
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,
+					'Content-Type': 'multipart/form-data',
+					token,
 				},
 			}
 		);

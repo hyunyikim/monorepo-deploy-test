@@ -109,7 +109,12 @@ console.log(process.env.NODE_ENV);
 					vircleApi
 				);
 			},
-			inject: [Cafe24API, InterworkRepository, VircleCoreAPI],
+			inject: [
+				Cafe24API,
+				InterworkRepository,
+				VircleCoreAPI,
+				GuaranteeRequestRepository,
+			],
 		},
 	],
 })

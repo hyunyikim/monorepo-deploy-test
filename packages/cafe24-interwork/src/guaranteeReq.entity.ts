@@ -20,6 +20,9 @@ export class GuaranteeRequest {
 	@IsObject()
 	webhook: WebHookBody<EventOrderShipping>;
 
+	@IsString()
+	traceId: string;
+
 	@IsObject()
 	product: Product | null;
 }

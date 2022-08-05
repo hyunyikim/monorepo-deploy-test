@@ -4,7 +4,7 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import {Cafe24Interwork, IssueSetting, IssueTiming} from './interwork.entity';
+import {IssueTiming} from './interwork.entity';
 import {Cafe24API} from './Cafe24ApiService/cafe24Api';
 import {InterworkRepository} from './DynamoRepo/interwork.repository';
 import {DateTime} from 'luxon';
@@ -23,10 +23,15 @@ export class Cafe24EventService {
 		this.shippingEvent = ['AFTER_SHIPPING', 'AFTER_DELIVERED'];
 	}
 
-	async handleShippingEvent(webHook: WebHookBody<EventOrderShipping>) {
+	async handleShippingEvent(
+		traceId: string,
+		webHook: WebHookBody<EventOrderShipping>
+	) {
 		const mallId = webHook.resource.mall_id;
 		const interwork = await this.interworkRepo.getInterwork(mallId);
-		if (!interwork || !interwork.confirmedAt) return;
+		if (!interwork || !interwork.confirmedAt || interwork.leavedAt) {
+			throw new NotFoundException('Not Found Interwork Info');
+		}
 		const issueTiming = interwork.issueSetting.issueTiming;
 
 		if (!interwork.coreApiToken) {
@@ -75,6 +80,7 @@ export class Cafe24EventService {
 				reqAt: DateTime.now().toISO(),
 				reqState: nft_req_state,
 				webhook: webHook,
+				traceId,
 				product,
 			});
 		}
