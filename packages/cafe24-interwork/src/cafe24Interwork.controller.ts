@@ -57,7 +57,7 @@ export class Cafe24InterworkController {
 	) {
 		const interwork = await this.cafe24InterworkService.completeInterwork(
 			mallId,
-			token.partnerIdx
+			token
 		);
 		return interwork;
 	}

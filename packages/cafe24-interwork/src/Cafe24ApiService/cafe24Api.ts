@@ -97,7 +97,7 @@ export class Cafe24API {
 			limit?: number; // min = 1, max = 100
 		}
 	) {
-		const url = `https://${mallId}.${this.fixedURL}/admin/store`;
+		const url = `https://${mallId}.${this.fixedURL}/admin/products`;
 		const {data} = await this.httpAgent.get<{products: Product[]}>(url, {
 			params: query,
 			headers: {
@@ -122,6 +122,30 @@ export class Cafe24API {
 			},
 		});
 		return data.product;
+	}
+
+	@TransformPlainToInstance(Product)
+	async getProductByCode(
+		mallId: string,
+		accessToken: string,
+		productCode: string,
+		shopNo?: number
+	) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/products`;
+		const {data} = await this.httpAgent.get<{products: Product[]}>(url, {
+			params: {
+				product_code: productCode,
+				shop_no: shopNo,
+			},
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (!data.products[0]) return null;
+
+		return data.products[0];
 	}
 
 	@TransformPlainToInstance(Category)

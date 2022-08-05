@@ -4,6 +4,7 @@ import {Cafe24API} from './Cafe24ApiService/cafe24Api';
 import {InterworkRepository} from './DynamoRepo/interwork.repository';
 import {DateTime} from 'luxon';
 import {VircleCoreAPI} from './vircleCoreApiService';
+import {TokenInfo} from './getToken.decorator';
 @Injectable()
 export class Cafe24InterworkService {
 	constructor(
@@ -16,6 +17,11 @@ export class Cafe24InterworkService {
 		return await this.interworkRepo.getAll();
 	}
 
+	/**
+	 * cafe24에 특정 mall이 연동 되어 있는지를 확인합니다.
+	 * @param mallId 연동 정보를 얻고자 하는 파트너스의 cafe24 mallId
+	 * @returns 연동 = true, 비연동 = false
+	 */
 	async isConfirmed(mallId: string) {
 		const interwork = await this.interworkRepo.getInterwork(mallId);
 		if (interwork === null) {
@@ -29,7 +35,7 @@ export class Cafe24InterworkService {
 
 	/**
 	 * cafe24 interwork 정보를 파트너 mallId 조회합니다.
-	 * @param mallId 연동 정보를 얻고자 하는 파트너스의 인덱스 값
+	 * @param mallId 연동 정보를 얻고자 하는 파트너스의 cafe24 mallId
 	 * @returns
 	 */
 	async getInterworkInfo(mallId: string) {
@@ -38,8 +44,8 @@ export class Cafe24InterworkService {
 
 	/**
 	 * cafe24 interwork 정보를 파트너 ID로 조회합니다.
-	 * @param idx
-	 * @returns
+	 * @param partnerIdx Cafe24 Mall과 연동된 파트너스 계정의 인덱스 값
+	 * @returns 연동 정보를 담은 Interwork 객체
 	 */
 	async getInterworkInfoByIdx(partnerIdx: number) {
 		return await this.interworkRepo.getInterworkByPartner(partnerIdx);
@@ -82,12 +88,16 @@ export class Cafe24InterworkService {
 		return interwork;
 	}
 
-	async completeInterwork(mallId: string, partnerIdx: number) {
+	async completeInterwork(mallId: string, {token, partnerIdx}: TokenInfo) {
 		const interwork = await this.getInterworkInfo(mallId);
 		if (interwork === null) {
 			throw new NotFoundException('The interwork dose not exist.');
 		}
+
+		const partnership = await this.vircleCoreApi.getPartnerInfo(token);
+
 		interwork.partnerIdx = partnerIdx;
+		interwork.coreApiToken = token;
 		interwork.updatedAt = DateTime.now().toISO();
 		interwork.confirmedAt = DateTime.now().toISO();
 		interwork.issueSetting = {
@@ -96,6 +106,7 @@ export class Cafe24InterworkService {
 			issueProducts: ['ALL'],
 			issueTiming: 'AFTER_DELIVERED',
 		};
+		interwork.partnerInfo = partnership;
 
 		await this.interworkRepo.putInterwork(interwork);
 		return interwork;
@@ -155,14 +166,14 @@ export class Cafe24InterworkService {
 	}
 
 	async changeLeaveReason(mallId: string, reasons: string[]) {
-		const info = await this.getInterworkInfo(mallId);
+		const interwork = await this.getInterworkInfo(mallId);
 
-		if (!info) {
+		if (!interwork) {
 			throw new NotFoundException('The interwork dose not exist.');
 		}
 
-		info.reasonForLeave = reasons;
-		await this.interworkRepo.putInterwork(info);
-		return info;
+		interwork.reasonForLeave = reasons;
+		await this.interworkRepo.putInterwork(interwork);
+		return interwork;
 	}
 }

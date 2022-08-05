@@ -212,8 +212,8 @@ export class Store {
 	@IsNumber()
 	shop_no: number;
 
-	@IsNumber()
-	shop_name: number;
+	@IsString()
+	shop_name: string;
 
 	@IsString()
 	mall_id: string;

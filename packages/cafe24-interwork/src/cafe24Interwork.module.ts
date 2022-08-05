@@ -9,6 +9,8 @@ import {HealthCheckController} from './healthcheck.controller';
 import {VircleCoreAPI} from './vircleCoreApiService';
 import {Cafe24EventController} from './cafe24Event.controller';
 import {JwtModule} from '@nestjs/jwt';
+import {GuaranteeRequestRepository} from './DynamoRepo';
+import {Cafe24EventService} from './cafe24Event.service';
 console.log(process.env.NODE_ENV);
 @Module({
 	imports: [
@@ -49,12 +51,25 @@ console.log(process.env.NODE_ENV);
 			provide: InterworkRepository,
 			useFactory: (configService: ConfigService) => {
 				const tableName = configService.getOrThrow<string>(
-					'CAFE24_DDB_TABLE_NAME'
+					'CAFE24_DDB_TABLE_NAME_INTERWORK'
 				);
 				const ddbClient = new DynamoDB.DocumentClient({
 					region: 'ap-northeast-2',
 				});
 				return new InterworkRepository(ddbClient, tableName);
+			},
+			inject: [ConfigService],
+		},
+		{
+			provide: GuaranteeRequestRepository,
+			useFactory: (configService: ConfigService) => {
+				const tableName = configService.getOrThrow<string>(
+					'CAFE24_DDB_TABLE_NAME_GUARANTEE_REQ'
+				);
+				const ddbClient = new DynamoDB.DocumentClient({
+					region: 'ap-northeast-2',
+				});
+				return new GuaranteeRequestRepository(ddbClient, tableName);
 			},
 			inject: [ConfigService],
 		},
@@ -76,6 +91,23 @@ console.log(process.env.NODE_ENV);
 				vircleApi: VircleCoreAPI
 			) => {
 				return new Cafe24InterworkService(cafe24Api, repo, vircleApi);
+			},
+			inject: [Cafe24API, InterworkRepository, VircleCoreAPI],
+		},
+		{
+			provide: Cafe24EventService,
+			useFactory: (
+				cafe24Api: Cafe24API,
+				interworkRepo: InterworkRepository,
+				vircleApi: VircleCoreAPI,
+				guaranteeRepo: GuaranteeRequestRepository
+			) => {
+				return new Cafe24EventService(
+					cafe24Api,
+					interworkRepo,
+					guaranteeRepo,
+					vircleApi
+				);
 			},
 			inject: [Cafe24API, InterworkRepository, VircleCoreAPI],
 		},
