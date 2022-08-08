@@ -6,11 +6,41 @@ on:
             - main
         paths:
             - 'packages/cafe24-interwork/**'
-            - '.github/workflows/cafe24-interwork.yml'
+
+    pull_request:
+        branches:
+            - dev
+        paths:
+            - 'packages/cafe24-interwork/**'
 
 jobs:
+    build_type_test:
+        if: ${{  github.event_name === 'pull_request' }}
+        runs-on: ubuntu-18.04
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./packages/cafe24-interwork
+        steps:
+            - name: git Checkout
+              uses: actions/checkout@v3
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: 의존성 체크
+              run: yarn
+
+            - name: entity 프로젝트 빌드하기
+              run: yarn workspace @vircle/entity build
+
+            - name: build 하기
+              run: yarn build
+
     deploy_on_dev:
-        if: ${{ github.ref_name == 'dev' }}
+        if: ${{ github.ref_name == 'dev' && github.event_name === 'push' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
@@ -70,7 +100,7 @@ jobs:
                     --deployment-group-name dev_cafe24_interwork \
                     --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.ref_name }}.${{ github.sha }}.zip
     deploy_on_prod:
-        if: ${{ github.ref_name == 'main' }}
+        if: ${{ github.ref_name == 'main' && github.event_name === 'push'  }}
         runs-on: ubuntu-18.04
         defaults:
             run:
