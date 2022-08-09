@@ -11,7 +11,8 @@ import {Cafe24EventController} from './cafe24Event.controller';
 import {JwtModule} from '@nestjs/jwt';
 import {GuaranteeRequestRepository} from './DynamoRepo';
 import {Cafe24EventService} from './cafe24Event.service';
-console.log(process.env.NODE_ENV);
+import {SlackReporter} from './slackReporter';
+
 @Module({
 	imports: [
 		JwtModule.registerAsync({
@@ -83,38 +84,18 @@ console.log(process.env.NODE_ENV);
 			},
 			inject: [ConfigService],
 		},
+		Cafe24InterworkService,
+		Cafe24EventService,
 		{
-			provide: Cafe24InterworkService,
-			useFactory: (
-				cafe24Api: Cafe24API,
-				repo: InterworkRepository,
-				vircleApi: VircleCoreAPI
-			) => {
-				return new Cafe24InterworkService(cafe24Api, repo, vircleApi);
+			provide: SlackReporter,
+			useFactory: (configService: ConfigService) => {
+				const token =
+					configService.getOrThrow<string>('SLACK_BOT_TOKEN');
+				const channel =
+					configService.getOrThrow<string>('SLACK_CHANEL_ID');
+				return new SlackReporter(token, channel);
 			},
-			inject: [Cafe24API, InterworkRepository, VircleCoreAPI],
-		},
-		{
-			provide: Cafe24EventService,
-			useFactory: (
-				cafe24Api: Cafe24API,
-				interworkRepo: InterworkRepository,
-				vircleApi: VircleCoreAPI,
-				guaranteeRepo: GuaranteeRequestRepository
-			) => {
-				return new Cafe24EventService(
-					cafe24Api,
-					interworkRepo,
-					guaranteeRepo,
-					vircleApi
-				);
-			},
-			inject: [
-				Cafe24API,
-				InterworkRepository,
-				VircleCoreAPI,
-				GuaranteeRequestRepository,
-			],
+			inject: [ConfigService],
 		},
 	],
 })

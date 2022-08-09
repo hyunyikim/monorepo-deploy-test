@@ -90,7 +90,7 @@ export class Cafe24InterworkController {
 	@UseGuards(JwtAuthGuard)
 	async updateLeaveReason(
 		@Param('mallId') mallId: string,
-		@Body('reasons') reasons: string[]
+		@Body('reasons') reasons: string
 	) {
 		await this.cafe24InterworkService.changeLeaveReason(mallId, reasons);
 		return;

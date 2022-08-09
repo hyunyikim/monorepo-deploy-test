@@ -71,7 +71,7 @@ export class Cafe24Interwork {
 
 	@IsOptional()
 	@IsString()
-	reasonForLeave?: string[];
+	reasonForLeave?: string;
 }
 
 export interface Partnership {

@@ -5,7 +5,7 @@ import {VircleCoreAPI} from './vircleCoreApi';
 const token =
 	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjQ1MiwidHlwZSI6IkIiLCJiMmJUeXBlIjoiQiIsImlhdCI6MTY1OTQ5MzI4NywiZXhwIjo0ODEzMDkzMjg3fQ.7ZObwT4w8bKcGFlMddHSVl1NxFFEwR35dIiICI3qzj8';
 
-describe('', () => {
+describe('Vircle Core Api Test', () => {
 	let vircleApi: VircleCoreAPI;
 
 	beforeAll(async () => {

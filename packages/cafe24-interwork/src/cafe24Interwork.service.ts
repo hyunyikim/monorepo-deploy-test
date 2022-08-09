@@ -5,12 +5,15 @@ import {InterworkRepository} from './DynamoRepo/interwork.repository';
 import {DateTime} from 'luxon';
 import {VircleCoreAPI} from './vircleCoreApiService';
 import {TokenInfo} from './getToken.decorator';
+import {SlackReporter} from './slackReporter';
 @Injectable()
 export class Cafe24InterworkService {
 	constructor(
-		@Inject() private readonly cafe24Api: Cafe24API,
-		@Inject() private readonly interworkRepo: InterworkRepository,
-		@Inject() private readonly vircleCoreApi: VircleCoreAPI
+		@Inject(Cafe24API) private readonly cafe24Api: Cafe24API,
+		@Inject(InterworkRepository)
+		private readonly interworkRepo: InterworkRepository,
+		@Inject(VircleCoreAPI) private readonly vircleCoreApi: VircleCoreAPI,
+		@Inject(SlackReporter) private readonly slackReporter: SlackReporter
 	) {}
 
 	async getAll() {
@@ -110,6 +113,7 @@ export class Cafe24InterworkService {
 			interwork.partnerInfo = partnership;
 
 			await this.interworkRepo.putInterwork(interwork);
+			this.slackReporter.sendInterworkReport(interwork);
 			return interwork;
 		} catch (err) {
 			console.log(err);
@@ -155,6 +159,7 @@ export class Cafe24InterworkService {
 
 		interwork.leavedAt = DateTime.now().toISO();
 		await this.interworkRepo.putInterwork(interwork);
+		this.slackReporter.sendLeaveReport(interwork);
 		return interwork;
 	}
 
@@ -170,7 +175,7 @@ export class Cafe24InterworkService {
 		return interwork;
 	}
 
-	async changeLeaveReason(mallId: string, reasons: string[]) {
+	async changeLeaveReason(mallId: string, reasons: string) {
 		const interwork = await this.getInterworkInfo(mallId);
 
 		if (!interwork) {

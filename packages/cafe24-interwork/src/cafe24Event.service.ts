@@ -15,10 +15,12 @@ import {GuaranteeRequestRepository} from './DynamoRepo';
 export class Cafe24EventService {
 	private shippingEvent: IssueTiming[];
 	constructor(
-		@Inject() private readonly cafe24Api: Cafe24API,
-		@Inject() private readonly interworkRepo: InterworkRepository,
-		@Inject() private readonly guaranteeReqRepo: GuaranteeRequestRepository,
-		@Inject() private readonly vircleCoreApi: VircleCoreAPI
+		@Inject(Cafe24API) private readonly cafe24Api: Cafe24API,
+		@Inject(InterworkRepository)
+		private readonly interworkRepo: InterworkRepository,
+		@Inject(GuaranteeRequestRepository)
+		private readonly guaranteeReqRepo: GuaranteeRequestRepository,
+		@Inject(VircleCoreAPI) private readonly vircleCoreApi: VircleCoreAPI
 	) {
 		this.shippingEvent = ['AFTER_SHIPPING', 'AFTER_DELIVERED'];
 	}

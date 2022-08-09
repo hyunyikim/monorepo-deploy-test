@@ -241,6 +241,9 @@ export class Store {
 
 	/** 쇼핑몰 주소 */
 	mall_url: string;
+
+	address1: string;
+	address2: string;
 }
 
 export class Shop {

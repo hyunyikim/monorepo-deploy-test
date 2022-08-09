@@ -15,7 +15,7 @@ on:
 
 jobs:
     build_type_test:
-        if: ${{  github.event_name === 'pull_request' }}
+        if: ${{  github.event_name == 'pull_request' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
@@ -40,7 +40,7 @@ jobs:
               run: yarn build
 
     deploy_on_dev:
-        if: ${{ github.ref_name == 'dev' && github.event_name === 'push' }}
+        if: ${{ github.ref_name == 'dev' && github.event_name == 'push' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
@@ -100,7 +100,7 @@ jobs:
                     --deployment-group-name dev_cafe24_interwork \
                     --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/${{ github.ref_name }}.${{ github.sha }}.zip
     deploy_on_prod:
-        if: ${{ github.ref_name == 'main' && github.event_name === 'push'  }}
+        if: ${{ github.ref_name == 'main' && github.event_name == 'push'  }}
         runs-on: ubuntu-18.04
         defaults:
             run:

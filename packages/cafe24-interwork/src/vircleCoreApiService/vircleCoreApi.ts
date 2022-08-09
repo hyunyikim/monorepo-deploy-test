@@ -1,6 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {TransformPlainToInstance} from 'class-transformer';
-import {Nft} from '@vircle/entity';
 import Axios, {AxiosInstance} from 'axios';
 import {Partnership} from 'src/interwork.entity';
 

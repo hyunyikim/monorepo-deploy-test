@@ -1036,6 +1036,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:8.1.0"\
       ],\
       [\
+        "@slack/logger",\
+        "npm:3.0.0"\
+      ],\
+      [\
+        "@slack/types",\
+        "npm:2.7.0"\
+      ],\
+      [\
+        "@slack/web-api",\
+        "npm:6.7.2"\
+      ],\
+      [\
         "@sqltools/formatter",\
         "npm:1.2.3"\
       ],\
@@ -1342,6 +1354,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "@types/is-function",\
         "npm:1.0.1"\
+      ],\
+      [\
+        "@types/is-stream",\
+        "npm:1.1.0"\
       ],\
       [\
         "@types/istanbul-lib-coverage",\
@@ -4000,6 +4016,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.1.0"\
       ],\
       [\
+        "is-electron",\
+        "npm:2.2.0"\
+      ],\
+      [\
         "is-extendable",\
         "npm:0.1.1"\
       ],\
@@ -5122,6 +5142,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "p-map",\
         "npm:4.0.0"\
+      ],\
+      [\
+        "p-queue",\
+        "npm:6.6.2"\
       ],\
       [\
         "p-retry",\
@@ -14419,6 +14443,45 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@slack/logger", [\
+        ["npm:3.0.0", {\
+          "packageLocation": "./.yarn/cache/@slack-logger-npm-3.0.0-284f8efb66-6512d0e9e4.zip/node_modules/@slack/logger/",\
+          "packageDependencies": [\
+            ["@slack/logger", "npm:3.0.0"],\
+            ["@types/node", "npm:18.6.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@slack/types", [\
+        ["npm:2.7.0", {\
+          "packageLocation": "./.yarn/cache/@slack-types-npm-2.7.0-6a26726074-f1a0fc7ce4.zip/node_modules/@slack/types/",\
+          "packageDependencies": [\
+            ["@slack/types", "npm:2.7.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@slack/web-api", [\
+        ["npm:6.7.2", {\
+          "packageLocation": "./.yarn/cache/@slack-web-api-npm-6.7.2-acda040fb1-caa82f3bb2.zip/node_modules/@slack/web-api/",\
+          "packageDependencies": [\
+            ["@slack/web-api", "npm:6.7.2"],\
+            ["@slack/logger", "npm:3.0.0"],\
+            ["@slack/types", "npm:2.7.0"],\
+            ["@types/is-stream", "npm:1.1.0"],\
+            ["@types/node", "npm:18.6.5"],\
+            ["axios", "npm:0.27.2"],\
+            ["eventemitter3", "npm:3.1.2"],\
+            ["form-data", "npm:2.5.1"],\
+            ["is-electron", "npm:2.2.0"],\
+            ["is-stream", "npm:1.1.0"],\
+            ["p-queue", "npm:6.6.2"],\
+            ["p-retry", "npm:4.6.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@sqltools/formatter", [\
         ["npm:1.2.3", {\
           "packageLocation": "./.yarn/cache/@sqltools-formatter-npm-1.2.3-bb0968c039-5d80554b84.zip/node_modules/@sqltools/formatter/",\
@@ -17481,6 +17544,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/is-stream", [\
+        ["npm:1.1.0", {\
+          "packageLocation": "./.yarn/cache/@types-is-stream-npm-1.1.0-ffc5064f9d-23fcb06cd8.zip/node_modules/@types/is-stream/",\
+          "packageDependencies": [\
+            ["@types/is-stream", "npm:1.1.0"],\
+            ["@types/node", "npm:17.0.31"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/istanbul-lib-coverage", [\
         ["npm:2.0.4", {\
           "packageLocation": "./.yarn/cache/@types-istanbul-lib-coverage-npm-2.0.4-734954bb56-a25d7589ee.zip/node_modules/@types/istanbul-lib-coverage/",\
@@ -17673,6 +17746,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-node-npm-18.6.1-9231d14b7c-06331f68bc.zip/node_modules/@types/node/",\
           "packageDependencies": [\
             ["@types/node", "npm:18.6.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:18.6.5", {\
+          "packageLocation": "./.yarn/cache/@types-node-npm-18.6.5-440ef423eb-e3e66c9a84.zip/node_modules/@types/node/",\
+          "packageDependencies": [\
+            ["@types/node", "npm:18.6.5"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -18408,6 +18488,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@nestjs/schematics", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.0.11"],\
             ["@nestjs/testing", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:8.4.5"],\
             ["@nestjs/websockets", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.0.5"],\
+            ["@slack/web-api", "npm:6.7.2"],\
             ["@types/amqplib", "npm:0.8.2"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.4.1"],\
@@ -24861,6 +24942,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["eventemitter3", [\
+        ["npm:3.1.2", {\
+          "packageLocation": "./.yarn/cache/eventemitter3-npm-3.1.2-a68b03e1ea-81e4e82b84.zip/node_modules/eventemitter3/",\
+          "packageDependencies": [\
+            ["eventemitter3", "npm:3.1.2"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:4.0.7", {\
           "packageLocation": "./.yarn/cache/eventemitter3-npm-4.0.7-7afcdd74ae-1875311c42.zip/node_modules/eventemitter3/",\
           "packageDependencies": [\
@@ -25762,6 +25850,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["form-data", [\
+        ["npm:2.5.1", {\
+          "packageLocation": "./.yarn/cache/form-data-npm-2.5.1-47256351b5-5134ada56c.zip/node_modules/form-data/",\
+          "packageDependencies": [\
+            ["form-data", "npm:2.5.1"],\
+            ["asynckit", "npm:0.4.0"],\
+            ["combined-stream", "npm:1.0.8"],\
+            ["mime-types", "npm:2.1.35"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:3.0.1", {\
           "packageLocation": "./.yarn/cache/form-data-npm-3.0.1-d080d436e0-b019e8d35c.zip/node_modules/form-data/",\
           "packageDependencies": [\
@@ -27700,6 +27798,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-dom", "npm:1.1.0"],\
             ["is-object", "npm:1.0.2"],\
             ["is-window", "npm:1.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["is-electron", [\
+        ["npm:2.2.0", {\
+          "packageLocation": "./.yarn/cache/is-electron-npm-2.2.0-478d52d4fa-79e497bd50.zip/node_modules/is-electron/",\
+          "packageDependencies": [\
+            ["is-electron", "npm:2.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -32001,6 +32108,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["p-map", "npm:4.0.0"],\
             ["aggregate-error", "npm:3.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["p-queue", [\
+        ["npm:6.6.2", {\
+          "packageLocation": "./.yarn/cache/p-queue-npm-6.6.2-b173c5bfa8-832642fcc4.zip/node_modules/p-queue/",\
+          "packageDependencies": [\
+            ["p-queue", "npm:6.6.2"],\
+            ["eventemitter3", "npm:4.0.7"],\
+            ["p-timeout", "npm:3.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\
