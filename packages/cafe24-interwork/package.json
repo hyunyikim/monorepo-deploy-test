@@ -20,6 +20,7 @@
 		"test:cov": "jest --coverage"
 	},
 	"dependencies": {
+		"@aws-sdk/client-cloudwatch-logs": "^3.145.0",
 		"@grpc/grpc-js": "^1.6.8",
 		"@grpc/proto-loader": "^0.7.0",
 		"@nestjs/common": "^8.0.0",
@@ -44,9 +45,12 @@
 		"morgan": "^1.10.0",
 		"mqtt": "^4.3.7",
 		"nats": "^2.7.1",
+		"nest-winston": "^1.7.0",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",
-		"rxjs": "^7.2.0"
+		"rxjs": "^7.2.0",
+		"winston": "^3.8.1",
+		"winston-cloudwatch": "^6.0.1"
 	},
 	"devDependencies": {
 		"@nestjs/cli": "^8.0.0",

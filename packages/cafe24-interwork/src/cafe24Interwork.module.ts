@@ -12,6 +12,9 @@ import {JwtModule} from '@nestjs/jwt';
 import {GuaranteeRequestRepository} from './DynamoRepo';
 import {Cafe24EventService} from './cafe24Event.service';
 import {SlackReporter} from './slackReporter';
+import {WinstonModule, utilities} from 'nest-winston';
+import {transports, format} from 'winston';
+import * as WinstonCloudWatch from 'winston-cloudwatch';
 
 @Module({
 	imports: [
@@ -25,6 +28,43 @@ import {SlackReporter} from './slackReporter';
 		ConfigModule.forRoot({
 			envFilePath:
 				process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
+		}),
+
+		WinstonModule.forRootAsync({
+			imports: [ConfigModule],
+			useFactory: (configService: ConfigService) => {
+				const transportList = [
+					new WinstonCloudWatch({
+						level:
+							process.env.NODE_ENV === 'production'
+								? 'info'
+								: 'silly',
+						logGroupName: configService.getOrThrow(
+							'AWS_CLOUDWATCH_LOG_GROUP'
+						),
+						logStreamName: configService.getOrThrow(
+							'AWS_CLOUDWATCH_LOG_STREAM'
+						),
+					}),
+					new transports.Console({
+						level:
+							process.env.NODE_ENV === 'production'
+								? 'info'
+								: 'silly',
+						format: format.combine(
+							format.timestamp(),
+							utilities.format.nestLike('@vircle/cafe24', {
+								prettyPrint: true,
+							})
+						),
+					}),
+				];
+
+				return {
+					transports: transportList,
+				};
+			},
+			inject: [ConfigService],
 		}),
 	],
 	controllers: [
