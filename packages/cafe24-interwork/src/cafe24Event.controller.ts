@@ -1,6 +1,15 @@
-import {Body, Controller, Get, Headers, Post, UseGuards} from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	Headers,
+	InternalServerErrorException,
+	Post,
+	UseFilters,
+	UseGuards,
+} from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
-import {ApiKeyGuard} from './apiKeyGuard';
+import {ApiKeyGuard} from './guard';
 import {
 	EventAppDelete,
 	EventAppExpire,
@@ -10,8 +19,10 @@ import {
 	WebHookBody,
 } from './cafe24Interwork.dto';
 import {Cafe24EventService} from './cafe24Event.service';
+import {HttpExceptionFilter} from './filter';
 
 @Controller({path: 'events'})
+@UseFilters(HttpExceptionFilter)
 export class Cafe24EventController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService,
@@ -20,7 +31,7 @@ export class Cafe24EventController {
 
 	@Get('')
 	alive() {
-		return 'Alive';
+		throw new InternalServerErrorException('error');
 	}
 
 	@Post('app/expire')

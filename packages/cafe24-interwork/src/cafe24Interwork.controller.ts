@@ -6,13 +6,16 @@ import {
 	Post,
 	Patch,
 	UseGuards,
+	UseFilters,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {GetToken, TokenInfo} from './getToken.decorator';
 import {IssueSetting} from './interwork.entity';
-import {JwtAuthGuard} from './jwtGuard/jwtAuth.guard';
+import {JwtAuthGuard} from './guard';
+import {HttpExceptionFilter} from './filter';
 
 @Controller({path: 'interwork'})
+@UseFilters(HttpExceptionFilter)
 export class Cafe24InterworkController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService

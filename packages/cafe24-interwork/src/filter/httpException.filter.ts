@@ -7,8 +7,9 @@ import {
 	InternalServerErrorException,
 	LoggerService,
 } from '@nestjs/common';
-import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
+
 import {Request, Response} from 'express';
+import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -26,14 +27,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		}
 
 		const response = (exception as HttpException).getResponse();
-		const stack = exception.stack;
-		const log = {
-			url: req.url,
-			response,
-			stack,
-		};
 
-		this.logger.log(log);
+		this.logger.error(exception);
 
 		res.status((exception as HttpException).getStatus()).json(response);
 	}

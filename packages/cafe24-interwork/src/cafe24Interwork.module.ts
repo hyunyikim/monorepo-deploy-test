@@ -29,7 +29,6 @@ import * as WinstonCloudWatch from 'winston-cloudwatch';
 			envFilePath:
 				process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
 		}),
-
 		WinstonModule.forRootAsync({
 			imports: [ConfigModule],
 			useFactory: (configService: ConfigService) => {
@@ -45,6 +44,7 @@ import * as WinstonCloudWatch from 'winston-cloudwatch';
 						logStreamName: configService.getOrThrow(
 							'AWS_CLOUDWATCH_LOG_STREAM'
 						),
+						jsonMessage: true,
 					}),
 					new transports.Console({
 						level:
@@ -59,7 +59,6 @@ import * as WinstonCloudWatch from 'winston-cloudwatch';
 						),
 					}),
 				];
-
 				return {
 					transports: transportList,
 				};

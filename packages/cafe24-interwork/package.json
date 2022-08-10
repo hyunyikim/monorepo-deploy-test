@@ -8,13 +8,16 @@
 	"license": "UNLICENSED",
 	"scripts": {
 		"prebuild": "rimraf dist && rimraf bundle",
-		"bundle": "NODE_NO_WARNINGS=1 webpack",
+		"bundle": "yarn bundle:prod",
+		"bundle:prod": "NODE_NO_WARNINGS=1 webpack build --config ./webpack.config.js",
+		"bundle:dev": "NODE_NO_WARNINGS=1 webpack build --config ./webpack.config.dev.js",
 		"build": "NODE_NO_WARNINGS=1 nest build",
 		"build:entity": "NODE_NO_WARNINGS=1 yarn workspace @vircle/entity build",
 		"start": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start",
 		"start:dev": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start --watch",
 		"start:debug": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start --debug --watch",
-		"start:prod": "node dist/main",
+		"start:prod": "NODE_ENV=development node dist/main",
+		"start:bundle": "node bundle/server",
 		"test": "NODE_NO_WARNINGS=1 jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage"
