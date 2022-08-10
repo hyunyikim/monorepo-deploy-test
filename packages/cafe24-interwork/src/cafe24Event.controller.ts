@@ -21,7 +21,7 @@ import {
 import {Cafe24EventService} from './cafe24Event.service';
 import {HttpExceptionFilter} from './filter';
 
-@Controller({path: 'events'})
+@Controller({version: '1', path: 'events'})
 @UseFilters(HttpExceptionFilter)
 export class Cafe24EventController {
 	constructor(

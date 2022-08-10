@@ -14,7 +14,7 @@ import {IssueSetting} from './interwork.entity';
 import {JwtAuthGuard} from './guard';
 import {HttpExceptionFilter} from './filter';
 
-@Controller({path: 'interwork'})
+@Controller({version: '1', path: 'interwork'})
 @UseFilters(HttpExceptionFilter)
 export class Cafe24InterworkController {
 	constructor(

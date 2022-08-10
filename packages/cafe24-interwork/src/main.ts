@@ -1,12 +1,9 @@
 import {NestFactory} from '@nestjs/core';
 import {Cafe24InterworkModule} from './cafe24Interwork.module';
 import {NestExpressApplication} from '@nestjs/platform-express';
-import {Logger, LoggerService, ValidationPipe} from '@nestjs/common';
+import {LoggerService, ValidationPipe, VersioningType} from '@nestjs/common';
 import * as morgan from 'morgan';
 import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
-import {WinstonModule, utilities} from 'nest-winston';
-import * as WinstonCloudWatch from 'winston-cloudwatch';
-import {transports, format} from 'winston';
 
 async function bootstrap() {
 	console.log(process.env.NODE_ENV);
@@ -18,6 +15,11 @@ async function bootstrap() {
 		app.setGlobalPrefix('cafe24');
 	}
 	app.enableCors();
+
+	app.enableVersioning({
+		type: VersioningType.URI,
+		prefix: 'v',
+	});
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,
