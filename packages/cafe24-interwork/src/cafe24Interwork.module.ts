@@ -45,6 +45,9 @@ import * as WinstonCloudWatch from 'winston-cloudwatch';
 							'AWS_CLOUDWATCH_LOG_STREAM'
 						),
 						jsonMessage: true,
+						awsRegion: configService.getOrThrow(
+							'AWS_CLOUDWATCH_REGION'
+						),
 					}),
 					new transports.Console({
 						level:
