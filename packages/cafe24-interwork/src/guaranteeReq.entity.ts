@@ -1,4 +1,4 @@
-import {IsNumber, IsObject, IsString} from 'class-validator';
+import {IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
 import {Product} from './Cafe24ApiService';
 import {WebHookBody, EventOrderShipping} from './cafe24Interwork.dto';
 
@@ -17,6 +17,15 @@ export class GuaranteeRequest {
 	@IsNumber()
 	reqState: number;
 
+	@IsString()
+	mallId: string;
+
+	@IsString()
+	eventShopNo: string;
+
+	@IsString()
+	orderId: string;
+
 	@IsObject()
 	webhook: WebHookBody<EventOrderShipping>;
 
@@ -25,4 +34,11 @@ export class GuaranteeRequest {
 
 	@IsObject()
 	product: Product | null;
+
+	@IsOptional()
+	@IsString()
+	canceledAt?: string;
+
+	@IsString()
+	cancelTraceId?: string;
 }

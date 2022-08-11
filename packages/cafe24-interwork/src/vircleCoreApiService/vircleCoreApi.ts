@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
 import {Partnership} from 'src/interwork.entity';
-
+import {Nft} from '@vircle/entity';
 @Injectable()
 export class VircleCoreAPI {
 	private httpAgent: AxiosInstance;
@@ -10,6 +10,21 @@ export class VircleCoreAPI {
 		this.httpAgent = Axios.create({
 			baseURL,
 		});
+	}
+
+	async cancelGuarantee(token: string, reqIdx: number) {
+		const {data} = await this.httpAgent.put<Nft>(
+			'/v1/admin/nft/cancel',
+			{
+				nft_req_idx: reqIdx,
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+		return data;
 	}
 
 	async getPartnerInfo(token: string) {

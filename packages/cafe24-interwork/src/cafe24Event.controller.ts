@@ -67,12 +67,14 @@ export class Cafe24EventController {
 		return;
 	}
 
-	@Post('order/refund')
+	@Post('order/return')
 	@UseGuards(ApiKeyGuard)
-	handleOrderRefundEvent(
+	async handleOrderRefundEvent(
+		@Headers('x-trace-id') traceId: string,
 		@Body() webHook: WebHookBody<EventOrderReturnExchange>
 	) {
 		console.log(webHook);
+		await this.cafe24EventService.handleReturnEvent(traceId, webHook);
 		return;
 	}
 }

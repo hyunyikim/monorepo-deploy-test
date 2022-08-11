@@ -9,9 +9,14 @@ import {Cafe24API} from './Cafe24ApiService/cafe24Api';
 import {InterworkRepository} from './DynamoRepo/interwork.repository';
 import {DateTime} from 'luxon';
 import {VircleCoreAPI} from './vircleCoreApiService';
-import {EventOrderShipping, WebHookBody} from './cafe24Interwork.dto';
+import {
+	EventOrderShipping,
+	EventOrderReturnExchange,
+	WebHookBody,
+} from './cafe24Interwork.dto';
 import {GuaranteeRequestRepository} from './DynamoRepo';
 import {TokenRefresher} from './tokenRefresher/tokenRefresher';
+
 @Injectable()
 export class Cafe24EventService {
 	private shippingEvent: IssueTiming[];
@@ -60,12 +65,47 @@ export class Cafe24EventService {
 			productCode: webHook.resource.ordering_product_code,
 			reqAt: DateTime.now().toISO(),
 			reqState,
+			mallId: webHook.resource.mall_id,
+			orderId: webHook.resource.order_id,
+			eventShopNo: webHook.resource.event_shop_no,
 			webhook: webHook,
 			traceId,
 			product,
 		});
 
 		return;
+	}
+
+	async handleReturnEvent(
+		traceId: string,
+		webHook: WebHookBody<EventOrderReturnExchange>
+	) {
+		if (webHook.resource.shipping_status === 'F') return;
+		const mallId = webHook.resource.mall_id;
+		const orderId = webHook.resource.order_id;
+		const interwork = await this.interworkRepo.getInterwork(mallId);
+		if (!interwork || !interwork.confirmedAt || interwork.leavedAt) {
+			throw new NotFoundException('Not Found Interwork Info');
+		}
+
+		const guaranteeReq = await this.guaranteeReqRepo.getRequest(
+			orderId,
+			mallId
+		);
+		if (!guaranteeReq) {
+			throw new NotFoundException('Not Found Guarantee Request');
+		}
+
+		if (!interwork.coreApiToken) {
+			throw new ForbiddenException('No permission for vircle core-api');
+		}
+		await this.vircleCoreApi.cancelGuarantee(
+			interwork.coreApiToken,
+			guaranteeReq.reqIdx
+		);
+		guaranteeReq.cancelTraceId = traceId;
+		guaranteeReq.canceledAt = DateTime.now().toISO();
+		this.guaranteeReqRepo.putRequest(guaranteeReq);
 	}
 
 	private async sendRequestForGuarantee(
@@ -80,13 +120,13 @@ export class Cafe24EventService {
 		const {nft_req_idx, nft_req_state} =
 			await this.vircleCoreApi.requestGuarantee(interwork.coreApiToken, {
 				productName: resource.ordering_product_name,
-				price: parseInt(resource.actual_payment_amount),
+				price: parseInt(resource.order_price_amount),
 				ordererName: resource.buyer_name,
 				ordererTel: resource.buyer_cellphone.replaceAll('-', ''),
 				platformName: interwork.store.shop_name,
 				modelNum: resource.ordering_product_code,
 				warranty: interwork.partnerInfo?.warrantyDate,
-				orderedAt: resource.ordered_date,
+				orderedAt: resource.order_date,
 				orderId: resource.order_id,
 				brandIdx: interwork.partnerInfo?.brand.idx,
 				nftState: DIRECT_ISSUE,

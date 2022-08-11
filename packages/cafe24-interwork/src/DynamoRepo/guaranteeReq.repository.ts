@@ -10,12 +10,13 @@ export class GuaranteeRequestRepository {
 		private tableName: string
 	) {}
 
-	async getRequest(idx: number) {
+	async getRequest(orderId: string, mallId: string) {
 		const {Item} = await this.ddbClient
 			.get({
 				TableName: this.tableName,
 				Key: {
-					reqIdx: idx,
+					orderId,
+					mallId,
 				},
 			})
 			.promise();

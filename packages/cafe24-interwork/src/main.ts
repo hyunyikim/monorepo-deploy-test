@@ -4,6 +4,7 @@ import {NestExpressApplication} from '@nestjs/platform-express';
 import {LoggerService, ValidationPipe, VersioningType} from '@nestjs/common';
 import * as morgan from 'morgan';
 import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
+import {IncomingMessage, ServerResponse} from 'http';
 
 async function bootstrap() {
 	console.log(process.env.NODE_ENV);
@@ -35,7 +36,15 @@ async function bootstrap() {
 		},
 	};
 
-	app.use(morgan('tiny', {stream}));
+	app.use(
+		morgan('tiny', {
+			stream,
+			skip: (req) => {
+				// health check용 api는 로깅하지 않는다.
+				return req.url === '/' || req.url === '/cafe24';
+			},
+		})
+	);
 	await app.listen(3000);
 }
 bootstrap();

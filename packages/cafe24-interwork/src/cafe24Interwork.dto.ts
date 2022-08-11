@@ -38,7 +38,7 @@ abstract class Order extends Resource {
 	/** 결제 PG사 이름 */
 	payment_gateway_name: string;
 	currency: 'KRW' | 'USD' | 'JPY';
-	ordered_date: string;
+	order_date: string;
 	order_place_name: string;
 	member_id: string;
 	member_authentication: 'T' | 'F' | 'B' | 'J';
