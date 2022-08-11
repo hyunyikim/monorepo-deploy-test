@@ -122,30 +122,6 @@ export class Cafe24InterworkService {
 	}
 
 	/**
-	 * refreshToken으로 AccessToken을 재발급
-	 * @param partnerIdx
-	 * @returns
-	 */
-	async refreshAccessToken(partnerIdx: number) {
-		const interwork = await this.interworkRepo.getInterworkByPartner(
-			partnerIdx
-		);
-
-		if (interwork === null) {
-			throw new NotFoundException('The interwork dose not exist.');
-		}
-
-		const {mallId, accessToken} = interwork;
-		const token = await this.cafe24Api.refreshAccessToken(
-			mallId,
-			accessToken.refresh_token
-		);
-		interwork.accessToken = token;
-		await this.interworkRepo.putInterwork(interwork);
-		return interwork;
-	}
-
-	/**
 	 * Cafe24 연동을 중지함
 	 * @param mallId
 	 * @returns

@@ -60,6 +60,13 @@ export class InterworkRepository {
 	}
 
 	async getAll() {
-		return await this.ddbClient.scan({TableName: this.tableName}).promise();
+		const {Items: list} = await this.ddbClient
+			.scan({TableName: this.tableName})
+			.promise();
+		if (!list) {
+			return [];
+		}
+
+		return plainToInstance(Cafe24Interwork, list);
 	}
 }

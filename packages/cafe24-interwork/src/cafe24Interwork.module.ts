@@ -15,9 +15,11 @@ import {SlackReporter} from './slackReporter';
 import {WinstonModule, utilities} from 'nest-winston';
 import {transports, format} from 'winston';
 import * as WinstonCloudWatch from 'winston-cloudwatch';
-
+import {TokenRefresher} from './tokenRefresher/tokenRefresher';
+import {ScheduleModule} from '@nestjs/schedule';
 @Module({
 	imports: [
+		ScheduleModule.forRoot(),
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
 			useFactory: (configService: ConfigService) => ({
@@ -128,6 +130,7 @@ import * as WinstonCloudWatch from 'winston-cloudwatch';
 		},
 		Cafe24InterworkService,
 		Cafe24EventService,
+		TokenRefresher,
 		{
 			provide: SlackReporter,
 			useFactory: (configService: ConfigService) => {
@@ -136,6 +139,14 @@ import * as WinstonCloudWatch from 'winston-cloudwatch';
 				const channel =
 					configService.getOrThrow<string>('SLACK_CHANEL_ID');
 				return new SlackReporter(token, channel);
+			},
+			inject: [ConfigService],
+		},
+		{
+			provide: 'CRON_TASK_ON',
+			useFactory: (configService: ConfigService) => {
+				const env = configService.getOrThrow<string>('CRON_TASK_ON');
+				return env === 'ON';
 			},
 			inject: [ConfigService],
 		},

@@ -1176,6 +1176,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.0.5"\
       ],\
       [\
+        "@nestjs/schedule",\
+        "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:2.1.0"\
+      ],\
+      [\
         "@nestjs/schematics",\
         "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.0.11"\
       ],\
@@ -1542,6 +1546,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "@types/cors",\
         "npm:2.8.12"\
+      ],\
+      [\
+        "@types/cron",\
+        "npm:2.0.0"\
       ],\
       [\
         "@types/cuid",\
@@ -2926,6 +2934,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "create-require",\
         "npm:1.1.1"\
+      ],\
+      [\
+        "cron",\
+        "npm:2.0.0"\
       ],\
       [\
         "cross-spawn",\
@@ -15160,6 +15172,38 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@nestjs/schedule", [\
+        ["npm:2.1.0", {\
+          "packageLocation": "./.yarn/cache/@nestjs-schedule-npm-2.1.0-449b2dd194-43423eb049.zip/node_modules/@nestjs/schedule/",\
+          "packageDependencies": [\
+            ["@nestjs/schedule", "npm:2.1.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:2.1.0", {\
+          "packageLocation": "./.yarn/__virtual__/@nestjs-schedule-virtual-27c364c1ce/0/cache/@nestjs-schedule-npm-2.1.0-449b2dd194-43423eb049.zip/node_modules/@nestjs/schedule/",\
+          "packageDependencies": [\
+            ["@nestjs/schedule", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:2.1.0"],\
+            ["@nestjs/common", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.4.5"],\
+            ["@nestjs/core", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:8.4.5"],\
+            ["@types/nestjs__common", null],\
+            ["@types/nestjs__core", null],\
+            ["@types/reflect-metadata", null],\
+            ["cron", "npm:2.0.0"],\
+            ["reflect-metadata", "npm:0.1.13"],\
+            ["uuid", "npm:8.3.2"]\
+          ],\
+          "packagePeers": [\
+            "@nestjs/common",\
+            "@nestjs/core",\
+            "@types/nestjs__common",\
+            "@types/nestjs__core",\
+            "@types/reflect-metadata",\
+            "reflect-metadata"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@nestjs/schematics", [\
         ["npm:8.0.11", {\
           "packageLocation": "./.yarn/cache/@nestjs-schematics-npm-8.0.11-a82d6f491f-f32df90df2.zip/node_modules/@nestjs/schematics/",\
@@ -18617,6 +18661,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/cron", [\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/@types-cron-npm-2.0.0-ea513eeeaf-392d2cfca5.zip/node_modules/@types/cron/",\
+          "packageDependencies": [\
+            ["@types/cron", "npm:2.0.0"],\
+            ["@types/luxon", "npm:3.0.0"],\
+            ["@types/node", "npm:17.0.31"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/cuid", [\
         ["npm:2.0.1", {\
           "packageLocation": "./.yarn/cache/@types-cuid-npm-2.0.1-e45b717bbe-54eef42164.zip/node_modules/@types/cuid/",\
@@ -19701,11 +19756,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@nestjs/microservices", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.0.5"],\
             ["@nestjs/platform-express", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:8.4.5"],\
             ["@nestjs/platform-socket.io", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.0.5"],\
+            ["@nestjs/schedule", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:2.1.0"],\
             ["@nestjs/schematics", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.0.11"],\
             ["@nestjs/testing", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:8.4.5"],\
             ["@nestjs/websockets", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.0.5"],\
             ["@slack/web-api", "npm:6.7.2"],\
             ["@types/amqplib", "npm:0.8.2"],\
+            ["@types/cron", "npm:2.0.0"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.4.1"],\
             ["@types/luxon", "npm:3.0.0"],\
@@ -24017,6 +24074,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/create-require-npm-1.1.1-839884ca2e-a9a1503d43.zip/node_modules/create-require/",\
           "packageDependencies": [\
             ["create-require", "npm:1.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["cron", [\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/cron-npm-2.0.0-9580454639-179ec137ad.zip/node_modules/cron/",\
+          "packageDependencies": [\
+            ["cron", "npm:2.0.0"],\
+            ["luxon", "npm:1.28.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -31790,6 +31857,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["luxon", [\
+        ["npm:1.28.0", {\
+          "packageLocation": "./.yarn/cache/luxon-npm-1.28.0-51c0607a71-5250cb9f13.zip/node_modules/luxon/",\
+          "packageDependencies": [\
+            ["luxon", "npm:1.28.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:2.4.0", {\
           "packageLocation": "./.yarn/cache/luxon-npm-2.4.0-53e53c605a-6071028d65.zip/node_modules/luxon/",\
           "packageDependencies": [\
