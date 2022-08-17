@@ -16,7 +16,7 @@
 		"start": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start",
 		"start:dev": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start --watch",
 		"start:debug": "NODE_NO_WARNINGS=1 NODE_ENV=development nest start --debug --watch",
-		"start:prod": "NODE_ENV=development node dist/main",
+		"start:prod": "NODE_ENV=production node dist/main",
 		"start:bundle": "node bundle/server",
 		"test": "NODE_NO_WARNINGS=1 jest",
 		"test:watch": "jest --watch",

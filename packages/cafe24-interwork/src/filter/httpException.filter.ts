@@ -17,19 +17,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		@Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
 	) {}
 
-	catch(exception: Error, host: ArgumentsHost) {
+	catch(err: Error, host: ArgumentsHost) {
 		const ctx = host.switchToHttp();
 		const req = ctx.getRequest<Request>();
 		const res = ctx.getResponse<Response>();
+		let exception: HttpException;
 
-		if (!(exception instanceof HttpException)) {
-			exception = new InternalServerErrorException();
+		if (!(err instanceof HttpException)) {
+			exception = new InternalServerErrorException(err);
+		} else {
+			exception = err;
 		}
 
-		const response = (exception as HttpException).getResponse();
-
 		this.logger.error({exception, req});
-
-		res.status((exception as HttpException).getStatus()).json(response);
+		const response = exception.getResponse();
+		res.status(exception.getStatus()).json(response);
 	}
 }

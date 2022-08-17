@@ -9,6 +9,202 @@ import {
 	IsUrl,
 } from 'class-validator';
 
+export class OrderItem {
+	/** 멀티쇼핑몰 번호 */
+	shop_no: number;
+
+	/** 품목별 주문번호의 아이디 */
+	item_no: number;
+
+	/** 품주코드 : 품목별 주문번호의 코드 */
+	order_item_code: string; // KEY FEATURE
+
+	/** 품목코드 : 시스템이 품목에 부여한 코드. 해당 쇼핑몰 내에서 품목 코드는 중복되지 않음. */
+	variant_code: string;
+
+	/** 상품의 고유한 일련 번호. 해당 쇼핑몰 내에서 상품 번호는 중복되지 않음. */
+	product_no: number;
+
+	/** 시스템이 상품에 부여한 코드. 해당 쇼핑몰 내에서 상품코드는 중복되지 않음. */
+	product_code: string; // P000000N
+
+	/** 자체상품 코드 */
+	custom_product_code: string;
+
+	/** 자체 품목 코드 */
+	custom_variant_code: string;
+
+	/** 상품의 영문 이름. 해외 배송 등에 사용 가능함. */
+	eng_product_name: string | null;
+
+	/** 상품옵션의 아이디 */
+	option_id: string;
+
+	/** 주문한 상품의 옵션값 */
+	option_value: string;
+
+	/** 기본옵션값 */
+	option_value_default: string;
+
+	additional_option_value: string;
+	additional_option_values: {
+		key: string;
+		type: string;
+		name: string;
+		value: string;
+	}[];
+
+	product_name: string;
+	product_name_default: string;
+	product_price: string;
+	option_price: string;
+	additional_discount_price: string;
+	coupon_discount_price: string;
+	app_item_discount_amount: string;
+	payment_amount: string;
+	quantity: number;
+	/** 상품 세금 구분 (A : 과세 B : 면세 C : 비과세) */
+	product_tax_type: 'A' | 'B' | 'C';
+
+	/** 과세율 */
+	tax_rate: number;
+
+	/** 공급사의 상품명 */
+	supplier_product_name: string;
+
+	/** 공급사의 거래 유형 ( D: 직등록형, P: 수수료형 ) */
+	supplier_transaction_type: 'D' | 'P';
+
+	/** 공급사의 아이디 */
+	supplier_id: string;
+
+	/** 공급사의 이름 */
+	supplier_name: string;
+
+	/** 송장번호 */
+	tracking_no: string;
+
+	/** 배송번호. 품목별 주문번호를 배송준비중으로 처리하면 시스템이 자동으로 부여하는 번호. */
+	shipping_code: string;
+
+	/** 취소/교환/반품 번호 */
+	claim_code: string; //C20190107-0000001
+
+	/** 취소/교환/반품 요청 사유 타입 */
+	claim_reason_type: string; //
+
+	/** 구매자의 취소/교환/반품 신청 사유 구분. */
+	claim_reason: string; // 구매자의 취소/교환/반품 신청 사유 상세 내용.
+
+	/** 환불 은행 */
+	refund_bank_name: string;
+
+	refund_bank_account_no: string;
+	refund_bank_account_holder: string;
+	// "post_express_flag": null;
+	/** 주문상태. 주문 상태별로 각각의 코드가 있음. */
+	order_status: string;
+
+	/** 철회상태
+	 * Cancellation : 취소철회
+	 * Exchange : 교환철회
+	 * Return : 반품철회
+	 */
+	request_undone: string | null;
+
+	/** 취소/교환/반품 요청 수량 */
+	claim_quantity: number;
+	/** 주문상태의 추가정보 */
+	order_status_additional_info: null;
+
+	/**
+	 * 현재 처리상태의 코드
+	 * N1 : 정상, N2 : 교환상품, C1 : 입금전취소, C2 : 배송전취소, C3 : 반품, E1 : 교환
+	 */
+	status_code: string;
+
+	/** 현재 처리상태 문구설명 */
+	status_text: string;
+
+	/** 마켓연동 상태값 */
+	open_market_status: string;
+
+	/** 배송 대상 주문건의 묶음배송 유형
+	 *  N : 단일 주문 일반 배송(Normal)
+	 * C :복합 주문 결합 배송(Combination)
+	 * */
+	bundled_shipping_type: 'N' | 'C';
+
+	/** 배송업체의 아이디 */
+	shipping_company_id: string;
+
+	/** 배송업체의 이름 */
+	shipping_company_name: string;
+
+	/** 배송업체 코드 */
+	shipping_company_code: string;
+
+	/** 세트상품 여부 */
+	product_bundle: 'T' | 'F';
+
+	/** 세트상품번호 */
+	product_bundle_no: string;
+	product_bundle_name: string | null;
+
+	original_item_no: number[];
+	store_pickup: 'F' | 'T';
+	ordered_date: string;
+	shipped_date: string | null;
+	delivered_date: string | null;
+	cancel_date: string | null;
+	return_confirmed_date: string | null;
+	return_request_date: string | null;
+	/** 반품수거일 */
+	return_collected_date: string | null;
+	/** 취소 요청일 */
+	cancel_request_date: string | null;
+	/** 환불 완료일 */
+	refund_date: string | null;
+	/** 교환 요청일 */
+	exchange_request_date: string | null;
+	/** 교환 완료일 */
+	exchange_date: string | null;
+	/** 상품의 소재. 복합 소재일 경우 상품의 소재와 함유랑을 함께 입력해야함 */
+	product_material: string | null;
+
+	/** 상품소재 영문 설명 */
+	product_material_eng: string | null;
+
+	/** 상품이 의류인 경우, 옷감. */
+	cloth_fabric: string | null;
+
+	/** 상품 중량 (kg) */
+	product_weight: string | null;
+
+	/** 상품의 부피 */
+	volume_size: string | null;
+
+	/** 상품의 부피 무게 */
+	volume_size_weight: string | null;
+
+	/** 상품의 원산지 */
+	origin_place: string;
+
+	/** 원산지 코드 */
+	origin_place_no: 1798;
+
+	/** 원산지 국가 코드 */
+	made_in_code: string | null;
+
+	/** 사은품 여부 */
+	gift: 'F' | 'T';
+
+	order_id: string;
+
+	claim_type: string;
+
+	claim_status: string;
+}
 export class AccessToken {
 	@IsNotEmpty()
 	@IsString()

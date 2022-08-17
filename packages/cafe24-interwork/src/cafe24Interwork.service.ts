@@ -92,33 +92,28 @@ export class Cafe24InterworkService {
 	}
 
 	async completeInterwork(mallId: string, {token, partnerIdx}: TokenInfo) {
-		try {
-			const interwork = await this.getInterworkInfo(mallId);
-			if (interwork === null) {
-				throw new NotFoundException('The interwork dose not exist.');
-			}
-
-			const partnership = await this.vircleCoreApi.getPartnerInfo(token);
-
-			interwork.partnerIdx = partnerIdx;
-			interwork.coreApiToken = token;
-			interwork.updatedAt = DateTime.now().toISO();
-			interwork.confirmedAt = DateTime.now().toISO();
-			interwork.issueSetting = {
-				issueCategories: ['ALL'],
-				issueCustomerGroups: ['ALL'],
-				issueProducts: ['ALL'],
-				issueTiming: 'AFTER_DELIVERED',
-			};
-			interwork.partnerInfo = partnership;
-
-			await this.interworkRepo.putInterwork(interwork);
-			this.slackReporter.sendInterworkReport(interwork);
-			return interwork;
-		} catch (err) {
-			console.log(err);
-			throw err;
+		const interwork = await this.getInterworkInfo(mallId);
+		if (interwork === null) {
+			throw new NotFoundException('The interwork dose not exist.');
 		}
+
+		const partnership = await this.vircleCoreApi.getPartnerInfo(token);
+
+		interwork.partnerIdx = partnerIdx;
+		interwork.coreApiToken = token;
+		interwork.updatedAt = DateTime.now().toISO();
+		interwork.confirmedAt = DateTime.now().toISO();
+		interwork.issueSetting = {
+			issueCategories: ['ALL'],
+			issueCustomerGroups: ['ALL'],
+			issueProducts: ['ALL'],
+			issueTiming: 'AFTER_DELIVERED',
+		};
+		interwork.partnerInfo = partnership;
+
+		await this.interworkRepo.putInterwork(interwork);
+		this.slackReporter.sendInterworkReport(interwork);
+		return interwork;
 	}
 
 	/**

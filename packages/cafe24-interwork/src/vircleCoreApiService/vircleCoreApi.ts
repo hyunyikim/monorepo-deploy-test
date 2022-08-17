@@ -14,13 +14,14 @@ export class VircleCoreAPI {
 
 	async cancelGuarantee(token: string, reqIdx: number) {
 		const {data} = await this.httpAgent.put<Nft>(
-			'/v1/admin/nft/cancel',
+			'/admin/nft/cancel',
 			{
-				nft_req_idx: reqIdx,
+				nft_req_idx: reqIdx.toString(),
 			},
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,
+					token,
 				},
 			}
 		);

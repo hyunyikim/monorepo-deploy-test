@@ -34,13 +34,6 @@ export class Cafe24EventController {
 		throw new InternalServerErrorException('error');
 	}
 
-	@Post('app/expire')
-	@UseGuards(ApiKeyGuard)
-	handleAppExpireEvent(@Body() webHook: WebHookBody<EventAppExpire>) {
-		console.log(webHook);
-		return;
-	}
-
 	@Post('app/delete')
 	@UseGuards(ApiKeyGuard)
 	async handleAppDeleteEvent(@Body() webHook: WebHookBody<EventAppDelete>) {
@@ -55,8 +48,7 @@ export class Cafe24EventController {
 		@Headers('x-trace-id') traceId: string,
 		@Body() webHook: WebHookBody<EventOrderShipping>
 	) {
-		await this.cafe24EventService.handleShippingEvent(traceId, webHook);
-
+		await this.cafe24EventService.handleShippingWebhook(traceId, webHook);
 		return 'OK';
 	}
 
@@ -69,12 +61,11 @@ export class Cafe24EventController {
 
 	@Post('order/return')
 	@UseGuards(ApiKeyGuard)
-	async handleOrderRefundEvent(
-		@Headers('x-trace-id') traceId: string,
+	handleOrderRefundRequestEvent(
+		// @Headers('x-trace-id') traceId: string,
 		@Body() webHook: WebHookBody<EventOrderReturnExchange>
 	) {
 		console.log(webHook);
-		await this.cafe24EventService.handleReturnEvent(traceId, webHook);
-		return;
+		return 'OK';
 	}
 }

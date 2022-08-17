@@ -1,5 +1,5 @@
 import {IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
-import {Product} from './Cafe24ApiService';
+import {OrderItem, Product} from './Cafe24ApiService';
 import {WebHookBody, EventOrderShipping} from './cafe24Interwork.dto';
 
 export class GuaranteeRequest {
@@ -20,8 +20,8 @@ export class GuaranteeRequest {
 	@IsString()
 	mallId: string;
 
-	@IsString()
-	eventShopNo: string;
+	@IsNumber()
+	eventShopNo: number;
 
 	@IsString()
 	orderId: string;
@@ -32,8 +32,11 @@ export class GuaranteeRequest {
 	@IsString()
 	traceId: string;
 
+	@IsString()
+	orderItemCode: string;
+
 	@IsObject()
-	product: Product | null;
+	orderItem: OrderItem;
 
 	@IsOptional()
 	@IsString()

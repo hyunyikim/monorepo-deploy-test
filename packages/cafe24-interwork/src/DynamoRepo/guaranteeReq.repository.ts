@@ -10,18 +10,52 @@ export class GuaranteeRequestRepository {
 		private tableName: string
 	) {}
 
-	async getRequest(orderId: string, mallId: string) {
+	async getRequest(reqIdx: number, mallId: string) {
 		const {Item} = await this.ddbClient
 			.get({
 				TableName: this.tableName,
 				Key: {
-					orderId,
+					reqIdx,
 					mallId,
 				},
 			})
 			.promise();
 
 		return Item ? plainToInstance(GuaranteeRequest, Item) : null;
+	}
+
+	async getRequestListByOrderId(orderId: string, mallId: string) {
+		const {Items} = await this.ddbClient
+			.query({
+				TableName: this.tableName,
+				IndexName: 'orderId-index',
+				KeyConditionExpression: 'orderId = :id and mallId = :mId',
+				ExpressionAttributeValues: {
+					':id': orderId,
+					':mId': mallId,
+				},
+			})
+			.promise();
+
+		if (!Items) return [];
+		return plainToInstance(GuaranteeRequest, Items);
+	}
+
+	async getRequestListByOrderItemId(orderItemId: string, mallId: string) {
+		const {Items} = await this.ddbClient
+			.query({
+				TableName: this.tableName,
+				IndexName: 'orderItemId-index',
+				KeyConditionExpression: 'orderItemId = :id and mallId = :mId',
+				ExpressionAttributeValues: {
+					':id': orderItemId,
+					':mId': mallId,
+				},
+			})
+			.promise();
+
+		if (!Items) return [];
+		return plainToInstance(GuaranteeRequest, Items);
 	}
 
 	async putRequest(req: GuaranteeRequest) {

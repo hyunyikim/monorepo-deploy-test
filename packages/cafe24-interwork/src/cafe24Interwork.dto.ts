@@ -80,7 +80,7 @@ export class EventOrderRegister extends Order {}
 export class EventOrderShipping extends Order {
 	ordering_product_code: string;
 	ordering_product_name: string;
-	return_confirmed_date: null;
+	return_confirmed_date: string | null;
 }
 
 /**쇼핑몰에 접수된 주문의 반품상태가 변경된 경우 (90027, 90028) */
