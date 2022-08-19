@@ -4,17 +4,12 @@ import {NestExpressApplication} from '@nestjs/platform-express';
 import {LoggerService, ValidationPipe, VersioningType} from '@nestjs/common';
 import * as morgan from 'morgan';
 import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
-import {IncomingMessage, ServerResponse} from 'http';
 
 async function bootstrap() {
-	console.log(process.env.NODE_ENV);
-
 	const app = await NestFactory.create<NestExpressApplication>(
 		Cafe24InterworkModule
 	);
-	if (process.env.NODE_ENV === 'development') {
-		app.setGlobalPrefix('cafe24');
-	}
+
 	app.enableCors();
 
 	app.enableVersioning({
@@ -45,6 +40,8 @@ async function bootstrap() {
 			},
 		})
 	);
+	logger.log(`NODE_ENV: ${process.env.NODE_ENV ?? 'UNDEFINED'}`);
+
 	await app.listen(3000);
 }
 bootstrap();

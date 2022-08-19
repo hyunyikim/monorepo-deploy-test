@@ -8,7 +8,7 @@ module.exports = {
 	entry: './dist/main.js', // make sure this matches the main root of your code
 	output: {
 		path: path.join(__dirname, 'bundle'), // this can be any path and directory you want
-		filename: `server.js`,
+		filename: `main.js`,
 	},
 	optimization: {
 		minimize: false, // enabling this reduces file size and readability

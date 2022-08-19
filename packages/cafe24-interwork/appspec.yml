@@ -2,14 +2,14 @@ version: 0.0
 os: linux
 files:
     - source: /
-      destination: /root/server
+      destination: /root/cafe24-interwork
 permissions:
-    - object: /root/server
+    - object: /root/cafe24-interwork
       owner: root
       group: root
       mode: 755
 hooks:
     AfterInstall:
-        - location: start.sh
+        - location: start.prod.sh
           timeout: 60
           runas: root

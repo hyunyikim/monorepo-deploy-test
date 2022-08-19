@@ -5,7 +5,7 @@ import {Cafe24Interwork} from '../interwork.entity';
 import {plainToInstance} from 'class-transformer';
 
 const REGION = 'ap-northeast-2';
-const TEST_TABLE_NAME = 'test_interwork_cafe24';
+const TEST_TABLE_NAME = 'dev_interwork_cafe24';
 
 describe('Interwork Repository Provider 테스트', () => {
 	let interworkRepo: InterworkRepository;
@@ -27,6 +27,14 @@ describe('Interwork Repository Provider 테스트', () => {
 		}).compile();
 
 		interworkRepo = module.get<InterworkRepository>(InterworkRepository);
+	});
+
+	it('테이블 확인', async () => {
+		const ddb = new DynamoDB({region: REGION});
+		const table = await ddb
+			.describeTable({TableName: TEST_TABLE_NAME})
+			.promise();
+		console.log(table.Table?.KeySchema);
 	});
 
 	it('interworkRepo 생성', () => {
@@ -58,14 +66,14 @@ describe('Interwork Repository Provider 테스트', () => {
 		expect(after.partnerIdx).toBe(123);
 	});
 
+	it('Get All Interwork', async () => {
+		const list = await interworkRepo.getAll();
+		expect(list.length).toBeGreaterThan(0);
+	});
+
 	it('Delete Interwork', async () => {
 		await interworkRepo.deleteInterworkItem('MASS_ADOPTION_TEST');
 		const item = await interworkRepo.getInterwork('MASS_ADOPTION_TEST');
 		expect(item).toBeNull();
-	});
-
-	it('Get All Interwork', async () => {
-		const list = await interworkRepo.getAll();
-		expect(list).toHaveLength(2);
 	});
 });
