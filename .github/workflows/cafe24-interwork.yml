@@ -17,7 +17,7 @@ on:
 jobs:
     build_type_test:
         if: ${{ github.event_name == 'pull_request' }}
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
         defaults:
             run:
                 shell: bash
@@ -42,7 +42,7 @@ jobs:
 
     deploy_on_dev:
         if: ${{ github.ref_name == 'dev' && github.event_name == 'push' }}
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
         defaults:
             run:
                 shell: bash
@@ -72,7 +72,7 @@ jobs:
 
     deploy_on_prod:
         if: ${{ github.ref_name == 'main' && github.event_name == 'push'  }}
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
         defaults:
             run:
                 shell: bash
@@ -127,7 +127,7 @@ jobs:
 
     deploy_on_stage:
         if: ${{ github.ref_name == 'stage' && github.event_name == 'push'  }}
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
         defaults:
             run:
                 shell: bash
