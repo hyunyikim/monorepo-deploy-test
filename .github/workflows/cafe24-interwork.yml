@@ -1,4 +1,4 @@
-name: cafe24_interwork_workflow
+name: '@vircle/cafe24-interwork'
 on:
     push:
         branches:

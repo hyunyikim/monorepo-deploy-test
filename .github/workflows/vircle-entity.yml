@@ -1,4 +1,4 @@
-name: 'coverage'
+name: '@vircle/entity'
 on:
     pull_request:
         branches:
