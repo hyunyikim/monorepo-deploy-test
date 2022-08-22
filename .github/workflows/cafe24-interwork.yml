@@ -16,7 +16,7 @@ on:
 
 jobs:
     build_type_test:
-        if: ${{  github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' }}
         runs-on: ubuntu-18.04
         defaults:
             run:
@@ -63,12 +63,12 @@ jobs:
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: ap-northeast-2
 
-            - name: aws ssm run command
+            - name: 개발 서버에 배포 (aws ssm send-command)
               run: |
                   aws ssm send-command \
                     --document-name "AWS-RunShellScript" \
                     --targets '[{"Key":"InstanceIds","Values":["i-03a594cfb6be66766"]}]' \
-                    --parameters '{"commands":[ "#!/bin/bash", "cd ~/vircle/packages/cafe24-interwork", "bash ./script/start.dev.sh", "touch done.txt" ]}' \
+                    --parameters '{"commands":[ "#!/bin/bash","cd ~/vircle/packages/cafe24-interwork", "bash ./script/start.dev.sh"]}' \
                     --output text
 
     deploy_on_prod:
@@ -141,3 +141,42 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+
+            - name: 의존성 체크
+              run: yarn
+
+            - name: build 하기
+              run: yarn build
+
+            - name: bundle 하기
+              run: yarn bundle:prod
+
+            - name: copy appspec file
+              run: cp appspec.yml bundle/appspec.yml
+
+            - name: copy shell file
+              run: cp script/start.prod.sh bundle/start.prod.sh
+
+            - name: aws 세팅
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ap-northeast-2
+
+            - name: aws s3 업로드
+              run: |
+                  aws deploy push \
+                    --application-name vircle \
+                    --description "git hash ${{ github.sha }}" \
+                    --no-ignore-hidden-files \
+                    --s3-location s3://vircle-app/cafe24-interwork/stage/${{ github.sha }}.zip \
+                    --source ./bundle
+
+            - name: aws codedeploy create-deployment
+              run: |
+                  aws deploy create-deployment \
+                    --application-name vircle \
+                    --deployment-config-name CodeDeployDefault.OneAtATime \
+                    --deployment-group-name stage_cafe24_interwork \
+                    --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/stage/${{ github.sha }}.zip

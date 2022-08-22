@@ -1,4 +1,9 @@
+#!/bin/bash
+whoami
+
 LOG_POINT=~/log/cafe24-interwork/deploy.log
+
+echo LOG_POINT
 
 echo ">[$(date) START DEPLOY BY USER : ${whoami}]" >>  LOG_POINT
 
@@ -19,10 +24,10 @@ yarn build
 
 echo ">[$(date)] Kill All pm2 process]" >> LOG_POINT
 
-yarn pm2 kill
+pm2 kill
 
 echo ">[$(date)] Application Run by pm2]" >>LOG_POINT
 
-NODE_ENV=development yarn pm2 start --name CAFE24-INTERWORK dist/main.js >> LOG_POINT
+NODE_ENV=development pm2 start --name CAFE24-INTERWORK dist/main.js >> LOG_POINT
 
 echo "[$(date)] DONE DEPLOY]" >> LOG_POINT
