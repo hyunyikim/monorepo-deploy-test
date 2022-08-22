@@ -239,6 +239,16 @@ export class Nft {
 
 	@OneToMany(() => NftImage, (image) => image.nft, {eager: true})
 	images: NftImage[];
+
+	@Column({name: 'issuer_idx', type: 'int'})
+	issuerIdx: number;
+
+	@ManyToOne(() => Admin, {createForeignKeyConstraints: false, eager: false})
+	@JoinColumn({name: 'issuer_idx'})
+	issuer: Admin;
+
+	@Column({name: 'reminder_dt', type: 'datetime', nullable: true})
+	reminderAt: Date;
 }
 
 @Entity({name: 'TB_NFT_HISTORY'})

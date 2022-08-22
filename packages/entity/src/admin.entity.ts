@@ -441,4 +441,31 @@ export class Admin {
 		length: 250,
 	})
 	webhookApiWallet: string;
+
+	@Column({
+		name: 'after_service_info',
+		type: 'varchar',
+		length: 1000,
+	})
+	afterServiceInfo: string;
+
+	@Column({
+		name: 'return_info',
+		type: 'varchar',
+		length: 1000,
+	})
+	returnInfo: string;
+
+	@Column({
+		name: 'use_auto_increment_order_num',
+		enum: YN,
+	})
+	useAutoIncrementOrderNum: YN;
+
+	@Column({
+		name: 'customer_center_url',
+		type: 'varchar',
+		length: 250,
+	})
+	customerCenterUrl: string;
 }

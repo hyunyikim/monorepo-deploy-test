@@ -96,6 +96,10 @@ export class CreditHistory {
 	@PrimaryGeneratedColumn({name: 'history_idx', type: 'int', unsigned: true})
 	idx: number;
 
+	@Index({unique: true})
+	@Column({name: 'history_uuid', type: 'char', length: 32})
+	uuid: string;
+
 	@Index()
 	@Column({name: 'partnership_idx', type: 'int', unsigned: true})
 	partnershipIdx: string;

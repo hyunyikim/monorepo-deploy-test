@@ -8,18 +8,22 @@ on:
 
 jobs:
     test-coverage:
-        timeout-minutes: 5
+        timeout-minutes: 10
         permissions:
             checks: write
             pull-requests: write
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [16.x]
+        runs-on: ubuntu-20.04
+
         steps:
             - uses: actions/checkout@v2
               with:
                   token: ${{ secrets.SECRET_TOKEN }}
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
             - uses: artiomtr/jest-coverage-report-action@v2
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
