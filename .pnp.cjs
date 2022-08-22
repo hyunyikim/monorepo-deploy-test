@@ -20079,6 +20079,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:3.0.2"],\
             ["rxjs", "npm:7.5.5"],\
             ["source-map-support", "npm:0.5.21"],\
+            ["standard-version", "npm:9.5.0"],\
             ["supertest", "npm:6.2.3"],\
             ["ts-jest", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:27.1.4"],\
             ["ts-loader", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.3.0"],\
@@ -23985,6 +23986,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/conventional-changelog-npm-3.1.24-11de891016-54253a3e37.zip/node_modules/conventional-changelog/",\
           "packageDependencies": [\
             ["conventional-changelog", "npm:3.1.24"],\
+            ["conventional-changelog-angular", "npm:5.0.13"],\
+            ["conventional-changelog-atom", "npm:2.0.8"],\
+            ["conventional-changelog-codemirror", "npm:2.0.8"],\
+            ["conventional-changelog-conventionalcommits", "npm:4.6.3"],\
+            ["conventional-changelog-core", "npm:4.2.4"],\
+            ["conventional-changelog-ember", "npm:2.0.9"],\
+            ["conventional-changelog-eslint", "npm:3.0.9"],\
+            ["conventional-changelog-express", "npm:2.0.6"],\
+            ["conventional-changelog-jquery", "npm:3.0.11"],\
+            ["conventional-changelog-jshint", "npm:2.0.9"],\
+            ["conventional-changelog-preset-loader", "npm:2.3.4"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:3.1.25", {\
+          "packageLocation": "./.yarn/cache/conventional-changelog-npm-3.1.25-dfc69e696b-1ea1837812.zip/node_modules/conventional-changelog/",\
+          "packageDependencies": [\
+            ["conventional-changelog", "npm:3.1.25"],\
             ["conventional-changelog-angular", "npm:5.0.13"],\
             ["conventional-changelog-atom", "npm:2.0.8"],\
             ["conventional-changelog-codemirror", "npm:2.0.8"],\
@@ -38390,6 +38409,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["figures", "npm:3.2.0"],\
             ["find-up", "npm:5.0.0"],\
             ["fs-access", "npm:1.0.1"],\
+            ["git-semver-tags", "npm:4.1.1"],\
+            ["semver", "npm:7.3.7"],\
+            ["stringify-package", "npm:1.0.1"],\
+            ["yargs", "npm:16.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:9.5.0", {\
+          "packageLocation": "./.yarn/cache/standard-version-npm-9.5.0-5662d02730-55003206f7.zip/node_modules/standard-version/",\
+          "packageDependencies": [\
+            ["standard-version", "npm:9.5.0"],\
+            ["chalk", "npm:2.4.2"],\
+            ["conventional-changelog", "npm:3.1.25"],\
+            ["conventional-changelog-config-spec", "npm:2.1.0"],\
+            ["conventional-changelog-conventionalcommits", "npm:4.6.3"],\
+            ["conventional-recommended-bump", "npm:6.1.0"],\
+            ["detect-indent", "npm:6.1.0"],\
+            ["detect-newline", "npm:3.1.0"],\
+            ["dotgitignore", "npm:2.1.0"],\
+            ["figures", "npm:3.2.0"],\
+            ["find-up", "npm:5.0.0"],\
             ["git-semver-tags", "npm:4.1.1"],\
             ["semver", "npm:7.3.7"],\
             ["stringify-package", "npm:1.0.1"],\

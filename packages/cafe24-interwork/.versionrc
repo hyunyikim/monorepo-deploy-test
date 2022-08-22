@@ -1,0 +1,5 @@
+{
+	"path": ".",
+	"tag-prefix": "cafe24-v",
+	"releaseCommitMessageFormat": "chore(cafe24): updated apps changelog"
+}
