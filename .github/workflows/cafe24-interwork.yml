@@ -68,8 +68,7 @@ jobs:
                   aws ssm send-command \
                     --document-name "AWS-RunShellScript" \
                     --targets '[{"Key":"InstanceIds","Values":["i-03a594cfb6be66766"]}]' \
-                    --parameters '{"commands":[ "#!/bin/bash","cd ~/vircle/packages/cafe24-interwork", "bash ./script/start.dev.sh"]}' \
-                    --output text
+                    --parameters '{"commands":[ "#!/bin/bash","cd ~/vircle/packages/cafe24-interwork", "bash ./script/start.dev.sh"]}'
 
     deploy_on_prod:
         if: ${{ github.ref_name == 'main' && github.event_name == 'push'  }}
