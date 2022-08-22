@@ -11067,17 +11067,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"conventional-changelog-conventionalcommits@npm:4.6.1":
-  version: 4.6.1
-  resolution: "conventional-changelog-conventionalcommits@npm:4.6.1"
-  dependencies:
-    compare-func: ^2.0.0
-    lodash: ^4.17.15
-    q: ^1.5.1
-  checksum: f866616c8f6f21cea005b42792451bfbd16bd4d82872867d1218f67a7993a53c5d87e26d6b483d9252e8022f2e4570e6cf9fa2a409aae5a3d73eea92ccf78b13
-  languageName: node
-  linkType: hard
-
 "conventional-changelog-conventionalcommits@npm:4.6.3, conventional-changelog-conventionalcommits@npm:^4.3.1, conventional-changelog-conventionalcommits@npm:^4.5.0":
   version: 4.6.3
   resolution: "conventional-changelog-conventionalcommits@npm:4.6.3"
@@ -11180,25 +11169,6 @@ __metadata:
   bin:
     conventional-changelog-writer: cli.js
   checksum: 5c0129db44577f14b1f8de225b62a392a9927ba7fe3422cb21ad71a771b8472bd03badb7c87cb47419913abc3f2ce3759b69f59550cdc6f7a7b0459015b3b44c
-  languageName: node
-  linkType: hard
-
-"conventional-changelog@npm:3.1.24":
-  version: 3.1.24
-  resolution: "conventional-changelog@npm:3.1.24"
-  dependencies:
-    conventional-changelog-angular: ^5.0.12
-    conventional-changelog-atom: ^2.0.8
-    conventional-changelog-codemirror: ^2.0.8
-    conventional-changelog-conventionalcommits: ^4.5.0
-    conventional-changelog-core: ^4.2.1
-    conventional-changelog-ember: ^2.0.9
-    conventional-changelog-eslint: ^3.0.9
-    conventional-changelog-express: ^2.0.6
-    conventional-changelog-jquery: ^3.0.11
-    conventional-changelog-jshint: ^2.0.9
-    conventional-changelog-preset-loader: ^2.3.4
-  checksum: 54253a3e3761369a8c68ec1ea57f3847b323a0104503dfccfd305553f77e83636132406d463dfa60ad3851dba42d84a528e8cb685943e8d6d7ae3eb37aaa19bb
   languageName: node
   linkType: hard
 
@@ -14204,15 +14174,6 @@ __metadata:
   version: 0.1.7
   resolution: "from@npm:0.1.7"
   checksum: b85125b7890489656eb2e4f208f7654a93ec26e3aefaf3bbbcc0d496fc1941e4405834fcc9fe7333192aa2187905510ace70417bbf9ac6f6f4784a731d986939
-  languageName: node
-  linkType: hard
-
-"fs-access@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "fs-access@npm:1.0.1"
-  dependencies:
-    null-check: ^1.0.0
-  checksum: 6792b115a5fc5095b3dbc42ea329afff372e0056fde8214a5b0c9c7559806378db9316660bac1682b295cc576bab3c19571f50f8a39ab4605c3d194bee0087c9
   languageName: node
   linkType: hard
 
@@ -19514,13 +19475,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"null-check@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "null-check@npm:1.0.0"
-  checksum: 6569fb2d74399e436eb4b05c7fdd341f22e87f3e0598a97309681073a364d6684997100cd329f2107d149663c506b2bfa47a0afdff23739ac1ba6ca5c4c6aa19
-  languageName: node
-  linkType: hard
-
 "num2fraction@npm:^1.2.2":
   version: 1.2.2
   resolution: "num2fraction@npm:1.2.2"
@@ -23308,31 +23262,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"standard-version@npm:^9.3.2":
-  version: 9.3.2
-  resolution: "standard-version@npm:9.3.2"
-  dependencies:
-    chalk: ^2.4.2
-    conventional-changelog: 3.1.24
-    conventional-changelog-config-spec: 2.1.0
-    conventional-changelog-conventionalcommits: 4.6.1
-    conventional-recommended-bump: 6.1.0
-    detect-indent: ^6.0.0
-    detect-newline: ^3.1.0
-    dotgitignore: ^2.1.0
-    figures: ^3.1.0
-    find-up: ^5.0.0
-    fs-access: ^1.0.1
-    git-semver-tags: ^4.0.0
-    semver: ^7.1.1
-    stringify-package: ^1.0.1
-    yargs: ^16.0.0
-  bin:
-    standard-version: bin/cli.js
-  checksum: 40e1105b73e77105338a869096708e15aebf0c1104740f8cbbbb24173f55a8e7f221ff2e4cad4765c230d34094caa4e378ceb74a1ea890709c32f5fb67bd49b7
-  languageName: node
-  linkType: hard
-
 "standard-version@npm:^9.5.0":
   version: 9.5.0
   resolution: "standard-version@npm:9.5.0"
@@ -25396,7 +25325,6 @@ __metadata:
     lint-staged: ">=10"
     prettier: ^2.6.2
     process: ^0.11.10
-    standard-version: ^9.3.2
     ts-node: ^10.7.0
     typescript: ^4.6.4
   languageName: unknown
