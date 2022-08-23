@@ -8,13 +8,19 @@ on:
 jobs:
     run-linters:
         name: Run linters
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [16.x]
+        runs-on: ubuntu-20.04
+
         steps:
-            - name: Check out Git repository
-              uses: actions/checkout@v2
+            - name: git Checkout
+              uses: actions/checkout@v3
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: 의존성 체크
+              run: yarn
 
             - name: Run linters
               uses: wearerequired/lint-action@v2

@@ -2,9 +2,9 @@ version: 0.0
 os: linux
 files:
     - source: /
-      destination: /root/cafe24-interwork
+      destination: /root/deploy
 permissions:
-    - object: /root/cafe24-interwork
+    - object: /root/deploy
       owner: root
       group: root
       mode: 755
