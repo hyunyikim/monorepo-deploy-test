@@ -34,6 +34,12 @@ export class Cafe24InterworkController {
 		return this.cafe24InterworkService.getInterworkInfo(mallId);
 	}
 
+	/**
+	 *
+	 * @param mallId cafe24 Mall Id
+	 * @param authCode cafe24에서 제공 해준 authCode
+	 * @returns
+	 */
 	@Post(':mallId')
 	async initInterwork(
 		@Param('mallId') mallId: string,
@@ -68,7 +74,7 @@ export class Cafe24InterworkController {
 	/**
 	 * 해당 mallId로 카페24와 연동하고 승인된 계정이 있는지 확인하는 엔드포인트 입니다.
 	 * @param mallId
-	 * @returns
+	 * @returns 연동 되어 있음=true, 연동 안됨=false
 	 */
 	@Get(':mallId/confirm')
 	isConfirmedPartnership(@Param('mallId') mallId: string) {

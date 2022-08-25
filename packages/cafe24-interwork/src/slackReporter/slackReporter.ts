@@ -1,4 +1,4 @@
-import {Injectable, ShutdownSignal} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {Store} from 'src/Cafe24ApiService';
 import {Cafe24Interwork} from 'src/interwork.entity';
 import {
@@ -13,7 +13,11 @@ import {
 @Injectable()
 export class SlackReporter {
 	private slackClient: WebClient;
-	constructor(private token: string, private channel: string) {
+	constructor(
+		private token: string,
+		private channel: string,
+		private envDev: boolean = false
+	) {
 		this.slackClient = new WebClient(this.token);
 	}
 
@@ -106,7 +110,7 @@ export class SlackReporter {
 			type: 'header',
 			text: {
 				type: 'plain_text',
-				text: title,
+				text: `${title}${this.envDev ? '(개발환경)' : ''}`,
 			},
 		};
 		return headerBlock;

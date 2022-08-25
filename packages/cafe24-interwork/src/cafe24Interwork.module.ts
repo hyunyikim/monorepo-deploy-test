@@ -138,7 +138,13 @@ import {ScheduleModule} from '@nestjs/schedule';
 					configService.getOrThrow<string>('SLACK_BOT_TOKEN');
 				const channel =
 					configService.getOrThrow<string>('SLACK_CHANEL_ID');
-				return new SlackReporter(token, channel);
+				const nodeEnv = configService.getOrThrow<string>('NODE_ENV');
+
+				return new SlackReporter(
+					token,
+					channel,
+					nodeEnv === 'development'
+				);
 			},
 			inject: [ConfigService],
 		},
