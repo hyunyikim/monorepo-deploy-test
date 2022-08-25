@@ -1,4 +1,4 @@
-import {Type} from 'class-transformer';
+import {Exclude, Type} from 'class-transformer';
 import {
 	IsArray,
 	IsDateString,
@@ -32,12 +32,14 @@ export class Cafe24Interwork {
 	mallId: string;
 
 	/** 최근 사용된 Auth Code */
+	@Exclude({toPlainOnly: true})
 	@IsString()
 	authCode: string;
 
 	@IsObject()
 	partnerInfo?: Partnership;
 
+	@Exclude({toPlainOnly: true})
 	@IsObject()
 	@ValidateNested()
 	@Type(() => AccessToken)
@@ -59,16 +61,19 @@ export class Cafe24Interwork {
 	@IsDateString()
 	confirmedAt?: string;
 
+	@Exclude({toPlainOnly: true})
 	@IsString()
 	coreApiToken?: string;
 
 	@IsDateString()
 	updatedAt: string;
 
+	@Exclude({toPlainOnly: true})
 	@IsOptional()
 	@IsDateString()
 	leavedAt?: string;
 
+	@Exclude({toPlainOnly: true})
 	@IsOptional()
 	@IsString()
 	reasonForLeave?: string;

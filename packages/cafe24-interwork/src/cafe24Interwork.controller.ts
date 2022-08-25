@@ -7,12 +7,14 @@ import {
 	Patch,
 	UseGuards,
 	UseFilters,
+	NotFoundException,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {GetToken, TokenInfo} from './getToken.decorator';
 import {IssueSetting} from './interwork.entity';
 import {JwtAuthGuard} from './guard';
 import {HttpExceptionFilter} from './filter';
+import {TransformInstanceToPlain} from 'class-transformer';
 
 @Controller({version: '1', path: 'interwork'})
 @UseFilters(HttpExceptionFilter)
@@ -21,17 +23,30 @@ export class Cafe24InterworkController {
 		private readonly cafe24InterworkService: Cafe24InterworkService
 	) {}
 
+	@TransformInstanceToPlain()
 	@Get()
 	@UseGuards(JwtAuthGuard)
-	getInterworkInfoByToken(@GetToken() token: TokenInfo) {
-		return this.cafe24InterworkService.getInterworkInfoByIdx(
-			token.partnerIdx
-		);
+	async getInterworkInfoByToken(@GetToken() token: TokenInfo) {
+		const interwork =
+			await this.cafe24InterworkService.getInterworkInfoByIdx(
+				token.partnerIdx
+			);
+		if (!interwork) {
+			throw new NotFoundException('NOT_FOUND_INTERWORK_INFO');
+		}
+		return interwork;
 	}
 
+	@TransformInstanceToPlain()
 	@Get(':mallId')
-	getInterworkInfo(@Param('mallId') mallId: string) {
-		return this.cafe24InterworkService.getInterworkInfo(mallId);
+	async getInterworkInfo(@Param('mallId') mallId: string) {
+		const interwork = await this.cafe24InterworkService.getInterworkInfo(
+			mallId
+		);
+		if (!interwork) {
+			throw new NotFoundException('NOT_FOUND_INTERWORK_INFO');
+		}
+		return interwork;
 	}
 
 	/**
@@ -40,6 +55,7 @@ export class Cafe24InterworkController {
 	 * @param authCode cafe24에서 제공 해준 authCode
 	 * @returns
 	 */
+	@TransformInstanceToPlain()
 	@Post(':mallId')
 	async initInterwork(
 		@Param('mallId') mallId: string,
@@ -58,6 +74,7 @@ export class Cafe24InterworkController {
 	 * @param token 파싱된 JWT 정보
 	 * @returns
 	 */
+	@TransformInstanceToPlain()
 	@Post(':mallId/confirm')
 	@UseGuards(JwtAuthGuard)
 	async confirmInterwork(
@@ -81,6 +98,7 @@ export class Cafe24InterworkController {
 		return this.cafe24InterworkService.isConfirmed(mallId);
 	}
 
+	@TransformInstanceToPlain()
 	@Patch(':mallId/setting')
 	@UseGuards(JwtAuthGuard)
 	async updateInterworkSetting(
