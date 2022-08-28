@@ -1,5 +1,9 @@
 #!/bin/bash
-whoami
+
+echo ">[$(date)] START DEPLOY" >> /root/deploy.log
+whoami >> /root/deploy.log
+
+pwd >> /root/deploy.log
 
 export HOME="/root"
 

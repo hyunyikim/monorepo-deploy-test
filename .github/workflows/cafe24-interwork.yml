@@ -99,7 +99,7 @@ jobs:
               run: cp appspec.yml bundle/appspec.yml
 
             - name: copy shell file
-              run: cp script/start.prod.sh bundle/start.prod.sh
+              run: cp script/after.install.sh bundle/after.install.sh
 
             - name: aws 세팅
               uses: aws-actions/configure-aws-credentials@v1
@@ -114,7 +114,7 @@ jobs:
                     --application-name vircle \
                     --description "git hash ${{ github.sha }}" \
                     --no-ignore-hidden-files \
-                    --s3-location s3://vircle-app/cafe24-interwork/prod/${{ github.sha }}.zip \
+                    --s3-location s3://deploy.vircle/cafe24-interwork/prod.zip \
                     --source ./bundle
 
             - name: aws codedeploy create-deployment
@@ -123,8 +123,8 @@ jobs:
                     --application-name vircle \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
                     --deployment-group-name cafe24_interwork \
-                    --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/prod/${{ github.sha }}.zip
-
+                    --s3-location bucket=deploy.vircle,bundleType=zip,key=cafe24-interwork/prod.zip \
+                    --file-exists-behavior=OVERWRITE
     deploy_on_stage:
         if: ${{ github.ref_name == 'stage' && github.event_name == 'push'  }}
         runs-on: ubuntu-20.04
