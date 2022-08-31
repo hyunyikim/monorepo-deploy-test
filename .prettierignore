@@ -7,3 +7,4 @@ node_modules
 !.storybook
 bundle
 CHANGELOG.md
+.yarnrc.yml

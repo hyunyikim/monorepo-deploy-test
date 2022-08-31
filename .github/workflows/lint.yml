@@ -19,8 +19,14 @@ jobs:
               with:
                   node-version: 16
 
+            - name: node 버전 확인
+              run: node -v
+
+            - name: yarn 버전 확인
+              run: yarn -v
+
             - name: 의존성 체크
-              run: yarn
+              run: yarn install --immutable
 
             - name: Run linters
               uses: wearerequired/lint-action@v2

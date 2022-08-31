@@ -1,6 +1,6 @@
 {
 	"name": "@vircle/admin-web",
-	"packageManager": "yarn@3.2.0",
+	"packageManager": "yarn@3.2.3",
 	"scripts": {
 		"dev": "webpack serve --config webpack.config.dev.js",
 		"build": "webpack --mode production --config webpack.config.js",

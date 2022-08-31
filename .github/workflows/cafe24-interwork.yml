@@ -169,7 +169,7 @@ jobs:
                     --application-name vircle \
                     --description "git hash ${{ github.sha }}" \
                     --no-ignore-hidden-files \
-                    --s3-location s3://vircle-app/cafe24-interwork/stage/${{ github.sha }}.zip \
+                    --s3-location s3://vircle-app/cafe24-interwork/stage.zip \
                     --source ./bundle
 
             - name: aws codedeploy create-deployment
@@ -177,5 +177,6 @@ jobs:
                   aws deploy create-deployment \
                     --application-name vircle \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
-                    --deployment-group-name stage_cafe24_interwork \
+                    --deployment-group-name vircle-stage-cafe24-DG \
                     --s3-location bucket=vircle-app,bundleType=zip,key=cafe24-interwork/stage/${{ github.sha }}.zip
+                    --file-exists-behavior=OVERWRITE

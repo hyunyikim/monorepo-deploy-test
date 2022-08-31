@@ -1,6 +1,6 @@
 {
 	"name": "@vircle/ui-component",
-	"packageManager": "yarn@3.2.0",
+	"packageManager": "yarn@3.2.3",
 	"main": "./src/index.tsx",
 	"scripts": {
 		"build": "tsc --project tsconfig.json",
