@@ -1,0 +1,26 @@
+name: '@vircle/common'
+on:
+    pull_request:
+        branches:
+            - dev
+            - main
+            - stage
+        paths:
+            - 'packages/common/**'
+
+jobs:
+    build_type_test:
+        if: ${{ github.event_name == 'pull_request' }}
+        runs-on: ubuntu-20.04
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./packages/common
+        steps:
+            - name: git Checkout
+              uses: actions/checkout@v3
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16

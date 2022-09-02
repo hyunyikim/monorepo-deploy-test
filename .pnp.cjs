@@ -33,6 +33,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/cafe24-interwork"\
       },\
       {\
+        "name": "@vircle/common",\
+        "reference": "workspace:packages/common"\
+      },\
+      {\
         "name": "@vircle/entity",\
         "reference": "workspace:packages/entity"\
       },\
@@ -59,6 +63,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@vircle/admin-api", ["workspace:packages/admin-api"]],\
       ["@vircle/admin-web", ["workspace:packages/admin-web"]],\
       ["@vircle/cafe24-interwork", ["workspace:packages/cafe24-interwork"]],\
+      ["@vircle/common", ["workspace:packages/common"]],\
       ["@vircle/entity", ["workspace:packages/entity"]],\
       ["@vircle/shipping-tracking", ["workspace:packages/shipping-tracking"]],\
       ["@vircle/styles", ["workspace:packages/styles"]],\
@@ -1878,6 +1883,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "@vircle/cafe24-interwork",\
         "workspace:packages/cafe24-interwork"\
+      ],\
+      [\
+        "@vircle/common",\
+        "workspace:packages/common"\
       ],\
       [\
         "@vircle/entity",\
@@ -20082,6 +20091,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["webpack-node-externals", "npm:3.0.0"],\
             ["winston", "npm:3.8.1"],\
             ["winston-cloudwatch", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:6.0.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@vircle/common", [\
+        ["workspace:packages/common", {\
+          "packageLocation": "./packages/common/",\
+          "packageDependencies": [\
+            ["@vircle/common", "workspace:packages/common"],\
+            ["jest", "virtual:c375b94e356cd12d3624bdbf4f5fe42c846b1a47153a983f03024a58ef16b7eeb1e867419f9f4dcba7fb47b87a2c149719d64746c2dfd79c2c91482d47abb578#npm:28.1.0"],\
+            ["rimraf", "npm:3.0.2"],\
+            ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=a1c5e5"]\
           ],\
           "linkType": "SOFT"\
         }]\

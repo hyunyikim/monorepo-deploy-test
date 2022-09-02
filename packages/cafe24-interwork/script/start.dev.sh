@@ -1,6 +1,4 @@
 #!/bin/bash
-whoami
-
 export HOME="/root"
 
 echo $HOME

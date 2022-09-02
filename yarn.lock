@@ -7846,6 +7846,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@vircle/common@workspace:packages/common":
+  version: 0.0.0-use.local
+  resolution: "@vircle/common@workspace:packages/common"
+  dependencies:
+    jest: ^28.1.0
+    rimraf: ^3.0.2
+    typescript: ^4.6.4
+  languageName: unknown
+  linkType: soft
+
 "@vircle/entity@workspace:*, @vircle/entity@workspace:packages/entity":
   version: 0.0.0-use.local
   resolution: "@vircle/entity@workspace:packages/entity"

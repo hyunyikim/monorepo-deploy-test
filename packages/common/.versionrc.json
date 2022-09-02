@@ -1,0 +1,5 @@
+{
+	"path": ".",
+	"tag-prefix": "common-v",
+	"releaseCommitMessageFormat": "chore(common): updated changelog"
+}
