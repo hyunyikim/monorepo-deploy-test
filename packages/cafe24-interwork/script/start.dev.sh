@@ -7,7 +7,7 @@ LOG_POINT="/root/log/cafe24-interwork/deploy.log"
 
 echo $LOG_POINT
 
-echo ">[$(date) START DEPLOY BY USER : ${whoami}]" >>  $LOG_POINT
+echo ">[$(date) START DEPLOY BY USER : $(whoami)]" >>  $LOG_POINT
 
 eval `ssh-agent -s`;
 ssh-add ~/.ssh/vircle_deploy_key;
