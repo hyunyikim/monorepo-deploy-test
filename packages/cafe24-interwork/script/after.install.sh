@@ -16,4 +16,4 @@ echo ">AFTER INSTALL[$(date)]: Application Run by pm2" >> /root/deploy.log
 
 pm2 start --name "CAFE24-INTERWORK" main.js
 
-echo "AFTER INSTALL[$(date)]: DONE >> /root/deploy.log
+echo "AFTER INSTALL[$(date)]: DONE" >> /root/deploy.log
