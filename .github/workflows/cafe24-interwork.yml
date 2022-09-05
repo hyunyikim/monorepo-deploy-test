@@ -7,6 +7,7 @@ on:
             - stage
         paths:
             - 'packages/cafe24-interwork/**'
+            - '.github/workflows/cafe24-interwork.yml'
 
     pull_request:
         branches:
@@ -101,7 +102,7 @@ jobs:
             - name: copy appspec & shell files
               run: |
                   cp appspec.yml bundle/appspec.yml
-                  cp script/deploy_prod bundle/script
+                  cp -r script/deploy_prod bundle/script
 
             - name: aws 세팅
               uses: aws-actions/configure-aws-credentials@v1
@@ -155,7 +156,7 @@ jobs:
             - name: copy appspec & shell files
               run: |
                   cp appspec.yml bundle/appspec.yml
-                  cp script/deploy_prod bundle/script
+                  cp -r script/deploy_stage bundle/script
 
             - name: aws 세팅
               uses: aws-actions/configure-aws-credentials@v1
