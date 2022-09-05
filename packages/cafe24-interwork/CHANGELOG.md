@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.0.3) (2022-09-05)
+
+
+### Features
+
+* **cafe24:** :rocket: 보증서 발급 이벤트 데이터(dynamodb)에 product 정보를 추가 ([#116](https://github.com/mass-adoption/vircle/issues/116)) ([0f4fb4f](https://github.com/mass-adoption/vircle/commit/0f4fb4f0001de49ce59e37ac04efda963ec79df4))
+* **cafe24:** :zap: cafe24 연동 여부 확인 비지니스 로직 변경 ([#113](https://github.com/mass-adoption/vircle/issues/113)) ([bfe8962](https://github.com/mass-adoption/vircle/commit/bfe89627faf3ab76c4127c09104f9d31c28078b1))
+* **common:** ⚡ vircle common 프로젝트 init ([#106](https://github.com/mass-adoption/vircle/issues/106)) ([0ba6e5d](https://github.com/mass-adoption/vircle/commit/0ba6e5d4424c7dd01d650df70ad2dde75c371001))
+
+
+### Bug Fixes
+
+* **cafe24:** :ambulance: jwt guard가 동작 에러 해결 ([#112](https://github.com/mass-adoption/vircle/issues/112)) ([c2eeae4](https://github.com/mass-adoption/vircle/commit/c2eeae4d73408e0322f6ff4a66fa91a5353cf43c))
+* **cafe24:** :ambulance: routing 에러 수정 ([#111](https://github.com/mass-adoption/vircle/issues/111)) ([4446ed3](https://github.com/mass-adoption/vircle/commit/4446ed3986a54117f35aafd15079dd6c28de6867))
+* **cafe24:** after.install.sh에 있는 syntax error 수정 ([#110](https://github.com/mass-adoption/vircle/issues/110)) ([ba6be22](https://github.com/mass-adoption/vircle/commit/ba6be22b69366b72ba2b7456e6c401ee0d678a0a))
+* **cafe24:** appspec script location error ([#118](https://github.com/mass-adoption/vircle/issues/118)) ([06ba246](https://github.com/mass-adoption/vircle/commit/06ba24632d5a2318be70eb34afd07f13f759eb11))
+
 ### 0.0.2 (2022-08-25)
 
 
