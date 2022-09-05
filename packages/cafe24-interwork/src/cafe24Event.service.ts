@@ -163,6 +163,12 @@ export class Cafe24EventService {
 
 		let q = orderItem.quantity;
 
+		const productInfo = await this.cafe24Api.getProductResource(
+			interwork.mallId,
+			interwork.accessToken.access_token,
+			orderItem.product_no
+		);
+
 		// 수량 만큽 발급
 		while (q > 0) {
 			q -= 1;
@@ -201,6 +207,7 @@ export class Cafe24EventService {
 				orderId: webHook.resource.order_id,
 				eventShopNo: orderItem.shop_no,
 				webhook: webHook,
+				productInfo,
 				traceId,
 				orderItem,
 			});

@@ -44,4 +44,7 @@ export class GuaranteeRequest {
 
 	@IsString()
 	cancelTraceId?: string;
+
+	@IsObject()
+	productInfo: Product;
 }
