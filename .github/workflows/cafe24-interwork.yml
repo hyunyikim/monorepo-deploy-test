@@ -101,10 +101,7 @@ jobs:
             - name: copy appspec & shell files
               run: |
                   cp appspec.yml bundle/appspec.yml
-                  cp script/after.install.sh bundle/after.install.sh
-                  cp script/app.stop.sh bundle/app.stop.sh
-                  cp script/before.install.sh bundle/before.install.sh
-                  cp script/app.start.sh bundle/app.start.sh
+                  cp script/deploy_prod bundle/script
 
             - name: aws 세팅
               uses: aws-actions/configure-aws-credentials@v1
@@ -158,10 +155,7 @@ jobs:
             - name: copy appspec & shell files
               run: |
                   cp appspec.yml bundle/appspec.yml
-                  cp script/after.install.sh bundle/after.install.sh
-                  cp script/app.stop.sh bundle/app.stop.sh
-                  cp script/before.install.sh bundle/before.install.sh
-                  cp script/app.start.sh bundle/app.start.sh
+                  cp script/deploy_prod bundle/script
 
             - name: aws 세팅
               uses: aws-actions/configure-aws-credentials@v1
