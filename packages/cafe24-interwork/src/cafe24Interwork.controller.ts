@@ -24,8 +24,8 @@ export class Cafe24InterworkController {
 	) {}
 
 	@Get()
-	@TransformInstanceToPlain()
 	@UseGuards(JwtAuthGuard)
+	@TransformInstanceToPlain()
 	async getInterworkInfoByToken(@GetToken() token: TokenInfo) {
 		const interwork =
 			await this.cafe24InterworkService.getInterworkInfoByIdx(
@@ -75,8 +75,8 @@ export class Cafe24InterworkController {
 	 * @returns
 	 */
 	@Post(':mallId/confirm')
-	@TransformInstanceToPlain()
 	@UseGuards(JwtAuthGuard)
+	@TransformInstanceToPlain()
 	async confirmInterwork(
 		@Param('mallId') mallId: string,
 		@GetToken() token: TokenInfo
@@ -99,8 +99,8 @@ export class Cafe24InterworkController {
 	}
 
 	@Patch(':mallId/setting')
-	@TransformInstanceToPlain()
 	@UseGuards(JwtAuthGuard)
+	@TransformInstanceToPlain()
 	async updateInterworkSetting(
 		@Param('mallId') mallId: string,
 		@Body() setting: IssueSetting
