@@ -23,8 +23,8 @@ export class Cafe24InterworkController {
 		private readonly cafe24InterworkService: Cafe24InterworkService
 	) {}
 
-	@TransformInstanceToPlain()
 	@Get()
+	@TransformInstanceToPlain()
 	@UseGuards(JwtAuthGuard)
 	async getInterworkInfoByToken(@GetToken() token: TokenInfo) {
 		const interwork =
@@ -37,8 +37,8 @@ export class Cafe24InterworkController {
 		return interwork;
 	}
 
-	@TransformInstanceToPlain()
 	@Get(':mallId')
+	@TransformInstanceToPlain()
 	async getInterworkInfo(@Param('mallId') mallId: string) {
 		const interwork = await this.cafe24InterworkService.getInterworkInfo(
 			mallId
@@ -55,8 +55,8 @@ export class Cafe24InterworkController {
 	 * @param authCode cafe24에서 제공 해준 authCode
 	 * @returns
 	 */
-	@TransformInstanceToPlain()
 	@Post(':mallId')
+	@TransformInstanceToPlain()
 	async initInterwork(
 		@Param('mallId') mallId: string,
 		@Body('authCode') authCode: string
@@ -74,8 +74,8 @@ export class Cafe24InterworkController {
 	 * @param token 파싱된 JWT 정보
 	 * @returns
 	 */
-	@TransformInstanceToPlain()
 	@Post(':mallId/confirm')
+	@TransformInstanceToPlain()
 	@UseGuards(JwtAuthGuard)
 	async confirmInterwork(
 		@Param('mallId') mallId: string,
@@ -98,8 +98,8 @@ export class Cafe24InterworkController {
 		return this.cafe24InterworkService.isConfirmed(mallId);
 	}
 
-	@TransformInstanceToPlain()
 	@Patch(':mallId/setting')
+	@TransformInstanceToPlain()
 	@UseGuards(JwtAuthGuard)
 	async updateInterworkSetting(
 		@Param('mallId') mallId: string,
