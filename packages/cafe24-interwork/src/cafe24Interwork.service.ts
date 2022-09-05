@@ -29,6 +29,8 @@ export class Cafe24InterworkService {
 		const interwork = await this.interworkRepo.getInterwork(mallId);
 		if (interwork === null) {
 			return false;
+		} else if (interwork.leavedAt) {
+			return false;
 		} else if (interwork.confirmedAt) {
 			return true;
 		} else {
