@@ -10,14 +10,14 @@ permissions:
       mode: 755
 hooks:
     ApplicationStop:
-        - location: app.stop.sh
+        - location: script/app.stop.sh
           timeout: 60
           runas: root
     BeforeInstall:
-        - location: before.install.sh
+        - location: script/script/before.install.sh
           timeout: 60
           runas: root
     AfterInstall:
-        - location: after.install.sh
+        - location: script/after.install.sh
           timeout: 60
           runas: root
