@@ -56,6 +56,7 @@ export class Cafe24EventService {
 			throw new BadRequestException('NO_TARGET_ORDER_ITEMS');
 		}
 
+		// 발급 요청 리스트
 		const reqList = await this.getGuaranteeRequests(webHook);
 
 		for (const item of orderItems) {
@@ -65,6 +66,7 @@ export class Cafe24EventService {
 			);
 
 			if (status === 'N40') {
+				// 배송 완료 => 보증서 발급 Case
 				if (targetReqList.length) {
 					//이미 발급 되어 있음
 					passed.push({
@@ -80,6 +82,7 @@ export class Cafe24EventService {
 					status: item.order_status,
 				});
 			} else if (['R40', 'E40'].includes(status)) {
+				// 반품/교환 완료 case => 보증서 취소
 				const cancelRequests: GuaranteeRequest[] = targetReqList;
 				if (cancelRequests.length === 0) {
 					const req = reqList.find(
@@ -122,6 +125,13 @@ export class Cafe24EventService {
 		this.logger.log({issued, canceled, passed});
 	}
 
+	/**
+	 * 보증서 발급 취소 요청 메서드
+	 * @param interwork 연동정도
+	 * @param orderItem 삭제되는 아이템 정보
+	 * @param req 발급요청 정보
+	 * @param traceId webhook trace id
+	 */
 	private async sendRequestCancel(
 		interwork: Cafe24Interwork,
 		orderItem: OrderItem,
@@ -159,10 +169,13 @@ export class Cafe24EventService {
 		if (!interwork.coreApiToken) {
 			throw new ForbiddenException('No auth for vircle core-api');
 		}
+		// 즉시 발행 옵션
 		const DIRECT_ISSUE = '2';
 
-		let q = orderItem.quantity;
+		// 발급 수량
+		let quantity = orderItem.quantity;
 
+		// 상품정보
 		const productInfo = await this.cafe24Api.getProductResource(
 			interwork.mallId,
 			interwork.accessToken.access_token,
@@ -170,8 +183,8 @@ export class Cafe24EventService {
 		);
 
 		// 수량 만큽 발급
-		while (q > 0) {
-			q -= 1;
+		while (quantity > 0) {
+			quantity -= 1;
 
 			const {nft_req_idx, nft_req_state} =
 				await this.vircleCoreApi.requestGuarantee(
@@ -189,7 +202,7 @@ export class Cafe24EventService {
 						warranty: interwork.partnerInfo?.warrantyDate,
 						orderedAt: orderItem.ordered_date,
 						orderId: webHook.resource.order_id,
-						brandIdx: interwork.partnerInfo?.brand.idx,
+						brandIdx: interwork.partnerInfo?.brand?.idx,
 						size: orderItem.volume_size ?? undefined,
 						weight: orderItem.product_weight ?? undefined,
 						material: orderItem.product_material ?? undefined,
@@ -215,7 +228,7 @@ export class Cafe24EventService {
 	}
 
 	/**
-	 *
+	 * Dynamo DB에서 Cafe24를 통한 발급 레코드를 가져온다.
 	 * @param webHook cafe24 Webhook 에서 전달한 객체
 	 * @returns webhook과 관련된 주문의 보증서 요청 리스트
 	 */
