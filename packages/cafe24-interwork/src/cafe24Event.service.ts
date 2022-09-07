@@ -57,7 +57,7 @@ export class Cafe24EventService {
 			const orderItems = await this.cafe24Api.getOrderItems(
 				webHook.resource.mall_id,
 				interwork.accessToken.access_token,
-				webHook.resource.order_id
+				orderId
 			);
 
 			if (orderItems.length === 0) {
