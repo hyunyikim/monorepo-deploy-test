@@ -141,5 +141,5 @@ export interface Partnership {
 		mainExposure: 'Y' | 'N';
 		useInspect: 'Y' | 'N';
 		useRepair: 'Y' | 'N';
-	};
+	} | null;
 }
