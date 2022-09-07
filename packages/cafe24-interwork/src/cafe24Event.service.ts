@@ -329,7 +329,7 @@ export class Cafe24EventService {
 				reqState: nft_req_state,
 				mallId: webHook.resource.mall_id,
 				orderItemCode: orderItem.order_item_code,
-				orderId: webHook.resource.order_id,
+				orderId: orderId,
 				eventShopNo: orderItem.shop_no,
 				webhook: webHook,
 				productInfo,
