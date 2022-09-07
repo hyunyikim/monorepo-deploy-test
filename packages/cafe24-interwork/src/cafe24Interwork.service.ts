@@ -53,7 +53,14 @@ export class Cafe24InterworkService {
 	 * @returns 연동 정보를 담은 Interwork 객체
 	 */
 	async getInterworkInfoByIdx(partnerIdx: number) {
-		return await this.interworkRepo.getInterworkByPartner(partnerIdx);
+		const interwork = await this.interworkRepo.getInterworkByPartner(
+			partnerIdx
+		);
+		// 연동을 한적이 없거나 연동을 해재한 경우
+		if (!interwork || interwork.leavedAt) {
+			return null;
+		}
+		return interwork;
 	}
 
 	/**
