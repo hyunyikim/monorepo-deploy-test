@@ -2,6 +2,24 @@ import {Injectable} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
 import {Partnership} from 'src/interwork.entity';
 import {Nft} from '@vircle/entity';
+
+export interface GuaranteeRequestPayload {
+	nftState: string; // "2"
+	productName: string;
+	price: number;
+	ordererName: string;
+	ordererTel: string;
+	brandIdx?: number;
+	platformName?: string;
+	category?: string;
+	modelNum?: string;
+	warranty?: string;
+	material?: string;
+	size?: string;
+	weight?: string;
+	orderedAt?: string;
+	orderId?: string;
+}
 @Injectable()
 export class VircleCoreAPI {
 	private httpAgent: AxiosInstance;
@@ -40,26 +58,7 @@ export class VircleCoreAPI {
 		return data;
 	}
 
-	async requestGuarantee(
-		token: string,
-		payload: {
-			nftState: string; // "2"
-			productName: string;
-			price: number;
-			ordererName: string;
-			ordererTel: string;
-			brandIdx?: number;
-			platformName?: string;
-			category?: string;
-			modelNum?: string;
-			warranty?: string;
-			material?: string;
-			size?: string;
-			weight?: string;
-			orderedAt?: string;
-			orderId?: string;
-		}
-	) {
+	async requestGuarantee(token: string, payload: GuaranteeRequestPayload) {
 		const {data} = await this.httpAgent.post<{
 			data: {
 				nft_req_idx: number;

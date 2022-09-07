@@ -1,3 +1,4 @@
+import {String} from 'aws-sdk/clients/apigateway';
 import {
 	IsArray,
 	IsDateString,
@@ -8,6 +9,21 @@ import {
 	IsString,
 	IsUrl,
 } from 'class-validator';
+
+export class OrderBuyer {
+	'shop_no': number;
+	'member_id': string;
+	'member_group_no': number;
+	'name': string;
+	'names_furigana': string;
+	'email': string;
+	'phone': string;
+	'cellphone': string;
+	'customer_notification': string;
+	'updated_date': string;
+	'user_id': string;
+	'user_name': string;
+}
 
 export class OrderItem {
 	/** 멀티쇼핑몰 번호 */

@@ -29,7 +29,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			exception = err;
 		}
 
-		this.logger.error({exception, req});
+		this.logger.error({
+			exception,
+			req: {
+				path: req.path,
+				params: req.params,
+				headers: req.headers,
+			},
+		});
 		const response = exception.getResponse();
 		res.status(exception.getStatus()).json(response);
 	}

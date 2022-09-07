@@ -83,6 +83,13 @@ export class EventOrderShipping extends Order {
 	return_confirmed_date: string | null;
 }
 
+export class EventBatchOrderShipping extends Resource {
+	event_shop_no: string;
+	order_id: string; // 20220907-0000011,20220905-0000025,20220907-0000023
+	included_deferpay_order: 'T' | 'F';
+	deferpay_order_id: string;
+}
+
 /**쇼핑몰에 접수된 주문의 반품상태가 변경된 경우 (90027, 90028) */
 export class EventOrderReturnExchange extends Order {
 	ordering_product_code: string;

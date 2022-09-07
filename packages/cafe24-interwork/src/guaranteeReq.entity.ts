@@ -1,6 +1,10 @@
 import {IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
 import {OrderItem, Product} from './Cafe24ApiService';
-import {WebHookBody, EventOrderShipping} from './cafe24Interwork.dto';
+import {
+	WebHookBody,
+	EventOrderShipping,
+	EventBatchOrderShipping,
+} from './cafe24Interwork.dto';
 
 export class GuaranteeRequest {
 	/** Partition Key */
@@ -27,7 +31,7 @@ export class GuaranteeRequest {
 	orderId: string;
 
 	@IsObject()
-	webhook: WebHookBody<EventOrderShipping>;
+	webhook: WebHookBody<EventOrderShipping | EventBatchOrderShipping>;
 
 	@IsString()
 	traceId: string;

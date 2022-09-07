@@ -13,6 +13,7 @@ import {ApiKeyGuard} from './guard';
 import {
 	EventAppDelete,
 	EventAppExpire,
+	EventBatchOrderShipping,
 	EventOrderRegister,
 	EventOrderReturnExchange,
 	EventOrderShipping,
@@ -49,6 +50,19 @@ export class Cafe24EventController {
 		@Body() webHook: WebHookBody<EventOrderShipping>
 	) {
 		await this.cafe24EventService.handleShippingWebhook(traceId, webHook);
+		return 'OK';
+	}
+
+	@Post('order/shipping/batch')
+	@UseGuards(ApiKeyGuard)
+	async handleBatchOrderShippingEvent(
+		@Headers('x-trace-id') traceId: string,
+		@Body() webHook: WebHookBody<EventBatchOrderShipping>
+	) {
+		await this.cafe24EventService.handleBachShippingWebHook(
+			traceId,
+			webHook
+		);
 		return 'OK';
 	}
 

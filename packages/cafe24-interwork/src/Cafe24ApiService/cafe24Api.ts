@@ -4,6 +4,7 @@ import {
 	AccessToken,
 	Category,
 	CustomerPrivacy,
+	OrderBuyer,
 	OrderItem,
 	Product,
 	Shop,
@@ -212,6 +213,18 @@ export class Cafe24API {
 			},
 		});
 		return data.items;
+	}
+
+	@TransformPlainToInstance(OrderBuyer)
+	async getOrderBuyer(mallId: string, accessToken: string, orderId: string) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/orders/${orderId}/buyer`;
+		const {data} = await this.httpAgent.get<{buyer: OrderBuyer}>(url, {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				'Content-Type': 'application/json',
+			},
+		});
+		return data.buyer;
 	}
 }
 
