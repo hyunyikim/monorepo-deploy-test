@@ -21,6 +21,7 @@ import {TokenRefresher} from './tokenRefresher/tokenRefresher';
 import {OrderBuyer, OrderItem} from './Cafe24ApiService';
 import {GuaranteeRequest} from './guaranteeReq.entity';
 import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
+import fetch from 'node-fetch';
 
 @Injectable()
 export class Cafe24EventService {
@@ -368,6 +369,9 @@ export class Cafe24EventService {
 			orderItem.product_no
 		);
 
+		const response = await fetch(productInfo.detail_image);
+		const buffer = await response.arrayBuffer();
+
 		// 수량 만큽 발급
 		while (quantity > 0) {
 			quantity -= 1;
@@ -383,6 +387,7 @@ export class Cafe24EventService {
 							'-',
 							''
 						),
+						image: buffer,
 						platformName: interwork.store.shop_name,
 						modelNum: orderItem.product_code,
 						warranty: interwork.partnerInfo?.warrantyDate,

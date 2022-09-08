@@ -19,6 +19,7 @@ export interface GuaranteeRequestPayload {
 	weight?: string;
 	orderedAt?: string;
 	orderId?: string;
+	image?: ArrayBuffer;
 }
 @Injectable()
 export class VircleCoreAPI {
@@ -82,6 +83,7 @@ export class VircleCoreAPI {
 				orderer_nm: payload.ordererName,
 				orderer_tel: payload.ordererTel,
 				nft_req_state: payload.nftState,
+				dclr_file: payload.image,
 			},
 			{
 				headers: {

@@ -12,7 +12,6 @@ import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {ApiKeyGuard} from './guard';
 import {
 	EventAppDelete,
-	EventAppExpire,
 	EventBatchOrderShipping,
 	EventOrderRegister,
 	EventOrderReturnExchange,
