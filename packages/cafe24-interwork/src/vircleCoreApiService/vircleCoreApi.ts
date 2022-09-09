@@ -2,7 +2,8 @@ import {Injectable} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
 import {Partnership} from 'src/interwork.entity';
 import {Nft} from '@vircle/entity';
-
+import * as FormData from 'form-data';
+import {Readable} from 'stream';
 export interface GuaranteeRequestPayload {
 	nftState: string; // "2"
 	productName: string;
@@ -60,39 +61,54 @@ export class VircleCoreAPI {
 	}
 
 	async requestGuarantee(token: string, payload: GuaranteeRequestPayload) {
+		const {
+			image,
+			category,
+			brandIdx,
+			productName,
+			modelNum,
+			material,
+			size,
+			weight,
+			price,
+			warranty,
+			platformName,
+			orderedAt,
+			orderId,
+			ordererName,
+			ordererTel,
+			nftState,
+		} = payload;
+		const form = new FormData();
+		image && form.append('product_img', image);
+		category && form.append('cate_cd', category);
+		brandIdx && form.append('brand_idx', brandIdx);
+		productName && form.append('pro_nm', productName);
+		modelNum && form.append('model_num', modelNum);
+		material && form.append('material', material);
+		size && form.append('size', size);
+		weight && form.append('weight', weight);
+		if (price !== undefined) form.append('price', price);
+		warranty && form.append('warranty_dt', warranty);
+		platformName && form.append('platform_nm', platformName);
+		orderedAt && form.append('order_dt', orderedAt);
+		orderId && form.append('ref_order_id', orderId);
+		ordererName && form.append('orderer_nm', ordererName);
+		ordererTel && form.append('orderer_tel', ordererTel);
+		nftState && form.append('nft_req_state', nftState);
+
 		const {data} = await this.httpAgent.post<{
 			data: {
 				nft_req_idx: number;
 				nft_req_state: number;
 			};
-		}>(
-			'/admin/nft',
-			{
-				cate_cd: payload.category,
-				brand_idx: payload.brandIdx,
-				pro_nm: payload.productName,
-				model_num: payload.modelNum,
-				material: payload.material,
-				size: payload.size,
-				weight: payload.weight,
-				price: payload.price,
-				warranty_dt: payload.warranty,
-				platform_nm: payload.platformName,
-				order_dt: payload.orderedAt,
-				ref_order_id: payload.orderId,
-				orderer_nm: payload.ordererName,
-				orderer_tel: payload.ordererTel,
-				nft_req_state: payload.nftState,
-				dclr_file: payload.image,
+		}>('/admin/nft', form, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				...form.getHeaders(),
+				token,
 			},
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					'Content-Type': 'multipart/form-data',
-					token,
-				},
-			}
-		);
+		});
 		return data.data;
 	}
 }

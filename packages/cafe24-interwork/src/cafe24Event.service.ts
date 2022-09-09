@@ -21,7 +21,8 @@ import {TokenRefresher} from './tokenRefresher/tokenRefresher';
 import {OrderBuyer, OrderItem} from './Cafe24ApiService';
 import {GuaranteeRequest} from './guaranteeReq.entity';
 import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
-import fetch from 'node-fetch';
+import axios from 'axios';
+import {Readable} from 'stream';
 
 @Injectable()
 export class Cafe24EventService {
@@ -298,6 +299,11 @@ export class Cafe24EventService {
 			orderItem.product_no
 		);
 
+		const res = await axios.get<ArrayBuffer>(productInfo.detail_image, {
+			responseType: 'arraybuffer',
+		});
+		const buffer = res.data;
+
 		// 수량 만큽 발급
 		while (quantity > 0) {
 			quantity -= 1;
@@ -306,6 +312,7 @@ export class Cafe24EventService {
 				await this.vircleCoreApi.requestGuarantee(
 					interwork.coreApiToken,
 					{
+						image: buffer,
 						productName: orderItem.product_name,
 						price: parseInt(orderItem.product_price),
 						ordererName: orderBuyer.name,
@@ -369,9 +376,10 @@ export class Cafe24EventService {
 			orderItem.product_no
 		);
 
-		const response = await fetch(productInfo.detail_image);
-		const buffer = await response.arrayBuffer();
-
+		const res = await axios.get<ArrayBuffer>(productInfo.detail_image, {
+			responseType: 'arraybuffer',
+		});
+		const buffer = res.data;
 		// 수량 만큽 발급
 		while (quantity > 0) {
 			quantity -= 1;
