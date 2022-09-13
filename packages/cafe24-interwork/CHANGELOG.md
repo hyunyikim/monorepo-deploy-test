@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.0.4) (2022-09-13)
+
+
+### Features
+
+* 상품 사진 이미지를 다운로드 하여 등록 ([#128](https://github.com/mass-adoption/vircle/issues/128)) ([9da61b9](https://github.com/mass-adoption/vircle/commit/9da61b9576a3a57fad544612d37d35641d0cdb99))
+* **cafe24:** :rocket: 보증서 발급 이벤트 데이터(dynamodb)에 product 정보를 추가 ([#116](https://github.com/mass-adoption/vircle/issues/116)) ([0f4fb4f](https://github.com/mass-adoption/vircle/commit/0f4fb4f0001de49ce59e37ac04efda963ec79df4))
+* **cafe24:** :zap: cafe24 연동 여부 확인 비지니스 로직 변경 ([#113](https://github.com/mass-adoption/vircle/issues/113)) ([bfe8962](https://github.com/mass-adoption/vircle/commit/bfe89627faf3ab76c4127c09104f9d31c28078b1))
+* **cafe24:** batch 주문을 처리하도록 설정 ([#125](https://github.com/mass-adoption/vircle/issues/125)) ([dddfa42](https://github.com/mass-adoption/vircle/commit/dddfa425d2d1a44f50cec060fd2916d0bd2826db))
+* **cafe24:** buffer 형태로 이미지를 업로드 ([#129](https://github.com/mass-adoption/vircle/issues/129)) ([9b4dc98](https://github.com/mass-adoption/vircle/commit/9b4dc98d5c923e5f28ac94e298cbbcacc8c47fda))
+* **common:** ⚡ vircle common 프로젝트 init ([#106](https://github.com/mass-adoption/vircle/issues/106)) ([0ba6e5d](https://github.com/mass-adoption/vircle/commit/0ba6e5d4424c7dd01d650df70ad2dde75c371001))
+
+
+### Bug Fixes
+
+* **cafe24:** :ambulance: jwt guard가 동작 에러 해결 ([#112](https://github.com/mass-adoption/vircle/issues/112)) ([c2eeae4](https://github.com/mass-adoption/vircle/commit/c2eeae4d73408e0322f6ff4a66fa91a5353cf43c))
+* **cafe24:** :ambulance: routing 에러 수정 ([#111](https://github.com/mass-adoption/vircle/issues/111)) ([4446ed3](https://github.com/mass-adoption/vircle/commit/4446ed3986a54117f35aafd15079dd6c28de6867))
+* **cafe24:** 연동을 해제한 사람의 연동 데이터가 조회되는 문제 해결 ([#124](https://github.com/mass-adoption/vircle/issues/124)) ([f85f620](https://github.com/mass-adoption/vircle/commit/f85f620db0e88ea2c4324bb3fe396eaccc17301f))
+* **cafe24:** after.install.sh에 있는 syntax error 수정 ([#110](https://github.com/mass-adoption/vircle/issues/110)) ([ba6be22](https://github.com/mass-adoption/vircle/commit/ba6be22b69366b72ba2b7456e6c401ee0d678a0a))
+* **cafe24:** appspec script location error ([#118](https://github.com/mass-adoption/vircle/issues/118)) ([06ba246](https://github.com/mass-adoption/vircle/commit/06ba24632d5a2318be70eb34afd07f13f759eb11))
+* **cafe24:** orderId 파싱에러 수정 ([#126](https://github.com/mass-adoption/vircle/issues/126)) ([041c906](https://github.com/mass-adoption/vircle/commit/041c9063c4d6324aea8c78c86bd14c21b45f405a))
+* **cafe24:** orderId가 이상하게 저장되는 문제 해결 ([#127](https://github.com/mass-adoption/vircle/issues/127)) ([3b39810](https://github.com/mass-adoption/vircle/commit/3b39810de79509cfe6529ba4d5e925b45ca6711f))
+* **cafe24:** partnerInfo에서 brand의 nullsafe 처리 ([#122](https://github.com/mass-adoption/vircle/issues/122)) ([b7e319e](https://github.com/mass-adoption/vircle/commit/b7e319ee90682f357246313a906aef46ee5c24fd))
+
 ### [0.0.3](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.0.3) (2022-09-05)
 
 
