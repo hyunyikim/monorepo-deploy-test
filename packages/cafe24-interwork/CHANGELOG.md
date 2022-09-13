@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.0.5) (2022-09-13)
+
+### Bug Fixes
+
+* **cafe24:** 상품 이미지가 없는 주문에 대한 처리 ([a9f8e32](https://github.com/mass-adoption/vircle/commit/a9f8e32941518415c5b4fbed86df728f6bde12a0))
+
+
 ### [0.0.4](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.0.4) (2022-09-13)
 
 

@@ -299,10 +299,16 @@ export class Cafe24EventService {
 			orderItem.product_no
 		);
 
-		const res = await axios.get<ArrayBuffer>(productInfo.detail_image, {
-			responseType: 'arraybuffer',
-		});
-		const buffer = res.data;
+		let buffer: ArrayBuffer | undefined = undefined;
+		if (productInfo.detail_image) {
+			const response = await axios.get<ArrayBuffer>(
+				productInfo.detail_image,
+				{
+					responseType: 'arraybuffer',
+				}
+			);
+			buffer = response.data;
+		}
 
 		// 수량 만큽 발급
 		while (quantity > 0) {
@@ -375,11 +381,17 @@ export class Cafe24EventService {
 			interwork.accessToken.access_token,
 			orderItem.product_no
 		);
+		let buffer: ArrayBuffer | undefined = undefined;
+		if (productInfo.detail_image) {
+			const response = await axios.get<ArrayBuffer>(
+				productInfo.detail_image,
+				{
+					responseType: 'arraybuffer',
+				}
+			);
+			buffer = response.data;
+		}
 
-		const res = await axios.get<ArrayBuffer>(productInfo.detail_image, {
-			responseType: 'arraybuffer',
-		});
-		const buffer = res.data;
 		// 수량 만큽 발급
 		while (quantity > 0) {
 			quantity -= 1;
