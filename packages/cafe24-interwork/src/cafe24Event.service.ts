@@ -299,15 +299,15 @@ export class Cafe24EventService {
 			orderItem.product_no
 		);
 
-		let buffer: ArrayBuffer | undefined = undefined;
+		let stream: Readable | undefined = undefined;
 		if (productInfo.detail_image) {
-			const response = await axios.get<ArrayBuffer>(
+			const response = await axios.get<Readable>(
 				productInfo.detail_image,
 				{
-					responseType: 'arraybuffer',
+					responseType: 'stream',
 				}
 			);
-			buffer = response.data;
+			stream = response.data;
 		}
 
 		// 수량 만큽 발급
@@ -318,7 +318,7 @@ export class Cafe24EventService {
 				await this.vircleCoreApi.requestGuarantee(
 					interwork.coreApiToken,
 					{
-						image: buffer,
+						image: stream,
 						productName: orderItem.product_name,
 						price: parseInt(orderItem.product_price),
 						ordererName: orderBuyer.name,
@@ -381,15 +381,17 @@ export class Cafe24EventService {
 			interwork.accessToken.access_token,
 			orderItem.product_no
 		);
-		let buffer: ArrayBuffer | undefined = undefined;
+
+		let stream: Readable | undefined = undefined;
 		if (productInfo.detail_image) {
-			const response = await axios.get<ArrayBuffer>(
+			const response = await axios.get<Readable>(
 				productInfo.detail_image,
 				{
-					responseType: 'arraybuffer',
+					responseType: 'stream',
 				}
 			);
-			buffer = response.data;
+			console.log(response.data);
+			stream = response.data;
 		}
 
 		// 수량 만큽 발급
@@ -400,6 +402,7 @@ export class Cafe24EventService {
 				await this.vircleCoreApi.requestGuarantee(
 					interwork.coreApiToken,
 					{
+						image: stream,
 						productName: orderItem.product_name,
 						price: parseInt(orderItem.product_price),
 						ordererName: webHook.resource.buyer_name,
@@ -407,7 +410,6 @@ export class Cafe24EventService {
 							'-',
 							''
 						),
-						image: buffer,
 						platformName: interwork.store.shop_name,
 						modelNum: orderItem.product_code,
 						warranty: interwork.partnerInfo?.warrantyDate,
