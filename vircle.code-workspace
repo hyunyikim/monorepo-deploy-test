@@ -27,6 +27,10 @@
 		{
 			"path": "packages/ui-component",
 			"name": "@vircle/ui-component"
+		},
+		{
+			"path": "packages/partners-web",
+			"name": "@vircle/partners-web"
 		}
 	],
 	"settings": {

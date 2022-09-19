@@ -8,3 +8,4 @@ node_modules
 bundle
 CHANGELOG.md
 .yarnrc.yml
+reset.css

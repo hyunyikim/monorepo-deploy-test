@@ -1,0 +1,5 @@
+{
+	"path": ".",
+	"tag-prefix": "partners-web-v",
+	"releaseCommitMessageFormat": "chore(partners-web): updated apps changelog"
+}
