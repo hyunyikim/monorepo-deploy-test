@@ -1,8 +1,7 @@
 import {TestingModule, Test} from '@nestjs/testing';
 import {InterworkRepository} from './interwork.repository';
 import {DynamoDB} from 'aws-sdk';
-import {Cafe24Interwork} from '../interwork.entity';
-import {plainToInstance} from 'class-transformer';
+import {Cafe24Interwork} from '../cafe24Interwork/interwork.entity';
 
 const REGION = 'ap-northeast-2';
 const TEST_TABLE_NAME = 'dev_interwork_cafe24';

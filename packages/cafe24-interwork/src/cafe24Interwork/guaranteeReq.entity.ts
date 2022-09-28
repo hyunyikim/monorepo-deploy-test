@@ -1,5 +1,5 @@
 import {IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
-import {OrderItem, Product} from './Cafe24ApiService';
+import {OrderItem, Product} from '../cafe24Api';
 import {
 	WebHookBody,
 	EventOrderShipping,
@@ -44,7 +44,7 @@ export class GuaranteeRequest {
 
 	@IsOptional()
 	@IsString()
-	canceledAt?: string;
+	canceledAt: string | null;
 
 	@IsString()
 	cancelTraceId?: string;

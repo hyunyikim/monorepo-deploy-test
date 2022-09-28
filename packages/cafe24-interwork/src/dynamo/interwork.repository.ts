@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {DynamoDB} from 'aws-sdk';
 import {plainToInstance} from 'class-transformer';
-import {Cafe24Interwork} from '../interwork.entity';
+import {Cafe24Interwork} from '../cafe24Interwork/interwork.entity';
 
 @Injectable()
 export class InterworkRepository {

@@ -275,6 +275,9 @@ export class Product {
 	@IsString()
 	eng_product_name: string;
 
+	@IsArray()
+	category: {category_no: number}[];
+
 	@IsString()
 	price: string;
 
@@ -365,8 +368,6 @@ export class Order {
 
 	member_id: string;
 	member_email: string;
-	/** 회원 인증여부. 인증여부에 따라 3가지로 회원타입이 나눠짐. */
-	member_authentication: 'T' | 'B' | 'J';
 
 	/** 결제자명 */
 	billing_name: string;
@@ -385,6 +386,9 @@ export class Order {
 
 	/** 배송 상태 (F : 배송전, M : 배송중, T : 배송완료, W : 배송보류, X : 발주전) */
 	shipping_status: string;
+
+	items: OrderItem[];
+	buyer: OrderBuyer;
 }
 
 export class CustomerPrivacy {

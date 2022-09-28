@@ -8,7 +8,7 @@ import {
 	IsString,
 	ValidateNested,
 } from 'class-validator';
-import {AccessToken, Store} from './Cafe24ApiService';
+import {AccessToken, Store} from '../cafe24Api';
 
 export type IssueTiming = 'AFTER_SHIPPING' | 'AFTER_DELIVERED';
 export class IssueSetting {
@@ -16,14 +16,17 @@ export class IssueSetting {
 	issueTiming: IssueTiming;
 
 	@IsArray()
-	issueCategories: string[];
-
-	@IsArray()
-	issueProducts: string[];
-
-	@IsArray()
-	issueCustomerGroups: string[];
+	issueCategories:
+		| {
+				idx: number;
+				depth: number;
+				name: string;
+				fullName: string[];
+				fullNo: number[];
+		  }[]
+		| null;
 }
+
 export class Cafe24Interwork {
 	@IsNumber()
 	partnerIdx: number;

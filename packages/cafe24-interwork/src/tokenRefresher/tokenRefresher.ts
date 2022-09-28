@@ -4,10 +4,10 @@ import {
 	LoggerService,
 	NotFoundException,
 } from '@nestjs/common';
-import {Cafe24API} from 'src/Cafe24ApiService';
+import {Cafe24API} from 'src/cafe24Api';
 import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
-import {Cafe24Interwork} from 'src/interwork.entity';
-import {InterworkRepository} from 'src/DynamoRepo/interwork.repository';
+import {Cafe24Interwork} from 'src/cafe24Interwork/interwork.entity';
+import {InterworkRepository} from 'src/dynamo/interwork.repository';
 import {Cron} from '@nestjs/schedule';
 
 @Injectable()

@@ -8,8 +8,8 @@ import {
 	UseFilters,
 	UseGuards,
 } from '@nestjs/common';
-import {Cafe24InterworkService} from './cafe24Interwork.service';
-import {ApiKeyGuard} from './guard';
+import {Cafe24InterworkService} from '../cafe24Interwork/cafe24Interwork.service';
+import {ApiKeyGuard} from '../guard';
 import {
 	EventAppDelete,
 	EventBatchOrderShipping,
@@ -17,9 +17,9 @@ import {
 	EventOrderReturnExchange,
 	EventOrderShipping,
 	WebHookBody,
-} from './cafe24Interwork.dto';
+} from '../cafe24Interwork';
 import {Cafe24EventService} from './cafe24Event.service';
-import {HttpExceptionFilter} from './filter';
+import {HttpExceptionFilter} from '../filter';
 
 @Controller({version: '1', path: 'events'})
 @UseFilters(HttpExceptionFilter)
@@ -39,17 +39,21 @@ export class Cafe24EventController {
 	async handleAppDeleteEvent(@Body() webHook: WebHookBody<EventAppDelete>) {
 		const mallId = webHook.resource.mall_id;
 		await this.cafe24InterworkService.inactivateInterwork(mallId);
-		return 'OK';
+		return {
+			mallId,
+		};
 	}
 
 	@Post('order/shipping')
 	@UseGuards(ApiKeyGuard)
 	async handleOrderShippingEvent(
 		@Headers('x-trace-id') traceId: string,
-		@Body() webHook: WebHookBody<EventOrderShipping>
+		@Body() webHook: WebHookBody<EventBatchOrderShipping>
 	) {
-		await this.cafe24EventService.handleShippingWebhook(traceId, webHook);
-		return 'OK';
+		return await this.cafe24EventService.handleDeliveryHook(
+			traceId,
+			webHook
+		);
 	}
 
 	@Post('order/shipping/batch')
@@ -58,11 +62,10 @@ export class Cafe24EventController {
 		@Headers('x-trace-id') traceId: string,
 		@Body() webHook: WebHookBody<EventBatchOrderShipping>
 	) {
-		await this.cafe24EventService.handleBachShippingWebHook(
+		return await this.cafe24EventService.handleDeliveryHook(
 			traceId,
 			webHook
 		);
-		return 'OK';
 	}
 
 	@Post('order/register')

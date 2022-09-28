@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
-import {Store} from 'src/Cafe24ApiService';
-import {Cafe24Interwork} from 'src/interwork.entity';
+import {Store} from 'src/cafe24Api';
+import {Cafe24Interwork} from 'src/cafe24Interwork/interwork.entity';
 import {
 	Block,
 	HeaderBlock,

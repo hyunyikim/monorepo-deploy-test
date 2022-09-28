@@ -1,7 +1,7 @@
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {Test, TestingModule} from '@nestjs/testing';
-import {Store} from '../Cafe24ApiService';
-import {Cafe24Interwork} from '../interwork.entity';
+import {Store} from '../cafe24Api';
+import {Cafe24Interwork} from '../cafe24Interwork/interwork.entity';
 
 import {SlackReporter} from './slackReporter';
 

@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
-import {Partnership} from 'src/interwork.entity';
+import {Partnership} from '../cafe24Interwork';
 import {Nft} from '@vircle/entity';
 import * as FormData from 'form-data';
 import {Readable} from 'stream';

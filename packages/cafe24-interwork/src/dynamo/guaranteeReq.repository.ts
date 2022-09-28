@@ -1,7 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {DynamoDB} from 'aws-sdk';
 import {plainToInstance} from 'class-transformer';
-import {GuaranteeRequest} from 'src/guaranteeReq.entity';
+import {DateTime} from 'luxon';
+import {GuaranteeRequest} from '../cafe24Interwork/guaranteeReq.entity';
 
 @Injectable()
 export class GuaranteeRequestRepository {
@@ -41,15 +42,17 @@ export class GuaranteeRequestRepository {
 		return plainToInstance(GuaranteeRequest, Items);
 	}
 
-	async getRequestListByOrderItemId(orderItemId: string, mallId: string) {
+	async getRequestListByOrderItemCode(orderItemCode: string, mallId: string) {
 		const {Items} = await this.ddbClient
 			.query({
 				TableName: this.tableName,
-				IndexName: 'orderItemId-index',
-				KeyConditionExpression: 'orderItemId = :id and mallId = :mId',
+				IndexName: 'orderItemCode-index',
+				KeyConditionExpression:
+					'orderItemCode = :id and mallId = :mId and canceledAt = :canceledAt',
 				ExpressionAttributeValues: {
-					':id': orderItemId,
+					':id': orderItemCode,
 					':mId': mallId,
+					':canceledAt': null,
 				},
 			})
 			.promise();
@@ -58,12 +61,36 @@ export class GuaranteeRequestRepository {
 		return plainToInstance(GuaranteeRequest, Items);
 	}
 
-	async putRequest(req: GuaranteeRequest) {
+	async putRequest(req: Partial<GuaranteeRequest>) {
 		await this.ddbClient
 			.put({
 				TableName: this.tableName,
 				Item: req,
 				ReturnValues: 'ALL_OLD',
+			})
+			.promise();
+	}
+
+	async updateCanceledRequest(
+		idx: number,
+		payload: {
+			traceId: string;
+			orderItemCode: string;
+		}
+	) {
+		await this.ddbClient
+			.update({
+				TableName: this.tableName,
+				Key: {
+					reqIdx: idx,
+				},
+				UpdateExpression:
+					'set cancelTraceId = :traceId, orderItemCode = :orderItemCode, canceledAt = :canceledAt',
+				ExpressionAttributeValues: {
+					':traceId': payload.traceId,
+					':orderItemCode': payload.orderItemCode,
+					':canceledAt': DateTime.now().toISO(),
+				},
 			})
 			.promise();
 	}

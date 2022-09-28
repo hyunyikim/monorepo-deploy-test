@@ -1,11 +1,16 @@
-import {Inject, Injectable, NotFoundException} from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import {Cafe24Interwork, IssueSetting} from './interwork.entity';
-import {Cafe24API} from './Cafe24ApiService/cafe24Api';
-import {InterworkRepository} from './DynamoRepo/interwork.repository';
+import {Cafe24API} from '../cafe24Api/cafe24Api';
+import {InterworkRepository} from '../dynamo/interwork.repository';
 import {DateTime} from 'luxon';
-import {VircleCoreAPI} from './vircleCoreApiService';
-import {TokenInfo} from './getToken.decorator';
-import {SlackReporter} from './slackReporter';
+import {VircleCoreAPI} from '../vircleCoreApiService';
+import {TokenInfo} from '../getToken.decorator';
+import {SlackReporter} from '../slackReporter';
 @Injectable()
 export class Cafe24InterworkService {
 	constructor(
@@ -103,7 +108,7 @@ export class Cafe24InterworkService {
 	async completeInterwork(mallId: string, {token, partnerIdx}: TokenInfo) {
 		const interwork = await this.getInterworkInfo(mallId);
 		if (interwork === null) {
-			throw new NotFoundException('The interwork dose not exist.');
+			throw new NotFoundException('NOT_FOUND_INTERWORK');
 		}
 
 		const partnership = await this.vircleCoreApi.getPartnerInfo(token);
@@ -113,11 +118,10 @@ export class Cafe24InterworkService {
 		interwork.updatedAt = DateTime.now().toISO();
 		interwork.confirmedAt = DateTime.now().toISO();
 		interwork.issueSetting = {
-			issueCategories: ['ALL'],
-			issueCustomerGroups: ['ALL'],
-			issueProducts: ['ALL'],
+			issueCategories: null,
 			issueTiming: 'AFTER_DELIVERED',
 		};
+
 		interwork.partnerInfo = partnership;
 
 		await this.interworkRepo.putInterwork(interwork);
@@ -134,7 +138,7 @@ export class Cafe24InterworkService {
 		const interwork = await this.interworkRepo.getInterwork(mallId);
 
 		if (interwork === null) {
-			throw new NotFoundException('The interwork dose not exist.');
+			throw new NotFoundException('NOT_FOUND_INTERWORK');
 		}
 
 		interwork.leavedAt = DateTime.now().toISO();
@@ -143,13 +147,24 @@ export class Cafe24InterworkService {
 		return interwork;
 	}
 
-	async changeInterworkSetting(mallId: string, setting: IssueSetting) {
+	async changeInterworkSetting(
+		mallId: string,
+		token: TokenInfo,
+		setting: Partial<IssueSetting>
+	) {
 		const interwork = await this.interworkRepo.getInterwork(mallId);
 
 		if (interwork === null) {
-			throw new NotFoundException('The interwork dose not exist.');
+			throw new NotFoundException('NOT_FOUND_INTERWORK');
 		}
-		interwork.issueSetting = setting;
+		if (interwork.partnerIdx !== token.partnerIdx) {
+			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
+		}
+
+		interwork.issueSetting = {
+			...interwork.issueSetting,
+			...setting,
+		};
 		interwork.updatedAt = DateTime.now().toISO();
 		await this.interworkRepo.putInterwork(interwork);
 		return interwork;
@@ -159,7 +174,7 @@ export class Cafe24InterworkService {
 		const interwork = await this.getInterworkInfo(mallId);
 
 		if (!interwork) {
-			throw new NotFoundException('The interwork dose not exist.');
+			throw new NotFoundException('NOT_FOUND_INTERWORK');
 		}
 
 		interwork.reasonForLeave = reasons;
