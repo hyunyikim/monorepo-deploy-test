@@ -174,10 +174,25 @@ export class Cafe24API {
 		return data.categories;
 	}
 
-	async getCategoryListFront(mallId: string) {
+	async getCategoryListFront(
+		mallId: string,
+		option: {
+			name?: string;
+			limit: number;
+			offset: number;
+			depth?: number;
+		}
+	) {
+		const {limit, offset, depth, name} = option;
 		const url = `https://${mallId}.cafe24api.com/api/v2/categories`;
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const {data} = await this.httpAgent.get<any>(url, {
+			params: {
+				category_name: name,
+				limit,
+				offset,
+				category_depth: depth,
+			},
 			headers: {
 				'X-Cafe24-Api-Version': '2022-09-01',
 				'X-Cafe24-Client-Id': this.clientId,

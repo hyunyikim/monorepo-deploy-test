@@ -11,6 +11,7 @@ import {DateTime} from 'luxon';
 import {VircleCoreAPI} from '../vircleCoreApiService';
 import {TokenInfo} from '../getToken.decorator';
 import {SlackReporter} from '../slackReporter';
+import {IsNumber, IsOptional, IsString} from 'class-validator';
 @Injectable()
 export class Cafe24InterworkService {
 	constructor(
@@ -183,7 +184,23 @@ export class Cafe24InterworkService {
 		return interwork;
 	}
 
-	async getCategories(mallId: string) {
-		return this.cafe24Api.getCategoryListFront(mallId);
+	async getCategories(mallId: string, option: CategoryListParams) {
+		return this.cafe24Api.getCategoryListFront(mallId, option);
 	}
+}
+
+export class CategoryListParams {
+	@IsOptional()
+	@IsString()
+	name?: string;
+
+	@IsNumber()
+	limit: number;
+
+	@IsNumber()
+	offset: number;
+
+	@IsOptional()
+	@IsNumber()
+	depth?: number;
 }

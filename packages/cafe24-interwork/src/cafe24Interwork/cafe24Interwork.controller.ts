@@ -8,6 +8,7 @@ import {
 	UseGuards,
 	UseFilters,
 	NotFoundException,
+	Query,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {GetToken, TokenInfo} from '../getToken.decorator';
@@ -15,6 +16,7 @@ import {IssueSetting} from './interwork.entity';
 import {JwtAuthGuard} from '../guard';
 import {HttpExceptionFilter} from '../filter';
 import {TransformInstanceToPlain} from 'class-transformer';
+import {CategoryListParams} from './cafe24Interwork.service';
 
 @Controller({version: '1', path: 'interwork'})
 @UseFilters(HttpExceptionFilter)
@@ -126,7 +128,16 @@ export class Cafe24InterworkController {
 	}
 
 	@Get(':mallId/categories')
-	getCategories(@Param('mallId') mallId: string) {
-		return this.cafe24InterworkService.getCategories(mallId);
+	getCategories(
+		@Param('mallId') mallId: string,
+		@Query() query: Partial<CategoryListParams>
+	) {
+		const {limit = 100, depth, offset = 0, name} = query;
+		return this.cafe24InterworkService.getCategories(mallId, {
+			limit,
+			depth,
+			offset,
+			name,
+		});
 	}
 }
