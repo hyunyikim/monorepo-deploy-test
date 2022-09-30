@@ -124,4 +124,9 @@ export class Cafe24InterworkController {
 		await this.cafe24InterworkService.changeLeaveReason(mallId, reasons);
 		return;
 	}
+
+	@Get(':mallId/categories')
+	getCategories(@Param('mallId') mallId: string) {
+		return this.cafe24InterworkService.getCategories(mallId);
+	}
 }

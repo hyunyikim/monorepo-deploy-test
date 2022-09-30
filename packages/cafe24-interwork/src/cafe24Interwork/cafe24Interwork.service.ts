@@ -182,4 +182,8 @@ export class Cafe24InterworkService {
 		await this.interworkRepo.putInterwork(interwork);
 		return interwork;
 	}
+
+	async getCategories(mallId: string) {
+		return this.cafe24Api.getCategoryListFront(mallId);
+	}
 }

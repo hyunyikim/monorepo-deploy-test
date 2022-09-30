@@ -174,6 +174,19 @@ export class Cafe24API {
 		return data.categories;
 	}
 
+	async getCategoryListFront(mallId: string) {
+		const url = `https://${mallId}.cafe24api.com/api/v2/categories`;
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const {data} = await this.httpAgent.get<any>(url, {
+			headers: {
+				'X-Cafe24-Api-Version': '2022-09-01',
+				'X-Cafe24-Client-Id': this.clientId,
+			},
+		});
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+		return data.categories;
+	}
+
 	@TransformPlainToInstance(CustomerPrivacy)
 	async getCustomerPrivacy(
 		mallId: string,
