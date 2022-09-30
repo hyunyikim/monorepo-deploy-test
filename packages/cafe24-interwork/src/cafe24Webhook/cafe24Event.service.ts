@@ -335,7 +335,7 @@ export class Cafe24EventService {
 		const productCategory = hook.productInfo?.category;
 
 		//모든 카테코리에 대해서 발행함
-		if (setting.issueCategories === null) {
+		if (setting.issueAll) {
 			return hook;
 		}
 

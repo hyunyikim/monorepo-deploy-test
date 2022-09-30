@@ -9,9 +9,17 @@ import {
 	IsString,
 	ValidateNested,
 } from 'class-validator';
-import {AccessToken, Store} from '../cafe24Api';
+import {AccessToken, Category, Store} from '../cafe24Api';
 
 export type IssueTiming = 'AFTER_SHIPPING' | 'AFTER_DELIVERED';
+
+export interface IssueCategory {
+	idx: number;
+	depth: number;
+	name: string;
+	fullName: string[];
+	fullNo: number[];
+}
 export class IssueSetting {
 	@IsBoolean()
 	manually: boolean;
@@ -19,16 +27,11 @@ export class IssueSetting {
 	@IsString()
 	issueTiming: IssueTiming;
 
+	@IsBoolean()
+	issueAll: boolean;
+
 	@IsArray()
-	issueCategories:
-		| {
-				idx: number;
-				depth: number;
-				name: string;
-				fullName: string[];
-				fullNo: number[];
-		  }[]
-		| null;
+	issueCategories: IssueCategory[];
 }
 
 export class Cafe24Interwork {
