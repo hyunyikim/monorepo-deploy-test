@@ -118,6 +118,7 @@ export class Cafe24InterworkService {
 		interwork.updatedAt = DateTime.now().toISO();
 		interwork.confirmedAt = DateTime.now().toISO();
 		interwork.issueSetting = {
+			manually: false,
 			issueCategories: null,
 			issueTiming: 'AFTER_DELIVERED',
 		};

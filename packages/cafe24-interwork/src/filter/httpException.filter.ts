@@ -34,6 +34,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			req: {
 				path: req.path,
 				params: req.params,
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				body: req.body,
 				headers: req.headers,
 			},
 		});

@@ -1,5 +1,4 @@
 import {
-	ForbiddenException,
 	Inject,
 	Injectable,
 	InternalServerErrorException,
@@ -11,7 +10,6 @@ import {
 	Cafe24Interwork,
 	EventBatchOrderShipping,
 	WebHookBody,
-	GuaranteeRequest,
 } from '../cafe24Interwork';
 import {Cafe24API, Order, OrderItem, Product} from '../cafe24Api';
 import {InterworkRepository, GuaranteeRequestRepository} from '../dynamo';
@@ -25,12 +23,9 @@ import {
 	concatMap,
 	mergeMap,
 	of,
-	from,
-	partition,
 	toArray,
 	range,
 	lastValueFrom,
-	filter,
 	map,
 	tap,
 	groupBy,
@@ -53,6 +48,12 @@ export class Cafe24EventService {
 		traceId: string,
 		webHook: WebHookBody<EventBatchOrderShipping>
 	) {
+		this.logger.log(
+			`EventType: ${webHook.event_no}
+			OrderIDs: ${webHook.resource.order_id}
+			MallId: ${webHook.resource.mall_id}
+			`
+		);
 		const hook = await this.addInterworkInfo(webHook);
 
 		const orderItems = of(hook).pipe(
@@ -63,8 +64,7 @@ export class Cafe24EventService {
 			map((hook) => this.categorizeAction(hook)),
 			mergeMap((hook) => this.addProductInfo(hook)),
 			map((hook) => this.targetCategory(hook)),
-			mergeMap((hook) => this.handleAction(hook, traceId)),
-			mergeMap((hook) => hook)
+			mergeMap((hook) => this.handleAction(hook, traceId))
 		);
 
 		const report$ = orderItems.pipe(
@@ -83,7 +83,7 @@ export class Cafe24EventService {
 		);
 
 		const report = await lastValueFrom(report$);
-		console.log(report);
+		this.logger.log(report);
 		return report;
 	}
 
@@ -112,6 +112,7 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
+		console.log('divideEachOrderId');
 		return webHook.resource.order_id.split(',').map((orderId) => ({
 			orderId,
 			interwork,
@@ -126,6 +127,7 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
+		console.log('AddReqInfo');
 		const mallId = hook.interwork.mallId;
 		const orderItemCode = hook.item.order_item_code;
 		const res = await this.guaranteeReqRepo.getRequestListByOrderItemCode(
@@ -144,6 +146,7 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
+		console.log('addOrderInfo');
 		const {webHook, interwork, orderId} = hook;
 
 		const order = await this.cafe24Api.getOrder(
@@ -163,10 +166,12 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
-		return hook.order.items.map((item) => ({
-			...hook,
-			item,
-		}));
+		return hook.order.items.flatMap((item) => {
+			return [...Array(item.quantity).keys()].map(() => ({
+				...hook,
+				item,
+			}));
+		});
 	}
 
 	private categorizeAction(hook: {
@@ -237,12 +242,12 @@ export class Cafe24EventService {
 				return issued;
 			case 'cancel':
 				const canceled = await this.cancelGuarantee(hook, traceId);
-				return [canceled];
+				return canceled;
 			case 'pass':
-				return [hook];
+				return hook;
 			default:
 				console.log('UNDEFINED ACTION');
-				return [hook];
+				return hook;
 		}
 	}
 
@@ -263,7 +268,7 @@ export class Cafe24EventService {
 		const interwork = hook.interwork;
 		const coreApiToken = hook.interwork.coreApiToken;
 		if (!coreApiToken) {
-			throw new ForbiddenException('No auth for vircle core-api');
+			throw new UnauthorizedException('NO_AUTH_FOR_CORE_API');
 		}
 		if (!hook.productInfo) {
 			throw new InternalServerErrorException('NO PRODUCT INFO');
@@ -275,50 +280,45 @@ export class Cafe24EventService {
 			}
 		);
 
-		const nftReq$ = range(1, hook.item.quantity).pipe(
-			mergeMap(async () => {
-				const nftReq = await this.vircleCoreApi.requestGuarantee(
-					coreApiToken,
-					this.createDirectReqPayload(
-						hook.orderId,
-						buyer.name,
-						buyer.cellphone,
-						interwork,
-						item,
-						stream
-					)
-				);
-				console.log('ISSUE', nftReq);
-				return {
-					...hook,
-					nftReqIdx: nftReq.nft_req_idx,
-					nftReq,
-				};
-			}),
-			mergeMap(async (hook) => {
-				await this.guaranteeReqRepo.putRequest({
-					reqIdx: hook.nftReq.nft_req_idx,
-					reqState: hook.nftReq.nft_req_state,
-					productCode: hook.item.product_code,
-					orderItemCode: hook.item.order_item_code,
-					eventShopNo: hook.item.shop_no,
-					reqAt: DateTime.now().toISO(),
-					mallId: hook.interwork.mallId,
-					orderId: hook.orderId,
-					webhook: hook.webHook,
-					productInfo: hook.productInfo!,
-					orderItem: hook.item,
-					canceledAt: null,
-					traceId,
-				});
-				return {
-					...hook,
-					nftReq: undefined,
-				};
-			}),
-			toArray()
+		/**
+		 * 수동 발급=1, 자동발급=2
+		 */
+		const issueType = interwork.issueSetting.manually ? 1 : 2;
+
+		const nftReq = await this.vircleCoreApi.requestGuarantee(
+			coreApiToken,
+			this.createDirectReqPayload(
+				issueType.toString(),
+				hook.orderId,
+				buyer.name,
+				buyer.cellphone,
+				interwork,
+				item,
+				stream
+			)
 		);
-		return lastValueFrom(nftReq$);
+		this.logger.log('ISSUE REQ', nftReq);
+
+		await this.guaranteeReqRepo.putRequest({
+			reqIdx: nftReq.nft_req_idx,
+			reqState: nftReq.nft_req_state,
+			productCode: hook.item.product_code,
+			orderItemCode: hook.item.order_item_code,
+			eventShopNo: hook.item.shop_no,
+			reqAt: DateTime.now().toISO(),
+			mallId: hook.interwork.mallId,
+			orderId: hook.orderId,
+			webhook: hook.webHook,
+			productInfo: hook.productInfo,
+			orderItem: hook.item,
+			canceledAt: null,
+			traceId,
+		});
+
+		return {
+			...hook,
+			nftReqIdx: nftReq.nft_req_idx,
+		};
 	}
 
 	private targetCategory(hook: {
@@ -333,8 +333,6 @@ export class Cafe24EventService {
 	}) {
 		const setting = hook.interwork.issueSetting;
 		const productCategory = hook.productInfo?.category;
-		const last = productCategory?.slice(-1).pop();
-		if (!last) return hook;
 
 		//모든 카테코리에 대해서 발행함
 		if (setting.issueCategories === null) {
@@ -347,7 +345,9 @@ export class Cafe24EventService {
 
 		//설정한 카테고리와 상품의 카테코리의 포함 관계를 확인
 		const include = setting.issueCategories.some((category) => {
-			return category.fullNo.includes(last.category_no);
+			return productCategory
+				?.map((c) => c.category_no)
+				.includes(category.idx);
 		});
 
 		if (hook.action === 'issue' && !include) {
@@ -357,6 +357,7 @@ export class Cafe24EventService {
 	}
 
 	private createDirectReqPayload(
+		issueType: string,
 		orderId: string,
 		buyerName: string,
 		buyerPhone: string,
@@ -364,7 +365,6 @@ export class Cafe24EventService {
 		orderItem: OrderItem,
 		image?: Readable
 	): GuaranteeRequestPayload {
-		const DIRECT_ISSUE = '2';
 		return {
 			productName: orderItem.product_name,
 			price: parseInt(orderItem.product_price),
@@ -379,7 +379,7 @@ export class Cafe24EventService {
 			size: orderItem.volume_size ?? undefined,
 			weight: orderItem.product_weight ?? undefined,
 			material: orderItem.product_material ?? undefined,
-			nftState: DIRECT_ISSUE,
+			nftState: issueType,
 			image,
 		};
 	}
@@ -402,6 +402,7 @@ export class Cafe24EventService {
 
 		await this.guaranteeReqRepo.putRequest({
 			reqIdx: idx,
+			orderId: hook.orderId,
 			mallId: hook.interwork.mallId,
 			cancelTraceId: traceId,
 			orderItemCode: hook.item.order_item_code,

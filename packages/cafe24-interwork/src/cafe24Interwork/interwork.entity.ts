@@ -1,6 +1,7 @@
 import {Exclude, Type} from 'class-transformer';
 import {
 	IsArray,
+	IsBoolean,
 	IsDateString,
 	IsNumber,
 	IsObject,
@@ -12,6 +13,9 @@ import {AccessToken, Store} from '../cafe24Api';
 
 export type IssueTiming = 'AFTER_SHIPPING' | 'AFTER_DELIVERED';
 export class IssueSetting {
+	@IsBoolean()
+	manually: boolean;
+
 	@IsString()
 	issueTiming: IssueTiming;
 
