@@ -31,6 +31,10 @@
 		{
 			"path": "packages/partners-web",
 			"name": "@vircle/partners-web"
+		},
+		{
+			"path": "packages/payment",
+			"name": "@vircle/payment"
 		}
 	],
 	"settings": {

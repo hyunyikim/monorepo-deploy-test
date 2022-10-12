@@ -8,6 +8,7 @@
 		"nestjs",
 		"semibold",
 		"sweettracker",
+		"tosspayments",
 		"typeorm",
 		"Unipass",
 		"vbank",
@@ -37,6 +38,7 @@
 		"ui-component",
 		"styles",
 		"shipping-tracking",
-		"cafe24"
+		"cafe24",
+		"payment"
 	]
 }

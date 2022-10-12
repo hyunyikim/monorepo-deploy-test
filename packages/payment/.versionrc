@@ -1,0 +1,5 @@
+{
+	"path": ".",
+	"tag-prefix": "payment-v",
+	"releaseCommitMessageFormat": "chore(payment): updated apps changelog"
+}

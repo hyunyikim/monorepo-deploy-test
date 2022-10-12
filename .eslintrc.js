@@ -94,6 +94,22 @@ module.exports = {
 				},
 			},
 		},
+
+		{
+			files: [
+				'packages/payment/**/*.ts?(x)',
+				'packages/payment/**/*.js?(x)',
+			],
+			settings: {
+				'import/resolver': {
+					node: {
+						project: path.resolve(
+							__dirname + '/packages/payment/tsconfig.json'
+						),
+					},
+				},
+			},
+		},
 	],
 	settings: {
 		'import/extensions': ['.js', '.jsx', '.ts', '.tsx', 'spec.js'],
