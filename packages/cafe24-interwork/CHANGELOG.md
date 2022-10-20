@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.1.0) (2022-10-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cafe24:** 카테고리 정보 제공 api 생성 (#138)
+
+### Features
+
+* 상품 사진 이미지를 다운로드 하여 등록 ([#128](https://github.com/mass-adoption/vircle/issues/128)) ([9da61b9](https://github.com/mass-adoption/vircle/commit/9da61b9576a3a57fad544612d37d35641d0cdb99))
+* **cafe24:** :rocket: 보증서 발급 이벤트 데이터(dynamodb)에 product 정보를 추가 ([#116](https://github.com/mass-adoption/vircle/issues/116)) ([0f4fb4f](https://github.com/mass-adoption/vircle/commit/0f4fb4f0001de49ce59e37ac04efda963ec79df4))
+* **cafe24:** :zap: cafe24 연동 여부 확인 비지니스 로직 변경 ([#113](https://github.com/mass-adoption/vircle/issues/113)) ([bfe8962](https://github.com/mass-adoption/vircle/commit/bfe89627faf3ab76c4127c09104f9d31c28078b1))
+* **cafe24:** 개런티 신청 정보 조회 API 생성 ([#142](https://github.com/mass-adoption/vircle/issues/142)) ([f2467b4](https://github.com/mass-adoption/vircle/commit/f2467b468f265688f387c45189d32e3f1dfd62d2))
+* **cafe24:** 이미지 업로드 형태를 buffer에서 readable stream으로 변경 ([#133](https://github.com/mass-adoption/vircle/issues/133)) ([cadc6c3](https://github.com/mass-adoption/vircle/commit/cadc6c3fb9b32bc89c42029c1f3f4681693a6e1e))
+* **cafe24:** 카테고리 정보 제공 api 생성 ([#138](https://github.com/mass-adoption/vircle/issues/138)) ([b61a3d1](https://github.com/mass-adoption/vircle/commit/b61a3d16503b78e85d840fbdfd8283e4962e143a))
+* **cafe24:** 카테고리 api query option 파라미터 추가 ([#139](https://github.com/mass-adoption/vircle/issues/139)) ([b5c10d7](https://github.com/mass-adoption/vircle/commit/b5c10d72a0d0501e80087176477ac4e03c900766))
+* **cafe24:** batch 주문을 처리하도록 설정 ([#125](https://github.com/mass-adoption/vircle/issues/125)) ([dddfa42](https://github.com/mass-adoption/vircle/commit/dddfa425d2d1a44f50cec060fd2916d0bd2826db))
+* **cafe24:** buffer 형태로 이미지를 업로드 ([#129](https://github.com/mass-adoption/vircle/issues/129)) ([9b4dc98](https://github.com/mass-adoption/vircle/commit/9b4dc98d5c923e5f28ac94e298cbbcacc8c47fda))
+* **common:** ⚡ vircle common 프로젝트 init ([#106](https://github.com/mass-adoption/vircle/issues/106)) ([0ba6e5d](https://github.com/mass-adoption/vircle/commit/0ba6e5d4424c7dd01d650df70ad2dde75c371001))
+
+
+### Bug Fixes
+
+* **cafe24:** :ambulance: jwt guard가 동작 에러 해결 ([#112](https://github.com/mass-adoption/vircle/issues/112)) ([c2eeae4](https://github.com/mass-adoption/vircle/commit/c2eeae4d73408e0322f6ff4a66fa91a5353cf43c))
+* **cafe24:** :ambulance: routing 에러 수정 ([#111](https://github.com/mass-adoption/vircle/issues/111)) ([4446ed3](https://github.com/mass-adoption/vircle/commit/4446ed3986a54117f35aafd15079dd6c28de6867))
+* **cafe24:** 상품 이미지가 없는 주문에 대한 처리 ([#132](https://github.com/mass-adoption/vircle/issues/132)) ([cd44ff6](https://github.com/mass-adoption/vircle/commit/cd44ff6e68ca7fb2e4c3fb08e6d893084d5a5b3c))
+* **cafe24:** 연동을 해제한 사람의 연동 데이터가 조회되는 문제 해결 ([#124](https://github.com/mass-adoption/vircle/issues/124)) ([f85f620](https://github.com/mass-adoption/vircle/commit/f85f620db0e88ea2c4324bb3fe396eaccc17301f))
+* **cafe24:** 컨트롤러 파라미터 오류 수정 ([#145](https://github.com/mass-adoption/vircle/issues/145)) ([c23bb19](https://github.com/mass-adoption/vircle/commit/c23bb19ad74a344d6f6d93df583b8f14d8fecb60))
+* **cafe24:** after.install.sh에 있는 syntax error 수정 ([#110](https://github.com/mass-adoption/vircle/issues/110)) ([ba6be22](https://github.com/mass-adoption/vircle/commit/ba6be22b69366b72ba2b7456e6c401ee0d678a0a))
+* **cafe24:** appspec script location error ([#118](https://github.com/mass-adoption/vircle/issues/118)) ([06ba246](https://github.com/mass-adoption/vircle/commit/06ba24632d5a2318be70eb34afd07f13f759eb11))
+* **cafe24:** controller path 설정 오류 수정 ([#144](https://github.com/mass-adoption/vircle/issues/144)) ([64885ec](https://github.com/mass-adoption/vircle/commit/64885ec493d5a14bc1c47fab0477cbe04f3e3a83))
+* **cafe24:** orderId 파싱에러 수정 ([#126](https://github.com/mass-adoption/vircle/issues/126)) ([041c906](https://github.com/mass-adoption/vircle/commit/041c9063c4d6324aea8c78c86bd14c21b45f405a))
+* **cafe24:** orderId가 이상하게 저장되는 문제 해결 ([#127](https://github.com/mass-adoption/vircle/issues/127)) ([3b39810](https://github.com/mass-adoption/vircle/commit/3b39810de79509cfe6529ba4d5e925b45ca6711f))
+* **cafe24:** partnerInfo에서 brand의 nullsafe 처리 ([#122](https://github.com/mass-adoption/vircle/issues/122)) ([b7e319e](https://github.com/mass-adoption/vircle/commit/b7e319ee90682f357246313a906aef46ee5c24fd))
+
 ### [0.0.5](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.0.5) (2022-09-13)
 
 ### Bug Fixes
