@@ -3,7 +3,7 @@ import {GetToken, TokenInfo} from 'src/getToken.decorator';
 import {JwtAuthGuard} from 'src/guard';
 import {Cafe24GuaranteeService} from './cafe24Guarantee.service';
 
-@Controller({version: '1', path: 'events'})
+@Controller({version: '1', path: 'guarantees'})
 export class Cafe24GuaranteeController {
 	constructor(
 		private readonly cafe24GuaranteeService: Cafe24GuaranteeService
