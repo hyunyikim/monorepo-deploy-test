@@ -17,6 +17,10 @@ import {transports, format} from 'winston';
 import * as WinstonCloudWatch from 'winston-cloudwatch';
 import {TokenRefresher} from './tokenRefresher/tokenRefresher';
 import {ScheduleModule} from '@nestjs/schedule';
+import {
+	Cafe24GuaranteeController,
+	Cafe24GuaranteeService,
+} from './cafe24Guarantee';
 @Module({
 	imports: [
 		ScheduleModule.forRoot(),
@@ -75,6 +79,7 @@ import {ScheduleModule} from '@nestjs/schedule';
 		Cafe24InterworkController,
 		HealthCheckController,
 		Cafe24EventController,
+		Cafe24GuaranteeController,
 	],
 	providers: [
 		{
@@ -130,6 +135,7 @@ import {ScheduleModule} from '@nestjs/schedule';
 		},
 		Cafe24InterworkService,
 		Cafe24EventService,
+		Cafe24GuaranteeService,
 		TokenRefresher,
 		{
 			provide: SlackReporter,
