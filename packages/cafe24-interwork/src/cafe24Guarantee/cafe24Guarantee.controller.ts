@@ -11,10 +11,10 @@ export class Cafe24GuaranteeController {
 
 	@Get(':reqIdx')
 	@UseGuards(JwtAuthGuard)
-	getReqInfo(@GetToken() token: TokenInfo, @Param(':reqIdx') reqIdx: string) {
+	getReqInfo(@GetToken() token: TokenInfo, @Param('reqIdx') reqIdx: number) {
 		const guaranteeReq =
 			this.cafe24GuaranteeService.getGuaranteeRequestInfo(
-				+reqIdx,
+				reqIdx,
 				token.partnerIdx
 			);
 		return guaranteeReq;
