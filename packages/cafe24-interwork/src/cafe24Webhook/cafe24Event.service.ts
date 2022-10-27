@@ -24,12 +24,11 @@ import {
 	mergeMap,
 	of,
 	toArray,
-	range,
 	lastValueFrom,
 	map,
-	tap,
 	groupBy,
 } from 'rxjs';
+import {KakaoAlimTalkService} from 'src/kakao-alim-talk';
 
 @Injectable()
 export class Cafe24EventService {
@@ -246,7 +245,6 @@ export class Cafe24EventService {
 			case 'pass':
 				return hook;
 			default:
-				console.log('UNDEFINED ACTION');
 				return hook;
 		}
 	}

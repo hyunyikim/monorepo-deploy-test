@@ -20,13 +20,15 @@ import {
 } from '../cafe24Interwork';
 import {Cafe24EventService} from './cafe24Event.service';
 import {HttpExceptionFilter} from '../filter';
+import {Cafe24OrderEventHandler} from './cafe24OrderEvent.handler';
 
 @Controller({version: '1', path: 'events'})
 @UseFilters(HttpExceptionFilter)
 export class Cafe24EventController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService,
-		private readonly cafe24EventService: Cafe24EventService
+		private readonly cafe24EventService: Cafe24EventService,
+		private readonly cafe24OrderEventHandler: Cafe24OrderEventHandler
 	) {}
 
 	@Get('')
@@ -70,9 +72,11 @@ export class Cafe24EventController {
 
 	@Post('order/register')
 	@UseGuards(ApiKeyGuard)
-	handleOrderRegisterEvent(@Body() webHook: WebHookBody<EventOrderRegister>) {
-		console.log(webHook);
-		return;
+	async handleOrderRegisterEvent(
+		@Body() webHook: WebHookBody<EventOrderRegister>
+	) {
+		const result = await this.cafe24OrderEventHandler.handle(webHook);
+		return result;
 	}
 
 	@Post('order/return')
@@ -81,7 +85,6 @@ export class Cafe24EventController {
 		// @Headers('x-trace-id') traceId: string,
 		@Body() webHook: WebHookBody<EventOrderReturnExchange>
 	) {
-		console.log(webHook);
 		return 'OK';
 	}
 }

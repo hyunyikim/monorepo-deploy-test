@@ -21,6 +21,9 @@ import {
 	Cafe24GuaranteeController,
 	Cafe24GuaranteeService,
 } from './cafe24Guarantee';
+import {KakaoAlimTalkModule} from './kakao-alim-talk/kakao-alim-talk.module';
+import {KakaoAlimTalkService} from './kakao-alim-talk';
+import {Cafe24OrderEventHandler} from './cafe24Webhook/cafe24OrderEvent.handler';
 @Module({
 	imports: [
 		ScheduleModule.forRoot(),
@@ -74,6 +77,7 @@ import {
 			},
 			inject: [ConfigService],
 		}),
+		KakaoAlimTalkModule,
 	],
 	controllers: [
 		Cafe24InterworkController,
@@ -137,6 +141,7 @@ import {
 		Cafe24EventService,
 		Cafe24GuaranteeService,
 		TokenRefresher,
+		Cafe24OrderEventHandler,
 		{
 			provide: SlackReporter,
 			useFactory: (configService: ConfigService) => {
@@ -162,6 +167,7 @@ import {
 			},
 			inject: [ConfigService],
 		},
+		KakaoAlimTalkService,
 	],
 })
 export class Cafe24InterworkModule {}
