@@ -69,7 +69,7 @@ export class Cafe24OrderEventHandler {
 							)
 						),
 						map((store) => ({
-							companyName: store.shop_name,
+							companyName: store.company_name,
 							productName,
 							cellphone: cellphone.replaceAll('-', ''),
 							userName: buyerName,
