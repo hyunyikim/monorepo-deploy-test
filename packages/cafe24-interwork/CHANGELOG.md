@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.2.0) (2022-10-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cafe24:** ⚡ 주문 완료시에 구매자에게 카카오톡 알림 발송  (#147)
+### Features
+* **cafe24:** ⚡ 주문 완료시에 구매자에게 카카오톡 알림 발송  ([#147](https://github.com/mass-adoption/vircle/issues/147)) ([5ffc026](https://github.com/mass-adoption/vircle/commit/5ffc026e096b93a40dc805c25e531d5fd691caa4))
+* **cafe24:** 게런티 발송 알림 별송 여부 설정에 따라 발송 처리 ([#149](https://github.com/mass-adoption/vircle/issues/149)) ([77ae772](https://github.com/mass-adoption/vircle/commit/77ae7723f63e19db3e1c50643930ed45f138b0e5))
+* **cafe24:** 디지털 게런티 알림톡 설정 ([#148](https://github.com/mass-adoption/vircle/issues/148)) ([1283c81](https://github.com/mass-adoption/vircle/commit/1283c81dcfb5fb50b8f0ac58063e9ca3bc23486b))
+
+
+### Bug Fixes
+* **cafe24:** 사전 발송 알림톡 쇼핑몰 이름 => 회사이름 ([#150](https://github.com/mass-adoption/vircle/issues/150)) ([a4a80ac](https://github.com/mass-adoption/vircle/commit/a4a80acf25c8e16ddcf7d630b953ec285a8b017c))
+
+
 ## [0.1.0](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.1.0) (2022-10-20)
 
 
