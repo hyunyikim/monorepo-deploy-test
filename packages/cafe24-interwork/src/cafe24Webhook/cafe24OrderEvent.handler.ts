@@ -15,18 +15,14 @@ import {
 	WebHookBody,
 } from 'src/cafe24Interwork';
 import {KakaoAlimTalkService} from 'src/kakao-alim-talk';
-import {TokenRefresher} from 'src/tokenRefresher';
 
 @Injectable()
 export class Cafe24OrderEventHandler {
 	constructor(
 		@Inject(KakaoAlimTalkService)
 		private alimTalkService: KakaoAlimTalkService,
-		@Inject(Cafe24API)
-		private cafe24Api: Cafe24API,
 		@Inject(Cafe24InterworkService)
-		private cafe24InterworkService: Cafe24InterworkService,
-		@Inject(TokenRefresher) private tokenRefresher: TokenRefresher
+		private cafe24InterworkService: Cafe24InterworkService
 	) {}
 
 	async handle(webHook: WebHookBody<EventOrderRegister>) {
@@ -51,25 +47,18 @@ export class Cafe24OrderEventHandler {
 						map((interwork) => {
 							if (interwork === null)
 								throw new UnauthorizedException('');
-
 							return interwork;
 						}),
 						concatMap((interwork) => {
 							if (interwork.issueSetting.issueIntro === false) {
 								return EMPTY;
 							}
-							return this.tokenRefresher.refreshAccessToken(
-								interwork
-							);
+							return of(interwork);
 						}),
-						concatMap((interwork) =>
-							this.cafe24Api.getStoreInfo(
-								interwork.mallId,
-								interwork.accessToken.access_token
-							)
-						),
-						map((store) => ({
-							companyName: store.company_name,
+
+						map((interwork) => ({
+							companyName:
+								interwork.partnerInfo?.companyName || mallId,
 							productName,
 							cellphone: cellphone.replaceAll('-', ''),
 							userName: buyerName,
