@@ -1,6 +1,7 @@
 import {Inject, Injectable, UnauthorizedException} from '@nestjs/common';
 import {
 	concatMap,
+	EMPTY,
 	firstValueFrom,
 	map,
 	mergeAll,
@@ -50,9 +51,13 @@ export class Cafe24OrderEventHandler {
 						map((interwork) => {
 							if (interwork === null)
 								throw new UnauthorizedException('');
+
 							return interwork;
 						}),
 						concatMap((interwork) => {
+							if (interwork.issueSetting.issueIntro === false) {
+								return EMPTY;
+							}
 							return this.tokenRefresher.refreshAccessToken(
 								interwork
 							);
