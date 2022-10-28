@@ -32,6 +32,9 @@ export class IssueSetting {
 
 	@IsArray()
 	issueCategories: IssueCategory[];
+
+	@IsBoolean()
+	issueIntro?: boolean = true;
 }
 
 export class Cafe24Interwork {

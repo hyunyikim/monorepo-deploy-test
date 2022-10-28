@@ -121,6 +121,7 @@ export class Cafe24InterworkService {
 		interwork.issueSetting = {
 			issueAll: true,
 			manually: false,
+			issueIntro: true,
 			issueCategories: [],
 			issueTiming: 'AFTER_DELIVERED',
 		};
