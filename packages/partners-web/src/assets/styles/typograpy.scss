@@ -1,0 +1,49 @@
+@import 'style.module.scss';
+
+// fontWeight
+.medium {
+	font-weight: $medium;
+}
+.bold {
+	font-weight: $bold;
+}
+
+// fontStyle className based on design system
+// you can use this combining fontWeight className (ex) .body-1 .bold)
+.head-1 {
+	font-size: 1.75rem;
+	font-weight: $bold;
+}
+.head-2 {
+	font-size: 1.5rem;
+	font-weight: $bold;
+}
+.sub-head-1 {
+	font-size: 1.3125rem;
+	font-weight: $bold;
+}
+.sub-head-2 {
+	font-size: 1.125rem;
+	font-weight: $bold;
+}
+.body-1 {
+	font-size: 1rem;
+}
+.body-2 {
+	font-size: 0.9375rem;
+}
+.body-3 {
+	font-size: 0.875rem;
+}
+.caption-1 {
+	font-size: 0.8125rem;
+}
+.caption-2 {
+	font-size: 0.75rem;
+}
+.caption-3 {
+	font-size: 0.6875rem;
+}
+.caption-4 {
+	font-size: 0.5625rem;
+}

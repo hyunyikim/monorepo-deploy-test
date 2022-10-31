@@ -21,7 +21,7 @@ module.exports = (env, argv) => {
 		module: {
 			rules: [
 				{
-					test: /\.(tsx)$/,
+					test: /\.tsx?$/,
 					loader: 'esbuild-loader',
 					options: {
 						loader: 'tsx',
@@ -37,15 +37,20 @@ module.exports = (env, argv) => {
 					use: ['style-loader', 'css-loader', 'sass-loader'],
 				},
 				{
-					test: /\.(jpe?g|gif|png|svg|ico)$/i,
+					test: /\.svg$/,
+					issuer: /\.[t]sx?$/,
+					use: ['@svgr/webpack'],
+				},
+				{
+					test: /\.(jpe?g|gif|png|ico)$/i,
 					type: 'asset/inline',
 				},
 				{
-					test: /\.(jpe?g|gif|png|svg|ico)$/i,
+					test: /\.(jpe?g|gif|png|ico)$/i,
 					type: 'asset/resource',
 				},
 				{
-					test: /\.(jpe?g|gif|png|svg|ico)$/i,
+					test: /\.(jpe?g|gif|png|ico)$/i,
 					type: 'asset',
 					parser: {
 						dataUrlCondition: {
@@ -63,6 +68,7 @@ module.exports = (env, argv) => {
 		},
 		resolve: {
 			extensions: ['.tsx', '.ts', '.jsx', '.js'],
+			// TODO: @도 없이, 아예 src 폴더가 루트가 되도록?
 			alias: {
 				'@': path.resolve(__dirname, 'src'),
 			},

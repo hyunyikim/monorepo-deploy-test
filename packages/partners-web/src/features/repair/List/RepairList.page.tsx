@@ -1,0 +1,260 @@
+import {format, parse} from 'date-fns';
+
+import {Box, TableRow, TableCell, Typography} from '@mui/material';
+
+import {useList, useOpen} from '@/utils/hooks';
+import {
+	ListRequestParam,
+	RepairListResponse,
+	RepairListRequestSearchType,
+	RepairListRequestParam,
+} from '@/@types';
+import {
+	initialSearchFilter,
+	getRepairStatusChip,
+	repairListSearchFilter,
+} from '@/data';
+import {formatPhoneNum, goToParentUrl, openParantModal} from '@/utils';
+import {useMessageDialog} from '@/stores';
+
+import {
+	ListTitle,
+	SearchFilter,
+	TableInfo,
+	Table,
+	PageSelect,
+	Pagination,
+	ImagePopup,
+	ImageModal,
+	Button,
+} from '@/components';
+import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
+import RepairConfirmDialog from './RepairConfirmDialog';
+
+function RepairList() {
+	const email = localStorage.getItem('email');
+	const {
+		isLoading,
+		data,
+		totalSize,
+		filter,
+		paginationProps,
+		handleChangeFilter,
+		handleSearch,
+		handleReset,
+	} = useList<
+		{
+			data: RepairListResponse[];
+			total: number;
+		},
+		ListRequestParam<RepairListRequestSearchType> & RepairListRequestParam
+	>({
+		apiFunc: getRepairList,
+		initialFilter: {
+			...initialSearchFilter,
+			inspct_state: '',
+		},
+	});
+
+	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
+	const {
+		open: confirmOpen,
+		onOpen: onConfirmOpen,
+		onClose: onConfirmClose,
+		modalData: confirmModalData,
+		onSetModalData: onSetConfirmModalData,
+	} = useOpen({});
+
+	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const handleCancelRepair = () => {
+		if (!confirmModalData.inspct_idx) return;
+		(async () => {
+			try {
+				const res = await cancelRepair(
+					Number(confirmModalData.inspct_idx)
+				);
+				onMessageDialogOpen(res?.message);
+				onConfirmClose();
+				handleSearch(filter);
+			} catch (e) {
+				console.log('e :>> ', e);
+			}
+		})();
+	};
+
+	const handleAcceptRepair = () => {
+		if (!confirmModalData.inspct_idx) return;
+		(async () => {
+			try {
+				const res = await acceptRepair(
+					Number(confirmModalData.inspct_idx)
+				);
+				onMessageDialogOpen(res?.message);
+				onConfirmClose();
+				handleSearch(filter);
+			} catch (e) {
+				console.log('e :>> ', e);
+			}
+		})();
+	};
+
+	return (
+		<>
+			<Box>
+				<ListTitle title="수선 신청 목록" />
+				<SearchFilter
+					filter={filter}
+					filterComponent={repairListSearchFilter}
+					onSearch={handleSearch}
+					onReset={handleReset}
+					onChangeFilter={handleChangeFilter}
+				/>
+				<TableInfo totalSize={totalSize} unit="건">
+					{email === 'copamilnew' && (
+						<Button
+							color="black"
+							height={32}
+							onClick={() => {
+								goToParentUrl('/b2b/repair/register');
+							}}>
+							신규 등록
+						</Button>
+					)}
+					<PageSelect
+						value={filter.pageMaxNum}
+						onChange={(value: {[key: string]: any}) =>
+							handleChangeFilter(value)
+						}
+					/>
+				</TableInfo>
+				<Table
+					isLoading={isLoading}
+					totalSize={totalSize}
+					headcell={
+						<>
+							<TableCell>신청일</TableCell>
+							<TableCell>신청번호</TableCell>
+							<TableCell>이름</TableCell>
+							<TableCell>연락처</TableCell>
+							<TableCell colSpan={2}>상품정보</TableCell>
+							<TableCell>신청현황</TableCell>
+							<TableCell>수선견적</TableCell>
+						</>
+					}>
+					{data &&
+						data?.data?.length > 0 &&
+						data?.data.map((item, idx) => (
+							<TableRow key={`item_${idx}`}>
+								<TableCell>
+									{item?.request_dt
+										? format(
+												parse(
+													item.request_dt,
+													'yy-MM-dd HH:mm',
+													new Date()
+												),
+												'yyyy-MM-dd'
+										  )
+										: '-'}
+								</TableCell>
+								<TableCell>
+									{item.inspct_num ? (
+										<Typography
+											fontSize={14}
+											className="underline"
+											onClick={() => {
+												goToParentUrl(
+													`/b2b/repair/detail/${item.inspct_idx}`
+												);
+											}}>
+											{item.inspct_num}
+										</Typography>
+									) : (
+										'-'
+									)}
+								</TableCell>
+								<TableCell>{item?.return_nm ?? '-'}</TableCell>
+								<TableCell>
+									{item.return_phone
+										? formatPhoneNum(item.return_phone)
+										: '-'}
+								</TableCell>
+								<TableCell width={60}>
+									<ImagePopup
+										image={item?.product_img}
+										alt={item.pro_nm}
+										onClick={(value) => {
+											// 부모창 이미지 모달 오픈
+											openParantModal({
+												title: '이미지',
+												content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+											});
+											// onSetModalData(value);
+											// onOpen();
+										}}
+									/>
+								</TableCell>
+								<TableCell>
+									<p>
+										[{item.brand_nm_en ?? '-'}
+										]
+										<br />
+										{item.pro_nm ? item.pro_nm : '-'}
+									</p>
+								</TableCell>
+								<TableCell align="center">
+									{getRepairStatusChip(item.inspct_state)}
+								</TableCell>
+								<TableCell>
+									{item.inspct_state === '5' ? (
+										/* 견적 승인, 코빠밀뉴 계정에만 버튼 노출 */
+										email === 'copamilnew' ? (
+											<Button
+												height={32}
+												color="primary"
+												variant="outlined"
+												onClick={() => {
+													onSetConfirmModalData(item);
+													onConfirmOpen();
+												}}>
+												견적 확인
+											</Button>
+										) : (
+											'-'
+										)
+									) : Number(item.inspct_state) > 5 &&
+									  item.inspct_fee > 0 ? (
+										/* 견적 금액 */
+										<p>
+											{item.inspct_fee.toLocaleString()}원
+										</p>
+									) : item.inspct_result === 'X' ? (
+										/* 수선 불가 */
+										<p>수선 불가</p>
+									) : (
+										'-'
+									)}
+								</TableCell>
+							</TableRow>
+						))}
+				</Table>
+				<Pagination {...paginationProps} />
+			</Box>
+			<ImageModal
+				open={open}
+				onClose={onClose}
+				imgSrc={modalData?.imgSrc}
+				imgAlt={modalData?.imgAlt}
+			/>
+			<RepairConfirmDialog
+				open={confirmOpen}
+				onClose={onConfirmClose}
+				modalData={confirmModalData}
+				onCancelRepair={handleCancelRepair}
+				onAcceptRepair={handleAcceptRepair}
+			/>
+		</>
+	);
+}
+
+export default RepairList;

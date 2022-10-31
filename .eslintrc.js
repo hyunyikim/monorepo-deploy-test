@@ -94,20 +94,13 @@ module.exports = {
 				},
 			},
 		},
-
 		{
-			files: [
-				'packages/payment/**/*.ts?(x)',
-				'packages/payment/**/*.js?(x)',
-			],
-			settings: {
-				'import/resolver': {
-					node: {
-						project: path.resolve(
-							__dirname + '/packages/payment/tsconfig.json'
-						),
-					},
-				},
+			files: ['packages/partners-web/**/*.ts?(x)'],
+			rules: {
+				'@typescript-eslint/no-misused-promises': 'warn',
+				'@typescript-eslint/no-empty-interface': 'warn',
+				'@typescript-eslint/no-unsafe-assignment': 'warn',
+				'@typescript-eslint/no-unsafe-member-access': 'warn',
 			},
 		},
 	],

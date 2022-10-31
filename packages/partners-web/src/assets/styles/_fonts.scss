@@ -1,0 +1,203 @@
+$font-path: 'https://static.vircle.co.kr/files/fonts';
+
+@font-face {
+	font-family: 'Noto Sans';
+	font-style: normal;
+	font-weight: 100;
+	src: url($font-path + '/NotoSansKR/NotoSansKR-Thin.woff2') format('woff2'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Thin.woff') format('woff'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Thin.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Noto Sans';
+	font-style: normal;
+	font-weight: 300;
+	src: url($font-path + '/NotoSansKR/NotoSansKR-Light.woff2') format('woff2'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Light.woff') format('woff'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Light.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Noto Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: url($font-path + '/NotoSansKR/NotoSansKR-Regular.woff2')
+			format('woff2'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Regular.woff') format('woff'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Regular.otf')
+			format('truetype');
+}
+@font-face {
+	font-family: 'Noto Sans';
+	font-style: normal;
+	font-weight: 500;
+	src: url($font-path + '/NotoSansKR/NotoSansKR-Medium.woff2') format('woff2'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Medium.woff') format('woff'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Medium.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Noto Sans';
+	font-style: normal;
+	font-weight: 700;
+	src: url($font-path + '/NotoSansKR/NotoSansKR-Bold.woff2') format('woff2'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Bold.woff') format('woff'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Bold.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Noto Sans';
+	font-style: normal;
+	font-weight: 900;
+	src: url($font-path + '/NotoSansKR/NotoSansKR-Black.woff2') format('woff2'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Black.woff') format('woff'),
+		url($font-path + '/NotoSansKR/NotoSansKR-Black.otf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 100;
+	src: url($font-path + '/Metropolis/Metropolis-Thin.eot');
+	src: url($font-path + '/Metropolis/Metropolis-Thin.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-Thin.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-Thin.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-Thin.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 200;
+	src: url($font-path + '/Metropolis/Metropolis-ExtraLight.eot');
+	src: url($font-path + '/Metropolis/Metropolis-ExtraLight.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-ExtraLight.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-ExtraLight.woff')
+			format('woff'),
+		url($font-path + '/Metropolis/Metropolis-ExtraLight.otf')
+			format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 300;
+	src: url($font-path + '/Metropolis/Metropolis-Light.eot');
+	src: url($font-path + '/Metropolis/Metropolis-Light.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-Light.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-Light.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-Light.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 400;
+	src: url($font-path + '/Metropolis/Metropolis-Regular.eot');
+	src: url($font-path + '/Metropolis/Metropolis-Regular.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-Regular.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-Regular.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-Regular.otf')
+			format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 500;
+	src: url($font-path + '/Metropolis/Metropolis-Medium.eot');
+	src: url($font-path + '/Metropolis/Metropolis-Medium.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-Medium.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-Medium.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-Medium.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 600;
+	src: url($font-path + '/Metropolis/Metropolis-SemiBold.eot');
+	src: url($font-path + '/Metropolis/Metropolis-SemiBold.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-SemiBold.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-SemiBold.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-SemiBold.otf')
+			format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 700;
+	src: url($font-path + '/Metropolis/Metropolis-Bold.eot');
+	src: url($font-path + '/Metropolis/Metropolis-Bold.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-Bold.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-Bold.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-Bold.otf') format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 800;
+	src: url($font-path + '/Metropolis/Metropolis-ExtraBold.eot');
+	src: url($font-path + '/Metropolis/Metropolis-ExtraBold.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-ExtraBold.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-ExtraBold.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-ExtraBold.otf')
+			format('truetype');
+}
+@font-face {
+	font-family: 'Metropolis';
+	font-style: normal;
+	font-weight: 900;
+	src: url($font-path + '/Metropolis/Metropolis-Black.eot');
+	src: url($font-path + '/Metropolis/Metropolis-Black.eot?#iefix')
+			format('embedded-opentype'),
+		// url($font-path + '/Metropolis/Metropolis-Black.woff2') format('woff2'),
+		url($font-path + '/Metropolis/Metropolis-Black.woff') format('woff'),
+		url($font-path + '/Metropolis/Metropolis-Black.otf') format('truetype');
+}
+
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 100;
+	src: url($font-path + '/suit/SUIT-Thin.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 200;
+	src: url($font-path + '/suit/SUIT-ExtraLight.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 300;
+	src: url($font-path + '/suit/SUIT-Light.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 400;
+	src: url($font-path + '/suit/SUIT-Regular.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 500;
+	src: url($font-path + '/suit/SUIT-Medium.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 600;
+	src: url($font-path + '/suit/SUIT-SemiBold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 700;
+	src: url($font-path + '/suit/SUIT-Bold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 800;
+	src: url($font-path + '/suit/SUIT-ExtraBold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'SUIT';
+	font-weight: 900;
+	src: url($font-path + '/suit/SUIT-Heavy.woff2') format('woff2');
+}

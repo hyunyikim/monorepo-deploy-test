@@ -1,0 +1,70 @@
+$vircleGradientBlue: linear-gradient(#5d9bf9, #5c3ef6);
+$vircleGradientWhiteBlue: linear-gradient(#ffffff, #5d97f9, #5c40f6);
+$vircleGradientRed: linear-gradient(#ff8459, #f8434e);
+$vircleGradientBlack: linear-gradient(#000000, #222227);
+
+$vircleBlue500: #526eff;
+$vircleBlue400: #98a8ff;
+$vircleBlue100: #d6dcff;
+$vircleBlue50: #edf0ff;
+
+$vircleRed500: #f8434e;
+$vircleRed400: #ffa5aa;
+$vircleRed100: #ffc3c7;
+$vircleRed50: #ffe3e5;
+
+$vircleGreen500: #00c29f;
+$vircleGreen400: #a6dfd5;
+$vircleGreen100: #dbf2ee;
+$vircleGreen50: #edf9f7;
+
+$vircleBlack: #000000;
+$vircleGrey900: #222227;
+$vircleGrey800: #333339;
+$vircleGrey700: #47474f;
+$vircleGrey600: #5c5c65;
+$vircleGrey500: #7b7b86;
+$vircleGrey400: #8e8e98;
+$vircleGrey300: #aeaeba;
+$vircleGrey200: #cacad3;
+$vircleGrey100: #e2e2e9;
+$vircleGrey50: #f3f3f5;
+$vircleGrey10: #fcfcfc;
+$vircleWhite: #ffffff;
+
+$bold: 700;
+$medium: 500;
+
+:export {
+	vircleGradientBlue: $vircleGradientBlue;
+	vircleGradientWhiteBlue: $vircleGradientWhiteBlue;
+	vircleGradientRed: $vircleGradientRed;
+	vircleGradientBlack: $vircleGradientBlack;
+	vircleBlue500: $vircleBlue500;
+	vircleBlue400: $vircleBlue400;
+	vircleBlue100: $vircleBlue100;
+	vircleBlue50: $vircleBlue50;
+	vircleRed500: $vircleRed500;
+	vircleRed400: $vircleRed400;
+	vircleRed100: $vircleRed100;
+	vircleRed50: $vircleRed50;
+	vircleGreen500: $vircleGreen500;
+	vircleGreen400: $vircleGreen400;
+	vircleGreen100: $vircleGreen100;
+	vircleGreen50: $vircleGreen50;
+	vircleBlack: $vircleBlack;
+	vircleGrey900: $vircleGrey900;
+	vircleGrey800: $vircleGrey800;
+	vircleGrey700: $vircleGrey700;
+	vircleGrey600: $vircleGrey600;
+	vircleGrey500: $vircleGrey500;
+	vircleGrey400: $vircleGrey400;
+	vircleGrey300: $vircleGrey300;
+	vircleGrey200: $vircleGrey200;
+	vircleGrey100: $vircleGrey100;
+	vircleGrey50: $vircleGrey50;
+	vircleGrey10: $vircleGrey10;
+	vircleWhite: $vircleWhite;
+	bold: $bold;
+	medium: $medium;
+}

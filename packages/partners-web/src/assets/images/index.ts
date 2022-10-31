@@ -1,0 +1,10 @@
+export {default as ImgConnectService} from './img-connect-service.png';
+export {default as ImgConnectService2x} from './img-connect-service@2x.png';
+export {default as ImgConnectServiceButton} from './img-connect-service-button.png';
+export {default as ImgConnectServiceButton2x} from './img-connect-service-button@2x.png';
+export {default as ImgBgCards} from './img-bg-cards.png';
+export {default as ImgBgCards2x} from './img-bg-cards@2x.png';
+export {default as ImgRobotWelcoming} from './img-robot-welcoming.png';
+export {default as ImgRobotWelcoming2x} from './img-robot-welcoming@2x.png';
+export {default as ImgRobitWithPencil} from './img-robot-with-pencil.png';
+export {default as ImgRobitWithPencil2x} from './img-robot-with-pencil@2x.png';
