@@ -1,3 +1,5 @@
+import {format, parse, addDays} from 'date-fns';
+
 import {instance} from '@/api';
 
 import {
@@ -9,7 +11,7 @@ import {
 	NftCustomerGuaranteeListResponse,
 	NftCustomerDetail,
 } from '@/@types';
-import {defaultStartDate} from '@/data';
+import {DATE_FORMAT, defaultStartDate} from '@/data';
 
 export const getNftCustomerList = async (
 	params: ListRequestParam<NftCustomerListRequestSearchType> &
@@ -24,12 +26,17 @@ export const getNftCustomerList = async (
 		searchText,
 		...otherPararms
 	} = params;
+
+	const addEndDate = format(
+		addDays(parse(endDate, DATE_FORMAT, new Date()), 1),
+		DATE_FORMAT
+	);
 	return await instance.get<NftCustomerListResponse>('/v1/admin/customers', {
 		params: {
 			page: currentPage,
 			size: pageMaxNum,
 			startAt: startDate || defaultStartDate,
-			endAt: endDate,
+			endAt: addEndDate,
 			searchTarget: searchType,
 			searchKeyword: searchText,
 			...otherPararms,
@@ -37,17 +44,20 @@ export const getNftCustomerList = async (
 	});
 };
 
-export const getNftCustomerDetail = async (idx: number) => {
-	return await instance.get<NftCustomerDetail>(`/v1/admin/customers/${idx}`);
+export const getNftCustomerDetail = async (name: string, phone: string) => {
+	return await instance.get<NftCustomerDetail>(
+		`/v1/admin/customers/${name}/${phone}`
+	);
 };
 
 export const getNftCustomerGuaranteeList = async (
 	params: ListRequestParam & NftCustomerGuaranteeRequestParam,
-	idx: number
+	name: string,
+	phone: string
 ) => {
 	const {currentPage, pageMaxNum, ...otherPararms} = params;
 	return await instance.get<NftCustomerGuaranteeListResponse>(
-		`/v1/admin/customers/${idx}/guarantees`,
+		`/v1/admin/customers/${name}/${phone}/guarantees`,
 		{
 			params: {
 				page: currentPage,

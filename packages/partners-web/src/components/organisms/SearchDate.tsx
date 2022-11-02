@@ -1,7 +1,7 @@
 import {useState, useCallback} from 'react';
 import {parse, format} from 'date-fns';
 
-import {Grid, InputLabel} from '@mui/material';
+import {Grid, InputLabel, Box} from '@mui/material';
 
 import {periods, calculatePeriod, defaultPeriodIdx, DATE_FORMAT} from '@/data';
 
@@ -54,10 +54,14 @@ function SearchDate({
 
 	return (
 		<>
-			<Grid item xs={2} className="flex items-center">
+			<Box className="flex items-center">
 				<InputLabel>{label}</InputLabel>
-			</Grid>
-			<Grid item container xs={10} columnGap={0.5} rowGap={0.5}>
+			</Box>
+			<Grid
+				container
+				className="items-center"
+				columnGap={0.5}
+				rowGap={0.5}>
 				{periods.map((item, idx) => (
 					<Grid item minWidth="fit-content" key={`date-term-${idx}`}>
 						<Button

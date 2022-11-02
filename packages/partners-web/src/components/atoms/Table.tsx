@@ -4,9 +4,10 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	TableCell,
 	TableProps,
 } from '@mui/material';
+
+import {TableCell} from '@/components';
 
 interface Props extends TableProps {
 	isLoading: boolean;
@@ -14,23 +15,19 @@ interface Props extends TableProps {
 	headcell: React.ReactNode;
 }
 
-function Table({isLoading, totalSize, headcell, children}: Props) {
+function Table({isLoading, totalSize, headcell, children, sx = {}}: Props) {
 	return (
 		<TableContainer
-			sx={{
+			sx={(theme) => ({
 				borderRadius: '4px',
-				'& .MuiTableHead-root': {
-					height: '46px',
-					backgroundColor: 'grey.10',
-					color: 'grey.700',
-					'& .MuiTableCell-head': {
-						padding: '0 16px',
+				// thead
+				'& .MuiTableCell-root.MuiTableCell-head, & .MuiTableCell-root.MuiTableCell-head p':
+					{
+						backgroundColor: 'grey.10',
+						color: 'grey.700',
 					},
-				},
 				'& .MuiTableCell-root': {
-					borderWidth: '1px',
-					borderStyle: 'solid',
-					borderColor: 'grey.100',
+					border: `1px solid ${theme.palette.grey[100]}`,
 					fontSize: '14px',
 					lineHeight: '14px',
 					// cell의 자식
@@ -38,8 +35,29 @@ function Table({isLoading, totalSize, headcell, children}: Props) {
 						display: 'flex',
 						alignItems: 'center',
 					},
+					padding: 0,
+					'& > .MuiBox-root': {
+						paddingLeft: '16px',
+						paddingRight: '16px',
+					},
 				},
-			}}>
+				'& .MuiTableRow-root > .MuiTableCell-root:nth-of-type(1)': {
+					borderLeft: 'none',
+				},
+				'& .MuiTableRow-root > .MuiTableCell-root:nth-last-of-type(1)':
+					{
+						borderRight: 'none',
+					},
+				// thead row height
+				'& .MuiTableHead-root .MuiTableCell-root > .MuiBox-root': {
+					minHeight: '46px',
+				},
+				// tbody row height
+				'& .MuiTableBody-root .MuiTableCell-root > .MuiBox-root': {
+					minHeight: '48px',
+				},
+				...sx,
+			})}>
 			<MuiTable aria-label="simple table">
 				<TableHead>
 					<TableRow>{headcell}</TableRow>

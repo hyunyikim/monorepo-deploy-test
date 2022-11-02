@@ -10,7 +10,8 @@ function TableInfo({totalSize, unit, children, sx = {}}: Props) {
 		<Box
 			className="flex justify-between items-center"
 			sx={{
-				margin: '30px 0',
+				marginTop: '40px',
+				marginBottom: '20px',
 				...sx,
 			}}>
 			<Box className="bold">
@@ -28,7 +29,7 @@ function TableInfo({totalSize, unit, children, sx = {}}: Props) {
 			<Box
 				sx={{
 					'& > *': {
-						marginLeft: '8px',
+						marginRight: '8px',
 					},
 				}}>
 				{children}

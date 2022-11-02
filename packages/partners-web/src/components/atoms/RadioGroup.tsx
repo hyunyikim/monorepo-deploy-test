@@ -8,6 +8,8 @@ import {
 
 import {Options} from '@/@types';
 
+import {IcRadioButtonChecked, IcRadioButtonUnchecked} from '@/assets/icon';
+
 interface Props<T> extends Omit<RadioGroupProps, 'onChange'> {
 	ariaLabel: string;
 	options: Options<T>;
@@ -30,11 +32,6 @@ function RadioGroup<T>({
 				name={name}
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
-				sx={{
-					'& .MuiSvgIcon-root': {
-						fontSize: 20,
-					},
-				}}
 				{...props}>
 				{options.map((option, idx) => (
 					<FormControlLabel
@@ -45,6 +42,8 @@ function RadioGroup<T>({
 								sx={{
 									color: 'grey.100',
 								}}
+								icon={<IcRadioButtonUnchecked />}
+								checkedIcon={<IcRadioButtonChecked />}
 							/>
 						}
 						label={option.label}

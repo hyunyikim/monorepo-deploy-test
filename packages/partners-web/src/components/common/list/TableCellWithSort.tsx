@@ -1,11 +1,6 @@
-import {
-	TableCell,
-	TableCellProps,
-	Box,
-	Typography,
-	ButtonBase,
-} from '@mui/material';
+import {TableCellProps, Box, Typography, ButtonBase} from '@mui/material';
 
+import {TableCell} from '@/components';
 import {IcSort} from '@/assets/icon';
 
 import {OrderDirectionType} from '@/@types';
@@ -30,7 +25,7 @@ function TableCellWithSort({
 }: Props) {
 	return (
 		<TableCell {...props}>
-			<Box className="flex justify-between">
+			<Box className="flex justify-between w-full">
 				<Typography fontSize={14} noWrap={false}>
 					{label}
 				</Typography>

@@ -1,4 +1,4 @@
-import {Grid, InputLabel} from '@mui/material';
+import {Grid, InputLabel, Box} from '@mui/material';
 
 import {Options} from '@/@types';
 
@@ -15,10 +15,12 @@ interface Props {
 function SearchRadioGroup({name, label, value, options, onChange}: Props) {
 	return (
 		<>
-			<Grid item xs={2} className="flex items-center">
+			<Box className="flex items-center">
 				<InputLabel>{label}</InputLabel>
-			</Grid>
-			<Grid item xs={10}>
+			</Box>
+			<Grid
+				container
+				className="items-center search-radio-group-grid-item">
 				<RadioGroup
 					ariaLabel="radio-label"
 					name={name}

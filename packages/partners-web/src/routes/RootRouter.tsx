@@ -50,7 +50,10 @@ const privateRouter: RouteObject[] = [
 			{path: '/b2b/guarantee/v2', element: <Guarantee />},
 			{path: '/b2b/product/v2', element: <Product />},
 			{path: '/b2b/customer/v2', element: <Customer />},
-			{path: '/b2b/customer/:idx/v2', element: <CustomerDetail />},
+			{
+				path: '/b2b/customer/:name/:phone/v2',
+				element: <CustomerDetail />,
+			},
 			{path: '/b2b/inspection/v2', element: <Inspection />},
 			{path: '/b2b/repair/v2', element: <Repair />},
 		],

@@ -3,6 +3,13 @@ import {Components} from '@mui/material';
 
 export default function component(): Components {
 	return {
+		MuiChip: {
+			styleOverrides: {
+				root: {
+					fontSize: '14px',
+				},
+			},
+		},
 		MuiButton: {
 			styleOverrides: {
 				root: {
@@ -14,7 +21,6 @@ export default function component(): Components {
 			styleOverrides: {
 				standard: {
 					fontSize: '14px',
-					border: `1px solid ${style.vircleGrey100}`,
 				},
 			},
 		},
@@ -26,6 +32,9 @@ export default function component(): Components {
 					'&.MuiInputBase-root.Mui-focused fieldset': {
 						borderWidth: '1px',
 						borderColor: style.vircleBlack,
+					},
+					'& fieldset': {
+						borderColor: style.vircleGrey100,
 					},
 				},
 				input: {

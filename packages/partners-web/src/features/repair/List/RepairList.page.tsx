@@ -1,6 +1,6 @@
 import {format, parse} from 'date-fns';
 
-import {Box, TableRow, TableCell, Typography} from '@mui/material';
+import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useOpen} from '@/utils/hooks';
 import {
@@ -27,6 +27,7 @@ import {
 	ImagePopup,
 	ImageModal,
 	Button,
+	TableCell,
 } from '@/components';
 import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
 import RepairConfirmDialog from './RepairConfirmDialog';
@@ -110,9 +111,15 @@ function RepairList() {
 					onChangeFilter={handleChangeFilter}
 				/>
 				<TableInfo totalSize={totalSize} unit="건">
+					<PageSelect
+						value={filter.pageMaxNum}
+						onChange={(value: {[key: string]: any}) =>
+							handleChangeFilter(value)
+						}
+					/>
 					{email === 'copamilnew' && (
 						<Button
-							color="black"
+							color="primary"
 							height={32}
 							onClick={() => {
 								goToParentUrl('/b2b/repair/register');
@@ -120,12 +127,6 @@ function RepairList() {
 							신규 등록
 						</Button>
 					)}
-					<PageSelect
-						value={filter.pageMaxNum}
-						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
-						}
-					/>
 				</TableInfo>
 				<Table
 					isLoading={isLoading}
@@ -136,7 +137,7 @@ function RepairList() {
 							<TableCell>신청번호</TableCell>
 							<TableCell>이름</TableCell>
 							<TableCell>연락처</TableCell>
-							<TableCell colSpan={2}>상품정보</TableCell>
+							<TableCell>상품정보</TableCell>
 							<TableCell>신청현황</TableCell>
 							<TableCell>수선견적</TableCell>
 						</>
@@ -179,28 +180,31 @@ function RepairList() {
 										? formatPhoneNum(item.return_phone)
 										: '-'}
 								</TableCell>
-								<TableCell width={60}>
-									<ImagePopup
-										image={item?.product_img}
-										alt={item.pro_nm}
-										onClick={(value) => {
-											// 부모창 이미지 모달 오픈
-											openParantModal({
-												title: '이미지',
-												content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-											});
-											// onSetModalData(value);
-											// onOpen();
-										}}
-									/>
-								</TableCell>
 								<TableCell>
-									<p>
-										[{item.brand_nm_en ?? '-'}
-										]
-										<br />
-										{item.pro_nm ? item.pro_nm : '-'}
-									</p>
+									<Box>
+										<ImagePopup
+											image={item?.product_img}
+											alt={item?.pro_nm}
+											onClick={(value) => {
+												// 부모창 이미지 모달 오픈
+												openParantModal({
+													title: '이미지',
+													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												});
+												// onSetModalData(value);
+												// onOpen();
+											}}
+										/>
+										<Typography
+											fontSize={16}
+											lineHeight="16px"
+											ml="12px">
+											[{item.brand_nm_en ?? '-'}
+											]
+											<br />
+											{item.pro_nm ? item.pro_nm : '-'}
+										</Typography>
+									</Box>
 								</TableCell>
 								<TableCell align="center">
 									{getRepairStatusChip(item.inspct_state)}

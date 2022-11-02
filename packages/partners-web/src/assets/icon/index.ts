@@ -18,3 +18,5 @@ export {default as IcClose} from './ic-close.svg';
 export {default as IcSort} from './ic-sort.svg';
 export {default as IcWon} from './ic-won.svg';
 export {default as IcDoc} from './ic-doc.svg';
+export {default as IcRadioButtonChecked} from './ic-radio-button-checked.svg';
+export {default as IcRadioButtonUnchecked} from './ic-radio-button-unchecked.svg';

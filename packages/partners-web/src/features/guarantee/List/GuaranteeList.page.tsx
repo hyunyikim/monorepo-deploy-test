@@ -1,4 +1,4 @@
-import {Box, TableRow, TableCell, Typography} from '@mui/material';
+import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useOpen} from '@/utils/hooks';
 import {getGuaranteeList} from '@/api/guarantee.api';
@@ -33,6 +33,7 @@ import {
 	ImagePopup,
 	ImageModal,
 	Button,
+	TableCell,
 } from '@/components';
 
 function GuaranteeList() {
@@ -83,8 +84,14 @@ function GuaranteeList() {
 						onClick={goToGuaranteeExcelUploadPage}>
 						엑셀 등록
 					</Button>
+					<PageSelect
+						value={filter.pageMaxNum}
+						onChange={(value: {[key: string]: any}) =>
+							handleChangeFilter(value)
+						}
+					/>
 					<Button
-						color="black"
+						color="primary"
 						height={32}
 						onClick={() => {
 							trackingToParent(
@@ -95,12 +102,6 @@ function GuaranteeList() {
 						}}>
 						신규등록
 					</Button>
-					<PageSelect
-						value={filter.pageMaxNum}
-						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
-						}
-					/>
 				</TableInfo>
 				<Table
 					isLoading={isLoading}
@@ -112,7 +113,7 @@ function GuaranteeList() {
 							<TableCell>판매처</TableCell>
 							<TableCell>이름</TableCell>
 							<TableCell>연락처</TableCell>
-							<TableCell colSpan={2}>상품정보</TableCell>
+							<TableCell>상품정보</TableCell>
 							<TableCell>개런티 상태</TableCell>
 						</>
 					}>
@@ -169,28 +170,31 @@ function GuaranteeList() {
 										? formatPhoneNum(item.orderer_tel)
 										: '-'}
 								</TableCell>
-								<TableCell width={60}>
-									<ImagePopup
-										image={item?.product_img}
-										alt={item.pro_nm}
-										onClick={(value) => {
-											// 부모창 이미지 모달 오픈
-											openParantModal({
-												title: '이미지',
-												content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-											});
-											// onSetModalData(value);
-											// onOpen();
-										}}
-									/>
-								</TableCell>
 								<TableCell>
-									<p>
-										[{item.brand_nm_en ?? '-'}
-										]
-										<br />
-										{item.pro_nm ? item.pro_nm : '-'}
-									</p>
+									<Box>
+										<ImagePopup
+											image={item?.product_img}
+											alt={item?.pro_nm}
+											onClick={(value) => {
+												// 부모창 이미지 모달 오픈
+												openParantModal({
+													title: '이미지',
+													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												});
+												// onSetModalData(value);
+												// onOpen();
+											}}
+										/>
+										<Typography
+											fontSize={16}
+											lineHeight="16px"
+											ml="12px">
+											[{item.brand_nm_en ?? '-'}
+											]
+											<br />
+											{item.pro_nm ? item.pro_nm : '-'}
+										</Typography>
+									</Box>
 								</TableCell>
 								<TableCell align="center">
 									{getGuaranteeStatusChip(

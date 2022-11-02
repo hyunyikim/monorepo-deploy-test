@@ -1,4 +1,6 @@
-import {Box, TableRow, TableCell, Typography} from '@mui/material';
+import {format} from 'date-fns';
+
+import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useOpen} from '@/utils/hooks';
 import {
@@ -13,7 +15,7 @@ import {
 	sortSearchFilter,
 	groupingGuaranteeRequestStates,
 } from '@/data';
-import {goToParentUrl} from '@/utils';
+import {goToParentUrl, openParantModal} from '@/utils';
 
 import {
 	TableInfo,
@@ -23,11 +25,11 @@ import {
 	ImagePopup,
 	ImageModal,
 	Select,
+	TableCell,
 } from '@/components';
 import {getNftCustomerGuaranteeList} from '@/api/customer.api';
-import {format} from 'date-fns';
 
-function CustomerGuaranteeTable({idx}: {idx: number}) {
+function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 	const {
 		isLoading,
 		data,
@@ -40,7 +42,7 @@ function CustomerGuaranteeTable({idx}: {idx: number}) {
 		ListRequestParam & NftCustomerGuaranteeRequestParam
 	>({
 		apiFunc: getNftCustomerGuaranteeList,
-		apiRestParam: [idx],
+		apiRestParam: [name, phone],
 		initialFilter: {
 			...initialSearchFilter,
 			status: 'ALL',
@@ -64,6 +66,7 @@ function CustomerGuaranteeTable({idx}: {idx: number}) {
 						}
 						sx={{
 							marginRight: 1,
+							minWidth: '150px',
 						}}
 					/>
 					<Select
@@ -77,6 +80,7 @@ function CustomerGuaranteeTable({idx}: {idx: number}) {
 						}
 						sx={{
 							marginRight: 1,
+							minWidth: '150px',
 						}}
 					/>
 					<PageSelect
@@ -91,23 +95,29 @@ function CustomerGuaranteeTable({idx}: {idx: number}) {
 					totalSize={totalSize}
 					headcell={
 						<>
-							<TableCell>발급일</TableCell>
+							<TableCell>신청일</TableCell>
 							<TableCell>개런티 번호</TableCell>
-							<TableCell colSpan={2}>상품 정보</TableCell>
+							<TableCell>상품 정보</TableCell>
 							<TableCell>상품금액</TableCell>
 							<TableCell>개런티 상태</TableCell>
 						</>
-					}>
+					}
+					sx={{
+						'& .MuiTableBody-root .MuiTableCell-root > .MuiBox-root':
+							{
+								minHeight: '65px',
+							},
+					}}>
 					{data &&
 						data?.list?.length > 0 &&
 						data?.list.map((item, idx) => (
 							<TableRow key={`item_${idx}`}>
-								<TableCell>
+								<TableCell width="180px">
 									{item?.requestedAt
 										? format(new Date(), DATE_FORMAT)
 										: '-'}
 								</TableCell>
-								<TableCell>
+								<TableCell width="180px">
 									{item?.serialNo ? (
 										<Typography
 											fontSize={14}
@@ -123,30 +133,36 @@ function CustomerGuaranteeTable({idx}: {idx: number}) {
 										'-'
 									)}
 								</TableCell>
-								<TableCell width={60}>
-									<ImagePopup
-										image={item?.product?.imagePath}
-										alt={item?.product?.name}
-										onClick={(value) => {
-											onSetModalData(value);
-											onOpen();
-										}}
-									/>
-								</TableCell>
 								<TableCell>
-									<p>
-										[{item?.brand?.nameEN ?? '-'}
-										]
-										<br />
-										{item?.product?.name ?? '-'}
-									</p>
+									<Box>
+										<ImagePopup
+											image={item?.product?.imagePath}
+											alt={item?.product?.name}
+											onClick={(value) => {
+												// 부모창 이미지 모달 오픈
+												openParantModal({
+													title: '이미지',
+													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												});
+												// onSetModalData(value);
+												// onOpen();
+											}}
+										/>
+										<Typography
+											fontSize={16}
+											lineHeight="16px"
+											ml="12px">
+											[{item?.brand?.nameEN ?? '-'}]<br />
+											{item?.product?.name ?? '-'}
+										</Typography>
+									</Box>
 								</TableCell>
-								<TableCell>
+								<TableCell width="180px">
 									{item?.price
 										? `${(item?.price).toLocaleString()}원`
 										: '-'}
 								</TableCell>
-								<TableCell align="center">
+								<TableCell width="180px">
 									{getGroupingGuaranteeStatusChip(
 										item.status
 									)}

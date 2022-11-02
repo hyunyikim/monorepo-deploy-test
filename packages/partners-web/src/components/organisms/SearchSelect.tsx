@@ -1,4 +1,4 @@
-import {Grid, InputLabel} from '@mui/material';
+import {InputLabel, Grid, Box} from '@mui/material';
 
 import {Options} from '@/@types';
 
@@ -15,10 +15,10 @@ interface Props {
 function SearchSelect({name, label, value, options, onChange}: Props) {
 	return (
 		<>
-			<Grid item xs={2} className="flex items-center">
+			<Box className="flex items-center">
 				<InputLabel>{label}</InputLabel>
-			</Grid>
-			<Grid item xs={10}>
+			</Box>
+			<Grid container className="items-center">
 				<Select
 					height={32}
 					width={150}

@@ -1,5 +1,5 @@
 import {useCallback, useRef} from 'react';
-import {Grid, InputLabel} from '@mui/material';
+import {Box, Grid, InputLabel} from '@mui/material';
 
 import {Options} from '@/@types';
 
@@ -56,16 +56,10 @@ function SearchField({
 
 	return (
 		<>
-			<Grid item xs={2} className="flex items-center">
+			<Box className="flex items-center">
 				<InputLabel>{label}</InputLabel>
-			</Grid>
-			<Grid
-				item
-				container
-				xs={10}
-				columnGap={0.5}
-				rowGap={0.5}
-				className="items-center">
+			</Box>
+			<Grid container columnGap={0.5} rowGap={0.5}>
 				<Select
 					ref={selectRef}
 					width={150}

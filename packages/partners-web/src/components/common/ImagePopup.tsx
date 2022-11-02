@@ -21,13 +21,12 @@ function ImagePopup({image, alt, style = {}, onClick}: Props) {
 		<Box
 			sx={{
 				cursor: 'pointer',
-				margin: '0 auto',
-				width: '70px',
-				height: '70px',
-				borderRadius: '8px',
+				margin: '6px auto',
+				width: '52px',
+				height: '52px',
 				background: '#fff',
 				backgroundSize: 'cover',
-				borderWidth: '1px',
+				borderWidth: '0.5px',
 				borderStyle: 'solid',
 				borderColor: 'grey.100',
 				backgroundImage: image ? `url(${image || ''})` : '',

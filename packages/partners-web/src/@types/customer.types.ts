@@ -23,7 +23,6 @@ export interface NftCustomerListResponse {
 }
 
 export interface NftCustomer {
-	customerIdx: number;
 	customerName: string;
 	phone: string;
 	amount: number;

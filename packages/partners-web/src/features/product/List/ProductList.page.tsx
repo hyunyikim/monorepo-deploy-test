@@ -1,4 +1,4 @@
-import {Box, TableRow, TableCell, Typography} from '@mui/material';
+import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useOpen} from '@/utils/hooks';
 import {getProductList} from '@/api/product.api';
@@ -27,6 +27,7 @@ import {
 	ImageModal,
 	Button,
 	Select,
+	TableCell,
 } from '@/components';
 
 function ProductList() {
@@ -64,17 +65,6 @@ function ProductList() {
 					onChangeFilter={handleChangeFilter}
 				/>
 				<TableInfo totalSize={totalSize} unit="건">
-					<Button
-						color="black"
-						height={32}
-						onClick={() => {
-							trackingToParent('itemadmin_list_regist_click', {
-								button_title: `신규등록 클릭`,
-							});
-							goToParentUrl('/b2b/product/register');
-						}}>
-						상품 등록
-					</Button>
 					<Select
 						height={32}
 						value={filter?.sort ?? 'latest'}
@@ -84,6 +74,9 @@ function ProductList() {
 								sort: e.target.value,
 							})
 						}
+						sx={{
+							minWidth: '150px',
+						}}
 					/>
 					<PageSelect
 						value={filter.pageMaxNum}
@@ -91,6 +84,17 @@ function ProductList() {
 							handleChangeFilter(value)
 						}
 					/>
+					<Button
+						color="primary"
+						height={32}
+						onClick={() => {
+							trackingToParent('itemadmin_list_regist_click', {
+								button_title: `신규등록 클릭`,
+							});
+							goToParentUrl('/b2b/product/register');
+						}}>
+						상품 등록
+					</Button>
 				</TableInfo>
 				<Table
 					isLoading={isLoading}
@@ -99,7 +103,7 @@ function ProductList() {
 						<>
 							<TableCell>No.</TableCell>
 							<TableCell>브랜드</TableCell>
-							<TableCell colSpan={2}>상품명</TableCell>
+							<TableCell>상품명</TableCell>
 							<TableCell>상품가격</TableCell>
 							<TableCell>카테고리</TableCell>
 							<TableCell>모델번호</TableCell>
@@ -129,23 +133,28 @@ function ProductList() {
 								<TableCell sx={{minWidth: 120}}>
 									{item?.brand?.name || '-'}
 								</TableCell>
-								<TableCell width={60}>
-									<ImagePopup
-										image={item?.productImage}
-										alt={item.name}
-										onClick={(value) => {
-											// 부모창 이미지 모달 오픈
-											openParantModal({
-												title: '이미지',
-												content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-											});
-											// onSetModalData(value);
-											// onOpen();
-										}}
-									/>
-								</TableCell>
-								<TableCell sx={{minWidth: 240}}>
-									{item?.name ? item.name : '-'}
+								<TableCell>
+									<Box>
+										<ImagePopup
+											image={item?.productImage}
+											alt={item?.name}
+											onClick={(value) => {
+												// 부모창 이미지 모달 오픈
+												openParantModal({
+													title: '이미지',
+													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												});
+												// onSetModalData(value);
+												// onOpen();
+											}}
+										/>
+										<Typography
+											fontSize={16}
+											lineHeight="16px"
+											ml="12px">
+											{item?.name ?? '-'}
+										</Typography>
+									</Box>
 								</TableCell>
 								<TableCell sx={{minWidth: 120}}>
 									{item?.price

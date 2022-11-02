@@ -43,7 +43,10 @@
 .underline {
 	cursor: pointer;
 	text-decoration: underline;
-	font-weight: $bold;
+}
+
+.w-full {
+	width: 100%;
 }
 
 // TODO: pixel to rem

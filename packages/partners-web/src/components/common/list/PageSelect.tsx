@@ -13,6 +13,9 @@ function PageSelect({value, onChange}: Props) {
 			height={32}
 			options={pageSizeSearchFilter}
 			value={value ?? defaultPageSize}
+			sx={{
+				minWidth: '150px',
+			}}
 			onChange={(e) =>
 				onChange({
 					pageMaxNum: e.target.value as number,

@@ -3,7 +3,7 @@ import {Box, Tabs, Tab} from '@mui/material';
 
 import CustomerGuaranteeTable from '@/features/customer/Detail/CustomerGuaranteeTable';
 
-function CustomerDetailTab({idx}: {idx: number}) {
+function CustomerDetailTab({name, phone}: {name: string; phone: string}) {
 	const [value, setValue] = useState(0);
 	const handleChange = useCallback(
 		(event: React.SyntheticEvent, newValue: number) => {
@@ -28,7 +28,7 @@ function CustomerDetailTab({idx}: {idx: number}) {
 				</Tabs>
 			</Box>
 			<TabPanel value={value} index={0}>
-				<CustomerGuaranteeTable idx={idx} />
+				<CustomerGuaranteeTable name={name} phone={phone} />
 			</TabPanel>
 		</Box>
 	);

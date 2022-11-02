@@ -13,7 +13,10 @@ interface Props extends Omit<ButtonProps, 'color' | 'size'> {
 	height?: Height;
 	onClick?: () => void;
 }
-
+/**
+ *
+ * width가 숫자인 경우, 너비가 고정되어 있는 fixed 버튼
+ */
 function Button({
 	variant = 'contained',
 	color = 'primary',
@@ -25,48 +28,40 @@ function Button({
 	...props
 }: Props) {
 	const colorSx = useMemo(() => {
-		const sx: SxProps = {
-			...(variant === 'outlined' && {
-				borderWidth: '1.5px',
-			}),
-		};
 		switch (color) {
-			// primary 기본 버튼 스타일 속성 사용
-			case 'primary':
-				return sx;
 			case 'blue-50':
-				sx.backgroundColor = 'primary.50';
-				sx.color = 'primary.main';
-				sx.borderColor = 'primary.main';
 				return {
-					...sx,
+					backgroundColor: 'primary.50',
+					color: 'primary.main',
+					borderColor: 'primary.main',
 				};
 			case 'black':
-				sx.backgroundColor = 'black';
-				sx.color = 'white';
 				return {
-					...sx,
+					backgroundColor: 'black',
+					color: 'white',
 					':hover': {
 						backgroundColor: 'grey.800',
 					},
 				};
 			case 'grey-100':
-				sx.borderColor = 'grey.100';
-				sx.backgroundColor = 'white';
-				sx.color = 'black';
 				return {
-					...sx,
+					borderColor: 'grey.100',
+					backgroundColor: 'white',
+					color: 'black',
 					':hover': {
 						backgroundColor: 'grey.50',
 						borderColor: 'grey.100',
 					},
 				};
 			case 'grey-50':
-				sx.backgroundColor = 'grey.50';
-				sx.color = 'grey.300';
 				return {
-					...sx,
+					backgroundColor: 'grey.50',
+					color: 'grey.300',
 				};
+			// primary 기본 버튼 스타일 속성 사용
+			case 'primary':
+			default:
+				return {};
 		}
 	}, [variant, color]);
 
@@ -79,6 +74,10 @@ function Button({
 			...(width !== 'auto' && {
 				padding: '0',
 				minWidth: '0',
+			}),
+			...(variant === 'outlined' && {
+				// height 48 버튼부터
+				borderWidth: height > 40 ? '1.5px' : '1px',
 			}),
 		};
 		switch (height) {
@@ -101,7 +100,12 @@ function Button({
 				sx.borderRadius = '4px';
 				break;
 			case 32:
-				if (color === 'grey-100' && variant === 'outlined') {
+				// fixed 버튼만
+				if (
+					color === 'grey-100' &&
+					variant === 'outlined' &&
+					typeof width === 'number'
+				) {
 					sx.fontWeight = style.medium;
 				}
 				sx.borderRadius = '4px';

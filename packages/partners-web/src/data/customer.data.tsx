@@ -44,7 +44,7 @@ export const getWalletLinkChip = (value: boolean) => {
 	return (
 		<Chip
 			label={value ? '연동완료' : '미연동'}
-			color={value ? 'primary' : 'grey-100'}
+			color={value ? 'primary-50' : 'grey-100'}
 		/>
 	);
 };

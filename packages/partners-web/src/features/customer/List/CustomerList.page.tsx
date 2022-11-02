@@ -1,4 +1,5 @@
-import {Box, TableRow, TableCell, Typography} from '@mui/material';
+import {Box, TableRow, Typography} from '@mui/material';
+import {TableCell} from '@/components';
 
 import {useList} from '@/utils/hooks';
 import {getNftCustomerList} from '@/api/customer.api';
@@ -97,7 +98,7 @@ function CustomerList() {
 								전화번호
 							</TableCell>
 							<TableSellWithSort
-								label="보유 개런티"
+								label="총 발급건수"
 								name="NO_OF_GUARANTEE"
 								orderBy={filter.orderBy}
 								orderDirection={filter.orderDirection}
@@ -108,7 +109,7 @@ function CustomerList() {
 								}
 							/>
 							<TableSellWithSort
-								label="총 주문금액"
+								label="총 상품금액"
 								name="TOTAL_PRICE"
 								orderBy={filter.orderBy}
 								orderDirection={filter.orderDirection}
@@ -119,7 +120,7 @@ function CustomerList() {
 								}
 							/>
 							<TableSellWithSort
-								label="최근 발급시간"
+								label="최근 발급 시간"
 								name="LATEST_ISSUED"
 								orderBy={filter.orderBy}
 								orderDirection={filter.orderDirection}
@@ -138,7 +139,11 @@ function CustomerList() {
 								<TableCell colSpan={2}>
 									{item?.customerName ? (
 										<Box flexDirection="row">
-											<Avatar>
+											<Avatar
+												sx={{
+													borderRadius: '12px',
+													fontSize: '12px',
+												}}>
 												{item?.customerName.slice(0, 1)}
 											</Avatar>
 											<Typography
@@ -146,8 +151,12 @@ function CustomerList() {
 												className="underline"
 												ml={'12px'}
 												onClick={() => {
+													const name =
+														item?.customerName;
+													const phone = item?.phone;
+													if (!name || !phone) return;
 													goToParentUrl(
-														`/b2b/customer/${item.customerIdx}`
+														`/b2b/customer/${name}/${phone}`
 													);
 												}}>
 												{item?.customerName}

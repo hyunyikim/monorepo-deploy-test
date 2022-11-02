@@ -1,4 +1,4 @@
-import {Grid} from '@mui/material';
+import {Box} from '@mui/material';
 
 import {defaultPeriod} from '@/data';
 
@@ -31,24 +31,43 @@ function SearchFilter<F extends object>({
 	onReset,
 }: Props<F>) {
 	return (
-		<Grid
-			container
-			sx={{
+		<Box
+			display="grid"
+			flexDirection="column"
+			sx={(theme) => ({
 				backgroundColor: 'grey.10',
 				borderRadius: '4px',
-				'&, & > .MuiGrid-root': {
-					borderWidth: '1px',
-					borderStyle: 'solid',
-					borderColor: 'grey.100',
-				},
-				'& > .MuiGrid-root': {
-					padding: '7px 16px',
-				},
-				'& .MuiInputLabel-root': {
+				gridTemplateColumns: '150px auto',
+				// 테이블 좌측 라벨
+				'& > .MuiBox-root > .MuiFormLabel-root': {
+					fontSize: '14px',
 					fontWeight: 'bold',
 					color: 'grey.700',
+					marginLeft: '16px',
 				},
-			}}>
+				// border style
+				'&': {
+					border: `1px solid ${theme.palette.grey[100]}`,
+				},
+				'& > .MuiBox-root': {
+					borderRight: `1px solid ${theme.palette.grey[100]}`,
+				},
+				'& > .MuiBox-root:not(:nth-last-of-type(-n+2)), & > .MuiGrid-root.MuiGrid-container:not(:nth-last-of-type(1))':
+					{
+						borderBottom: `1px solid ${theme.palette.grey[100]}`,
+					},
+				// height, padding
+				'& > .MuiGrid-root.MuiGrid-container': {
+					minHeight: '46px',
+					alignItems: 'center',
+					paddingLeft: '16px',
+					paddingRight: '16px',
+				},
+				'& > .MuiGrid-root:not(.search-radio-group-grid-item)': {
+					paddingTop: '6px',
+					paddingBottom: '6px',
+				},
+			})}>
 			{filterComponent.map((item) => {
 				switch (item.component) {
 					case 'searchField':
@@ -117,7 +136,7 @@ function SearchFilter<F extends object>({
 						);
 				}
 			})}
-		</Grid>
+		</Box>
 	);
 }
 

@@ -9,12 +9,12 @@ import {NftCustomerDetail} from '@/@types';
 import {getNftCustomerDetail} from '@/api/customer.api';
 import {formatPhoneNum, goToParentUrl} from '@/utils';
 
-function CustomerDetailInfo({idx}: {idx: number}) {
+function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 	const [data, setData] = useState<NftCustomerDetail | null>(null);
 
 	useEffect(() => {
 		(async () => {
-			const res = await getNftCustomerDetail(idx);
+			const res = await getNftCustomerDetail(name, phone);
 			setData(res);
 		})();
 	}, []);
@@ -34,7 +34,7 @@ function CustomerDetailInfo({idx}: {idx: number}) {
 						direction={{sm: 'column', md: 'row'}}
 						gap={{xs: '12px'}}
 						justifyContent="space-between"
-						mt="30px">
+						mt="20px">
 						<Box
 							display="flex"
 							flexDirection="row"
@@ -62,14 +62,14 @@ function CustomerDetailInfo({idx}: {idx: number}) {
 								Icon={<IcWallet fill={style.vircleGrey500} />}
 							/>
 							<CustomerInfoBox
-								title="총 주문금액"
+								title="총 상품금액"
 								value={`${(
 									data?.totalPrice ?? 0
 								).toLocaleString()}원`}
 								Icon={<IcWon fill={style.vircleGrey500} />}
 							/>
 							<CustomerInfoBox
-								title="총 발급완료건수"
+								title="총 발급건수"
 								value={`${(
 									data?.amount ?? 0
 								).toLocaleString()}개`}
@@ -104,6 +104,7 @@ const CustomerInfoBox = ({
 				borderColor: 'grey.100',
 				borderRadius: '8px',
 				padding: '20px',
+				height: '80px',
 			}}>
 			<Box>
 				<Typography color="grey.500" fontSize={13} pb={0.5}>

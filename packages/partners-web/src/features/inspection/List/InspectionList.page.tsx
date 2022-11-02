@@ -1,6 +1,6 @@
 import {format, parse} from 'date-fns';
 
-import {Box, TableRow, TableCell, Typography} from '@mui/material';
+import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useOpen} from '@/utils/hooks';
 import {
@@ -27,6 +27,7 @@ import {
 	ImagePopup,
 	ImageModal,
 	Select,
+	TableCell,
 } from '@/components';
 import {getInspectionList} from '@/api/inspection.api';
 
@@ -77,6 +78,9 @@ function InspectionList() {
 								sort: e.target.value,
 							})
 						}
+						sx={{
+							minWidth: '150px',
+						}}
 					/>
 					<PageSelect
 						value={filter.pageMaxNum}
@@ -94,7 +98,7 @@ function InspectionList() {
 							<TableCell>신청번호</TableCell>
 							<TableCell>이름</TableCell>
 							<TableCell>연락처</TableCell>
-							<TableCell colSpan={2}>상품정보</TableCell>
+							<TableCell>상품정보</TableCell>
 							<TableCell>감정 결과</TableCell>
 							<TableCell>신청 현황</TableCell>
 						</>
@@ -137,28 +141,28 @@ function InspectionList() {
 										? formatPhoneNum(item.return_phone)
 										: '-'}
 								</TableCell>
-								<TableCell width={60}>
-									<ImagePopup
-										image={item?.product_img}
-										alt={item.pro_nm}
-										onClick={(value) => {
-											// 부모창 이미지 모달 오픈
-											openParantModal({
-												title: '이미지',
-												content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-											});
-											// onSetModalData(value);
-											// onOpen();
-										}}
-									/>
-								</TableCell>
 								<TableCell>
-									<p>
-										[{item.brand_nm_en ?? '-'}
-										]
-										<br />
-										{item.pro_nm ? item.pro_nm : '-'}
-									</p>
+									<Box>
+										<ImagePopup
+											image={item?.product_img}
+											alt={item?.pro_nm}
+											onClick={(value) => {
+												// 부모창 이미지 모달 오픈
+												openParantModal({
+													title: '이미지',
+													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												});
+												// onSetModalData(value);
+												// onOpen();
+											}}
+										/>
+										<Typography
+											fontSize={16}
+											lineHeight="16px"
+											ml="12px">
+											{item?.pro_nm ?? '-'}
+										</Typography>
+									</Box>
 								</TableCell>
 								<TableCell>
 									{item?.inspct_result_text || '-'}
