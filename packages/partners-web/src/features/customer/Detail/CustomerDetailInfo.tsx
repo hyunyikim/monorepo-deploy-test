@@ -58,7 +58,9 @@ function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 						<Grid container width="fit-content" gap={'12px'}>
 							<CustomerInfoBox
 								title="지갑 연동 상태"
-								value={data?.walletLinked ? '연동' : '미연동'}
+								value={
+									data?.walletLinked ? '연동완료' : '미연동'
+								}
 								Icon={<IcWallet fill={style.vircleGrey500} />}
 							/>
 							<CustomerInfoBox

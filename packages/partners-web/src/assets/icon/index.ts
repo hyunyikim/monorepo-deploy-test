@@ -20,3 +20,4 @@ export {default as IcWon} from './ic-won.svg';
 export {default as IcDoc} from './ic-doc.svg';
 export {default as IcRadioButtonChecked} from './ic-radio-button-checked.svg';
 export {default as IcRadioButtonUnchecked} from './ic-radio-button-unchecked.svg';
+export {default as IcEmptyImage} from './ic-empty-image.svg';

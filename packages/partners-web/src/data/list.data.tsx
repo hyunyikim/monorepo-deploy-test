@@ -6,6 +6,7 @@ import {
 	PeriodType,
 	ListRequestParam,
 	SortType,
+	OrderDirectionType,
 } from '@/@types';
 import {DATE_FORMAT} from './common.data';
 
@@ -112,4 +113,9 @@ export const initialSearchFilter: ListRequestParam<any> = {
 export const sortSearchFilter: Options<SortType> = [
 	{value: 'latest', label: '최신순'},
 	{value: 'oldest', label: '오래된순'},
+];
+
+export const orderDirectionSearchFilter: Options<OrderDirectionType> = [
+	{value: 'DESC', label: '최신순'},
+	{value: 'ASC', label: '오래된순'},
 ];

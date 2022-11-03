@@ -30,8 +30,13 @@ import {
 	TableCell,
 } from '@/components';
 
+const menu = 'itemadmin';
+const menuKo = '상품';
+
 function ProductList() {
 	const b2btype = localStorage.getItem('b2btype');
+	const useFieldModelNum =
+		localStorage.getItem('useFieldModelNum') === 'Y' ? true : false;
 	const {
 		isLoading,
 		data,
@@ -58,6 +63,8 @@ function ProductList() {
 			<Box>
 				<ListTitle title="상품 목록" />
 				<SearchFilter
+					menu={menu}
+					menuKo={menuKo}
 					filter={filter}
 					filterComponent={productListSearchFilter}
 					onSearch={handleSearch}
@@ -69,11 +76,18 @@ function ProductList() {
 						height={32}
 						value={filter?.sort ?? 'latest'}
 						options={sortSearchFilter}
-						onChange={(e) =>
+						onChange={(e) => {
+							const sortLabel =
+								sortSearchFilter.find(
+									(item) => item.value === e.target.value
+								)?.label || '';
+							trackingToParent(`${menu}_unit_view_click`, {
+								button_title: `정렬_${sortLabel}`,
+							});
 							handleChangeFilter({
 								sort: e.target.value,
-							})
-						}
+							});
+						}}
 						sx={{
 							minWidth: '150px',
 						}}
@@ -88,7 +102,7 @@ function ProductList() {
 						color="primary"
 						height={32}
 						onClick={() => {
-							trackingToParent('itemadmin_list_regist_click', {
+							trackingToParent(`${menu}_list_regist_click`, {
 								button_title: `신규등록 클릭`,
 							});
 							goToParentUrl('/b2b/product/register');
@@ -106,7 +120,9 @@ function ProductList() {
 							<TableCell>상품명</TableCell>
 							<TableCell>상품가격</TableCell>
 							<TableCell>카테고리</TableCell>
-							<TableCell>모델번호</TableCell>
+							{useFieldModelNum && (
+								<TableCell>모델번호</TableCell>
+							)}
 							<TableCell>상품코드</TableCell>
 						</>
 					}>
@@ -149,9 +165,15 @@ function ProductList() {
 											}}
 										/>
 										<Typography
-											fontSize={16}
-											lineHeight="16px"
-											ml="12px">
+											fontSize={14}
+											lineHeight={'18px'}
+											ml="12px"
+											className="underline"
+											onClick={() => {
+												goToParentUrl(
+													`/b2b/product/${item.idx}`
+												);
+											}}>
 											{item?.name ?? '-'}
 										</Typography>
 									</Box>
@@ -164,9 +186,11 @@ function ProductList() {
 								<TableCell sx={{minWidth: 120}}>
 									{item?.categoryName || '-'}
 								</TableCell>
-								<TableCell sx={{minWidth: 180}}>
-									{item?.modelNum || '-'}
-								</TableCell>
+								{useFieldModelNum && (
+									<TableCell sx={{minWidth: 180}}>
+										{item?.modelNum || '-'}
+									</TableCell>
+								)}
 								<TableCell sx={{minWidth: 180}}>
 									{item?.code || '-'}
 								</TableCell>

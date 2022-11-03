@@ -1,6 +1,6 @@
 export type GuaranteeListRequestSearchType = 'all' | 'nft_req_num';
 
-export type GuaranteeStatus = 'READY' | 'COMPLETE' | 'CANCELED';
+export type GuaranteeStatus = 'READY' | 'CONFIRMED' | 'COMPLETED' | 'CANCELED';
 
 export interface GuaranteeListRequestParam {
 	nft_req_state: string;

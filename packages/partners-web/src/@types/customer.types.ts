@@ -1,4 +1,4 @@
-import {OrderDirectionType, GuaranteeStatus} from '@/@types';
+import {OrderDirectionType, GuaranteeStatus, ListRequestParam} from '@/@types';
 
 export type NftCustomerListRequestSearchType = 'all' | 'name' | 'phone';
 export type WalletLinkType = 'ALL' | 'LINKED' | 'NONE';
@@ -8,7 +8,11 @@ export type CustomerOrderByType =
 	| 'LATEST_ISSUED'
 	| 'TOTAL_PRICE';
 
-export type NftCustomerGuaranteeStatus = 'ALL' | GuaranteeStatus;
+export type NftCustomerGuaranteeStatus =
+	| 'ALL'
+	| 'READY'
+	| 'CONFIRMED,COMPLETED'
+	| 'CANCELED';
 export type NftCustomerGuaranteeOrderByType = 'REQUESTED';
 
 export interface NftCustomerListRequestParam {
@@ -35,7 +39,8 @@ export interface NftCustomerDetail extends NftCustomer {
 	walletAddress: string;
 }
 
-export interface NftCustomerGuaranteeRequestParam {
+export interface NftCustomerGuaranteeRequestParam
+	extends Pick<ListRequestParam, 'currentPage' | 'pageMaxNum'> {
 	status: NftCustomerGuaranteeStatus;
 	orderBy: NftCustomerGuaranteeOrderByType;
 	orderDirection: OrderDirectionType;

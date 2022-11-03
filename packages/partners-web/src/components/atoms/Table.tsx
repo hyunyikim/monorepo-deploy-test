@@ -15,7 +15,7 @@ interface Props extends TableProps {
 	headcell: React.ReactNode;
 }
 
-function Table({isLoading, totalSize, headcell, children, sx = {}}: Props) {
+function Table({isLoading, totalSize, headcell, children, sx}: Props) {
 	return (
 		<TableContainer
 			sx={(theme) => ({
@@ -25,6 +25,7 @@ function Table({isLoading, totalSize, headcell, children, sx = {}}: Props) {
 					{
 						backgroundColor: 'grey.10',
 						color: 'grey.700',
+						fontWeight: 'bold',
 					},
 				'& .MuiTableCell-root': {
 					border: `1px solid ${theme.palette.grey[100]}`,
@@ -56,14 +57,15 @@ function Table({isLoading, totalSize, headcell, children, sx = {}}: Props) {
 				'& .MuiTableBody-root .MuiTableCell-root > .MuiBox-root': {
 					minHeight: '48px',
 				},
-				...sx,
+				...(sx && sx),
 			})}>
 			<MuiTable aria-label="simple table">
 				<TableHead>
 					<TableRow>{headcell}</TableRow>
 				</TableHead>
 				<TableBody>
-					{isLoading ? (
+					{/* 너무 빠르게 isLoading이 변경 되기 때문에 현재 의미가 없어 false로 임시 처리 */}
+					{false ? (
 						<TableRow>
 							<TableCell align="center" colSpan={20}>
 								데이터를 불러오는 중입니다.

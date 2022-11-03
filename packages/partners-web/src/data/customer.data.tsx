@@ -3,6 +3,8 @@ import {
 	ListSearchFilters,
 	NftCustomerListRequestSearchType,
 	WalletLinkType,
+	NftCustomerGuaranteeStatus,
+	GuaranteeStatus,
 } from '@/@types';
 
 import {Chip} from '@/components';
@@ -40,6 +42,14 @@ export const nftCustomerListSearchFilter: ListSearchFilters = [
 	},
 ];
 
+export const groupingGuaranteeRequestStates: Options<NftCustomerGuaranteeStatus> =
+	[
+		{value: 'ALL', label: '전체'},
+		{value: 'READY', label: '신청대기'},
+		{value: 'CONFIRMED,COMPLETED', label: '발급완료'},
+		{value: 'CANCELED', label: '발급취소'},
+	];
+
 export const getWalletLinkChip = (value: boolean) => {
 	return (
 		<Chip
@@ -47,4 +57,27 @@ export const getWalletLinkChip = (value: boolean) => {
 			color={value ? 'primary-50' : 'grey-100'}
 		/>
 	);
+};
+
+/**
+ * 'READY' | 'CONFIRMED' | 'COMPLETED' | 'CANCELED'로 묶여 전달되는 개런티 발급 상태에 대한 칩
+ */
+export const getGroupingGuaranteeStatusChip = (status: GuaranteeStatus) => {
+	let color = 'grey-50';
+	let text = '신청대기';
+
+	switch (status) {
+		case 'READY':
+			break;
+		case 'CONFIRMED':
+		case 'COMPLETED':
+			color = 'green';
+			text = '발급완료';
+			break;
+		case 'CANCELED':
+			color = 'red';
+			text = '발급취소';
+			break;
+	}
+	return <Chip label={text} color={color} />;
 };

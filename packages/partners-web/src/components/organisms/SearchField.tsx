@@ -1,11 +1,13 @@
 import {useCallback, useRef} from 'react';
 import {Box, Grid, InputLabel} from '@mui/material';
 
+import {trackingToParent} from '@/utils';
 import {Options} from '@/@types';
 
 import {Select, TextField, Button} from '@/components';
 
 interface Props {
+	menu: string;
 	label?: string;
 	name: string[];
 	options: Options;
@@ -16,6 +18,7 @@ interface Props {
 }
 
 function SearchField({
+	menu,
 	label = '검색어',
 	name,
 	options,
@@ -33,7 +36,10 @@ function SearchField({
 			[name[1]]: textRef.current?.value ?? '',
 		};
 		onSearch(param);
-	}, [name, onSearch]);
+		trackingToParent(`${menu}_search_click`, {
+			button_title: `검색버튼 클릭`,
+		});
+	}, [menu, name, onSearch]);
 
 	const handleReset = useCallback(() => {
 		const selectEle = selectRef.current;
@@ -50,8 +56,11 @@ function SearchField({
 			selectNodeList[0].previousSibling.textContent = options[0].label;
 		}
 		textEle.value = '';
-
 		onReset();
+
+		trackingToParent(`${menu}_reset_click`, {
+			button_title: `초기화버튼 클릭`,
+		});
 	}, [onReset]);
 
 	return (

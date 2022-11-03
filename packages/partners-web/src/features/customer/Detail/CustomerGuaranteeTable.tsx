@@ -4,7 +4,6 @@ import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useOpen} from '@/utils/hooks';
 import {
-	ListRequestParam,
 	NftCustomerGuaranteeListResponse,
 	NftCustomerGuaranteeRequestParam,
 } from '@/@types';
@@ -12,8 +11,8 @@ import {
 	initialSearchFilter,
 	DATE_FORMAT,
 	getGroupingGuaranteeStatusChip,
-	sortSearchFilter,
 	groupingGuaranteeRequestStates,
+	orderDirectionSearchFilter,
 } from '@/data';
 import {goToParentUrl, openParantModal} from '@/utils';
 
@@ -29,6 +28,14 @@ import {
 } from '@/components';
 import {getNftCustomerGuaranteeList} from '@/api/customer.api';
 
+const {
+	searchText,
+	searchType,
+	startDate,
+	endDate,
+	sort,
+	...customerGuaranteeInitialSearchFilter
+} = initialSearchFilter;
 function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 	const {
 		isLoading,
@@ -39,12 +46,12 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 		handleChangeFilter,
 	} = useList<
 		NftCustomerGuaranteeListResponse,
-		ListRequestParam & NftCustomerGuaranteeRequestParam
+		NftCustomerGuaranteeRequestParam
 	>({
 		apiFunc: getNftCustomerGuaranteeList,
 		apiRestParam: [name, phone],
 		initialFilter: {
-			...initialSearchFilter,
+			...customerGuaranteeInitialSearchFilter,
 			status: 'ALL',
 			orderBy: 'REQUESTED',
 			orderDirection: 'DESC',
@@ -71,11 +78,11 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 					/>
 					<Select
 						height={32}
-						value={filter?.sort ?? 'latest'}
-						options={sortSearchFilter}
+						value={filter?.orderDirection ?? 'DESC'}
+						options={orderDirectionSearchFilter}
 						onChange={(e) =>
 							handleChangeFilter({
-								sort: e.target.value,
+								orderDirection: e.target.value,
 							})
 						}
 						sx={{
@@ -85,9 +92,9 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 					/>
 					<PageSelect
 						value={filter.pageMaxNum}
-						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
-						}
+						onChange={(value: {[key: string]: any}) => {
+							handleChangeFilter(value);
+						}}
 					/>
 				</TableInfo>
 				<Table
@@ -149,8 +156,8 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 											}}
 										/>
 										<Typography
-											fontSize={16}
-											lineHeight="16px"
+											fontSize={14}
+											lineHeight={'18px'}
 											ml="12px">
 											[{item?.brand?.nameEN ?? '-'}]<br />
 											{item?.product?.name ?? '-'}

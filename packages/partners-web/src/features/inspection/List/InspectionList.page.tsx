@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {format, parse} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
@@ -15,7 +16,12 @@ import {
 	getInspectionStatusChip,
 	inspectionListSearchFilter,
 } from '@/data';
-import {formatPhoneNum, goToParentUrl, openParantModal} from '@/utils';
+import {
+	formatPhoneNum,
+	goToParentUrl,
+	openParantModal,
+	trackingToParent,
+} from '@/utils';
 
 import {
 	ListTitle,
@@ -31,7 +37,14 @@ import {
 } from '@/components';
 import {getInspectionList} from '@/api/inspection.api';
 
+const menu = 'appraisal';
+const menuKo = '감정';
+
 function InspectionList() {
+	useEffect(() => {
+		trackingToParent(`${menu}_pv`, {pv_title: '감정신청목록 진입'});
+	}, []);
+
 	const {
 		isLoading,
 		data,
@@ -62,6 +75,8 @@ function InspectionList() {
 			<Box>
 				<ListTitle title="감정 신청 목록" />
 				<SearchFilter
+					menu={menu}
+					menuKo={menuKo}
 					filter={filter}
 					filterComponent={inspectionListSearchFilter}
 					onSearch={handleSearch}
@@ -73,20 +88,33 @@ function InspectionList() {
 						height={32}
 						value={filter?.sort ?? 'latest'}
 						options={sortSearchFilter}
-						onChange={(e) =>
+						onChange={(e) => {
+							const sortLabel =
+								sortSearchFilter.find(
+									(item) => item.value === e.target.value
+								)?.label || '';
+							trackingToParent(`${menu}_unit_view_click`, {
+								button_title: `정렬_${sortLabel}`,
+							});
 							handleChangeFilter({
 								sort: e.target.value,
-							})
-						}
+							});
+						}}
 						sx={{
 							minWidth: '150px',
 						}}
 					/>
 					<PageSelect
 						value={filter.pageMaxNum}
-						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
-						}
+						onChange={(value: {
+							[key: string]: any;
+							pageMaxNum: number;
+						}) => {
+							trackingToParent(`${menu}_unit_view_click`, {
+								button_title: `노출수_${value.pageMaxNum}개씩`,
+							});
+							handleChangeFilter(value);
+						}}
 					/>
 				</TableInfo>
 				<Table
@@ -157,8 +185,8 @@ function InspectionList() {
 											}}
 										/>
 										<Typography
-											fontSize={16}
-											lineHeight="16px"
+											fontSize={14}
+											lineHeight={'18px'}
 											ml="12px">
 											{item?.pro_nm ?? '-'}
 										</Typography>
@@ -167,7 +195,7 @@ function InspectionList() {
 								<TableCell>
 									{item?.inspct_result_text || '-'}
 								</TableCell>
-								<TableCell align="center">
+								<TableCell>
 									{getInspectionStatusChip(item.inspct_state)}
 								</TableCell>
 							</TableRow>

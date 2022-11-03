@@ -51,18 +51,20 @@ export const getNftCustomerDetail = async (name: string, phone: string) => {
 };
 
 export const getNftCustomerGuaranteeList = async (
-	params: ListRequestParam & NftCustomerGuaranteeRequestParam,
+	params: NftCustomerGuaranteeRequestParam,
 	name: string,
 	phone: string
 ) => {
-	const {currentPage, pageMaxNum, ...otherPararms} = params;
+	const {currentPage, pageMaxNum, status, orderBy, orderDirection} = params;
 	return await instance.get<NftCustomerGuaranteeListResponse>(
 		`/v1/admin/customers/${name}/${phone}/guarantees`,
 		{
 			params: {
 				page: currentPage,
 				size: pageMaxNum,
-				...otherPararms,
+				status: status,
+				orderBy,
+				orderDirection,
 			},
 		}
 	);

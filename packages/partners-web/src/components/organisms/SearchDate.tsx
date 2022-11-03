@@ -7,8 +7,10 @@ import {periods, calculatePeriod, defaultPeriodIdx, DATE_FORMAT} from '@/data';
 
 import {Button, DatePicker} from '@/components';
 import {PeriodType} from '@/@types';
+import {trackingToParent} from '@/utils';
 
 interface Props {
+	menu: string;
 	label?: string;
 	startDate: string;
 	endDate: string;
@@ -20,6 +22,7 @@ interface Props {
 
 // FIXME: filter 없이 useList 훅의 handleChangeFilter에서만 제어하기
 function SearchDate({
+	menu,
 	label = '기간',
 	startDate,
 	endDate,
@@ -37,6 +40,12 @@ function SearchDate({
 				endDate,
 			});
 			setSelected(idx);
+
+			const periodLabel =
+				periods.find((item) => item.type === type)?.label ?? '';
+			trackingToParent(`${menu}_period_click`, {
+				button_title: `기간선택_${periodLabel}`,
+			});
 		},
 		[filter]
 	);
@@ -47,6 +56,9 @@ function SearchDate({
 			onChange({
 				...filter,
 				[type]: format(value, DATE_FORMAT),
+			});
+			trackingToParent(`${menu}_period_directinput_click`, {
+				button_title: '기간선택_직접입력',
 			});
 		},
 		[filter]

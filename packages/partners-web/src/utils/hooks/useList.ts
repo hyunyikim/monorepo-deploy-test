@@ -11,6 +11,9 @@ interface Props<D, F> {
 	initialFilter: F;
 }
 
+/**
+ * url 쿼리스트링으로 조회할 파라미터의 상태를 관리한다.
+ */
 const useList = <
 	D extends {total?: number; totalNo?: number},
 	F extends object
@@ -30,8 +33,9 @@ const useList = <
 			token: string;
 			b2btype: string;
 			email: string;
+			useFieldModelNum?: string;
 		};
-		const {token, b2btype, email, ...otherSearch} = res;
+		const {token, b2btype, email, useFieldModelNum, ...otherSearch} = res;
 		return otherSearch as F;
 	}, [search]);
 
@@ -64,8 +68,18 @@ const useList = <
 
 	useEffect(() => {
 		// 최초 해당 메뉴 진입시 init filter
-		if (Object.keys(parsedSearch).length === 0) {
-			navigate(`${pathname}?${qs.stringify(initialFilter)}`, {
+		const isInitialSearch = Object.keys(parsedSearch).length === 0;
+		// 조회되어야 하는 필터의 개수와 맞지 않을 경우(url을 통해서 부분 필터만 전달 되었을 경우)
+		const isSeveralSearch =
+			Object.keys(initialFilter).length !==
+			Object.keys(parsedSearch).length;
+
+		if (isInitialSearch || isSeveralSearch) {
+			const param = {
+				...initialFilter,
+				...parsedSearch,
+			};
+			navigate(`${pathname}?${qs.stringify(param)}`, {
 				replace: true,
 			});
 			return;
@@ -81,11 +95,9 @@ const useList = <
 				currentPage?: number;
 				page?: number;
 			} = {};
+
 			if (newParam.hasOwnProperty('currentPage')) {
 				pageParam['currentPage'] = newParam?.currentPage;
-			}
-			if (newParam.hasOwnProperty('page')) {
-				pageParam['page'] = newParam?.page;
 			}
 			const chaningQuery = qs.stringify({
 				...parsedSearch,

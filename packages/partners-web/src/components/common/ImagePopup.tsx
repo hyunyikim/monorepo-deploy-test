@@ -1,5 +1,9 @@
 import {Box} from '@mui/material';
 
+import {trackingToParent} from '@/utils';
+
+import {IcEmptyImage} from '@/assets/icon';
+
 interface Props {
 	image?: string;
 	alt: string;
@@ -7,35 +11,46 @@ interface Props {
 	onClick: (value: {imgSrc: string; imgAlt: string}) => void;
 }
 
+const imagePopupSx = {
+	margin: '6px auto',
+	width: '52px',
+	height: '52px',
+	borderWidth: '0.5px',
+	borderStyle: 'solid',
+	borderColor: 'grey.100',
+};
+
 function ImagePopup({image, alt, style = {}, onClick}: Props) {
 	const onImageClick = (imgSrc: string, imgAlt: string) => {
-		// TODO: tracking
-		// tracking('guarantee_list_itemimage_click', {button_title: `상품이미지 클릭`});
+		trackingToParent('guarantee_list_itemimage_click', {
+			button_title: `상품이미지 클릭`,
+		});
 
 		onClick({
 			imgSrc,
 			imgAlt,
 		});
 	};
-	return (
+	return image ? (
 		<Box
 			sx={{
 				cursor: 'pointer',
-				margin: '6px auto',
-				width: '52px',
-				height: '52px',
 				background: '#fff',
 				backgroundSize: 'cover',
-				borderWidth: '0.5px',
-				borderStyle: 'solid',
-				borderColor: 'grey.100',
 				backgroundImage: image ? `url(${image || ''})` : '',
+				...imagePopupSx,
 			}}
 			style={style}
-			onClick={() => {
-				image && onImageClick(image, alt);
-			}}
+			onClick={() => onImageClick(image, alt)}
 		/>
+	) : (
+		<Box
+			sx={{
+				...imagePopupSx,
+				backgroundColor: 'grey.10',
+			}}>
+			<IcEmptyImage style={{margin: 'auto'}} />
+		</Box>
 	);
 }
 

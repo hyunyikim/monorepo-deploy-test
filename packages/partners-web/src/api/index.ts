@@ -1,6 +1,7 @@
 import axios, {Axios, AxiosRequestConfig, AxiosResponse} from 'axios';
 
 import {TOKEN_KEY, useMessageDialog} from '@/stores';
+import {openParantModal} from '@/utils';
 
 interface CustomAxios extends Axios {
 	get<T = any, R = T, D = any>(
@@ -52,7 +53,13 @@ authInstance.interceptors.response.use(
 	},
 	(error) => {
 		// 공통 예외 처리
-		onOpen('네트워크 에러');
+		// onOpen('네트워크 에러');
+
+		// 부모창으로 에러 모달 띄움
+		openParantModal({
+			title: '알림',
+			content: `<div style="min-width: 300px;font-size: 14px;font-weight: 500;">네트워크 에러</div>`,
+		});
 		return Promise.reject(error);
 	}
 );

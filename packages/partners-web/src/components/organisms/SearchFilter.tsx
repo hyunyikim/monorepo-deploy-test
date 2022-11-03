@@ -11,6 +11,8 @@ import {
 import {ListSearchFilters, Options} from '@/@types';
 
 interface Props<F> {
+	menu: string;
+	menuKo: string;
 	filter: F & {[key: string]: any};
 	filterComponent: ListSearchFilters;
 	onChangeFilter: (value: object) => void;
@@ -24,6 +26,8 @@ interface Props<F> {
  * 상태가 바뀐 뒤 바로 검색이 안 되어도 되는 컴포넌트는 비제어 컴포넌트로 개발 (SearchField)
  */
 function SearchFilter<F extends object>({
+	menu,
+	menuKo,
 	filter,
 	filterComponent,
 	onChangeFilter,
@@ -74,6 +78,7 @@ function SearchFilter<F extends object>({
 						return (
 							<SearchField
 								key={`search-field-${item.name[0]}`}
+								menu={menu}
 								label={item.label}
 								name={item.name as string[]}
 								selectValue={
@@ -90,6 +95,7 @@ function SearchFilter<F extends object>({
 						return (
 							<SearchDate
 								key={item.name as string}
+								menu={menu}
 								startDate={
 									filter?.startDate ?? defaultPeriod[0]
 								}
@@ -102,6 +108,8 @@ function SearchFilter<F extends object>({
 						return (
 							<SearchRadioGroup
 								key={item.name as string}
+								menu={menu}
+								menuKo={menuKo}
 								name={item.name as string}
 								label={item.label}
 								value={

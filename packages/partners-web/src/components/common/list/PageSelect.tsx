@@ -4,7 +4,13 @@ import {Select} from '@/components';
 
 interface Props {
 	value: number;
-	onChange: ({pageMaxNum, page}: {pageMaxNum: number; page: number}) => void;
+	onChange: ({
+		pageMaxNum,
+		currentPage,
+	}: {
+		pageMaxNum: number;
+		currentPage: number;
+	}) => void;
 }
 
 function PageSelect({value, onChange}: Props) {
@@ -19,7 +25,7 @@ function PageSelect({value, onChange}: Props) {
 			onChange={(e) =>
 				onChange({
 					pageMaxNum: e.target.value as number,
-					page: 1,
+					currentPage: 1,
 				})
 			}
 		/>

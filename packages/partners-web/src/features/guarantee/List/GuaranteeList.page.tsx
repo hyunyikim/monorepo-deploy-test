@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useOpen} from '@/utils/hooks';
@@ -36,7 +37,13 @@ import {
 	TableCell,
 } from '@/components';
 
+const menu = 'guarantee';
+const menuKo = '개런티';
+
 function GuaranteeList() {
+	useEffect(() => {
+		trackingToParent('guarantee_pv', {pv_title: '개런티목록 노출'});
+	}, []);
 	const {
 		isLoading,
 		data,
@@ -63,6 +70,8 @@ function GuaranteeList() {
 			<Box>
 				<ListTitle title="개런티 목록" />
 				<SearchFilter
+					menu={menu}
+					menuKo={menuKo}
 					filter={filter}
 					filterComponent={guaranteeListSearchFilter}
 					onSearch={handleSearch}
@@ -70,6 +79,18 @@ function GuaranteeList() {
 					onChangeFilter={handleChangeFilter}
 				/>
 				<TableInfo totalSize={totalSize} unit="건">
+					<PageSelect
+						value={filter.pageMaxNum}
+						onChange={(value: {
+							[key: string]: any;
+							pageMaxNum: number;
+						}) => {
+							trackingToParent(`${menu}_unit_view_click`, {
+								button_title: `노출수_${value.pageMaxNum}개씩`,
+							});
+							handleChangeFilter(value);
+						}}
+					/>
 					<Button
 						color="grey-100"
 						variant="outlined"
@@ -82,14 +103,8 @@ function GuaranteeList() {
 						variant="outlined"
 						height={32}
 						onClick={goToGuaranteeExcelUploadPage}>
-						엑셀 등록
+						엑셀등록
 					</Button>
-					<PageSelect
-						value={filter.pageMaxNum}
-						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
-						}
-					/>
 					<Button
 						color="primary"
 						height={32}
@@ -186,8 +201,8 @@ function GuaranteeList() {
 											}}
 										/>
 										<Typography
-											fontSize={16}
-											lineHeight="16px"
+											fontSize={14}
+											lineHeight={'18px'}
 											ml="12px">
 											[{item.brand_nm_en ?? '-'}
 											]
@@ -196,7 +211,7 @@ function GuaranteeList() {
 										</Typography>
 									</Box>
 								</TableCell>
-								<TableCell align="center">
+								<TableCell>
 									{getGuaranteeStatusChip(
 										item.nft_req_state,
 										item.nft_req_state_text
@@ -214,7 +229,6 @@ function GuaranteeList() {
 				imgAlt={modalData?.imgAlt}
 			/>
 		</>
-		// TODO: error -> modal
 	);
 }
 

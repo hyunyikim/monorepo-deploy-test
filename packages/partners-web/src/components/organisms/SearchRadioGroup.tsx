@@ -3,8 +3,12 @@ import {Grid, InputLabel, Box} from '@mui/material';
 import {Options} from '@/@types';
 
 import {RadioGroup} from '@/components';
+import {useCallback} from 'react';
+import {trackingToParent} from '@/utils';
 
 interface Props {
+	menu: string;
+	menuKo: string;
 	name: string;
 	label: string;
 	value: any;
@@ -12,7 +16,27 @@ interface Props {
 	onChange: (value: any) => void;
 }
 
-function SearchRadioGroup({name, label, value, options, onChange}: Props) {
+function SearchRadioGroup({
+	menu,
+	menuKo,
+	name,
+	label,
+	value,
+	options,
+	onChange,
+}: Props) {
+	const handleChange = useCallback(
+		(value: any) => {
+			onChange(value);
+			const stateLabel =
+				options.find((item) => item.value === value)?.label || '';
+			trackingToParent(`${menu}_state_click`, {
+				button_title: `${menuKo}_${stateLabel}`,
+			});
+		},
+		[menu, menuKo, onChange]
+	);
+
 	return (
 		<>
 			<Box className="flex items-center">
@@ -26,7 +50,7 @@ function SearchRadioGroup({name, label, value, options, onChange}: Props) {
 					name={name}
 					options={options}
 					value={value}
-					onChange={onChange}
+					onChange={handleChange}
 				/>
 			</Grid>
 		</>

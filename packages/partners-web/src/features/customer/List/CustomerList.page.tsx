@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 import {TableCell} from '@/components';
 
@@ -14,7 +15,12 @@ import {
 	nftCustomerListSearchFilter,
 	getWalletLinkChip,
 } from '@/data';
-import {formatPhoneNum, getDateByUnitHour, goToParentUrl} from '@/utils';
+import {
+	formatPhoneNum,
+	getDateByUnitHour,
+	goToParentUrl,
+	trackingToParent,
+} from '@/utils';
 
 import {
 	ListTitle,
@@ -27,7 +33,16 @@ import {
 	TableSellWithSort,
 } from '@/components';
 
+const menu = 'useradmin';
+const menuKo = '고객관리';
+
+const {sort, ...customerInitialSearchFilter} = initialSearchFilter;
+
 function CustomerList() {
+	useEffect(() => {
+		trackingToParent(`${menu}_pv`, {pv_title: '고객관리 목록 진입'});
+	}, []);
+
 	const {
 		isLoading,
 		data,
@@ -44,7 +59,7 @@ function CustomerList() {
 	>({
 		apiFunc: getNftCustomerList,
 		initialFilter: {
-			...initialSearchFilter,
+			...customerInitialSearchFilter,
 			wallet: 'ALL',
 			orderBy: 'LATEST_ISSUED',
 			orderDirection: 'DESC',
@@ -55,6 +70,8 @@ function CustomerList() {
 			<Box>
 				<ListTitle title="고객관리" />
 				<SearchFilter
+					menu={menu}
+					menuKo={menuKo}
 					filter={filter}
 					filterComponent={nftCustomerListSearchFilter}
 					onSearch={handleSearch}
@@ -64,9 +81,15 @@ function CustomerList() {
 				<TableInfo totalSize={totalSize} unit="명">
 					<PageSelect
 						value={filter.pageMaxNum}
-						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
-						}
+						onChange={(value: {
+							[key: string]: any;
+							pageMaxNum: number;
+						}) => {
+							trackingToParent(`${menu}_unit_view_click`, {
+								button_title: `노출수_${value.pageMaxNum}개씩`,
+							});
+							handleChangeFilter(value);
+						}}
 					/>
 				</TableInfo>
 				<Table

@@ -7,12 +7,13 @@ import {Box} from '@mui/material';
 import {TOKEN_KEY} from '@/stores';
 import {sendResizedIframeChildHeight} from '@/utils';
 
+const MIN_HEIGHT = 550;
 const resizeIframeChildHeight = (
 	iframeChildWrapperEle: HTMLDivElement | null
 ) => {
 	if (iframeChildWrapperEle) {
 		const height = iframeChildWrapperEle?.clientHeight || 1130;
-		sendResizedIframeChildHeight(height);
+		sendResizedIframeChildHeight(height < MIN_HEIGHT ? MIN_HEIGHT : height);
 	}
 };
 const mutationObserver = (iframeChildWrapperEle: HTMLDivElement) => {
@@ -51,6 +52,10 @@ function IframeChild() {
 			(parsedSearch?.b2btype || '') as string
 		);
 		localStorage.setItem('email', (parsedSearch?.email || '') as string);
+		localStorage.setItem(
+			'useFieldModelNum',
+			(parsedSearch?.useFieldModelNum || 'Y') as string
+		);
 	}, [location.search, token]);
 
 	useEffect(() => {

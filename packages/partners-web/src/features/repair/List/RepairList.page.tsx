@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {format, parse} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
@@ -14,7 +15,12 @@ import {
 	getRepairStatusChip,
 	repairListSearchFilter,
 } from '@/data';
-import {formatPhoneNum, goToParentUrl, openParantModal} from '@/utils';
+import {
+	formatPhoneNum,
+	goToParentUrl,
+	openParantModal,
+	trackingToParent,
+} from '@/utils';
 import {useMessageDialog} from '@/stores';
 
 import {
@@ -32,7 +38,14 @@ import {
 import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
 import RepairConfirmDialog from './RepairConfirmDialog';
 
+const menu = 'repair';
+const menuKo = '수선';
+
 function RepairList() {
+	useEffect(() => {
+		trackingToParent('repair_pv', {pv_title: '수선신청목록 진입'});
+	}, []);
+
 	const email = localStorage.getItem('email');
 	const {
 		isLoading,
@@ -104,6 +117,8 @@ function RepairList() {
 			<Box>
 				<ListTitle title="수선 신청 목록" />
 				<SearchFilter
+					menu={menu}
+					menuKo={menuKo}
 					filter={filter}
 					filterComponent={repairListSearchFilter}
 					onSearch={handleSearch}
@@ -196,8 +211,8 @@ function RepairList() {
 											}}
 										/>
 										<Typography
-											fontSize={16}
-											lineHeight="16px"
+											fontSize={14}
+											lineHeight={'18px'}
 											ml="12px">
 											[{item.brand_nm_en ?? '-'}
 											]
@@ -206,7 +221,7 @@ function RepairList() {
 										</Typography>
 									</Box>
 								</TableCell>
-								<TableCell align="center">
+								<TableCell>
 									{getRepairStatusChip(item.inspct_state)}
 								</TableCell>
 								<TableCell>
