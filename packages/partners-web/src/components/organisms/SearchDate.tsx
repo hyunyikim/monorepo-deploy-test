@@ -15,6 +15,7 @@ interface Props {
 	startDate: string;
 	endDate: string;
 	filter: {[key: string]: any};
+	periodIdx: number;
 	onChange: (value: {
 		[key in 'startDate' | 'endDate']?: string;
 	}) => void;
@@ -27,9 +28,10 @@ function SearchDate({
 	startDate,
 	endDate,
 	filter,
+	periodIdx,
 	onChange,
 }: Props) {
-	const [selected, setSelected] = useState<number | null>(defaultPeriodIdx);
+	const [selected, setSelected] = useState<number | null>(periodIdx);
 
 	const handleClickDateButton = useCallback(
 		(type: PeriodType, value: number, idx: number) => {

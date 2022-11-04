@@ -10,6 +10,7 @@ import {
 	ListResponse,
 } from '@/@types';
 import {
+	calculatePeriod,
 	initialSearchFilter,
 	productListSearchFilter,
 	sortSearchFilter,
@@ -53,6 +54,9 @@ function ProductList() {
 		apiFunc: getProductList,
 		initialFilter: {
 			...initialSearchFilter,
+			// default 날짜가 14일이 아님
+			startDate: calculatePeriod('all')[0],
+			endDate: calculatePeriod('all')[1],
 			categoryCode: '',
 		},
 	});
@@ -67,6 +71,7 @@ function ProductList() {
 					menuKo={menuKo}
 					filter={filter}
 					filterComponent={productListSearchFilter}
+					periodIdx={6}
 					onSearch={handleSearch}
 					onReset={handleReset}
 					onChangeFilter={handleChangeFilter}

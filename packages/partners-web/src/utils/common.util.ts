@@ -73,6 +73,9 @@ export const getDateByUnitHour = (value: Date) => {
 	const gapMin = Math.ceil(
 		(new Date().getTime() - value.getTime()) / (1000 * 60)
 	);
+	// if (gapMin < 60) {
+	// 	return `${gapMin} 분전`;
+	// }
 	if (gapMin < 60 * 24) {
 		return `${Math.ceil(gapMin / 60)} 시간전`;
 	}

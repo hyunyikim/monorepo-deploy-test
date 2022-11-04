@@ -14,6 +14,7 @@ import {
 	initialSearchFilter,
 	nftCustomerListSearchFilter,
 	getWalletLinkChip,
+	calculatePeriod,
 } from '@/data';
 import {
 	formatPhoneNum,
@@ -60,6 +61,9 @@ function CustomerList() {
 		apiFunc: getNftCustomerList,
 		initialFilter: {
 			...customerInitialSearchFilter,
+			// default 날짜가 14일이 아님
+			startDate: calculatePeriod('all')[0],
+			endDate: calculatePeriod('all')[1],
 			wallet: 'ALL',
 			orderBy: 'LATEST_ISSUED',
 			orderDirection: 'DESC',
@@ -74,6 +78,7 @@ function CustomerList() {
 					menuKo={menuKo}
 					filter={filter}
 					filterComponent={nftCustomerListSearchFilter}
+					periodIdx={6}
 					onSearch={handleSearch}
 					onReset={handleReset}
 					onChangeFilter={handleChangeFilter}

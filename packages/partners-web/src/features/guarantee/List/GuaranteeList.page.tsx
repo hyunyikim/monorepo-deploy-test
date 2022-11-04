@@ -178,7 +178,21 @@ function GuaranteeList() {
 										: '-'}
 								</TableCell>
 								<TableCell>
-									{item.orderer_nm ? item.orderer_nm : '-'}
+									<Typography
+										fontSize={14}
+										className="underline"
+										onClick={() => {
+											const name = item?.orderer_nm;
+											const phone = item?.orderer_tel;
+											if (!name || !phone) return;
+											goToParentUrl(
+												`/b2b/customer/${name}/${phone}`
+											);
+										}}>
+										{item.orderer_nm
+											? item.orderer_nm
+											: '-'}
+									</Typography>
 								</TableCell>
 								<TableCell>
 									{item.orderer_tel
