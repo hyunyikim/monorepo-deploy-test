@@ -7,7 +7,8 @@
 		"build:dev": "env-cmd -f .env.development webpack --mode production",
 		"build:stage": "env-cmd -f .env.stage webpack --mode production",
 		"build:prod": "env-cmd -f .env.production webpack --mode production",
-		"dev": "env-cmd -f .env.development webpack serve --mode development --open --hot"
+		"dev": "env-cmd -f .env.development webpack serve --mode development --open --hot",
+		"release": "standard-version"
 	},
 	"dependencies": {
 		"@date-io/date-fns": "^2.16.0",

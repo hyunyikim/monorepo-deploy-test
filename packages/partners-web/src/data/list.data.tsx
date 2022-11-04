@@ -64,16 +64,16 @@ export const periods: (Option<number> & {
 
 export const calculatePeriod = (
 	type: PeriodType,
-	value: number
+	value?: number
 ): [string, string] => {
 	const today = new Date();
 	let res = [today, today];
 	switch (type) {
 		case 'week':
-			res = [addDays(subWeeks(today, value), 1), today];
+			res = [addDays(subWeeks(today, value ?? 0), 1), today];
 			break;
 		case 'month':
-			res = [addDays(subMonths(today, value), 1), today];
+			res = [addDays(subMonths(today, value ?? 0), 1), today];
 			break;
 		case 'all':
 			return ['', format(today, DATE_FORMAT)];

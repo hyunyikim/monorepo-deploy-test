@@ -1,6 +1,6 @@
 import {Box} from '@mui/material';
 
-import {defaultPeriod} from '@/data';
+import {defaultPeriodIdx} from '@/data';
 
 import {
 	SearchField,
@@ -15,6 +15,7 @@ interface Props<F> {
 	menuKo: string;
 	filter: F & {[key: string]: any};
 	filterComponent: ListSearchFilters;
+	periodIdx?: number;
 	onChangeFilter: (value: object) => void;
 	onSearch: (value: F) => void;
 	onReset: () => void;
@@ -30,6 +31,7 @@ function SearchFilter<F extends object>({
 	menuKo,
 	filter,
 	filterComponent,
+	periodIdx = defaultPeriodIdx,
 	onChangeFilter,
 	onSearch,
 	onReset,
@@ -96,11 +98,11 @@ function SearchFilter<F extends object>({
 							<SearchDate
 								key={item.name as string}
 								menu={menu}
-								startDate={
-									filter?.startDate ?? defaultPeriod[0]
-								}
-								endDate={filter?.endDate ?? defaultPeriod[1]}
+								label={item.label}
+								startDate={filter.startDate}
+								endDate={filter.endDate}
 								filter={filter}
+								periodIdx={periodIdx}
 								onChange={onChangeFilter}
 							/>
 						);

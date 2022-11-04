@@ -93,8 +93,9 @@ const useList = <
 			// 그 외 필터 변경 되었을 때는 페이지 초기화
 			const pageParam: {
 				currentPage?: number;
-				page?: number;
-			} = {};
+			} = {
+				currentPage: 1,
+			};
 
 			if (newParam.hasOwnProperty('currentPage')) {
 				pageParam['currentPage'] = newParam?.currentPage;
