@@ -3,11 +3,11 @@
 	"version": "0.0.1",
 	"packageManager": "yarn@3.2.3",
 	"scripts": {
-		"dev": "webpack serve --env mode=development",
 		"prebuild": "rm -rf dist",
-		"build:dev": "webpack --env mode=development",
-		"build:stage": "webpack --env mode=stage",
-		"build:prod": "webpack --env mode=production"
+		"build:dev": "env-cmd -f .env.development webpack --mode production",
+		"build:stage": "env-cmd -f .env.stage webpack --mode production",
+		"build:prod": "env-cmd -f .env.production webpack --mode production",
+		"dev": "env-cmd -f .env.development webpack serve --mode development --open --hot"
 	},
 	"dependencies": {
 		"@date-io/date-fns": "^2.16.0",
@@ -46,6 +46,7 @@
 		"clean-webpack-plugin": "^4.0.0",
 		"css-loader": "^6.7.1",
 		"dotenv-webpack": "^8.0.1",
+		"env-cmd": "^10.1.0",
 		"esbuild-loader": "^2.20.0",
 		"html-webpack-plugin": "^5.5.0",
 		"mini-css-extract-plugin": "^2.6.1",

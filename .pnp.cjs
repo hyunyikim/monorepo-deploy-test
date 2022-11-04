@@ -2901,7 +2901,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "commander",\
-        "npm:2.20.3"\
+        "npm:4.1.1"\
       ],\
       [\
         "commist",\
@@ -3530,6 +3530,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "entities",\
         "npm:2.2.0"\
+      ],\
+      [\
+        "env-cmd",\
+        "npm:10.1.0"\
       ],\
       [\
         "env-paths",\
@@ -24597,6 +24601,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-loader", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:6.7.1"],\
             ["date-fns", "npm:2.29.3"],\
             ["dotenv-webpack", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:8.0.1"],\
+            ["env-cmd", "npm:10.1.0"],\
             ["esbuild-loader", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.20.0"],\
             ["html-webpack-plugin", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:5.5.0"],\
             ["mini-css-extract-plugin", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.6.1"],\
@@ -30752,6 +30757,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/entities-npm-4.4.0-97635dc5cc-84d250329f.zip/node_modules/entities/",\
           "packageDependencies": [\
             ["entities", "npm:4.4.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["env-cmd", [\
+        ["npm:10.1.0", {\
+          "packageLocation": "./.yarn/cache/env-cmd-npm-10.1.0-85470635d6-efef550742.zip/node_modules/env-cmd/",\
+          "packageDependencies": [\
+            ["env-cmd", "npm:10.1.0"],\
+            ["commander", "npm:4.1.1"],\
+            ["cross-spawn", "npm:7.0.3"]\
           ],\
           "linkType": "HARD"\
         }]\

@@ -1,15 +1,14 @@
+const webpack = require('webpack');
 const path = require('path');
 const {merge} = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
-	const mode = env.mode;
+	const mode = argv.mode;
 	console.log('env, argv :>> ', env, argv);
 
-	const envMode = 'stage' === mode ? 'production' : mode;
-	const envConfig = require(`./webpack.${envMode}`);
+	const envConfig = require(`./webpack.${mode}`);
 
 	const config = {
 		entry: './src/App.tsx',
@@ -29,12 +28,33 @@ module.exports = (env, argv) => {
 					},
 				},
 				{
-					test: /\.css$/i,
-					use: ['style-loader', 'css-loader'],
+					test: /\.s[ac]ss$/i,
+					use: [
+						'style-loader',
+						'css-loader',
+						'sass-loader',
+						{
+							loader: 'esbuild-loader',
+							options: {
+								loader: 'css',
+								minify: true,
+							},
+						},
+					],
 				},
 				{
-					test: /\.s[ac]ss$/i,
-					use: ['style-loader', 'css-loader', 'sass-loader'],
+					test: /\.css$/i,
+					use: [
+						'style-loader',
+						'css-loader',
+						{
+							loader: 'esbuild-loader',
+							options: {
+								loader: 'css',
+								minify: true,
+							},
+						},
+					],
 				},
 				{
 					test: /\.svg$/,
@@ -79,8 +99,11 @@ module.exports = (env, argv) => {
 				filename: 'index.html',
 			}),
 			new CleanWebpackPlugin(),
-			new Dotenv({
-				path: `.env.${mode}`,
+			new webpack.DefinePlugin({
+				...Object.entries(process.env).reduce((acc, [key, value]) => ({
+					...acc,
+					...{[key]: JSON.stringify(value)},
+				})),
 			}),
 		],
 	};

@@ -2,6 +2,7 @@ import axios, {Axios, AxiosRequestConfig, AxiosResponse} from 'axios';
 
 import {TOKEN_KEY, useMessageDialog} from '@/stores';
 import {openParantModal} from '@/utils';
+import {API_URL} from '@/utils/constants';
 
 interface CustomAxios extends Axios {
 	get<T = any, R = T, D = any>(
@@ -18,8 +19,6 @@ interface CustomAxios extends Axios {
 		config?: AxiosRequestConfig<D>
 	): Promise<R>;
 }
-
-const API_URL = process.env.API_URL as string;
 
 const nonAuthInstance = axios.create({
 	baseURL: API_URL,
