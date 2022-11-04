@@ -1,3 +1,5 @@
+import {isValid} from 'date-fns';
+
 import {TextField, SxProps, SvgIcon} from '@mui/material';
 import {
 	DatePicker as MuiDatePicker,
@@ -35,11 +37,14 @@ function DatePicker({value, sx, onChange, ...props}: Props) {
 				views={['day']}
 				value={value || null}
 				onChange={(newValue) => {
-					onChange(newValue ?? new Date());
+					const isValided = isValid(newValue);
+					if (isValided) {
+						onChange(newValue ?? new Date());
+					}
 				}}
-				renderInput={(params) => (
-					<TextField {...params} sx={sx ?? defaultSx} />
-				)}
+				renderInput={(params) => {
+					return <TextField {...params} sx={sx ?? defaultSx} />;
+				}}
 				components={{
 					OpenPickerIcon: IcChevronDownForDate,
 				}}
