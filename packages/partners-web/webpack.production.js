@@ -10,7 +10,7 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.s[ac]ss$/i,
+				test: /\.css$/i,
 				use: [MiniCssExtractionPlugin.loader, 'css-loader'],
 			},
 		],
@@ -23,5 +23,5 @@ module.exports = {
 			}),
 		],
 	},
-	plugins: [new MiniCssExtractionPlugin()],
+	plugins: [new MiniCssExtractionPlugin(), new ESBuildMinifyPlugin()],
 };
