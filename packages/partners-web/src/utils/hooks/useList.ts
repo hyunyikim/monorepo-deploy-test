@@ -3,7 +3,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import qs from 'qs';
 
 import {defaultPageSize} from '@/data';
-import {sortObjectByKey} from '@/utils';
+import {sortObjectByKey, scrollUpParent} from '@/utils';
 
 interface Props<D, F> {
 	apiFunc: (value: F, ...rest: any[]) => Promise<D>;
@@ -108,6 +108,10 @@ const useList = <
 			navigate(`${pathname}?${chaningQuery}`, {
 				replace: true,
 			});
+
+			// 조회 후 scroll up
+			scrollUpParent();
+			// window.scrollTo(0, 0);
 		},
 		[pathname, parsedSearch]
 	);

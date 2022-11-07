@@ -21,7 +21,6 @@ interface Props {
 	}) => void;
 }
 
-// FIXME: filter 없이 useList 훅의 handleChangeFilter에서만 제어하기
 function SearchDate({
 	menu,
 	label = '기간',
@@ -37,7 +36,6 @@ function SearchDate({
 		(type: PeriodType, value: number, idx: number) => {
 			const [startDate, endDate] = calculatePeriod(type, value);
 			onChange({
-				...filter,
 				startDate,
 				endDate,
 			});
@@ -56,7 +54,6 @@ function SearchDate({
 		(type: 'startDate' | 'endDate', value: Date) => {
 			setSelected(null);
 			onChange({
-				...filter,
 				[type]: format(value, DATE_FORMAT),
 			});
 			trackingToParent(`${menu}_period_directinput_click`, {

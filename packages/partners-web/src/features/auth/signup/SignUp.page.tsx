@@ -1,12 +1,7 @@
-import {OutlinedInput} from '@mui/material';
+import {Box} from '@mui/material';
 
 function SignUp() {
-	return (
-		<div>
-			hello world!
-			<OutlinedInput />
-		</div>
-	);
+	return <Box>Sign up page</Box>;
 }
 
 export default SignUp;

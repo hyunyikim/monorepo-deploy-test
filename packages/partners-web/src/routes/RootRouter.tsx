@@ -23,7 +23,6 @@ const Inspection = lazy(
 	() => import('@/features/inspection/List/InspectionList.page')
 );
 const Repair = lazy(() => import('@/features/repair/List/RepairList.page'));
-const SignIn = lazy(() => import('@/features/auth/signin/SignIn.page'));
 const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const NotFound = lazy(() => import('@/features/common/NotFound.page'));
 
@@ -46,7 +45,6 @@ const privateRouter: RouteObject[] = [
 	{
 		element: <IframeChild />,
 		children: [
-			{path: '/', element: <NotFound />},
 			{path: '/b2b/guarantee/v2', element: <Guarantee />},
 			{path: '/b2b/product/v2', element: <Product />},
 			{path: '/b2b/customer/v2', element: <Customer />},
@@ -56,22 +54,25 @@ const privateRouter: RouteObject[] = [
 			},
 			{path: '/b2b/inspection/v2', element: <Inspection />},
 			{path: '/b2b/repair/v2', element: <Repair />},
+			{path: '*', element: <NotFound />},
 		],
 	},
 ];
 
 const publicRouter: RouteObject[] = [
 	{
-		path: '/auth/signin',
-		element: <SignIn />,
-	},
-	{
-		path: '/auth/signup',
-		element: <SignUp />,
-	},
-	{
-		path: '*',
-		element: <Navigate to="/auth/signin" replace />,
+		element: <IframeChild />,
+		children: [
+			{
+				path: '/auth/signup/v2',
+				element: <SignUp />,
+			},
+			{
+				path: '*',
+				element: <Navigate to="/auth/signin/v2" replace />,
+			},
+			{path: '*', element: <NotFound />},
+		],
 	},
 ];
 
@@ -81,7 +82,7 @@ function RootRouter() {
 		<RouterProvider
 			router={createBrowserRouter(
 				// (isLogin ? privateRouter : publicRouter).map((route) => ({
-				privateRouter.map((route) => ({
+				[...publicRouter, ...privateRouter].map((route) => ({
 					...route,
 					element: <Suspense>{route.element}</Suspense>,
 				}))

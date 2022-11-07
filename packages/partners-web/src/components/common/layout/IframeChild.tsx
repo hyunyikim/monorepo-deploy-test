@@ -7,13 +7,14 @@ import {Box} from '@mui/material';
 import {TOKEN_KEY} from '@/stores';
 import {sendResizedIframeChildHeight} from '@/utils';
 
-const MIN_HEIGHT = 550;
+const MIN_HEIGHT = 550 + 10;
 const resizeIframeChildHeight = (
 	iframeChildWrapperEle: HTMLDivElement | null
 ) => {
 	if (iframeChildWrapperEle) {
-		const height = iframeChildWrapperEle?.clientHeight || 1130;
-		sendResizedIframeChildHeight(height < MIN_HEIGHT ? MIN_HEIGHT : height);
+		let height = (iframeChildWrapperEle?.clientHeight || 1130) + 10;
+		height = height < MIN_HEIGHT ? MIN_HEIGHT : height;
+		sendResizedIframeChildHeight(height);
 	}
 };
 const mutationObserver = (iframeChildWrapperEle: HTMLDivElement) => {
@@ -38,13 +39,11 @@ function IframeChild() {
 		const parsedSearch = parse(location.search, {
 			ignoreQueryPrefix: true,
 		});
-		if (!parsedSearch.hasOwnProperty('token')) {
+		const tokenFromParsedSearch = (parsedSearch?.token as string) ?? null;
+		if (!tokenFromParsedSearch) {
 			return;
 		}
-		const tokenFromParsedSearch = (parsedSearch?.token ?? '') as string;
-		if (token && tokenFromParsedSearch === token) {
-			return;
-		}
+
 		setToken(tokenFromParsedSearch);
 		localStorage.setItem(TOKEN_KEY, tokenFromParsedSearch);
 		localStorage.setItem(
@@ -60,18 +59,18 @@ function IframeChild() {
 
 	useEffect(() => {
 		let observer: MutationObserver | null = null;
-		// 데이터 조회 대상이 되는 테이블
-		const tables = document.getElementsByClassName('MuiTableBody-root');
 		const iframeChildWrapperEle = iframeChildWrapperRef?.current;
-		if (!iframeChildWrapperEle || !tables) {
+		if (!iframeChildWrapperEle) {
 			return;
 		}
 
 		document.body.style.overflowY = 'hidden';
-		if (tables?.length > 0) {
-			observer = mutationObserver(iframeChildWrapperEle);
-			observer.observe(tables[0], {childList: true});
-		}
+		observer = mutationObserver(iframeChildWrapperEle);
+
+		observer.observe(iframeChildWrapperEle, {
+			childList: true, // 자식 요소에 변화 생길 경우
+			subtree: true, // 후손 요소에 변화 생길 경우
+		});
 		return () => {
 			document.body.style.overflowY = 'auto';
 			observer && observer.disconnect();
