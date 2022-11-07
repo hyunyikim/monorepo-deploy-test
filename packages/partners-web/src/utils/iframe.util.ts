@@ -4,6 +4,7 @@ type RequestType =
 	| 'guarantee_excel_download'
 	| 'guarantee_excel_upload'
 	| 'document_height'
+	| 'scroll_up'
 	| 'open_modal';
 
 export const sendMessageToParent = (data: {type: RequestType; data: any}) => {
@@ -51,6 +52,13 @@ export const sendResizedIframeChildHeight = (height: number) => {
 	sendMessageToParent({
 		type: 'document_height',
 		data: height,
+	});
+};
+
+export const scrollUpParent = () => {
+	sendMessageToParent({
+		type: 'scroll_up',
+		data: null,
 	});
 };
 

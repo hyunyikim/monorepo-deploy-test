@@ -6,7 +6,6 @@ export * from './guarantee.types';
 export * from './auth.types';
 export * from './partnership.types';
 export * from './common.types';
-export * from './theme.types';
 export * from './menu.types';
 export * from './statstics.types';
 export * from './list.types';
