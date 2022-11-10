@@ -78,7 +78,12 @@ function IframeChild() {
 	}, []);
 
 	return (
-		<Box id="content-wrapper" ref={iframeChildWrapperRef}>
+		<Box
+			id="content-wrapper"
+			ref={iframeChildWrapperRef}
+			sx={{
+				height: '100%',
+			}}>
 			<Outlet />
 		</Box>
 	);

@@ -1,4 +1,4 @@
-import {TableCellProps, Box, Typography, ButtonBase} from '@mui/material';
+import {TableCellProps, Box, Typography, IconButton} from '@mui/material';
 
 import {TableCell} from '@/components';
 import {IcSort} from '@/assets/icon';
@@ -29,8 +29,8 @@ function TableCellWithSort({
 				<Typography fontSize={14} noWrap={false}>
 					{label}
 				</Typography>
-				<ButtonBase
-					className="rounded"
+				<IconButton
+					size="small"
 					onClick={() => {
 						let newOrderDirection = defaultOrderDirection;
 						if (name === orderBy) {
@@ -43,7 +43,7 @@ function TableCellWithSort({
 						});
 					}}>
 					<IcSort className="cursor-pointer" />
-				</ButtonBase>
+				</IconButton>
 			</Box>
 		</TableCell>
 	);

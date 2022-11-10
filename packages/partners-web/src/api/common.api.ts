@@ -1,4 +1,4 @@
-import {instance} from '@/api';
+import {instance, nonAuthInstance} from '@/api';
 
 import {ListResponse, Options} from '@/@types';
 
@@ -12,4 +12,8 @@ export const getSearchBrandList = async () => {
 			},
 		}
 	);
+};
+
+export const sendSlack = async (data: Record<string, any>) => {
+	return await nonAuthInstance.post('/v1/common/slack/send', data);
 };

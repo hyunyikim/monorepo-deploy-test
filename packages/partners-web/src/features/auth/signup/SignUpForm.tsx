@@ -1,0 +1,346 @@
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+
+import {
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	FormHelperText,
+	Stack,
+	Box,
+} from '@mui/material';
+
+import {
+	partnershipSignupEmailSchemaShape as emailSchemaShape,
+	partnershipSignUpRestSchemaShape as restFieldSchemaShape,
+} from '@/utils/schema';
+import {handleChangeDataFormat, openParantModal} from '@/utils';
+import {signUp} from '@/api/auth.api';
+
+import {Button} from '@/components';
+import SignUpTextField from '@/features/auth/signup/SignUpTextField';
+import {
+	IcEnvelope,
+	IcHotelBuilding,
+	IcDoc,
+	IcPhone,
+	IcLock,
+} from '@/assets/icon';
+import {SignUpRequestFormData} from '@/@types';
+import {useNavigate} from 'react-router-dom';
+
+const inputList = [
+	{
+		type: 'text',
+		name: 'email',
+		placeholder: '이메일을 입력해주세요.',
+		label: '이메일 주소',
+		autoComplete: 'off',
+		required: true,
+		icon: <IcEnvelope />,
+	},
+	{
+		type: 'text',
+		name: 'companyName',
+		placeholder: '회사명을 입력해주세요.',
+		label: '회사명',
+		autoComplete: 'off',
+		required: true,
+		icon: <IcHotelBuilding />,
+	},
+	{
+		type: 'text',
+		name: 'businessNum',
+		placeholder: '사업자등록정보를 입력해주세요.',
+		label: '사업자등록정보',
+		autoComplete: 'off',
+		required: true,
+		icon: <IcDoc />,
+	},
+	{
+		type: 'text',
+		name: 'phoneNum',
+		placeholder: '담당자 연락처를 입력해주세요.',
+		label: '휴대전화번호',
+		autoComplete: 'off',
+		required: true,
+		icon: <IcPhone />,
+	},
+	{
+		type: 'password',
+		name: 'password',
+		placeholder: '비밀번호를 입력해주세요.',
+		label: '비밀번호',
+		autoComplete: 'off',
+		required: true,
+		icon: <IcLock />,
+	},
+	{
+		type: 'password',
+		name: 'passwordConfirm',
+		placeholder: '비밀번호를 한번 더 입력해주세요.',
+		label: '비밀번호',
+		autoComplete: 'off',
+		required: true,
+		icon: <IcLock />,
+	},
+];
+
+const defaultValues = inputList
+	.map((item: {name: string}) => item.name)
+	.reduce((acc: Record<string, any>, cur) => {
+		return {...acc, [cur]: ''};
+	}, {});
+
+interface FormProps extends SignUpRequestFormData {
+	passwordConfirm: string;
+	isAgree: boolean;
+}
+
+interface Props {
+	setStep: (value: number) => void;
+	onOpenModal: () => void;
+	onSetAgreementType: (value: 'policy' | 'privacy') => void;
+}
+
+function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
+	const navigate = useNavigate();
+	const [showAllField, setShowAllField] = useState(false);
+
+	const showInputList = useMemo(() => {
+		if (showAllField) {
+			return inputList;
+		}
+		return [inputList[0]];
+	}, [showAllField]);
+
+	const {
+		getFieldState,
+		control,
+		handleSubmit,
+		formState: {errors},
+	} = useForm<FormProps>({
+		resolver: yupResolver(
+			showAllField
+				? emailSchemaShape.concat(restFieldSchemaShape)
+				: emailSchemaShape
+		),
+		mode: showAllField ? 'onSubmit' : 'onBlur',
+		reValidateMode: showAllField ? 'onSubmit' : 'onBlur',
+		defaultValues: {...defaultValues, ...{isAgree: false}},
+	});
+
+	const fieldState = getFieldState('email');
+	useEffect(() => {
+		const {error, isTouched} = fieldState;
+		// 이메일을 올바르게 입력한 경우에 전체 필드 보여줌
+		if (!error && isTouched) {
+			setShowAllField(true);
+		}
+	}, [fieldState]);
+
+	// const onOpen = useMessageDialog((state) => state.onOpen);
+
+	const onSubmit = useCallback(
+		async (data: SignUpRequestFormData) => {
+			try {
+				const formData = new FormData();
+				Object.keys(data).forEach((key: string) => {
+					if (['passwordConfirm', 'isAgree'].includes(key)) {
+						return;
+					}
+					let value = data[key as keyof SignUpRequestFormData];
+					if (key === 'businessNum') {
+						value = value.split('-').join('');
+					}
+					formData.append(key, value);
+				});
+				if (!formData) return;
+				await signUp(formData);
+				navigate('/auth/signup/v2', {
+					state: data.email,
+					replace: true,
+				});
+				setStep(3);
+			} catch (e: any) {
+				const message = (e?.response?.data?.message ||
+					'네트워크 에러') as string;
+				// onOpen(message);
+				openParantModal({
+					title: '알림',
+					content: `<div style="min-width: 300px;font-size: 14px;font-weight: 500;">${message}</div>`,
+				});
+			}
+		},
+		[navigate]
+	);
+
+	return (
+		<form
+			noValidate
+			onSubmit={handleSubmit(onSubmit)}
+			style={{
+				width: '100%',
+			}}>
+			<Stack
+				direction="column"
+				rowGap="14px"
+				sx={{
+					margin: 'auto',
+					maxWidth: '480px',
+				}}>
+				{showInputList.map((input) => (
+					<Controller
+						key={input.name}
+						name={input.name as keyof FormProps}
+						control={control}
+						render={({
+							field: {onChange, onBlur, value, ref},
+							fieldState: {error},
+						}) => {
+							return (
+								<SignUpTextField
+									error={error}
+									{...input}
+									onChange={(e) => {
+										if (input.name === 'phoneNum') {
+											e.target.value =
+												handleChangeDataFormat(
+													'phoneNum',
+													e
+												);
+										}
+										if (input.name === 'businessNum') {
+											e.target.value =
+												handleChangeDataFormat(
+													'businessNum',
+													e
+												);
+										}
+										onChange(e);
+									}}
+									onBlur={onBlur}
+									value={value}
+								/>
+							);
+						}}
+					/>
+				))}
+				{showAllField && (
+					<Controller
+						name="isAgree"
+						control={control}
+						render={({
+							field: {onChange, value},
+							fieldState: {error},
+						}) => {
+							return (
+								<FormControl error={error ? true : false}>
+									<FormControlLabel
+										sx={{
+											'& .MuiTypography-root': {
+												display: 'flex',
+												alignItems: 'center',
+												fontSize: {
+													xs: 13,
+													md: 14,
+												},
+												fontWeight: 'bold',
+												color: 'grey.600',
+												'& .MuiTypography-h6': {
+													color: 'primary.main',
+												},
+											},
+										}}
+										control={
+											<Checkbox
+												name="checked"
+												color="primary"
+												sx={{
+													'& .MuiSvgIcon-root': {
+														fontSize: 20,
+													},
+												}}
+												onChange={onChange}
+												checked={value}
+											/>
+										}
+										label={
+											<Box color="grey.600">
+												<Box
+													display="inline-block"
+													color="primary.main"
+													fontWeight={600}
+													className="underline cursor-pointer"
+													onClick={(e) => {
+														e.preventDefault();
+														onSetAgreementType(
+															'policy'
+														);
+														onOpenModal();
+													}}>
+													서비스 이용약관
+												</Box>
+												과{' '}
+												<Box
+													display="inline-block"
+													color="primary.main"
+													fontWeight={600}
+													className="underline cursor-pointer"
+													onClick={(e) => {
+														e.preventDefault();
+														onSetAgreementType(
+															'privacy'
+														);
+														onOpenModal();
+													}}>
+													개인정보 수집 및 이용
+												</Box>
+												에 동의합니다.
+											</Box>
+										}
+									/>
+									<FormHelperText
+										sx={{
+											margin: 0,
+											fontSize: 13,
+											fontWeight: 'bold',
+										}}>
+										{error?.message}
+									</FormHelperText>
+								</FormControl>
+							);
+						}}
+					/>
+				)}
+				<Button
+					type="submit"
+					fullWidth
+					// TODO: tracking info 심기
+					// trackingInfo={{
+					// 	eventName: 'signup_click',
+					// 	propertyName: 'button_title',
+					// 	propertyData: '지금 무료로 시작하기',
+					// }}
+					sx={{
+						marginTop: '34px',
+						background:
+							'linear-gradient(98.38deg, #5D9BF9 43.58%, #5C3EF6 104.42%)',
+						height: {
+							sm: '56px',
+							md: '60px',
+						},
+						fontSize: {
+							sm: '16px',
+							md: '18px',
+						},
+					}}>
+					지금 무료로 시작하기
+				</Button>
+			</Stack>
+		</form>
+	);
+}
+
+export default SignUpForm;

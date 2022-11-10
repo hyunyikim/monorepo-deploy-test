@@ -1,76 +1,81 @@
-import {Avatar, Box, ButtonBase, Typography} from '@mui/material';
+import {ButtonBase, AppBar, Toolbar} from '@mui/material';
 
-// TODO: icon 교체
-import {IconMenu2} from '@tabler/icons';
+import {
+	ImgLogoVirclePartners,
+	ImgLogoVirclePartners2x,
+	ImgLogoVirclePartnersWhite,
+	ImgLogoVirclePartnersWhite2x,
+} from '@/assets/images';
+import {useMemo} from 'react';
 
-import {useOpenMenuStore, useViewMenuStore} from '@/stores';
-import {sidebarWidth} from '@/data';
-
-import {Logo} from '@/components';
 import HeaderProfile from '@/components/common/layout/HeaderProfile';
 
-const headerPaddingLeft = '24px';
+import {HEADER_HEIGHT, PARTIAL_PAGE_MAX_WIDTH} from '@/data';
+import {goToParentUrl} from '@/utils';
 
-function Header() {
-	const {open, setOpen} = useOpenMenuStore();
+const HEADER_PADDING = '16px';
+interface Props {
+	fullPage?: boolean;
+	backgroundColor?: 'white' | 'transparent';
+	borderBottom?: boolean;
+}
 
-	// TODO: subscribe 필요
-	const currentMenu = useViewMenuStore((state) => state.currentMenu());
+function Header({
+	fullPage = true,
+	backgroundColor = 'white',
+	borderBottom = true,
+}: Props) {
+	const logoImage = useMemo(() => {
+		return {
+			src:
+				backgroundColor === 'white'
+					? ImgLogoVirclePartners
+					: ImgLogoVirclePartnersWhite,
+			srcSet:
+				backgroundColor === 'white'
+					? ImgLogoVirclePartners2x
+					: ImgLogoVirclePartnersWhite2x,
+		};
+	}, [backgroundColor]);
+
 	return (
-		<>
-			<Box
-				sx={(theme) => ({
-					width: `calc(${sidebarWidth} - ${headerPaddingLeft} )`,
-					display: 'flex',
-					[theme.breakpoints.down('md')]: {
-						width: 'auto',
-					},
-				})}>
-				<Box
-					sx={{
-						display: {xs: 'none', md: 'flex'},
-						flexGrow: 1,
-						alignItmes: 'center',
-					}}>
-					<Logo />
-				</Box>
+		<AppBar
+			position="fixed"
+			sx={{
+				height: HEADER_HEIGHT,
+				backgroundColor: backgroundColor,
+				boxShadow: 'none',
+				...(borderBottom && {
+					borderBottomWidth: '1px',
+					borderBottomStyle: 'solid',
+					borderBottomColor: 'grey.100',
+				}),
+				'.MuiToolbar-root': {
+					// TODO: 반응형 체크
+					minWidth: fullPage
+						? '100%'
+						: `calc(${PARTIAL_PAGE_MAX_WIDTH} + (${HEADER_PADDING} * 2))`,
+					height: 'inherit',
+					margin: 'auto',
+					justifyContent: 'space-between',
+				},
+			}}>
+			<Toolbar>
 				<ButtonBase
-					sx={{borderRadius: '8px', overflow: 'hidden'}}
-					onClick={() => setOpen(!open)}>
-					<Avatar
-						variant="rounded"
-						sx={(theme) => ({
-							cursor: 'pointer',
-							borderRadius: '8px',
-							width: '34px',
-							height: '34px',
-							fontSize: '1.2rem',
-							transition: 'all .2s ease-in-out',
-							background: theme.palette.primary.light,
-							color: theme.palette.primary.dark,
-							'&:hover': {
-								background: theme.palette.primary.main,
-								color: theme.palette.primary.light,
-							},
-						})}
-						// onClick={handleLeftDrawerToggle}
-						color="inherit">
-						<IconMenu2 stroke={1.5} size="1.3rem" />
-					</Avatar>
+					disableRipple
+					onClick={() => {
+						goToParentUrl('/');
+					}}>
+					<img
+						src={logoImage.src}
+						srcSet={logoImage.srcSet}
+						alt="logo"
+						width={172}
+					/>
 				</ButtonBase>
-			</Box>
-			<Box sx={{pl: 2, display: {xs: 'block', md: 'none'}}}>
-				<Typography
-					component="h2"
-					variant="h2"
-					color="inherit"
-					sx={{fontSize: '20px'}}>
-					{currentMenu.title}
-				</Typography>
-			</Box>
-			{/* <div className={classes.grow} /> */}
-			<HeaderProfile />
-		</>
+				{/* {true && <HeaderProfile />} */}
+			</Toolbar>
+		</AppBar>
 	);
 }
 
