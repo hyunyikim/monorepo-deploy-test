@@ -28,7 +28,6 @@ const EmailVerificationFail = lazy(
 );
 const NotFound = lazy(() => import('@/features/common/NotFound.page'));
 
-const;
 const privateRouter: RouteObject[] = [
 	// TODO: 임시 주석처리, 아예 신규 프로젝트로 이관 완료되면 그때 다시 정리
 	// {
