@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {Box, Stack, Typography} from '@mui/material';
 
 import {useOpen} from '@/utils/hooks';
@@ -5,9 +6,14 @@ import {useOpen} from '@/utils/hooks';
 import {Button} from '@/components';
 import IntroductionInquiryDialog from '@/features/auth/signup/IntroductionInquiryDialog';
 import {IcBag, IcShop} from '@/assets/icon';
+import {trackingToParent} from '@/utils';
 
 function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 	const {open, onOpen, onClose} = useOpen({});
+
+	useEffect(() => {
+		trackingToParent('storetype_pv', {pv_title: '스토어 유형 선택'});
+	}, []);
 
 	return (
 		<>
@@ -51,6 +57,10 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 							<Button
 								width={124}
 								onClick={() => {
+									trackingToParent(
+										'storetype_brandstart_click',
+										{button_title: '브랜드 시작하기'}
+									);
 									setStep(2);
 								}}>
 								시작하기
@@ -71,6 +81,10 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 							<Button
 								width={124}
 								onClick={() => {
+									trackingToParent(
+										'storetype_imported_click',
+										{button_title: '도입문의 팝업 노출'}
+									);
 									onOpen();
 								}}>
 								도입 문의하기

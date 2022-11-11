@@ -790,9 +790,10 @@ function AgreementModal({open, type, onClose}: Props) {
 							{li.contents &&
 								(li.contents as string[]).map((line, i) =>
 									line === '' ? (
-										<br />
+										<br key={i} />
 									) : (
 										<Typography
+											key={i}
 											fontSize={14}
 											fontWeight={400}
 											marginY="14px">
@@ -814,7 +815,7 @@ function AgreementModal({open, type, onClose}: Props) {
 													fontSize: '16px',
 													background: '#F3F3F5',
 													borderLeft: `0.5px solid ${theme.palette.grey[100]}`,
-													'&:first-child': {
+													'&:first-of-type': {
 														borderLeft: 'none',
 													},
 												},
@@ -824,7 +825,7 @@ function AgreementModal({open, type, onClose}: Props) {
 													padding: '5px 16px',
 													borderLeft: `0.5px solid ${theme.palette.grey[100]}`,
 												},
-												'& td:first-child': {
+												'& td:first-of-type': {
 													borderLeft: 'none',
 												},
 											},
@@ -835,9 +836,9 @@ function AgreementModal({open, type, onClose}: Props) {
 													li?.table
 														?.thead as string[][]
 												).map((tr, j) => (
-													<TableRow>
+													<TableRow key={i}>
 														{tr.map((td, k) => (
-															<TableCell>
+															<TableCell key={k}>
 																{td}
 															</TableCell>
 														))}
@@ -850,9 +851,9 @@ function AgreementModal({open, type, onClose}: Props) {
 												{(
 													li.table.tbody as string[][]
 												).map((tr, j) => (
-													<TableRow>
+													<TableRow key={j}>
 														{tr.map((td, k) => (
-															<TableCell>
+															<TableCell key={k}>
 																{td}
 															</TableCell>
 														))}

@@ -1,3 +1,6 @@
+import {useLocation} from 'react-router-dom';
+import {parse} from 'qs';
+
 import {Box, Stack, Typography} from '@mui/material';
 
 import {HEADER_HEIGHT, PARTIAL_PAGE_MAX_WIDTH} from '@/data';
@@ -5,8 +8,12 @@ import {HEADER_HEIGHT, PARTIAL_PAGE_MAX_WIDTH} from '@/data';
 import Header from '@/components/common/layout/Header';
 
 import {ImgTelegram, ImgTelegram2x} from '@/assets/images';
+import {sendEmailVerification} from '@/api/auth.api';
+import {goToParentUrl} from '@/utils';
 
 function EmailVerificationFail() {
+	const {search} = useLocation();
+
 	return (
 		<>
 			<Header fullPage={false} />
@@ -58,8 +65,22 @@ function EmailVerificationFail() {
 							xs: 13,
 							md: 18,
 						}}
-						// TODO:
-						onClick={() => console.log('')}>
+						onClick={async () => {
+							try {
+								const parsedSearch = parse(search, {
+									ignoreQueryPrefix: true,
+								}) as {
+									email?: string;
+								};
+								const email = parsedSearch?.email;
+								if (!email) return;
+								await sendEmailVerification(email);
+								// navigate('/');
+								goToParentUrl('/');
+							} catch (e) {
+								console.log('e :>> ', e);
+							}
+						}}>
 						인증 이메일 다시 보내기
 					</Typography>
 				</Stack>

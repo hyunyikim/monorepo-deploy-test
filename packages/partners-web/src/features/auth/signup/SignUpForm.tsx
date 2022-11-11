@@ -15,7 +15,11 @@ import {
 	partnershipSignupEmailSchemaShape as emailSchemaShape,
 	partnershipSignUpRestSchemaShape as restFieldSchemaShape,
 } from '@/utils/schema';
-import {handleChangeDataFormat, openParantModal} from '@/utils';
+import {
+	handleChangeDataFormat,
+	openParantModal,
+	trackingToParent,
+} from '@/utils';
 import {signUp} from '@/api/auth.api';
 
 import {Button} from '@/components';
@@ -145,6 +149,10 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 	const onSubmit = useCallback(
 		async (data: SignUpRequestFormData) => {
 			try {
+				if (!data?.password) {
+					return;
+				}
+
 				const formData = new FormData();
 				Object.keys(data).forEach((key: string) => {
 					if (['passwordConfirm', 'isAgree'].includes(key)) {
@@ -317,12 +325,6 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 				<Button
 					type="submit"
 					fullWidth
-					// TODO: tracking info 심기
-					// trackingInfo={{
-					// 	eventName: 'signup_click',
-					// 	propertyName: 'button_title',
-					// 	propertyData: '지금 무료로 시작하기',
-					// }}
 					sx={{
 						marginTop: '34px',
 						background:
@@ -335,6 +337,11 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 							sm: '16px',
 							md: '18px',
 						},
+					}}
+					onClick={() => {
+						trackingToParent('signup_click', {
+							button_title: '회원가입 완료',
+						});
 					}}>
 					지금 무료로 시작하기
 				</Button>
