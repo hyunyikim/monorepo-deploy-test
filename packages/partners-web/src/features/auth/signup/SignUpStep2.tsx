@@ -6,7 +6,13 @@ import SignUpForm from '@/features/auth/signup/SignUpForm';
 import AgreementModal from '@/features/auth/signup/AgreementModal';
 import {goToParentUrl} from '@/utils';
 
-function SignUpStep2({setStep}: {setStep: (value: number) => void}) {
+function SignUpStep2({
+	setStep,
+	loginUrl,
+}: {
+	setStep: (value: number) => void;
+	loginUrl: string;
+}) {
 	const {open, modalData, onOpen, onClose, onSetModalData} = useOpen({});
 	return (
 		<>
@@ -61,7 +67,7 @@ function SignUpStep2({setStep}: {setStep: (value: number) => void}) {
 						color="primary.main"
 						className="cursor-pointer"
 						onClick={() => {
-							goToParentUrl('/auth/login');
+							goToParentUrl(loginUrl);
 						}}>
 						&nbsp;로그인
 					</Typography>

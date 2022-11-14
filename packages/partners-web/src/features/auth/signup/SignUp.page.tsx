@@ -1,4 +1,6 @@
 import {useEffect, useState} from 'react';
+import {useLocation} from 'react-router-dom';
+import {parse, stringify} from 'qs';
 
 import {Box} from '@mui/material';
 
@@ -12,10 +14,27 @@ import {trackingToParent} from '@/utils';
 
 function SignUp() {
 	const [step, setStep] = useState(1);
+	const [loginUrl, setLoginUrl] = useState('/auth/login');
+	const {search} = useLocation();
 
 	useEffect(() => {
 		trackingToParent('signup_pv', {pv_title: '회원가입 진입'});
 	}, []);
+
+	useEffect(() => {
+		// cafe24 대응
+		const parsedQuery = parse(search, {
+			ignoreQueryPrefix: true,
+		});
+		const query = {
+			context: parsedQuery.context,
+			code: parsedQuery.code,
+			state: parsedQuery.state,
+		};
+		if (parsedQuery.context === 'cafe24') {
+			setLoginUrl(`/auth/login?${stringify(query)}`);
+		}
+	}, [search]);
 
 	return (
 		<>
@@ -33,7 +52,7 @@ function SignUp() {
 				{step === 1 ? (
 					<SignUpStep1 setStep={setStep} />
 				) : step === 2 ? (
-					<SignUpStep2 setStep={setStep} />
+					<SignUpStep2 setStep={setStep} loginUrl={loginUrl} />
 				) : step === 3 ? (
 					<SignUpStep3 />
 				) : null}

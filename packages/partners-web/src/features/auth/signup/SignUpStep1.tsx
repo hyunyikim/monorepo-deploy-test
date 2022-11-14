@@ -20,14 +20,20 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 			<Stack id="justify" alignItems="center">
 				<Box flexDirection="column">
 					<Typography
-						fontSize={40}
+						fontSize={{
+							xs: 24,
+							md: 40,
+						}}
 						fontWeight={700}
 						textAlign="center"
 						mb="24px">
 						가입 유형 선택
 					</Typography>
 					<Typography
-						fontSize={18}
+						fontSize={{
+							xs: 13,
+							md: 18,
+						}}
 						fontWeight={400}
 						color="grey.400"
 						textAlign="center"
@@ -126,11 +132,24 @@ const SignUpStoreType = ({
 				border: `1px solid ${theme.palette.grey[100]}`,
 			})}>
 			{icon}
-			<Typography fontSize={24} fontWeight={700} mt="32px" mb="10px">
+			<Typography
+				fontSize={{
+					xs: 20,
+					md: 24,
+				}}
+				fontWeight={700}
+				mt={{
+					xs: '16px',
+					md: '32px',
+				}}
+				mb="10px">
 				{title}
 			</Typography>
 			<Typography
-				fontSize={16}
+				fontSize={{
+					xs: 13,
+					md: 16,
+				}}
 				fontWeight={400}
 				color="grey.400"
 				textAlign="center"

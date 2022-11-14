@@ -31,12 +31,13 @@ export const partnershipSignUpRestSchemaShape = yup.object().shape({
 	companyName: yup.string().required('회사명을 입력해주세요.'),
 	businessNum: businessNumberSchemaValidation.test({
 		test: async (val) => {
+			const formattedValue = val?.split('-').join('');
 			const isDuplicated = await checkBusinessNumberDuplicated(
-				val as string
+				formattedValue as string
 			);
 			return !isDuplicated;
 		},
-		message: '이미 가입된 사업자등록정보 입니다.',
+		message: '이미 가입된 사업자등록번호입니다.',
 	}),
 	phoneNum: phoneNumberSchemaValidation,
 	password: passwordSchemaValidation,

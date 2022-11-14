@@ -56,8 +56,8 @@ const inputList = [
 	{
 		type: 'text',
 		name: 'businessNum',
-		placeholder: '사업자등록정보를 입력해주세요.',
-		label: '사업자등록정보',
+		placeholder: '사업자등록번호를 입력해주세요.',
+		label: '사업자등록번호',
 		autoComplete: 'off',
 		required: true,
 		icon: <IcDoc />,
@@ -152,7 +152,6 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 				if (!data?.password) {
 					return;
 				}
-
 				const formData = new FormData();
 				Object.keys(data).forEach((key: string) => {
 					if (['passwordConfirm', 'isAgree'].includes(key)) {

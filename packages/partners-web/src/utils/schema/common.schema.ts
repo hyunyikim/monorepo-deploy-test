@@ -12,8 +12,8 @@ export const emailSchemaValidation = yup
 	.email('유효하지 않은 이메일 주소입니다.');
 export const businessNumberSchemaValidation = yup
 	.string()
-	.required('사업자등록정보 10자리를 모두 입력해주세요.')
-	.matches(businessNumberFormat, '사업자등록정보 형식을 확인해주세요.');
+	.required('사업자등록번호 10자리를 모두 입력해주세요.')
+	.matches(businessNumberFormat, '사업자등록번호 형식을 확인해주세요.');
 export const phoneNumberSchemaValidation = yup
 	.string()
 	.required('휴대전화번호 11자리를 모두 입력해주세요.')
