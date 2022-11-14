@@ -120,30 +120,33 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 	}, [showAllField]);
 
 	const {
+		watch,
 		getFieldState,
 		control,
 		handleSubmit,
-		formState: {errors},
+		formState: {errors, isDirty, isValidating, isValid},
 	} = useForm<FormProps>({
 		resolver: yupResolver(
 			showAllField
 				? emailSchemaShape.concat(restFieldSchemaShape)
 				: emailSchemaShape
 		),
-		mode: showAllField ? 'onSubmit' : 'onBlur',
+		mode: showAllField ? 'onSubmit' : 'onChange',
 		reValidateMode: showAllField ? 'onSubmit' : 'onBlur',
 		defaultValues: {...defaultValues, ...{isAgree: false}},
 	});
 
+	const watchEmail = watch('email');
 	const fieldState = getFieldState('email');
 	useEffect(() => {
-		const {error, isTouched} = fieldState;
+		if (isValidating) {
+			return;
+		}
 		// 이메일을 올바르게 입력한 경우에 전체 필드 보여줌
-		if (!error && isTouched) {
+		if (watchEmail && !fieldState.error) {
 			setShowAllField(true);
 		}
-	}, [fieldState]);
-
+	}, [isValidating, fieldState, watchEmail]);
 	// const onOpen = useMessageDialog((state) => state.onOpen);
 
 	const onSubmit = useCallback(
@@ -206,19 +209,20 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 							field: {onChange, onBlur, value, ref},
 							fieldState: {error},
 						}) => {
+							const name = input.name;
 							return (
 								<SignUpTextField
 									error={error}
 									{...input}
 									onChange={(e) => {
-										if (input.name === 'phoneNum') {
+										if (name === 'phoneNum') {
 											e.target.value =
 												handleChangeDataFormat(
 													'phoneNum',
 													e
 												);
 										}
-										if (input.name === 'businessNum') {
+										if (name === 'businessNum') {
 											e.target.value =
 												handleChangeDataFormat(
 													'businessNum',
@@ -229,6 +233,14 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 									}}
 									onBlur={onBlur}
 									value={value}
+									{...(['phoneNum', 'businessNum'].includes(
+										name
+									) && {
+										inputProps: {
+											maxLength:
+												name === 'phoneNum' ? 13 : 12,
+										},
+									})}
 								/>
 							);
 						}}

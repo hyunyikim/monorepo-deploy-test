@@ -20,6 +20,7 @@ export const partnershipSignInSchemaShape = {
 export const partnershipSignupEmailSchemaShape = yup.object().shape({
 	email: emailSchemaValidation.test({
 		test: async (val) => {
+			// TODO: debounce 처리
 			const isDuplicated = await checkEmailDuplicated(val as string);
 			return !isDuplicated;
 		},
