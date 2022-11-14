@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import {useForm} from 'react-hook-form';
 
-import {SignInRequest} from '@/@types/auth.types';
+import {SignInRequestRequestParam} from '@/@types/auth.types';
 import {signIn} from '@/api/auth.api';
 import {getPartnershipInfo} from '@/api/partnership.api';
 import {
@@ -19,7 +19,7 @@ function LoginForm() {
 		handleSubmit,
 		watch,
 		formState: {errors},
-	} = useForm<SignInRequest>();
+	} = useForm<SignInRequestRequestParam>();
 
 	const {isLogin, token, setLogin, setLogout} = useLoginStore(
 		(state) => state
@@ -29,7 +29,7 @@ function LoginForm() {
 	}));
 	const setViewMenu = useViewMenuStore((state) => state.setViewMenu);
 
-	const onSubmit = useCallback(async (data: SignInRequest) => {
+	const onSubmit = useCallback(async (data: SignInRequestRequestParam) => {
 		try {
 			const res = await signIn(data);
 			// const token = res.data.token;

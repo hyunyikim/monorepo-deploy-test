@@ -3,7 +3,6 @@ import {
 	RouterProvider,
 	createBrowserRouter,
 	RouteObject,
-	Navigate,
 } from 'react-router-dom';
 
 import Layout from '@/components/common/layout/Layout';
@@ -24,6 +23,9 @@ const Inspection = lazy(
 );
 const Repair = lazy(() => import('@/features/repair/List/RepairList.page'));
 const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
+const EmailVerificationFail = lazy(
+	() => import('@/features/auth/verification/EmailVerificationFail.page')
+);
 const NotFound = lazy(() => import('@/features/common/NotFound.page'));
 
 const privateRouter: RouteObject[] = [
@@ -68,8 +70,8 @@ const publicRouter: RouteObject[] = [
 				element: <SignUp />,
 			},
 			{
-				path: '*',
-				element: <Navigate to="/auth/signin/v2" replace />,
+				path: '/auth/verification/fail',
+				element: <EmailVerificationFail />,
 			},
 			{path: '*', element: <NotFound />},
 		],

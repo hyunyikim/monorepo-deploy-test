@@ -38,5 +38,8 @@ export default function themePalette(): PaletteOptions {
 			black: palette.vircleBlack,
 			white: palette.vircleWhite,
 		},
+		error: {
+			main: palette.vircleRed500,
+		},
 	};
 }
