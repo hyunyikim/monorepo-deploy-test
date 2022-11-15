@@ -13,6 +13,10 @@ export interface SignUpRequestFormData {
 	password: string;
 	phoneNum: string;
 	businessNum: string;
+
+	// cafe24로 가입했는지 여부
+	cafe24Code?: string;
+	cafe24State?: string;
 }
 
 // TODO: partnership 정보 조회와 응답 동일한지 확인 필요

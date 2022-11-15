@@ -11,10 +11,14 @@ import SignUpStep1 from '@/features/auth/signup/SignUpStep1';
 import SignUpStep2 from '@/features/auth/signup/SignUpStep2';
 import SignUpStep3 from '@/features/auth/signup/SignUpStep3';
 import {trackingToParent} from '@/utils';
+import {SignUpRequestFormData} from '@/@types';
 
 function SignUp() {
 	const [step, setStep] = useState(1);
 	const [loginUrl, setLoginUrl] = useState('/auth/login');
+	const [formData, setFormData] = useState<SignUpRequestFormData | null>(
+		null
+	);
 	const {search} = useLocation();
 
 	useEffect(() => {
@@ -31,7 +35,21 @@ function SignUp() {
 			code: parsedQuery.code,
 			state: parsedQuery.state,
 		};
+		// cafe24를 통해 가입 하는 경우, url로 넘어오는 값을 폼에 넣어줌
 		if (parsedQuery.context === 'cafe24') {
+			const {email, companyName, registrationNo, phone, code, state} =
+				parsedQuery;
+
+			const parsedEmail = Array.isArray(email) ? email[1] : email;
+			setFormData({
+				email: (parsedEmail || '') as string,
+				companyName: (companyName || '') as string,
+				businessNum: (registrationNo || '') as string,
+				phoneNum: (phone || '') as string,
+				password: '',
+				cafe24Code: (code || '') as string,
+				cafe24State: (state || '') as string,
+			});
 			setLoginUrl(`/auth/login?${stringify(query)}`);
 		}
 	}, [search]);
@@ -52,7 +70,11 @@ function SignUp() {
 				{step === 1 ? (
 					<SignUpStep1 setStep={setStep} />
 				) : step === 2 ? (
-					<SignUpStep2 setStep={setStep} loginUrl={loginUrl} />
+					<SignUpStep2
+						setStep={setStep}
+						loginUrl={loginUrl}
+						formData={formData}
+					/>
 				) : step === 3 ? (
 					<SignUpStep3 />
 				) : null}

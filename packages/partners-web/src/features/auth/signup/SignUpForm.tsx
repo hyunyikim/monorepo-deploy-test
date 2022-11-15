@@ -103,12 +103,18 @@ interface FormProps extends SignUpRequestFormData {
 }
 
 interface Props {
+	formData: SignUpRequestFormData | null;
 	setStep: (value: number) => void;
 	onOpenModal: () => void;
 	onSetAgreementType: (value: 'policy' | 'privacy') => void;
 }
 
-function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
+function SignUpForm({
+	formData,
+	setStep,
+	onOpenModal,
+	onSetAgreementType,
+}: Props) {
 	const navigate = useNavigate();
 	const [showAllField, setShowAllField] = useState(false);
 
@@ -120,6 +126,7 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 	}, [showAllField]);
 
 	const {
+		reset,
 		watch,
 		getFieldState,
 		control,
@@ -133,8 +140,24 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 		),
 		mode: showAllField ? 'onSubmit' : 'onChange',
 		reValidateMode: showAllField ? 'onSubmit' : 'onBlur',
-		defaultValues: {...defaultValues, ...{isAgree: false}},
 	});
+
+	// form 초기화
+	useEffect(() => {
+		if (formData) {
+			reset({
+				...formData,
+				passwordConfirm: '',
+				isAgree: false,
+			});
+			return;
+		}
+		reset({
+			...defaultValues,
+			passwordConfirm: '',
+			isAgree: false,
+		});
+	}, [formData]);
 
 	const watchEmail = watch('email');
 	const fieldState = getFieldState('email');
@@ -161,13 +184,15 @@ function SignUpForm({setStep, onOpenModal, onSetAgreementType}: Props) {
 						return;
 					}
 					let value = data[key as keyof SignUpRequestFormData];
-					if (key === 'businessNum') {
+					if (key === 'businessNum' && value) {
 						value = value.split('-').join('');
 					}
-					formData.append(key, value);
+					formData.append(key, value || '');
 				});
+
 				if (!formData) return;
 				await signUp(formData);
+
 				navigate('/auth/signup/v2', {
 					state: data.email,
 					replace: true,
