@@ -1,6 +1,6 @@
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useList, useOpen} from '@/utils/hooks';
+import {useList} from '@/utils/hooks';
 import {getProductList} from '@/api/product.api';
 import {
 	ProductListRequestParam,
@@ -15,7 +15,7 @@ import {
 	productListSearchFilter,
 	sortSearchFilter,
 } from '@/data';
-import {goToParentUrl, openParantModal, trackingToParent} from '@/utils';
+import {goToParentUrl, trackingToParent} from '@/utils';
 
 import {
 	ListTitle,
@@ -24,8 +24,6 @@ import {
 	Table,
 	PageSelect,
 	Pagination,
-	ImagePopup,
-	ImageModal,
 	Button,
 	Select,
 	TableCell,
@@ -60,8 +58,6 @@ function ProductList() {
 			categoryCode: '',
 		},
 	});
-	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
-
 	return (
 		<>
 			<Box>
@@ -154,34 +150,18 @@ function ProductList() {
 								<TableCell sx={{minWidth: 120}}>
 									{item?.brand?.name || '-'}
 								</TableCell>
-								<TableCell>
-									<Box>
-										<ImagePopup
-											image={item?.productImage}
-											alt={item?.name}
-											onClick={(value) => {
-												// 부모창 이미지 모달 오픈
-												openParantModal({
-													title: '이미지',
-													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-												});
-												// onSetModalData(value);
-												// onOpen();
-											}}
-										/>
-										<Typography
-											fontSize={14}
-											lineHeight={'18px'}
-											ml="12px"
-											className="underline"
-											onClick={() => {
-												goToParentUrl(
-													`/b2b/product/${item.idx}`
-												);
-											}}>
-											{item?.name ?? '-'}
-										</Typography>
-									</Box>
+								<TableCell sx={{minWidth: 200}}>
+									<Typography
+										fontSize={14}
+										lineHeight={'18px'}
+										className="underline"
+										onClick={() => {
+											goToParentUrl(
+												`/b2b/product/${item.idx}`
+											);
+										}}>
+										{item?.name ?? '-'}
+									</Typography>
 								</TableCell>
 								<TableCell sx={{minWidth: 120}}>
 									{item?.price
@@ -204,12 +184,6 @@ function ProductList() {
 				</Table>
 				<Pagination {...paginationProps} />
 			</Box>
-			<ImageModal
-				open={open}
-				onClose={onClose}
-				imgSrc={modalData?.imgSrc}
-				imgAlt={modalData?.imgAlt}
-			/>
 		</>
 	);
 }
