@@ -1,4 +1,5 @@
 export * from './common.data';
+export * from './ui.data';
 export * from './list.data';
 export * from './menu.data';
 export * from './guarantee.data';

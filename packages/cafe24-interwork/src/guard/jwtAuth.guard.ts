@@ -35,3 +35,29 @@ export class JwtAuthGuard implements CanActivate {
 			});
 	}
 }
+
+@Injectable()
+export class MasterAuthGuard implements CanActivate {
+	constructor(@Inject(JwtService) private jwtService: JwtService) {}
+
+	canActivate(
+		context: ExecutionContext
+	): boolean | Promise<boolean> | Observable<boolean> {
+		const req: Request = context.switchToHttp().getRequest();
+		const header = req.headers.authorization;
+		if (!header) {
+			return false;
+		}
+
+		const token = header.replaceAll('Bearer ', '');
+		req['token'] = token;
+		return this.jwtService
+			.verifyAsync(token)
+			.then((payload: {idx: number; type: string}) => {
+				return payload.type === 'M';
+			})
+			.catch((error) => {
+				throw new BadRequestException('Invalid Token');
+			});
+	}
+}

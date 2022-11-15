@@ -24,6 +24,7 @@ import {
 import {KakaoAlimTalkModule} from './kakao-alim-talk/kakao-alim-talk.module';
 import {KakaoAlimTalkService} from './kakao-alim-talk';
 import {Cafe24OrderEventHandler} from './cafe24Webhook/cafe24OrderEvent.handler';
+import {MasterCafe24InterworkController} from './cafe24Interwork/cafe24intework.master.controller';
 @Module({
 	imports: [
 		ScheduleModule.forRoot(),
@@ -84,6 +85,7 @@ import {Cafe24OrderEventHandler} from './cafe24Webhook/cafe24OrderEvent.handler'
 		HealthCheckController,
 		Cafe24EventController,
 		Cafe24GuaranteeController,
+		MasterCafe24InterworkController,
 	],
 	providers: [
 		{

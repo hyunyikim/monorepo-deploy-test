@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useList, useOpen} from '@/utils/hooks';
+import {useList} from '@/utils/hooks';
 import {getGuaranteeList} from '@/api/guarantee.api';
 import {
 	GuaranteeListRequestParam,
@@ -21,7 +21,6 @@ import {
 	trackingToParent,
 	downloadGuaranteeExcel,
 	goToGuaranteeExcelUploadPage,
-	openParantModal,
 } from '@/utils';
 
 import {
@@ -31,8 +30,6 @@ import {
 	Table,
 	PageSelect,
 	Pagination,
-	ImagePopup,
-	ImageModal,
 	Button,
 	TableCell,
 } from '@/components';
@@ -64,7 +61,6 @@ function GuaranteeList() {
 			nft_req_state: '',
 		},
 	});
-	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
 	return (
 		<>
 			<Box>
@@ -199,31 +195,15 @@ function GuaranteeList() {
 										? formatPhoneNum(item.orderer_tel)
 										: '-'}
 								</TableCell>
-								<TableCell>
-									<Box>
-										<ImagePopup
-											image={item?.product_img}
-											alt={item?.pro_nm}
-											onClick={(value) => {
-												// 부모창 이미지 모달 오픈
-												openParantModal({
-													title: '이미지',
-													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-												});
-												// onSetModalData(value);
-												// onOpen();
-											}}
-										/>
-										<Typography
-											fontSize={14}
-											lineHeight={'18px'}
-											ml="12px">
-											[{item.brand_nm_en ?? '-'}
-											]
-											<br />
-											{item.pro_nm ? item.pro_nm : '-'}
-										</Typography>
-									</Box>
+								<TableCell width="500px">
+									<Typography
+										fontSize={14}
+										lineHeight={'18px'}>
+										[{item.brand_nm_en ?? '-'}
+										]
+										<br />
+										{item.pro_nm ? item.pro_nm : '-'}
+									</Typography>
 								</TableCell>
 								<TableCell>
 									{getGuaranteeStatusChip(
@@ -236,12 +216,6 @@ function GuaranteeList() {
 				</Table>
 				<Pagination {...paginationProps} />
 			</Box>
-			<ImageModal
-				open={open}
-				onClose={onClose}
-				imgSrc={modalData?.imgSrc}
-				imgAlt={modalData?.imgAlt}
-			/>
 		</>
 	);
 }

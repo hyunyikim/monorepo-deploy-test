@@ -27,7 +27,7 @@ function Chip({color = 'primary', variant = 'filled', sx, ...props}: Props) {
 			case 'green':
 				return {
 					backgroundColor: 'green.50',
-					color: '#2F9E8A',
+					color: 'green.main',
 				};
 			case 'red':
 				return {

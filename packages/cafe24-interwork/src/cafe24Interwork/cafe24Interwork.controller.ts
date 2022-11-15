@@ -13,7 +13,7 @@ import {
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {GetToken, TokenInfo} from '../getToken.decorator';
 import {IssueSetting} from './interwork.entity';
-import {JwtAuthGuard} from '../guard';
+import {JwtAuthGuard, MasterAuthGuard} from '../guard';
 import {HttpExceptionFilter} from '../filter';
 import {TransformInstanceToPlain} from 'class-transformer';
 import {CategoryListParams} from './cafe24Interwork.service';
