@@ -195,11 +195,10 @@ function GuaranteeList() {
 										? formatPhoneNum(item.orderer_tel)
 										: '-'}
 								</TableCell>
-								<TableCell sx={{minWidth: 200}}>
+								<TableCell width="500px">
 									<Typography
 										fontSize={14}
-										lineHeight={'18px'}
-										ml="12px">
+										lineHeight={'18px'}>
 										[{item.brand_nm_en ?? '-'}
 										]
 										<br />
