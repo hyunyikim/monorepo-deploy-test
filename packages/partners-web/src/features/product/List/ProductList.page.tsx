@@ -131,7 +131,7 @@ function ProductList() {
 						data?.data?.length > 0 &&
 						data?.data.map((item, idx) => (
 							<TableRow key={`item_${idx}`}>
-								<TableCell sx={{minWidth: 180}}>
+								<TableCell sx={{minWidth: 120}}>
 									{item.num ? (
 										<Typography
 											fontSize={14}
@@ -147,10 +147,10 @@ function ProductList() {
 										'-'
 									)}
 								</TableCell>
-								<TableCell sx={{minWidth: 120}}>
+								<TableCell>
 									{item?.brand?.name || '-'}
 								</TableCell>
-								<TableCell sx={{minWidth: 200}}>
+								<TableCell width="500px">
 									<Typography
 										fontSize={14}
 										lineHeight={'18px'}
