@@ -2,7 +2,7 @@ import {format} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useList, useOpen} from '@/utils/hooks';
+import {useList} from '@/utils/hooks';
 import {
 	NftCustomerGuaranteeListResponse,
 	NftCustomerGuaranteeRequestParam,
@@ -14,15 +14,13 @@ import {
 	groupingGuaranteeRequestStates,
 	orderDirectionSearchFilter,
 } from '@/data';
-import {goToParentUrl, openParantModal} from '@/utils';
+import {goToParentUrl} from '@/utils';
 
 import {
 	TableInfo,
 	Table,
 	PageSelect,
 	Pagination,
-	ImagePopup,
-	ImageModal,
 	Select,
 	TableCell,
 } from '@/components';
@@ -57,7 +55,6 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 			orderDirection: 'DESC',
 		},
 	});
-	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
 	return (
 		<>
 			<Box>
@@ -108,13 +105,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 							<TableCell>상품금액</TableCell>
 							<TableCell>개런티 상태</TableCell>
 						</>
-					}
-					sx={{
-						'& .MuiTableBody-root .MuiTableCell-root > .MuiBox-root':
-							{
-								minHeight: '65px',
-							},
-					}}>
+					}>
 					{data &&
 						data?.list?.length > 0 &&
 						data?.list.map((item, idx) => (
@@ -140,29 +131,13 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 										'-'
 									)}
 								</TableCell>
-								<TableCell>
-									<Box>
-										<ImagePopup
-											image={item?.product?.imagePath}
-											alt={item?.product?.name}
-											onClick={(value) => {
-												// 부모창 이미지 모달 오픈
-												openParantModal({
-													title: '이미지',
-													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-												});
-												// onSetModalData(value);
-												// onOpen();
-											}}
-										/>
-										<Typography
-											fontSize={14}
-											lineHeight={'18px'}
-											ml="12px">
-											[{item?.brand?.nameEN ?? '-'}]<br />
-											{item?.product?.name ?? '-'}
-										</Typography>
-									</Box>
+								<TableCell sx={{minWidth: 200}}>
+									<Typography
+										fontSize={14}
+										lineHeight={'18px'}>
+										[{item?.brand?.nameEN ?? '-'}]<br />
+										{item?.product?.name ?? '-'}
+									</Typography>
 								</TableCell>
 								<TableCell width="180px">
 									{item?.price
@@ -179,12 +154,6 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 				</Table>
 				<Pagination {...paginationProps} />
 			</Box>
-			<ImageModal
-				open={open}
-				onClose={onClose}
-				imgSrc={modalData?.imgSrc}
-				imgAlt={modalData?.imgAlt}
-			/>
 		</>
 	);
 }
