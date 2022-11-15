@@ -5,13 +5,16 @@ import {useOpen} from '@/utils/hooks';
 import SignUpForm from '@/features/auth/signup/SignUpForm';
 import AgreementModal from '@/features/auth/signup/AgreementModal';
 import {goToParentUrl} from '@/utils';
+import {SignUpRequestFormData} from '@/@types';
 
 function SignUpStep2({
 	setStep,
 	loginUrl,
+	formData,
 }: {
 	setStep: (value: number) => void;
 	loginUrl: string;
+	formData: SignUpRequestFormData | null;
 }) {
 	const {open, modalData, onOpen, onClose, onSetModalData} = useOpen({});
 	return (
@@ -47,6 +50,7 @@ function SignUpStep2({
 					setStep={setStep}
 					onOpenModal={onOpen}
 					onSetAgreementType={onSetModalData}
+					formData={formData}
 				/>
 				<Stack direction="row" mt="20px">
 					<Typography
