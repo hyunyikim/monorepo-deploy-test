@@ -111,7 +111,6 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
-		console.log('divideEachOrderId');
 		return webHook.resource.order_id.split(',').map((orderId) => ({
 			orderId,
 			interwork,
@@ -126,7 +125,6 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
-		console.log('AddReqInfo');
 		const mallId = hook.interwork.mallId;
 		const orderItemCode = hook.item.order_item_code;
 		const res = await this.guaranteeReqRepo.getRequestListByOrderItemCode(
@@ -145,7 +143,6 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
-		console.log('addOrderInfo');
 		const {webHook, interwork, orderId} = hook;
 
 		const order = await this.cafe24Api.getOrder(
@@ -363,8 +360,9 @@ export class Cafe24EventService {
 		orderItem: OrderItem,
 		image?: Readable
 	): GuaranteeRequestPayload {
+		console.log(orderItem);
 		return {
-			productName: orderItem.product_name,
+			productName: `${orderItem.product_name}-${orderItem.additional_option_value}`,
 			price: parseInt(orderItem.product_price),
 			ordererName: buyerName,
 			ordererTel: buyerPhone.replaceAll('-', ''),

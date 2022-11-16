@@ -27,7 +27,6 @@ export class MasterCafe24InterworkController {
 	@UseGuards(MasterAuthGuard)
 	@TransformInstanceToPlain()
 	async getInterworkByIdx(@Query('partnershipIdx') partnershipIdx: number) {
-		console.log(partnershipIdx, 'hello');
 		const interwork =
 			await this.cafe24InterworkService.getInterworkInfoByIdx(
 				partnershipIdx
