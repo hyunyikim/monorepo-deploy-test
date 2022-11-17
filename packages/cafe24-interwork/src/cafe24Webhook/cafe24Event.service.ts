@@ -361,8 +361,10 @@ export class Cafe24EventService {
 		image?: Readable
 	): GuaranteeRequestPayload {
 		return {
-			productName: `${orderItem.product_name}-${orderItem.option_value}`,
-			price: parseInt(orderItem.product_price),
+			productName: `${orderItem.product_name} - ${orderItem.option_value}`,
+			price:
+				parseInt(orderItem.product_price) +
+				parseInt(orderItem.option_price),
 			ordererName: buyerName,
 			ordererTel: buyerPhone.replaceAll('-', ''),
 			platformName: interwork.store.shop_name,
