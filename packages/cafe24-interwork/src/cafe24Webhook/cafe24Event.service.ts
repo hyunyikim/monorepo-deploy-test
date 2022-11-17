@@ -360,9 +360,8 @@ export class Cafe24EventService {
 		orderItem: OrderItem,
 		image?: Readable
 	): GuaranteeRequestPayload {
-		console.log(orderItem);
 		return {
-			productName: `${orderItem.product_name}-${orderItem.additional_option_value}`,
+			productName: `${orderItem.product_name}-${orderItem.option_value}`,
 			price: parseInt(orderItem.product_price),
 			ordererName: buyerName,
 			ordererTel: buyerPhone.replaceAll('-', ''),
