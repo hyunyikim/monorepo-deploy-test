@@ -44,6 +44,9 @@ export class OrderItem {
 	/** 시스템이 상품에 부여한 코드. 해당 쇼핑몰 내에서 상품코드는 중복되지 않음. */
 	product_code: string; // P000000N
 
+	/** 상품명(관리용) */
+	internal_product_name: string;
+
 	/** 자체상품 코드 */
 	custom_product_code: string;
 

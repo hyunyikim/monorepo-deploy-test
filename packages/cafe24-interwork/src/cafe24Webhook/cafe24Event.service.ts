@@ -368,13 +368,16 @@ export class Cafe24EventService {
 			ordererName: buyerName,
 			ordererTel: buyerPhone.replaceAll('-', ''),
 			platformName: interwork.store.shop_name,
-			modelNum: orderItem.product_code,
+			modelNum:
+				orderItem.internal_product_name ||
+				orderItem.custom_product_code ||
+				undefined,
 			warranty: interwork.partnerInfo?.warrantyDate,
 			orderedAt: orderItem.ordered_date,
 			orderId: orderId,
 			brandIdx: interwork.partnerInfo?.brand?.idx,
 			size: orderItem.volume_size ?? undefined,
-			weight: orderItem.product_weight ?? undefined,
+			// 중량 표시 않함 (SXLP-2352) :weight: orderItem.product_weight ?? undefined,
 			material: orderItem.product_material ?? undefined,
 			nftState: issueType,
 			image,
