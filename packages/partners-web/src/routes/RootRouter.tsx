@@ -26,6 +26,7 @@ const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const EmailVerificationFail = lazy(
 	() => import('@/features/auth/verification/EmailVerificationFail.page')
 );
+const TestFullPage = lazy(() => import('@/features/common/TestFullPage.page'));
 const NotFound = lazy(() => import('@/features/common/NotFound.page'));
 
 const privateRouter: RouteObject[] = [
@@ -63,7 +64,11 @@ const privateRouter: RouteObject[] = [
 
 const publicRouter: RouteObject[] = [
 	{
-		element: <IframeChild />,
+		element: (
+			<IframeChild>
+				<Layout hasSidebar={false} />
+			</IframeChild>
+		),
 		children: [
 			{
 				path: '/auth/signup/v2',
@@ -75,6 +80,14 @@ const publicRouter: RouteObject[] = [
 			},
 			{path: '*', element: <NotFound />},
 		],
+	},
+	{
+		path: '/test/fullpage/v2',
+		element: (
+			<IframeChild fullPage>
+				<TestFullPage />
+			</IframeChild>
+		),
 	},
 ];
 

@@ -1,5 +1,4 @@
 import {YNType} from '@/@types';
-
 export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	idx: number;
 	parentIdx: number;
@@ -53,12 +52,17 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	nftProductBoxW: number;
 	nftProductBoxH: number;
 	useDirectMint: YNType;
+	confirmed: YNType;
+	confirmedAt: string;
 	useAutoIncrementOrderNumber: YNType;
 	excInspectorIdx: number;
 	excRepairerIdx: number;
 	warrantyDate: string;
 	blockchainPlatform: string;
+	lastLoggedIn: string;
+	passwordChanged: string;
 	brand: string | null;
+	nftCustomFields: string[];
 }
 
 export interface PartnershipViewMenuYN {

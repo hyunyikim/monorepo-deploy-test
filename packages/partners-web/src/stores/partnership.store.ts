@@ -1,17 +1,14 @@
-import create from 'zustand';
+import {useQuery} from '@tanstack/react-query';
 
-import {PartnershipInfoResponse} from '@/@types';
+import {getPartnershipInfo} from '@/api/partnership.api';
+import {useLoginStore} from '@/stores/auth.store';
 
-interface PartnershipState {
-	data: PartnershipInfoResponse | null;
-	setData: (value: PartnershipInfoResponse) => void;
-	adminIdx: () => number | null;
-	parentIdx: () => number | null;
-}
+export const useGetPartnershipInfo = () => {
+	const token = useLoginStore().token;
+	return useQuery({
+		queryKey: ['partnershipInfo', token],
+		queryFn: () => (token ? getPartnershipInfo() : null),
+	});
+};
 
-export const usePartnershipStore = create<PartnershipState>((set, get) => ({
-	data: null,
-	setData: (value) => set(() => ({data: value})),
-	adminIdx: () => get().data?.idx ?? null,
-	parentIdx: () => get().data?.parentIdx ?? null,
-}));
+// TODO: react-query 정책 다시 확인

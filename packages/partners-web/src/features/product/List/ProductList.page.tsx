@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList} from '@/utils/hooks';
@@ -28,14 +29,17 @@ import {
 	Select,
 	TableCell,
 } from '@/components';
+import {useGetPartnershipInfo} from '@/stores';
 
 const menu = 'itemadmin';
 const menuKo = '상품';
 
 function ProductList() {
-	const b2btype = localStorage.getItem('b2btype');
-	const useFieldModelNum =
-		localStorage.getItem('useFieldModelNum') === 'Y' ? true : false;
+	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const useFieldModelNum = useMemo(() => {
+		return partnershipInfo?.useFieldModelNum === 'Y' ? true : false;
+	}, [partnershipInfo]);
+
 	const {
 		isLoading,
 		data,

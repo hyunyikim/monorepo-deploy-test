@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {format, parse} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
@@ -22,6 +22,8 @@ import {
 	trackingToParent,
 } from '@/utils';
 import {useMessageDialog} from '@/stores';
+import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
+import {useGetPartnershipInfo} from '@/stores';
 
 import {
 	ListTitle,
@@ -35,7 +37,6 @@ import {
 	Button,
 	TableCell,
 } from '@/components';
-import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
 import RepairConfirmDialog from './RepairConfirmDialog';
 
 const menu = 'repair';
@@ -46,7 +47,11 @@ function RepairList() {
 		trackingToParent('repair_pv', {pv_title: '수선신청목록 진입'});
 	}, []);
 
-	const email = localStorage.getItem('email');
+	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const email = useMemo(() => {
+		return partnershipInfo?.email || '';
+	}, [partnershipInfo]);
+
 	const {
 		isLoading,
 		data,

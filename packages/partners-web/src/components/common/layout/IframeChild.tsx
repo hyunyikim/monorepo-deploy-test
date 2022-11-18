@@ -1,10 +1,10 @@
-import {useEffect, useState, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import {parse} from 'qs';
 
 import {Box} from '@mui/material';
 
-import {TOKEN_KEY} from '@/stores';
+import {TOKEN_KEY, useLoginStore} from '@/stores';
 import {sendResizedIframeChildHeight} from '@/utils';
 
 const MIN_HEIGHT = 550 + 10;
@@ -28,9 +28,14 @@ const mutationObserver = (iframeChildWrapperEle: HTMLDivElement) => {
 	});
 };
 
-function IframeChild() {
+interface Props {
+	fullPage?: boolean;
+	children?: React.ReactElement;
+}
+
+function IframeChild({fullPage, children}: Props) {
 	const location = useLocation();
-	const [token, setToken] = useState<string | null>(null);
+	const setLogin = useLoginStore((state) => state.setLogin);
 
 	const iframeChildWrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,18 +49,9 @@ function IframeChild() {
 			return;
 		}
 
-		setToken(tokenFromParsedSearch);
 		localStorage.setItem(TOKEN_KEY, tokenFromParsedSearch);
-		localStorage.setItem(
-			'b2btype',
-			(parsedSearch?.b2btype || '') as string
-		);
-		localStorage.setItem('email', (parsedSearch?.email || '') as string);
-		localStorage.setItem(
-			'useFieldModelNum',
-			(parsedSearch?.useFieldModelNum || 'Y') as string
-		);
-	}, [location.search, token]);
+		setLogin(tokenFromParsedSearch);
+	}, [location.search]);
 
 	useEffect(() => {
 		let observer: MutationObserver | null = null;
@@ -63,19 +59,19 @@ function IframeChild() {
 		if (!iframeChildWrapperEle) {
 			return;
 		}
-
-		document.body.style.overflowY = 'hidden';
+		if (!fullPage) {
+			document.body.style.overflowY = 'hidden';
+		}
 		observer = mutationObserver(iframeChildWrapperEle);
-
 		observer.observe(iframeChildWrapperEle, {
 			childList: true, // 자식 요소에 변화 생길 경우
 			subtree: true, // 후손 요소에 변화 생길 경우
 		});
 		return () => {
-			document.body.style.overflowY = 'auto';
+			document.body.style.overflowY = 'visible';
 			observer && observer.disconnect();
 		};
-	}, []);
+	}, [fullPage]);
 
 	return (
 		<Box
@@ -84,7 +80,7 @@ function IframeChild() {
 			sx={{
 				height: '100%',
 			}}>
-			<Outlet />
+			{children ? children : <Outlet />}
 		</Box>
 	);
 }

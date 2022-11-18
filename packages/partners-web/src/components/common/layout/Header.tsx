@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import {ButtonBase, AppBar, Toolbar} from '@mui/material';
 
 import {
@@ -6,25 +7,19 @@ import {
 	ImgLogoVirclePartnersWhite,
 	ImgLogoVirclePartnersWhite2x,
 } from '@/assets/images';
-import {useMemo} from 'react';
 
 import HeaderProfile from '@/components/common/layout/HeaderProfile';
 
-import {HEADER_HEIGHT, PARTIAL_PAGE_MAX_WIDTH} from '@/data';
+import {HEADER_HEIGHT} from '@/data';
 import {goToParentUrl} from '@/utils';
+import {useGetPartnershipInfo} from '@/stores/partnership.store';
 
-const HEADER_PADDING = '16px';
 interface Props {
-	fullPage?: boolean;
 	backgroundColor?: 'white' | 'transparent';
 	borderBottom?: boolean;
 }
 
-function Header({
-	fullPage = true,
-	backgroundColor = 'white',
-	borderBottom = true,
-}: Props) {
+function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 	const logoImage = useMemo(() => {
 		return {
 			src:
@@ -37,6 +32,8 @@ function Header({
 					: ImgLogoVirclePartnersWhite2x,
 		};
 	}, [backgroundColor]);
+
+	const {data} = useGetPartnershipInfo();
 
 	return (
 		<AppBar
@@ -52,19 +49,20 @@ function Header({
 				}),
 				'.MuiToolbar-root': {
 					// TODO: 반응형 체크
-					minWidth: fullPage
-						? '100%'
-						: `calc(${PARTIAL_PAGE_MAX_WIDTH} + (${HEADER_PADDING} * 2))`,
+					minWidth: '100%',
 					height: 'inherit',
 					margin: 'auto',
 					justifyContent: 'space-between',
 				},
 			}}>
-			<Toolbar>
+			<Toolbar
+				sx={{
+					width: '100%',
+				}}>
 				<ButtonBase
 					disableRipple
 					onClick={() => {
-						goToParentUrl('/');
+						goToParentUrl('/dashboard');
 					}}>
 					<img
 						src={logoImage.src}
@@ -73,7 +71,7 @@ function Header({
 						width={172}
 					/>
 				</ButtonBase>
-				{/* {true && <HeaderProfile />} */}
+				{data && <HeaderProfile data={data} />}
 			</Toolbar>
 		</AppBar>
 	);
