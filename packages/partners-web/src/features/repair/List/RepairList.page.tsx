@@ -3,7 +3,7 @@ import {format, parse} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useList, useOpen} from '@/utils/hooks';
+import {useChildModalOpen, useList, useOpen} from '@/utils/hooks';
 import {
 	ListRequestParam,
 	RepairListResponse,
@@ -75,7 +75,8 @@ function RepairList() {
 		},
 	});
 
-	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
+	const {open, onOpen, onClose, modalData, onSetModalData} =
+		useChildModalOpen({});
 	const {
 		open: confirmOpen,
 		onOpen: onConfirmOpen,
@@ -207,12 +208,12 @@ function RepairList() {
 											alt={item?.pro_nm}
 											onClick={(value) => {
 												// 부모창 이미지 모달 오픈
-												openParantModal({
-													title: '이미지',
-													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-												});
-												// onSetModalData(value);
-												// onOpen();
+												// openParantModal({
+												// 	title: '이미지',
+												// 	content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												// });
+												onSetModalData(value);
+												onOpen();
 											}}
 										/>
 										<Typography

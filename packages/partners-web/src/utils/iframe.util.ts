@@ -5,7 +5,9 @@ type RequestType =
 	| 'guarantee_excel_upload'
 	| 'document_height'
 	| 'scroll_up'
-	| 'open_modal';
+	| 'open_modal'
+	| 'open_child_modal'
+	| 'close_child_modal';
 
 export const sendMessageToParent = (data: {type: RequestType; data: any}) => {
 	window.parent.postMessage(data, '*');
@@ -66,5 +68,19 @@ export const openParantModal = (data: {title: string; content: string}) => {
 	sendMessageToParent({
 		type: 'open_modal',
 		data: data,
+	});
+};
+
+export const openChildModal = () => {
+	sendMessageToParent({
+		type: 'open_child_modal',
+		data: null,
+	});
+};
+
+export const closeChildModal = () => {
+	sendMessageToParent({
+		type: 'close_child_modal',
+		data: null,
 	});
 };
