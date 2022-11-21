@@ -3,10 +3,11 @@ import create from 'zustand';
 
 interface OnOpenParamType {
 	title: string;
-	message: string;
+	message?: string;
 	showBottomCloseButton?: boolean;
 	closeButtonValue?: '확인' | '취소';
 	buttons?: React.ReactElement;
+	onCloseFunc?: () => void;
 }
 
 interface MessageDialogState {
@@ -44,11 +45,12 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 		// 메시지 외 다른 데이터도 바뀜
 		set(() => ({
 			title: value?.title,
-			message: value?.message,
+			message: value?.message ?? null,
 			showBottomCloseButton: value?.showBottomCloseButton ?? false,
 			closeButtonValue: value?.closeButtonValue ?? '확인',
 			buttons: value?.buttons ?? null,
 			open: true,
+			onCloseFunc: value?.onCloseFunc ?? null,
 		}));
 	},
 	onClose: () => {
