@@ -11,6 +11,9 @@ import IframeChild from '@/components/common/layout/IframeChild';
 const SetupGuarantee = lazy(
 	() => import('@/features/setup/SetupGuarantee.page')
 );
+const ResetupGuarantee = lazy(
+	() => import('@/features/setup/ResetupGuarantee.page')
+);
 const Dashboard = lazy(() => import('@/features/dashboard/Dashboard.page'));
 const Guarantee = lazy(
 	() => import('@/features/guarantee/List/GuaranteeList.page')
@@ -61,6 +64,7 @@ const privateRouter: RouteObject[] = [
 			},
 			{path: '/b2b/inspection/v2', element: <Inspection />},
 			{path: '/b2b/repair/v2', element: <Repair />},
+			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
 			{path: '*', element: <NotFound />},
 		],
 	},

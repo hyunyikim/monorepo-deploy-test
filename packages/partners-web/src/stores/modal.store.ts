@@ -36,6 +36,7 @@ export const useModalStore = create<ModalState>((set) => ({
 	subtitle: '',
 	children: null,
 	buttonTitle: '',
+	onClickButton: null,
 	setOpen: (openState) => {
 		set((state) => ({isOpen: openState}));
 	},

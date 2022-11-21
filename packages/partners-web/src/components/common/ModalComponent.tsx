@@ -1,8 +1,4 @@
-import React, {useState, useRef, ReactNode, useMemo, useEffect} from 'react';
-
-import styled from '@emotion/styled';
 import {
-	// Dialog,
 	DialogTitle,
 	DialogContent,
 	DialogActions,
@@ -16,14 +12,14 @@ import Button from '../atoms/Button';
 import {Dialog} from '@/components';
 function ModalComponent() {
 	const {
+		id,
 		isOpen,
 		title,
 		subtitle,
-		content,
-		id,
-		setOpen,
+		children,
 		buttonTitle,
-		buttonHandler,
+		setOpen,
+		onClickButton,
 		width,
 	} = useModalStore((state) => state);
 
@@ -73,17 +69,17 @@ function ModalComponent() {
 					)}
 
 					<Grid container justifyContent={'center'}>
-						{content && content}
+						{children && children}
 					</Grid>
 				</DialogContent>
 
-				{buttonTitle && buttonHandler && (
+				{buttonTitle && onClickButton && (
 					<DialogActions sx={{p: 0}}>
 						<Button
 							variant="contained"
 							width={'100%'}
 							color={'gradient'}
-							onClick={buttonHandler}
+							onClick={onClickButton}
 							autoFocus>
 							{buttonTitle}
 						</Button>

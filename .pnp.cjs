@@ -1753,7 +1753,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@types/lodash",\
-        "npm:4.14.186"\
+        "npm:4.14.189"\
       ],\
       [\
         "@types/long",\
@@ -23317,6 +23317,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/lodash", "npm:4.14.186"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:4.14.189", {\
+          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.189-7aa430cca4-096d1e0954.zip/node_modules/@types/lodash/",\
+          "packageDependencies": [\
+            ["@types/lodash", "npm:4.14.189"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@types/long", [\
@@ -24656,6 +24663,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@svgr/webpack", "npm:6.5.1"],\
             ["@tabler/icons", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:1.108.0"],\
             ["@tanstack/react-query", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:4.16.1"],\
+            ["@types/lodash", "npm:4.14.189"],\
             ["@types/node", "npm:18.7.16"],\
             ["@types/qs", "npm:6.9.7"],\
             ["@types/react", "npm:18.0.18"],\
@@ -24673,6 +24681,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["env-cmd", "npm:10.1.0"],\
             ["esbuild-loader", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.20.0"],\
             ["html-webpack-plugin", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:5.5.0"],\
+            ["lodash", "npm:4.17.21"],\
             ["mini-css-extract-plugin", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.6.1"],\
             ["qs", "npm:6.11.0"],\
             ["react", "npm:18.2.0"],\

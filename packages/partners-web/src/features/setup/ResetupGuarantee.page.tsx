@@ -27,7 +27,7 @@ import {
 
 import CapsuleButton from '@/components/atoms/CapsuleButton';
 
-import {Button} from '@/components';
+import {Button, Dialog} from '@/components';
 
 import {
 	IcGreyArrowDown,
@@ -72,9 +72,11 @@ import {
 } from '@/api/guarantee.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {goToParentUrl} from '@/utils';
-import Header from '@/components/common/layout/Header';
 
-import {useLocation} from 'react-router-dom';
+import smallPhoneFrame from '@/assets/images/img_small_phone_frame.png';
+import smallPhoneFrame2x from '@/assets/images/img_small_phone_frame@2x.png';
+import massadoptionBrandCard from '@/assets/images/img_massadoption_brand_card.png';
+import massadoptionBrandCard2x from '@/assets/images/img_massadoption_brand_card@2x.png';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -398,181 +400,6 @@ function CategoryContainer({
 	);
 }
 
-function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
-	const video = useMemo(() => {
-		const result = `${STATIC_URL}/files/video/video_setup_guarantee_${
-			boxIndexState + 1
-		}.mp4`;
-		return result;
-	}, [boxIndexState]);
-
-	const tipText = useMemo(() => {
-		let result;
-
-		switch (boxIndexState) {
-			case 0:
-				result = (
-					<TipTextStyle>
-						{`고객센터는 브랜드의 카카오톡 채널에서 더보기 > URL 복사하기를 선택하신 후에 개런티 설정의 고객센터 영역에 입력해주세요!`}
-					</TipTextStyle>
-				);
-				break;
-			case 1:
-				result = (
-					<TipTextStyle>
-						개런티 카드에 어떤 정보를 개런티카드에 노출할지 설정하는
-						단계입니다.
-						<br />
-						<TipBoldTextStyle>
-							상품명과 보증기간 두가지의 필수정보 이외에 브랜드의
-							상품에 필요한 정보들을 자유롭게 추가해주세요!
-						</TipBoldTextStyle>
-					</TipTextStyle>
-				);
-				break;
-			case 2:
-				result = (
-					<TipTextStyle>
-						브랜드의 이미지를 개런티카드에 제작 해보세요! <br />
-						이미지를 업로드해 개런티 카드의 배경 이미지를 자유롭게
-						변경할 수 있습니다.
-						<br />
-						<TipBoldTextStyle underline={true}>
-							개런티제작가이드를{' '}
-						</TipBoldTextStyle>
-						참고해 개런티카드를 제작 해보세요!
-					</TipTextStyle>
-				);
-				break;
-			case 3:
-				result = (
-					<TipTextStyle>
-						개런티 카드에 추가로 노출 될 정보를 입력해주세요.
-						<br />
-						<TipBoldTextStyle underline={true}>
-							교환 및 반품안내, A/S 주의사항
-						</TipBoldTextStyle>
-						과 같이 사후관리와 관련된 정보들을 입력해주시면 개런티가
-						발급되었을때 고객과의 접점을 확보할 수 있어요!
-					</TipTextStyle>
-				);
-				break;
-			default:
-				result = <></>;
-				break;
-		}
-
-		return result;
-	}, [boxIndexState]);
-
-	return (
-		<Grid
-			item
-			container
-			minWidth="662px"
-			maxWidth="662px"
-			sx={{position: 'relative' /* zIndex : 1300 */}}>
-			<Box sx={{position: 'fixed', left: 0, top: 0}}>
-				<Grid
-					container
-					gap="83px"
-					sx={{position: 'absolute', top: '115px', left: '47px'}}>
-					{Array(4)
-						.fill('')
-						.map((el, idx) =>
-							idx > boxIndexState ? (
-								<Box
-									sx={{position: 'relative'}}
-									key={`progress-circle-${idx}`}>
-									<EmphtyProgressCircleStyle />
-									{idx !== 3 && (
-										<DashedLineStyle
-											src={dashedLine}
-											srcSet={`${dashedLine} 1x, ${dashedLine2x} 2x`}
-										/>
-									)}
-								</Box>
-							) : idx === boxIndexState ? (
-								<Box
-									sx={{position: 'relative'}}
-									key={`progress-circle-${idx}`}>
-									<ProgressCircleStyle />
-									{idx !== 3 && (
-										<DashedLineStyle
-											src={dashedLine}
-											srcSet={`${dashedLine} 1x, ${dashedLine2x} 2x`}
-										/>
-									)}
-								</Box>
-							) : (
-								<Box
-									sx={{position: 'relative'}}
-									key={`progress-circle-${idx}`}>
-									<img
-										src={tickInWhiteCircle}
-										srcSet={`${tickInWhiteCircle} 1x, ${tickInWhiteCircle2x} 2x`}
-										alt="completed"
-									/>
-									{idx !== 3 && (
-										<SolidLineStyle
-											src={solidLine}
-											srcSet={`${solidLine} 1x, ${solidLine2x} 2x`}
-										/>
-									)}
-								</Box>
-							)
-						)}
-				</Grid>
-
-				<Box
-					sx={{
-						minWidth: '660px',
-						minHeight: '786px',
-						// height : '986px'
-					}}>
-					<video
-						autoPlay
-						muted
-						playsInline
-						loop
-						src={video}
-						// type="video/mp4"
-					/>
-				</Box>
-
-				<Grid
-					container
-					flexDirection="column"
-					sx={{
-						position: 'absolute',
-						left: 0,
-						right: 0,
-						bottom: '55px',
-						margin: 'auto',
-						background: 'rgba(0, 0, 0, 0.4)',
-						backdropFilter: 'blur(15px)',
-						borderRadius: '16px',
-						padding: '22px 24px',
-						maxWidth: 'calc(100% - 110px)',
-					}}>
-					<Typography
-						variant="h4"
-						sx={{
-							color: 'white',
-							fontSize: '20px',
-							fontWeight: 700,
-							lineHeight: '24px',
-							marginBottom: '16px',
-						}}>
-						버클TIP
-					</Typography>
-					{tipText}
-				</Grid>
-			</Box>
-		</Grid>
-	);
-}
-
 function SetupGuarantee() {
 	const {
 		handleSubmit,
@@ -588,8 +415,7 @@ function SetupGuarantee() {
 		mode: 'onChange',
 	});
 
-	const location = useLocation();
-	const parsedQuery: string = location.state?.query;
+	const parsedQuery = location.state?.query;
 	const b2bType = localStorage.getItem('b2btype'); // cooperator or brand
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
@@ -623,8 +449,7 @@ function SetupGuarantee() {
 	const {isOpen, setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const {data} = useGetPartnershipInfo();
-	// const hasProfileLogo = data?.profileImage;
-	const hasProfileLogo = false;
+	const hasProfileLogo = data?.profileImage;
 
 	// console.log()
 
@@ -793,6 +618,60 @@ function SetupGuarantee() {
 	const openPreviewGuaranteeModal = () => {
 		const values = getValues();
 
+		// const cardBackground = brandCardPreview.preview
+		// 	? brandCardPreview.preview
+		// 	: massadoptionBrandCard;
+		// const cardBackground2x = brandCardPreview.preview
+		// 	? brandCardPreview.preview
+		// 	: massadoptionBrandCard2x;
+
+		// openParantModal({
+		// 	title: '알림',
+		// 	content: `
+		// 		<div class='preview_container'>
+		// 			<img
+		// 				class='phone_frame'
+		// 				src=${smallPhoneFrame}
+		// 				srcSet=${smallPhoneFrame} 1x, ${smallPhoneFrame2x} 2x
+		// 				alt="phone frame"
+		// 			/>
+
+		// 			<div class='preview_box'>
+		// 				<div class='preview_inner'>
+		// 					<div class='brandCard_box'>
+		// 						<img
+		// 							class='brand_card'
+		// 							src=${cardBackground}
+		// 							srcSet=${cardBackground} 1x, ${cardBackground2x} 2x
+		// 							alt="phone frame"
+		// 						/>
+		// 					</div>
+		// 				</div>
+		// 			</div>
+
+		// 			<h4 class='brand_title'>
+		// 				{values.brandNameEN || '브랜드명'}
+		// 			</h4>
+		// 			<h2 class='product_title'>
+		// 				{'상품명'}
+		// 			</h2>
+		// 			<h2 class='price'>
+		// 				{'0,000,000원'}
+		// 			</h2>
+		// 		</div>
+		// 	`,
+		// });
+
+		// if(hasProfileLogo) {
+		// 	openParantModal({
+		// 		title: '알림',
+		// 		content: (
+		// 			<Grid>
+
+		// 			</Grid>
+		// 		),
+		// 	});
+		// }else {
 		setModalOption({
 			id: 'exampleGuranteeCard',
 			isOpen: true,
@@ -820,6 +699,7 @@ function SetupGuarantee() {
 				}
 			},
 		});
+		// }
 	};
 
 	const openExampleModal = () => {
@@ -980,16 +860,15 @@ function SetupGuarantee() {
 			}
 		} else if (hasProfileLogo && data) {
 			reset({
-				brandName: data.brand?.name,
-				brandNameEN: data.brand?.englishName,
+				brandName: data.brand.name,
+				brandNameEN: data.brand.englishName,
 				warrantyDate: data.warrantyDate,
 				customerCenterUrl: data.customerCenterUrl,
 				authInfo: data.authInfo,
 				returnInfo: data.returnInfo,
 				afterServiceInfo: data.afterServiceInfo,
 			});
-			// setExampleList((pre) => [...data.nftCustomFields]);
-			setExampleList(() => [...data.nftCustomFields]);
+			setExampleList((pre) => [...data.nftCustomFields]);
 
 			setBrandLogoPreview({preview: data.profileImage});
 			setBrandCardPreview({preview: data.nftBackgroundImg});
@@ -998,14 +877,6 @@ function SetupGuarantee() {
 
 	return (
 		<Grid container flexWrap="nowrap">
-			{/* {!hasProfileLogo && (
-				<>
-				</>
-			)} */}
-			<Header backgroundColor="transparent" borderBottom={false} />
-			<VideoInformationSection boxIndexState={boxIndexState} />
-
-			{/* 오른쪽 form 박스 */}
 			<Grid
 				item
 				container
@@ -1447,6 +1318,8 @@ function SetupGuarantee() {
 					</BoxContainer>
 
 					{/* fixed 버튼s */}
+
+					{/* { !hasProfileLogo && ()} */}
 					<Box
 						sx={{
 							background: 'transparent',
@@ -1461,7 +1334,7 @@ function SetupGuarantee() {
 							sx={{
 								padding: hasProfileLogo
 									? '12px 0px'
-									: '12px 24px 12px 40px',
+									: '12px 24px 12px 12px',
 								background: 'white',
 								borderTop: '1px solid #E2E2E9',
 								marginLeft: hasProfileLogo ? 0 : '662px',

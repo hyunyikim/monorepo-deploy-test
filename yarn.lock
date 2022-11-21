@@ -9456,6 +9456,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.189":
+  version: 4.14.189
+  resolution: "@types/lodash@npm:4.14.189"
+  checksum: 096d1e0954794fb76bd6a0ea443067f02004b53e3c59ac6e3fed88817a1468fc2e6614abdf44341f5e0fdff5f9a3c94a934cc9ff7126e07efbcd94355a21fe45
+  languageName: node
+  linkType: hard
+
 "@types/long@npm:^4.0.1":
   version: 4.0.2
   resolution: "@types/long@npm:4.0.2"
@@ -10523,6 +10530,7 @@ __metadata:
     "@svgr/webpack": ^6.3.1
     "@tabler/icons": ^1.100.0
     "@tanstack/react-query": ^4.16.1
+    "@types/lodash": ^4.14.189
     "@types/node": ^18.7.16
     "@types/qs": ^6
     "@types/react": ^18.0.18
@@ -10540,6 +10548,7 @@ __metadata:
     env-cmd: ^10.1.0
     esbuild-loader: ^2.20.0
     html-webpack-plugin: ^5.5.0
+    lodash: ^4.17.21
     mini-css-extract-plugin: ^2.6.1
     qs: ^6.11.0
     react: ^18.2.0
