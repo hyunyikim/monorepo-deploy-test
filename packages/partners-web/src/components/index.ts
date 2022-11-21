@@ -9,6 +9,8 @@ export {default as Pagination} from '@/components/atoms/Pagination';
 export {default as Avatar} from '@/components/atoms/Avatar';
 export {default as ListTitle} from '@/components/atoms/ListTitle';
 
+export {default as CapsuleButton} from '@/components/atoms/CapsuleButton';
+
 export {default as Logo} from '@/components/molecules/Logo';
 export {default as BreadCrumb} from '@/components/molecules/BreadCrumb';
 

@@ -78,6 +78,10 @@ module.exports = (env, argv) => {
 						},
 					},
 				},
+				{
+					test: /\.mp4/,
+					type: 'asset/resource',
+				},
 			],
 		},
 		optimization: {
