@@ -94,14 +94,22 @@ function MessageDialog() {
 				sx={{
 					padding: 0,
 				}}>
-				{showBottomCloseButton && (
-					<Button
-						color="grey-100"
-						variant="outlined"
-						onClick={handleClose}>
-						{closeButtonValue}
-					</Button>
-				)}
+				{showBottomCloseButton &&
+					(!buttons ? (
+						<Button
+							color="black"
+							variant="contained"
+							onClick={handleClose}>
+							{closeButtonValue}
+						</Button>
+					) : (
+						<Button
+							color="grey-100"
+							variant="outlined"
+							onClick={handleClose}>
+							{closeButtonValue}
+						</Button>
+					))}
 				{buttons && buttons}
 			</DialogActions>
 		</Dialog>

@@ -168,17 +168,17 @@ const ServiceCenterButtonStyle = styled.div`
 `;
 
 type ValueTypes = {
-	brandName: string;
-	brandNameEN: string;
-	warrantyDate: string;
-	nftCustomField?: string[];
+	brandName?: string;
+	brandNameEN?: string;
+	warrantyDate?: string;
+	nftCustomField?: string[] | [];
 	afterServiceInfo?: string;
 	authInfo?: string;
 	customerCenterUrl?: string;
 	'newCustomField-6'?: string;
 	'newCustomField-7'?: string;
-	nftBackgroundImage?: string;
-	profileImage?: string;
+	nftBackgroundImage?: string | ArrayBuffer | null;
+	profileImage?: string | ArrayBuffer | null;
 	returnInfo?: string;
 };
 
@@ -226,8 +226,12 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 					<BrandCardBoxStyle>
 						{values.nftBackgroundImage ? (
 							<BrandCardStyle
-								src={values.nftBackgroundImage}
-								srcSet={`${values.nftBackgroundImage} 1x, ${values.nftBackgroundImage} 2x`}
+								src={values.nftBackgroundImage as string}
+								srcSet={`${
+									values.nftBackgroundImage as string
+								} 1x, ${
+									values.nftBackgroundImage as string
+								} 2x`}
 								alt="brand card"
 							/>
 						) : (
@@ -278,7 +282,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								<LogoImgStyle
 									logo={
 										values?.profileImage &&
-										values?.profileImage
+										(values?.profileImage as string)
 									}
 								/>
 								<Grid container flexDirection={'column'}>

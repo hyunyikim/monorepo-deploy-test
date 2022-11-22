@@ -7,6 +7,7 @@ type RequestType =
 	| 'scroll_up'
 	| 'open_modal'
 	| 'open_child_modal'
+	| 'update_partnership_data'
 	| 'close_child_modal';
 
 export const sendMessageToParent = (data: {type: RequestType; data: any}) => {
@@ -81,6 +82,13 @@ export const openChildModal = () => {
 export const closeChildModal = () => {
 	sendMessageToParent({
 		type: 'close_child_modal',
+		data: null,
+	});
+};
+
+export const updateParentPartnershipData = () => {
+	sendMessageToParent({
+		type: 'update_partnership_data',
 		data: null,
 	});
 };

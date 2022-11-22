@@ -22,7 +22,6 @@ import {Button} from '@/components';
 
 import {
 	IcGreyArrowDown,
-	IcChevronDown,
 	IcLock,
 	IcBin,
 	exampleBrandIcon,
@@ -62,7 +61,7 @@ import {
 	setCustomizedBrandCard,
 } from '@/api/guarantee.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
-import {goToParentUrl} from '@/utils';
+import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import Header from '@/components/common/layout/Header';
 import {useLocation} from 'react-router-dom';
 
@@ -154,25 +153,25 @@ const BulletListStyle = styled('li')`
 `;
 
 const ProgressCircleStyle = styled('div')`
-	width : 40px;
-	height : 40px;
-	border-radius : 50%;
-	position : relative;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	position: relative;
 	background: rgba(255, 255, 255, 0.4);
-	
+
 	&:before {
-		content : '';
+		content: '';
 		background: white;
-		display : 'block';
-		width : 18px;
-		height : 18px;
-		border-radius : 50%;
-		position : absolute;
-		left : 0;
-		right : 0;
-		top : 11px;
-		margin : auto;
-	},
+		display: 'block';
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 11px;
+		margin: auto;
+	}
 `;
 
 const EmphtyProgressCircleStyle = styled('div')`
@@ -221,6 +220,7 @@ const LinkStyle = styled('a')`
 
 interface BoxContainerProps {
 	children: ReactNode;
+	hasProfileLogo?: string;
 	isOpen: boolean;
 	title: string;
 	isFilled?: boolean;
@@ -238,6 +238,11 @@ interface InputFormProps {
 	boxIndexState: number;
 	boxOpenHandler: (_idx: number) => void;
 	justOpenBox: (_idx: number) => void;
+}
+
+interface ParsedQueryProps {
+	state?: string;
+	code?: string;
 }
 
 const tabList = ['쥬얼리', '패션의류', '가구', '전자기기'];
@@ -261,6 +266,7 @@ const openCustomizedCardDesign = () => {
 
 function BoxContainer({
 	children,
+	hasProfileLogo,
 	isOpen,
 	title,
 	useLabel,
@@ -302,14 +308,18 @@ function BoxContainer({
 							</BoxContainerFailLabel>
 						))}
 				</Grid>
-				<IcGreyArrowDown
-					onClick={openHandler}
-					style={{
-						transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-						transition: 'all 250ms linear',
-					}}
-				/>
-				{/* <IcChevronDown style={{fill: 'rgba(42,169,224, 0.2)'}} fill="rgb(42,169,224)"/> */}
+
+				{!hasProfileLogo && (
+					<IcGreyArrowDown
+						onClick={openHandler}
+						style={{
+							transform: isOpen
+								? 'rotate(180deg)'
+								: 'rotate(0deg)',
+							transition: 'all 250ms linear',
+						}}
+					/>
+				)}
 			</Grid>
 
 			{isOpen && children}
@@ -590,9 +600,7 @@ export function InputFormSection({
 	});
 
 	const location = useLocation();
-	const parsedQuery: string | undefined = location.state?.query;
-	const b2bType = localStorage.getItem('b2btype'); // cooperator or brand
-	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
+	const parsedQuery: ParsedQueryProps | undefined = location.state?.query;
 
 	const [brandLogo, setBrandLogo] = useState<FileData>({
 		file: null,
@@ -623,6 +631,8 @@ export function InputFormSection({
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const {data} = useGetPartnershipInfo();
+	const b2bType = data?.b2bType; // cooperator or brand
+	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 	const hasProfileLogo = data?.profileImage;
 
 	/**
@@ -689,7 +699,17 @@ export function InputFormSection({
 		const target = (e.target as HTMLButtonElement).value;
 
 		if (target) {
-			setExampleList((pre) => {
+			setExampleList((pre: string[]) => {
+				if (pre.includes(target)) {
+					/* 이미 추가된 상품일때, 모달 */
+					onMessageDialogOpen({
+						title: '이미 추가된 상품 정보입니다.',
+						showBottomCloseButton: true,
+						closeButtonValue: '확인',
+					});
+					return [...pre];
+				}
+
 				return [...pre, target];
 			});
 		}
@@ -726,7 +746,6 @@ export function InputFormSection({
 		} else {
 			setError('customerCenterUrl', {
 				message: 'URL을 입력해주세요',
-				// shouldFocus: true,
 			});
 		}
 	};
@@ -834,7 +853,7 @@ export function InputFormSection({
 		return formData;
 	};
 
-	/* 개런티 설정완료 모달 */
+	/* 개런티 설정완료 및 파트너스 데이터 업데이트 모달 */
 	const openCompleteSettingGuaranteeModal = () => {
 		onMessageDialogOpen({
 			title: '개런티 설정이 완료되었어요!',
@@ -845,7 +864,10 @@ export function InputFormSection({
 						color="primary"
 						variant="outlined"
 						onClick={() => {
-							goToParentUrl('/b2b/interwork');
+							updateParentPartnershipData();
+							setTimeout(() => {
+								goToParentUrl('/b2b/interwork');
+							}, 200);
 						}}>
 						Cafe24 연동하기
 					</Button>
@@ -853,7 +875,10 @@ export function InputFormSection({
 						color="black"
 						variant="contained"
 						onClick={() => {
-							goToParentUrl('/b2b/guarantee/register');
+							updateParentPartnershipData();
+							setTimeout(() => {
+								goToParentUrl('/b2b/guarantee/register');
+							}, 200);
 						}}>
 						개런티 발급하기
 					</Button>
@@ -871,7 +896,6 @@ export function InputFormSection({
 	) => {
 		const response = await setGuaranteeInformation(_data);
 		if (response) {
-			// TODO : 데이터 업데이트?
 			openCompleteSettingGuaranteeModal();
 		}
 	};
@@ -1002,62 +1026,107 @@ export function InputFormSection({
 				autoComplete="off">
 				<Grid
 					container
-					justifyContent={'flex-end'}
+					flexWrap={'nowrap'}
+					alignItems={'flex-end'}
+					justifyContent={
+						hasProfileLogo ? 'space-between' : 'flex-end'
+					}
 					gap="12px"
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
-					<Grid item sx={{position: 'relative'}}>
-						<TooltipComponent
-							isOpen={tooltipState}
-							arrow={true}
-							onClickCloseBtn={closeTooltip}
-							title={
-								<Typography
-									fontSize={12}
-									color={'#ffffff'}
-									lineHeight="18px"
-									fontWeight={500}>
-									어떤 정보를 노출 할지 고민 된다면
-									<br /> 타 브랜드의 개런티 화면을 참고하세요!
-								</Typography>
-							}>
-							<CapsuleButton
-								variant="outlined"
-								onClick={openExampleModal}
-								sx={{
-									padding: '4px 11px 4px 6px',
-									gap: '12px',
-								}}
-								startIcon={
-									<img
-										src={exampleBrandIcon}
-										srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
-										alt="brand-sample"
-									/>
-								}>
-								브랜드 개런티 예시보기
-							</CapsuleButton>
-						</TooltipComponent>
-					</Grid>
+					{hasProfileLogo && (
+						<Grid
+							xs={6}
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: '20px',
+							}}>
+							<Typography
+								fontSize={28}
+								color={'black'}
+								lineHeight="32px"
+								fontWeight={700}>
+								안녕하세요, {data?.brand?.name}님!
+							</Typography>
+							<Typography
+								fontSize={16}
+								color={'grey.300'}
+								lineHeight="24px"
+								fontWeight={500}>
+								개런티 설정을 완료하고 버클 개런티 카드를
+								발급해보세요
+							</Typography>
+						</Grid>
+					)}
 
-					<LinkStyle
-						href="https://guide.vircle.co.kr/about-vircle"
-						target="_blank"
-						rel="noreferrer"
-						className="faq_link">
-						<CapsuleButton>이용가이드 보기</CapsuleButton>
-					</LinkStyle>
+					<Grid
+						container
+						xs={6}
+						gap="12px"
+						flexWrap={'nowrap'}
+						justifyContent={'flex-end'}>
+						<Grid item sx={{position: 'relative'}}>
+							<TooltipComponent
+								isOpen={tooltipState}
+								arrow={true}
+								onClickCloseBtn={closeTooltip}
+								title={
+									<Typography
+										fontSize={12}
+										color={'#ffffff'}
+										lineHeight="18px"
+										fontWeight={500}>
+										어떤 정보를 노출 할지 고민 된다면
+										<br /> 타 브랜드의 개런티 화면을
+										참고하세요!
+									</Typography>
+								}>
+								<CapsuleButton
+									variant="outlined"
+									onClick={openExampleModal}
+									sx={{
+										padding: '4px 11px 4px 6px',
+										gap: '12px',
+									}}
+									startIcon={
+										<img
+											src={exampleBrandIcon}
+											srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
+											alt="brand-sample"
+										/>
+									}>
+									브랜드 개런티 예시보기
+								</CapsuleButton>
+							</TooltipComponent>
+						</Grid>
+
+						<LinkStyle
+							href="https://guide.vircle.co.kr/about-vircle"
+							target="_blank"
+							rel="noreferrer"
+							className="faq_link">
+							<CapsuleButton>이용가이드 보기</CapsuleButton>
+						</LinkStyle>
+					</Grid>
 				</Grid>
 
 				{/* 브랜드 정보 box */}
 				<BoxContainer
-					isOpen={boxIndexState === 0 ? true : false}
+					hasProfileLogo={hasProfileLogo}
+					isOpen={
+						hasProfileLogo
+							? true
+							: boxIndexState === 0
+							? true
+							: false
+					}
 					title="브랜드 정보를 입력해주세요"
 					useLabel={boxIndexState !== 0}
 					isFilled={
-						watch().brandName &&
-						watch().brandNameEN &&
-						watch().warrantyDate &&
+						getValues().brandName &&
+						getValues().brandNameEN &&
+						getValues().warrantyDate &&
 						brandLogoPreview.preview &&
 						boxIndexState !== 0
 					}
@@ -1168,7 +1237,14 @@ export function InputFormSection({
 
 				{/* 상품 정보 box */}
 				<BoxContainer
-					isOpen={boxIndexState === 1 ? true : false}
+					hasProfileLogo={hasProfileLogo}
+					isOpen={
+						hasProfileLogo
+							? true
+							: boxIndexState === 1
+							? true
+							: false
+					}
 					title="상품 정보를 추가해주세요"
 					isFilled={false}
 					openHandler={() => boxOpenHandler(1)}>
@@ -1197,7 +1273,8 @@ export function InputFormSection({
 										key={`example-list-${idx}`}
 									/>
 							  ))
-							: categoryRequiredList.map((li, idx) => (
+							: b2bType === 'cooperator'
+							? categoryRequiredList.map((li, idx) => (
 									<CategoryContainer
 										required={true}
 										category={li}
@@ -1205,7 +1282,8 @@ export function InputFormSection({
 										exampleIdx={idx}
 										key={`example-list-${idx}`}
 									/>
-							  ))}
+							  ))
+							: null}
 
 						{exampleList.map((li, idx) => (
 							<CategoryContainer
@@ -1225,6 +1303,7 @@ export function InputFormSection({
 								onBlur={addCategoryToList}
 								onKeyDown={enterHandler}
 								control={control}
+								autoFocus={true}
 								name={`newCustomField-${exampleList.length}`}
 							/>
 						)}
@@ -1261,7 +1340,14 @@ export function InputFormSection({
 
 				{/* 개런티 카드 디자인 box */}
 				<BoxContainer
-					isOpen={boxIndexState === 2 ? true : false}
+					hasProfileLogo={hasProfileLogo}
+					isOpen={
+						hasProfileLogo
+							? true
+							: boxIndexState === 2
+							? true
+							: false
+					}
 					title="개런티 카드 디자인을 업로드 해주세요"
 					isFilled={false}
 					openHandler={() => boxOpenHandler(2)}>
@@ -1391,7 +1477,14 @@ export function InputFormSection({
 
 				{/* 추가정보를 입력해주세요 box */}
 				<BoxContainer
-					isOpen={boxIndexState === 3 ? true : false}
+					hasProfileLogo={hasProfileLogo}
+					isOpen={
+						hasProfileLogo
+							? true
+							: boxIndexState === 3
+							? true
+							: false
+					}
 					title="추가정보를 입력해주세요"
 					isFilled={false}
 					openHandler={() => boxOpenHandler(3)}>
@@ -1429,7 +1522,9 @@ export function InputFormSection({
 								? '12px 0px'
 								: '12px 24px 12px 40px',
 							background: 'white',
-							borderTop: '1px solid #E2E2E9',
+							borderTop: hasProfileLogo
+								? null
+								: '1px solid #E2E2E9',
 							marginLeft: hasProfileLogo ? 0 : '662px',
 							width: hasProfileLogo
 								? '100%'
