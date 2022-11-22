@@ -995,7 +995,7 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={hasProfileLogo ? 'center' : 'flex-start'}
 			alignItems="center"
-			p={hasProfileLogo ? '0px 0px 72px' : '129px 40px 72px'}>
+			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px'}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
