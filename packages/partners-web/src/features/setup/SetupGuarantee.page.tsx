@@ -13,17 +13,8 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {guaranteeSchemaShape} from '@/utils/schema';
 
-import {openParantModal} from '@/utils';
 import {useModalStore, useGetPartnershipInfo, useMessageDialog} from '@/stores';
-import {
-	Box,
-	Typography,
-	Grid,
-	useTheme,
-	Input,
-	InputLabel,
-	Divider,
-} from '@mui/material';
+import {Box, Typography, Grid, Divider} from '@mui/material';
 
 import CapsuleButton from '@/components/atoms/CapsuleButton';
 
@@ -73,7 +64,6 @@ import {
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {goToParentUrl} from '@/utils';
 import Header from '@/components/common/layout/Header';
-
 import {useLocation} from 'react-router-dom';
 
 type BoldTextProps = {
@@ -244,6 +234,13 @@ interface CategoryContainerProps {
 	sx?: object;
 	clickHandler(e: React.ChangeEvent<HTMLInputElement>): void;
 }
+interface InputFormProps {
+	boxIndexState: number;
+	boxOpenHandler: (_idx: number) => void;
+	justOpenBox: (_idx: number) => void;
+}
+
+const tabList = ['쥬얼리', '패션의류', '가구', '전자기기'];
 
 const brandCategoryRequiredList = ['상품명', '보증기간'];
 const categoryRequiredList = ['상품금액', '브랜드', '카테고리'];
@@ -573,7 +570,11 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 	);
 }
 
-function SetupGuarantee() {
+export function InputFormSection({
+	boxIndexState,
+	boxOpenHandler,
+	justOpenBox,
+}: InputFormProps) {
 	const {
 		handleSubmit,
 		watch,
@@ -589,11 +590,10 @@ function SetupGuarantee() {
 	});
 
 	const location = useLocation();
-	const parsedQuery: string = location.state?.query;
+	const parsedQuery: string | undefined = location.state?.query;
 	const b2bType = localStorage.getItem('b2btype'); // cooperator or brand
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
-	const [boxIndexState, setBoxIndexState] = useState<number>(0);
 	const [brandLogo, setBrandLogo] = useState<FileData>({
 		file: null,
 	});
@@ -620,26 +620,10 @@ function SetupGuarantee() {
 	const [tabState, setTabState] = useState<number>(0);
 	const [exampleList, setExampleList] = useState<string[]>([]);
 	const [isAdding, setIsAdding] = useState<boolean>(false);
-	const {isOpen, setOpen, setModalOption} = useModalStore((state) => state);
+	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const {data} = useGetPartnershipInfo();
-	// const hasProfileLogo = data?.profileImage;
-	const hasProfileLogo = false;
-
-	// console.log()
-
-	/**
-	 * 폼 인풋 박스 오픈 핸들러
-	 *
-	 * @param _index
-	 */
-	const boxOpenHandler = (_index: number) => {
-		if (boxIndexState === _index) {
-			setBoxIndexState(_index);
-		} else {
-			setBoxIndexState(_index);
-		}
-	};
+	const hasProfileLogo = data?.profileImage;
 
 	/**
 	 * 파일 선택 이벤트
@@ -678,21 +662,6 @@ function SetupGuarantee() {
 	const closeTooltip = () => {
 		setTooltipState(false);
 	};
-
-	const tabList = [
-		{
-			text: '쥬얼리',
-		},
-		{
-			text: '패션의류',
-		},
-		{
-			text: '가구',
-		},
-		{
-			text: '전자기기',
-		},
-	];
 
 	const tabHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const targetIdx = e.target.dataset.tabidx;
@@ -746,11 +715,6 @@ function SetupGuarantee() {
 	 * 링크 확인
 	 */
 	const handleCheckOutLinkClick = () => {
-		// onMessageDialogOpen({
-		// 	title: '개런티 설정이 완료되었어요!',
-		// 	message: '이용 가이드를 통해 버클의 기능들을 미리 경험해보세요!'
-		// });
-
 		const value: string = getValues('customerCenterUrl');
 
 		if (value) {
@@ -870,6 +834,34 @@ function SetupGuarantee() {
 		return formData;
 	};
 
+	/* 개런티 설정완료 모달 */
+	const openCompleteSettingGuaranteeModal = () => {
+		onMessageDialogOpen({
+			title: '개런티 설정이 완료되었어요!',
+			message: '이용 가이드를 통해 버클의 기능들을 미리 경험해보세요!',
+			buttons: (
+				<>
+					<Button
+						color="primary"
+						variant="outlined"
+						onClick={() => {
+							goToParentUrl('/b2b/interwork');
+						}}>
+						Cafe24 연동하기
+					</Button>
+					<Button
+						color="black"
+						variant="contained"
+						onClick={() => {
+							goToParentUrl('/b2b/guarantee/register');
+						}}>
+						개런티 발급하기
+					</Button>
+				</>
+			),
+		});
+	};
+
 	/**
 	 * Form Data 보내기
 	 *
@@ -880,7 +872,7 @@ function SetupGuarantee() {
 		const response = await setGuaranteeInformation(_data);
 		if (response) {
 			// TODO : 데이터 업데이트?
-			goToParentUrl('/dashboard');
+			openCompleteSettingGuaranteeModal();
 		}
 	};
 
@@ -888,7 +880,7 @@ function SetupGuarantee() {
 		/* 로고 등록 안할시 에러표시 */
 		if (!brandLogoPreview.preview) {
 			setBrandLogoError(true);
-			setBoxIndexState(0);
+			justOpenBox(0);
 			return;
 		} else {
 			setBrandLogoError(false);
@@ -949,13 +941,10 @@ function SetupGuarantee() {
 	 * 초기 데이터 셋팅
 	 */
 	useEffect(() => {
-		console.log('data', data);
-
 		const hasInputDataSavedInStorage =
 			localStorage.getItem('hasInputDataSaved');
-		const nftCustomFieldSavedData = (
-			localStorage.getItem('nftCustomField') as string
-		).split(',');
+		const nftCustomFieldSavedData: string | null =
+			localStorage.getItem('nftCustomField');
 
 		// 임시저장된 데이터가 있을 경우
 		if (hasInputDataSavedInStorage === 'true') {
@@ -969,7 +958,10 @@ function SetupGuarantee() {
 				returnInfo: localStorage.getItem('returnInfo'),
 				afterServiceInfo: localStorage.getItem('afterServiceInfo'),
 			});
-			setExampleList((pre) => [...nftCustomFieldSavedData]);
+
+			if (nftCustomFieldSavedData) {
+				setExampleList(() => [...nftCustomFieldSavedData.split(',')]);
+			}
 
 			/* 개런티 수정할때, 저장 및 나가기 눌렀을경우에 이미지 불러와야함 */
 			if (data?.profileImage) {
@@ -988,7 +980,7 @@ function SetupGuarantee() {
 				returnInfo: data.returnInfo,
 				afterServiceInfo: data.afterServiceInfo,
 			});
-			// setExampleList((pre) => [...data.nftCustomFields]);
+
 			setExampleList(() => [...data.nftCustomFields]);
 
 			setBrandLogoPreview({preview: data.profileImage});
@@ -997,519 +989,525 @@ function SetupGuarantee() {
 	}, [data]);
 
 	return (
-		<Grid container flexWrap="nowrap">
-			{/* {!hasProfileLogo && (
-				<>
-				</>
-			)} */}
-			<Header backgroundColor="transparent" borderBottom={false} />
-			<VideoInformationSection boxIndexState={boxIndexState} />
-
-			{/* 오른쪽 form 박스 */}
-			<Grid
-				item
-				container
-				position="relative"
-				justifyContent={hasProfileLogo ? 'center' : 'flex-start'}
-				alignItems="center"
-				p={hasProfileLogo ? '0px 0px 72px' : '129px 40px 72px'}>
-				<FullFormStyled
-					onSubmit={handleSubmit(onSubmit)}
-					noValidate
-					autoComplete="off">
-					<Grid
-						container
-						justifyContent={'flex-end'}
-						gap="12px"
-						mb="32px"
-						sx={{maxWidth: '800px'}}>
-						<Grid item sx={{position: 'relative'}}>
-							<TooltipComponent
-								isOpen={tooltipState}
-								arrow={true}
-								onClickCloseBtn={closeTooltip}
-								title={
-									<Typography
-										fontSize={12}
-										color={'#ffffff'}
-										lineHeight="18px"
-										fontWeight={500}>
-										어떤 정보를 노출 할지 고민 된다면
-										<br /> 타 브랜드의 개런티 화면을
-										참고하세요!
-									</Typography>
+		<Grid
+			item
+			container
+			position="relative"
+			justifyContent={hasProfileLogo ? 'center' : 'flex-start'}
+			alignItems="center"
+			p={hasProfileLogo ? '0px 0px 72px' : '129px 40px 72px'}>
+			<FullFormStyled
+				onSubmit={handleSubmit(onSubmit)}
+				noValidate
+				autoComplete="off">
+				<Grid
+					container
+					justifyContent={'flex-end'}
+					gap="12px"
+					mb="32px"
+					sx={{maxWidth: '800px'}}>
+					<Grid item sx={{position: 'relative'}}>
+						<TooltipComponent
+							isOpen={tooltipState}
+							arrow={true}
+							onClickCloseBtn={closeTooltip}
+							title={
+								<Typography
+									fontSize={12}
+									color={'#ffffff'}
+									lineHeight="18px"
+									fontWeight={500}>
+									어떤 정보를 노출 할지 고민 된다면
+									<br /> 타 브랜드의 개런티 화면을 참고하세요!
+								</Typography>
+							}>
+							<CapsuleButton
+								variant="outlined"
+								onClick={openExampleModal}
+								sx={{
+									padding: '4px 11px 4px 6px',
+									gap: '12px',
+								}}
+								startIcon={
+									<img
+										src={exampleBrandIcon}
+										srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
+										alt="brand-sample"
+									/>
 								}>
-								<CapsuleButton
-									variant="outlined"
-									onClick={openExampleModal}
-									sx={{
-										padding: '4px 11px 4px 6px',
-										gap: '12px',
-									}}
-									startIcon={
-										<img
-											src={exampleBrandIcon}
-											srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
-											alt="brand-sample"
-										/>
-									}>
-									브랜드 개런티 예시보기
-								</CapsuleButton>
-							</TooltipComponent>
-						</Grid>
-
-						<LinkStyle
-							href="https://guide.vircle.co.kr/about-vircle"
-							target="_blank"
-							rel="noreferrer"
-							className="faq_link">
-							<CapsuleButton>이용가이드 보기</CapsuleButton>
-						</LinkStyle>
+								브랜드 개런티 예시보기
+							</CapsuleButton>
+						</TooltipComponent>
 					</Grid>
 
-					{/* 브랜드 정보 box */}
-					<BoxContainer
-						isOpen={boxIndexState === 0 ? true : false}
-						title="브랜드 정보를 입력해주세요"
-						useLabel={boxIndexState !== 0}
-						isFilled={
-							watch().brandName &&
-							watch().brandNameEN &&
-							watch().warrantyDate &&
-							brandLogoPreview.preview &&
-							boxIndexState !== 0
-						}
-						openHandler={() => boxOpenHandler(0)}>
-						<Grid
-							container
-							flexWrap="nowrap"
-							alignItems={'flex-start'}>
-							<Box mr="24px" sx={{position: 'relative'}}>
-								<FileInputStyle
-									type="file"
-									accept="image/*"
-									name="brandLogo"
-									ref={logoInputFile}
-									id={`input-file-brandLogo`}
-									onChange={(e) => handleAttachFile(e)}
+					<LinkStyle
+						href="https://guide.vircle.co.kr/about-vircle"
+						target="_blank"
+						rel="noreferrer"
+						className="faq_link">
+						<CapsuleButton>이용가이드 보기</CapsuleButton>
+					</LinkStyle>
+				</Grid>
+
+				{/* 브랜드 정보 box */}
+				<BoxContainer
+					isOpen={boxIndexState === 0 ? true : false}
+					title="브랜드 정보를 입력해주세요"
+					useLabel={boxIndexState !== 0}
+					isFilled={
+						watch().brandName &&
+						watch().brandNameEN &&
+						watch().warrantyDate &&
+						brandLogoPreview.preview &&
+						boxIndexState !== 0
+					}
+					openHandler={() => boxOpenHandler(0)}>
+					<Grid container flexWrap="nowrap" alignItems={'flex-start'}>
+						<Box mr="24px" sx={{position: 'relative'}}>
+							<FileInputStyle
+								type="file"
+								accept="image/*"
+								name="brandLogo"
+								ref={logoInputFile}
+								id={`input-file-brandLogo`}
+								onChange={(e) => handleAttachFile(e)}
+							/>
+							<AvatarStyle
+								onClick={() => logoInputFile?.current.click()}
+								src={
+									brandLogoError
+										? defaultErrorLogoImg2x
+										: (brandLogoPreview?.preview as string)
+										? (brandLogoPreview?.preview as string)
+										: defaultLogoImg2x
+								}
+							/>
+							{!brandLogoPreview?.preview && (
+								<PlusInBlueStyle
+									src={plusInBlue}
+									srcSet={`${plusInBlue} 1x, ${plusInBlue2x} 2x`}
+									alt="plus-button"
+									onClick={() =>
+										logoInputFile.current.click()
+									}
 								/>
-								<AvatarStyle
+							)}
+						</Box>
+
+						<Grid container sx={{marginBottom: '24px'}}>
+							<InputLabelTag
+								required={true}
+								labelTitle={'브랜드명'}
+							/>
+							<Grid container gap="16px" flexWrap={'nowrap'}>
+								<ControlledInputComponent
+									type={'text'}
+									name="brandName"
+									placeholder={'국문 브랜드명을 입력해주세요'}
+									required
+									maxHeight={'48px'}
+									control={control}
+									error={errors && errors.brandName}
+								/>
+								<ControlledInputComponent
+									type={'text'}
+									name="brandNameEN"
+									control={control}
+									placeholder={'영문 브랜드명을 입력해주세요'}
+									required
+									maxHeight={'48px'}
+									error={errors && errors.brandNameEN}
+								/>
+							</Grid>
+						</Grid>
+					</Grid>
+
+					<InputWithLabel
+						name="warrantyDate"
+						control={control}
+						labelTitle="보증기간"
+						required={true}
+						placeholder="예시) 제품 구매 후 3년간 보증됩니다."
+						multiline
+						inputType="textarea"
+						error={errors && errors.warrantyDate}
+					/>
+
+					{b2bType === 'brand' && (
+						<Grid container sx={{marginBottom: 0}}>
+							<Grid container justifyContent="space-between">
+								<InputLabelTag
+									required={false}
+									labelTitle={'고객센터'}
+								/>
+								<Typography
+									onClick={handleCheckOutLinkClick}
+									sx={{
+										fontSize: '14px',
+										lineHeight: '18px',
+										color: 'primary.main',
+										fontWeight: 700,
+										textDecoration: 'underline',
+										cursor: 'pointer',
+									}}>
+									연결 확인하기
+								</Typography>
+							</Grid>
+
+							<ControlledInputComponent
+								control={control}
+								name="customerCenterUrl"
+								error={errors && errors.customerCenterUrl}
+								type={'text'}
+								placeholder={'고객센터 링크를 연결해주세요'}
+								fullWidth
+							/>
+						</Grid>
+					)}
+				</BoxContainer>
+
+				{/* 상품 정보 box */}
+				<BoxContainer
+					isOpen={boxIndexState === 1 ? true : false}
+					title="상품 정보를 추가해주세요"
+					isFilled={false}
+					openHandler={() => boxOpenHandler(1)}>
+					{b2bType === 'brand' && (
+						<Grid container gap="8px" mb="24px">
+							{tabList.map((li, idx) => (
+								<Tab
+									text={li}
+									idx={idx}
+									key={`tab-${li}`}
+									activeHandler={tabHandler}
+									isActive={tabState === idx ? true : false}
+								/>
+							))}
+						</Grid>
+					)}
+
+					<Grid container gap="12px">
+						{b2bType === 'brand'
+							? brandCategoryRequiredList.map((li, idx) => (
+									<CategoryContainer
+										required={true}
+										category={li}
+										clickHandler={deleteList}
+										exampleIdx={idx}
+										key={`example-list-${idx}`}
+									/>
+							  ))
+							: categoryRequiredList.map((li, idx) => (
+									<CategoryContainer
+										required={true}
+										category={li}
+										clickHandler={deleteList}
+										exampleIdx={idx}
+										key={`example-list-${idx}`}
+									/>
+							  ))}
+
+						{exampleList.map((li, idx) => (
+							<CategoryContainer
+								required={false}
+								category={li}
+								clickHandler={deleteList}
+								exampleIdx={idx}
+								key={`example-list-${idx}`}
+							/>
+						))}
+
+						{isAdding && (
+							<ControlledInputComponent
+								type="text"
+								maxHeight="48px"
+								placeholder="상품정보 명칭을 입력해 주세요"
+								onBlur={addCategoryToList}
+								onKeyDown={enterHandler}
+								control={control}
+								name={`newCustomField-${exampleList.length}`}
+							/>
+						)}
+
+						{exampleList.length >=
+						maximumAdditionalCategory ? null : (
+							<Grid
+								item
+								display="flex"
+								gap="6px"
+								alignItems="center"
+								sx={{cursor: 'pointer'}}
+								mt="8px"
+								onClick={wantToAddCategory}>
+								<img
+									src={bluePlus}
+									srcSet={`${bluePlus} 1x, ${bluePlus2x} 2x`}
+									alt="plus button"
+								/>
+								<Typography
+									variant="h4"
+									sx={{
+										fontSize: '16px',
+										fontWeight: 500,
+										color: 'primary.main',
+										lineHeight: '24px',
+									}}>
+									상품정보 추가
+								</Typography>
+							</Grid>
+						)}
+					</Grid>
+				</BoxContainer>
+
+				{/* 개런티 카드 디자인 box */}
+				<BoxContainer
+					isOpen={boxIndexState === 2 ? true : false}
+					title="개런티 카드 디자인을 업로드 해주세요"
+					isFilled={false}
+					openHandler={() => boxOpenHandler(2)}>
+					<Grid
+						container
+						flexWrap="nowrap"
+						alignItems="flex-end"
+						gap="20px">
+						<Grid item>
+							<FileInputStyle
+								type="file"
+								accept="image/*"
+								name="brandCard"
+								ref={brandInputFile}
+								id={`input-file-brandLogo`}
+								onChange={(e) => handleAttachFile(e)}
+								// control={control}
+							/>
+
+							{brandCardPreview?.preview ? (
+								<AvatarCardStyle
 									onClick={() =>
 										logoInputFile?.current.click()
 									}
-									src={
-										brandLogoError
-											? defaultErrorLogoImg2x
-											: (brandLogoPreview?.preview as string)
-											? (brandLogoPreview?.preview as string)
-											: defaultLogoImg2x
-									}
+									src={brandCardPreview?.preview}
 								/>
-								{!brandLogoPreview?.preview && (
-									<PlusInBlueStyle
-										src={plusInBlue}
-										srcSet={`${plusInBlue} 1x, ${plusInBlue2x} 2x`}
-										alt="plus-button"
+							) : (
+								<Box
+									sx={{
+										position: 'relative',
+										cursor: 'pointer',
+									}}>
+									<UploadBrandCardDesignStyle
 										onClick={() =>
-											logoInputFile.current.click()
+											brandInputFile?.current.click()
 										}
 									/>
-								)}
-							</Box>
-
-							<Grid container sx={{marginBottom: '24px'}}>
-								<InputLabelTag
-									required={true}
-									labelTitle={'브랜드명'}
-								/>
-								<Grid container gap="16px" flexWrap={'nowrap'}>
-									<ControlledInputComponent
-										type={'text'}
-										name="brandName"
-										placeholder={
-											'국문 브랜드명을 입력해주세요'
+									<UploadPlusButtonStyle
+										onClick={() =>
+											brandInputFile?.current.click()
 										}
-										required
-										maxHeight={'48px'}
-										control={control}
-										error={errors && errors.brandName}
-									/>
-									<ControlledInputComponent
-										type={'text'}
-										name="brandNameEN"
-										control={control}
-										placeholder={
-											'영문 브랜드명을 입력해주세요'
-										}
-										required
-										maxHeight={'48px'}
-										error={errors && errors.brandNameEN}
-									/>
-								</Grid>
-							</Grid>
-						</Grid>
-
-						<InputWithLabel
-							name="warrantyDate"
-							control={control}
-							labelTitle="보증기간"
-							required={true}
-							placeholder="예시) 제품 구매 후 3년간 보증됩니다."
-							multiline
-							inputType="textarea"
-							error={errors && errors.warrantyDate}
-						/>
-
-						{b2bType === 'brand' && (
-							<Grid container sx={{marginBottom: 0}}>
-								<Grid container justifyContent="space-between">
-									<InputLabelTag
-										required={false}
-										labelTitle={'고객센터'}
-									/>
-									<Typography
-										onClick={handleCheckOutLinkClick}
-										sx={{
-											fontSize: '14px',
-											lineHeight: '18px',
-											color: 'primary.main',
-											fontWeight: 700,
-											textDecoration: 'underline',
-											cursor: 'pointer',
-										}}>
-										연결 확인하기
-									</Typography>
-								</Grid>
-
-								<ControlledInputComponent
-									control={control}
-									name="customerCenterUrl"
-									error={errors && errors.customerCenterUrl}
-									type={'text'}
-									placeholder={'고객센터 링크를 연결해주세요'}
-									fullWidth
-								/>
-							</Grid>
-						)}
-					</BoxContainer>
-
-					{/* 상품 정보 box */}
-					<BoxContainer
-						isOpen={boxIndexState === 1 ? true : false}
-						title="상품 정보를 추가해주세요"
-						isFilled={false}
-						openHandler={() => boxOpenHandler(1)}>
-						{b2bType === 'brand' && (
-							<Grid container gap="8px" mb="24px">
-								{tabList.map((li, idx) => (
-									<Tab
-										text={li.text}
-										idx={idx}
-										key={`tab-${li.text}`}
-										activeHandler={tabHandler}
-										isActive={
-											tabState === idx ? true : false
-										}
-									/>
-								))}
-							</Grid>
-						)}
-
-						<Grid container gap="12px">
-							{b2bType === 'brand'
-								? brandCategoryRequiredList.map((li, idx) => (
-										<CategoryContainer
-											required={true}
-											category={li}
-											clickHandler={deleteList}
-											exampleIdx={idx}
-											key={`example-list-${idx}`}
-										/>
-								  ))
-								: categoryRequiredList.map((li, idx) => (
-										<CategoryContainer
-											required={true}
-											category={li}
-											clickHandler={deleteList}
-											exampleIdx={idx}
-											key={`example-list-${idx}`}
-										/>
-								  ))}
-
-							{exampleList.map((li, idx) => (
-								<CategoryContainer
-									required={false}
-									category={li}
-									clickHandler={deleteList}
-									exampleIdx={idx}
-									key={`example-list-${idx}`}
-								/>
-							))}
-
-							{isAdding && (
-								<ControlledInputComponent
-									type="text"
-									maxHeight="48px"
-									placeholder="상품정보 명칭을 입력해 주세요"
-									onBlur={addCategoryToList}
-									onKeyDown={enterHandler}
-									control={control}
-									name={`newCustomField-${exampleList.length}`}
-								/>
-							)}
-
-							{exampleList.length >=
-							maximumAdditionalCategory ? null : (
-								<Grid
-									item
-									display="flex"
-									gap="6px"
-									alignItems="center"
-									sx={{cursor: 'pointer'}}
-									mt="8px"
-									onClick={wantToAddCategory}>
-									<img
-										src={bluePlus}
-										srcSet={`${bluePlus} 1x, ${bluePlus2x} 2x`}
+										src={blue100Plus}
+										srcSet={`${blue100Plus} 1x, ${blue100Plus2x} 2x`}
 										alt="plus button"
 									/>
-									<Typography
-										variant="h4"
-										sx={{
-											fontSize: '16px',
-											fontWeight: 500,
-											color: 'primary.main',
-											lineHeight: '24px',
-										}}>
-										상품정보 추가
-									</Typography>
-								</Grid>
+								</Box>
 							)}
 						</Grid>
-					</BoxContainer>
 
-					{/* 개런티 카드 디자인 box */}
-					<BoxContainer
-						isOpen={boxIndexState === 2 ? true : false}
-						title="개런티 카드 디자인을 업로드 해주세요"
-						isFilled={false}
-						openHandler={() => boxOpenHandler(2)}>
-						<Grid
-							container
-							flexWrap="nowrap"
-							alignItems="flex-end"
-							gap="20px">
-							<Grid item>
-								<FileInputStyle
-									type="file"
-									accept="image/*"
-									name="brandCard"
-									ref={brandInputFile}
-									id={`input-file-brandLogo`}
-									onChange={(e) => handleAttachFile(e)}
-									// control={control}
-								/>
-
-								{brandCardPreview?.preview ? (
-									<AvatarCardStyle
-										onClick={() =>
-											logoInputFile?.current.click()
-										}
-										src={brandCardPreview?.preview}
-									/>
-								) : (
-									<Box
-										sx={{
-											position: 'relative',
-											cursor: 'pointer',
-										}}>
-										<UploadBrandCardDesignStyle
-											onClick={() =>
-												brandInputFile?.current.click()
-											}
+						<Grid item>
+							<Grid container flexDirection="column" gap="20px">
+								<Grid container gap="8px">
+									{brandCard.file ? (
+										<CategoryContainer
+											required={false}
+											category={brandCard.file?.name}
+											clickHandler={deleteCardPreview}
+											exampleIdx={177}
 										/>
-										<UploadPlusButtonStyle
-											onClick={() =>
-												brandInputFile?.current.click()
-											}
-											src={blue100Plus}
-											srcSet={`${blue100Plus} 1x, ${blue100Plus2x} 2x`}
-											alt="plus button"
-										/>
-									</Box>
-								)}
-							</Grid>
-
-							<Grid item>
-								<Grid
-									container
-									flexDirection="column"
-									gap="20px">
-									<Grid container gap="8px">
-										{brandCard.file ? (
-											<CategoryContainer
-												required={false}
-												category={brandCard.file?.name}
-												clickHandler={deleteCardPreview}
-												exampleIdx={177}
-											/>
-										) : (
-											<Box
-												sx={{
-													backgroundColor: 'white',
-													color: 'grey.100',
-													border: '1px solid',
-													borderColor: 'grey.100',
-													borderRadius: '6px',
-													padding: '16px',
-													maxHeight: '48px',
-													minHeight: '48px',
-													fontWeight: 500,
-													fontSize: '14px',
-													lineHeight: '14px',
-												}}>
-												이미지 파일을 업로드 해주세요
-											</Box>
-										)}
-
-										<Button
-											variant="contained"
-											color="blue-50"
-											width={100}
-											height={48}
+									) : (
+										<Box
 											sx={{
-												paddingLeft: '16px',
-												paddingRight: '16px',
-											}}
-											onClick={() =>
-												brandInputFile?.current.click()
-											}>
-											업로드 하기
-										</Button>
-									</Grid>
+												backgroundColor: 'white',
+												color: 'grey.100',
+												border: '1px solid',
+												borderColor: 'grey.100',
+												borderRadius: '6px',
+												padding: '16px',
+												maxHeight: '48px',
+												minHeight: '48px',
+												fontWeight: 500,
+												fontSize: '14px',
+												lineHeight: '14px',
+											}}>
+											이미지 파일을 업로드 해주세요
+										</Box>
+									)}
 
-									<UlStyle>
-										<BulletListStyle>
-											2MB 이하의 이미지 파일을 업로드
-											해주세요.
-										</BulletListStyle>
-										<BulletListStyle>
-											PNG, JPG, JPEG 형식의 이미지 파일을
-											업로드 해주세요.
-										</BulletListStyle>
-										<BulletListStyle>
-											가이드를 참고해 개런티 카드를
-											제작해주세요.{' '}
-											<Typography
-												variant="h6"
-												sx={{
-													display: 'inline-block',
-													color: 'primary.main',
-													fontSize: '14px',
-													fontWeight: 700,
-													lineHeight: '18px',
-													textDecoration: 'underline',
-													cursor: 'pointer',
-												}}
-												onClick={
-													openCustomizedCardDesign
-												}>
-												가이드보기
-											</Typography>
-										</BulletListStyle>
-									</UlStyle>
+									<Button
+										variant="contained"
+										color="blue-50"
+										width={100}
+										height={48}
+										sx={{
+											paddingLeft: '16px',
+											paddingRight: '16px',
+										}}
+										onClick={() =>
+											brandInputFile?.current.click()
+										}>
+										업로드 하기
+									</Button>
 								</Grid>
+
+								<UlStyle>
+									<BulletListStyle>
+										2MB 이하의 이미지 파일을 업로드
+										해주세요.
+									</BulletListStyle>
+									<BulletListStyle>
+										PNG, JPG, JPEG 형식의 이미지 파일을
+										업로드 해주세요.
+									</BulletListStyle>
+									<BulletListStyle>
+										가이드를 참고해 개런티 카드를
+										제작해주세요.{' '}
+										<Typography
+											variant="h6"
+											sx={{
+												display: 'inline-block',
+												color: 'primary.main',
+												fontSize: '14px',
+												fontWeight: 700,
+												lineHeight: '18px',
+												textDecoration: 'underline',
+												cursor: 'pointer',
+											}}
+											onClick={openCustomizedCardDesign}>
+											가이드보기
+										</Typography>
+									</BulletListStyle>
+								</UlStyle>
 							</Grid>
 						</Grid>
-					</BoxContainer>
+					</Grid>
+				</BoxContainer>
 
-					{/* 추가정보를 입력해주세요 box */}
-					<BoxContainer
-						isOpen={boxIndexState === 3 ? true : false}
-						title="추가정보를 입력해주세요"
-						isFilled={false}
-						openHandler={() => boxOpenHandler(3)}>
-						{additionalInfomationList.map(
-							(li, idx) =>
-								li.appearance && (
-									<InputWithLabel
-										name={li.name}
-										control={control}
-										labelTitle={li.title}
-										placeholder={li.placeholder}
-										multiline
-										fullWidth={true}
-										inputType="textarea"
-										key={`additional-information-${idx}`}
-									/>
-								)
-						)}
-					</BoxContainer>
+				{/* 추가정보를 입력해주세요 box */}
+				<BoxContainer
+					isOpen={boxIndexState === 3 ? true : false}
+					title="추가정보를 입력해주세요"
+					isFilled={false}
+					openHandler={() => boxOpenHandler(3)}>
+					{additionalInfomationList.map(
+						(li, idx) =>
+							li.appearance && (
+								<InputWithLabel
+									name={li.name}
+									control={control}
+									labelTitle={li.title}
+									placeholder={li.placeholder}
+									multiline
+									fullWidth={true}
+									inputType="textarea"
+									key={`additional-information-${idx}`}
+								/>
+							)
+					)}
+				</BoxContainer>
 
-					{/* fixed 버튼s */}
-					<Box
+				{/* fixed 버튼s */}
+				<Box
+					sx={{
+						background: 'transparent',
+						position: 'fixed',
+						bottom: '0',
+						left: '0',
+						right: '0',
+					}}>
+					<Grid
+						container
+						justifyContent="space-between"
 						sx={{
-							background: 'transparent',
-							position: 'fixed',
-							bottom: '0',
-							left: '0',
-							right: '0',
+							padding: hasProfileLogo
+								? '12px 0px'
+								: '12px 24px 12px 40px',
+							background: 'white',
+							borderTop: '1px solid #E2E2E9',
+							marginLeft: hasProfileLogo ? 0 : '662px',
+							width: hasProfileLogo
+								? '100%'
+								: 'calc(100% - 662px)',
 						}}>
 						<Grid
 							container
 							justifyContent="space-between"
 							sx={{
-								padding: hasProfileLogo
-									? '12px 0px'
-									: '12px 24px 12px 40px',
-								background: 'white',
-								borderTop: '1px solid #E2E2E9',
-								marginLeft: hasProfileLogo ? 0 : '662px',
-								width: hasProfileLogo
-									? '100%'
-									: 'calc(100% - 662px)',
+								maxWidth: '800px',
+								margin: hasProfileLogo ? 'auto' : 0,
 							}}>
+							<Button
+								variant="outlined"
+								color="black"
+								height={48}
+								onClick={saveDataToStorage}>
+								저장 및 나가기
+							</Button>
+
 							<Grid
+								item
 								container
-								justifyContent="space-between"
-								sx={{
-									maxWidth: '800px',
-									margin: hasProfileLogo ? 'auto' : 0,
-								}}>
+								gap="12px"
+								sx={{width: 'auto'}}>
 								<Button
 									variant="outlined"
-									color="black"
+									color="primary"
 									height={48}
-									onClick={saveDataToStorage}>
-									저장 및 나가기
+									onClick={openPreviewGuaranteeModal}>
+									미리보기
 								</Button>
-
-								<Grid
-									item
-									container
-									gap="12px"
-									sx={{width: 'auto'}}>
-									<Button
-										variant="outlined"
-										color="primary"
-										height={48}
-										onClick={openPreviewGuaranteeModal}>
-										미리보기
-									</Button>
-									<Button
-										type="submit"
-										color="primary"
-										height={48}>
-										{hasProfileLogo
-											? '수정하기'
-											: '설정 완료하기'}
-									</Button>
-								</Grid>
+								<Button
+									type="submit"
+									color="primary"
+									height={48}>
+									{hasProfileLogo
+										? '수정하기'
+										: '설정 완료하기'}
+								</Button>
 							</Grid>
 						</Grid>
-					</Box>
-				</FullFormStyled>
-			</Grid>
+					</Grid>
+				</Box>
+			</FullFormStyled>
+		</Grid>
+	);
+}
+
+function SetupGuarantee() {
+	const [boxIndexState, setBoxIndexState] = useState<number>(0);
+	/**
+	 * 폼 인풋 박스 오픈 핸들러
+	 *
+	 * @param _index
+	 */
+	const boxOpenHandler = (_index: number) => {
+		if (boxIndexState === _index) {
+			setBoxIndexState(_index);
+		} else {
+			setBoxIndexState(_index);
+		}
+	};
+
+	const justOpenBox = (_idx: number) => {
+		setBoxIndexState(_idx);
+	};
+
+	return (
+		<Grid container flexWrap="nowrap">
+			<Header backgroundColor="transparent" borderBottom={false} />
+			<VideoInformationSection boxIndexState={boxIndexState} />
+
+			<InputFormSection
+				boxIndexState={boxIndexState}
+				boxOpenHandler={boxOpenHandler}
+				justOpenBox={justOpenBox}
+			/>
 		</Grid>
 	);
 }

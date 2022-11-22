@@ -9,7 +9,11 @@ import {IcClose} from '@/assets/icon';
 import {useModalStore} from '@/stores';
 import Button from '../atoms/Button';
 
+import {openChildModal, closeChildModal} from '@/utils';
+
 import {Dialog} from '@/components';
+import {useEffect} from 'react';
+
 function ModalComponent() {
 	const {
 		id,
@@ -28,6 +32,14 @@ function ModalComponent() {
 			setOpen(false);
 		}
 	};
+
+	useEffect(() => {
+		if (isOpen) {
+			openChildModal();
+			return;
+		}
+		closeChildModal();
+	}, [isOpen]);
 
 	return (
 		<Dialog
