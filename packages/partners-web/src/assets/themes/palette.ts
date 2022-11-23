@@ -7,6 +7,7 @@ export default function themePalette(): PaletteOptions {
 		primary: {
 			main: palette.vircleBlue500,
 			400: palette.vircleBlue400,
+			200: palette.vircleBlue200,
 			100: palette.vircleBlue100,
 			50: palette.vircleBlue50,
 		},

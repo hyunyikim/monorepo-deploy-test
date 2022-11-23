@@ -8,9 +8,34 @@ export interface Option<T = any> {
 export type Options<T = any> = Option<T>[];
 
 export type FileData = {
-	file: File | null;
+	file?: File | null;
+	filename?: string;
 };
 
 export type FileDataPreview = {
-	preview: string | null | ArrayBuffer;
+	preview?: string | null | ArrayBuffer;
 };
+
+/* 이하 이미지 크롭 관련 타입 */
+export interface BlobProps {
+	size: number;
+	type: string;
+}
+
+export type CropPreviewData = {
+	preview?: string | null | ArrayBuffer;
+	file?: FileData;
+	filename?: string;
+};
+
+export interface CropConfigProps {
+	crop?: {x: number; y: number};
+	croppedArea?: {x: number; y: number; width: number; height: number} | null;
+	croppedAreaPixels?: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	} | null;
+	zoom?: number;
+}

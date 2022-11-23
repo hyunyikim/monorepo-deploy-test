@@ -62,7 +62,7 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	lastLoggedIn: string;
 	passwordChanged: string;
 	brand: BrandType | null;
-	nftCustomFields: string[];
+	nftCustomFields: string[] | [];
 }
 
 export type BrandType = {

@@ -25,6 +25,8 @@ function ModalComponent() {
 		setOpen,
 		onClickButton,
 		width,
+		align,
+		maxWidth,
 	} = useModalStore((state) => state);
 
 	const closeHandler = () => {
@@ -57,10 +59,15 @@ function ModalComponent() {
 				'& .MuiDialog-container': {
 					'& .MuiPaper-root': {
 						padding: '24px',
-						maxWidth: '700px',
 						borderRadius: '16px',
+						maxWidth: maxWidth ? maxWidth : '700px',
 						width: width ? width : 'auto',
 					},
+				},
+				'& .MuiDialogContent-root': {
+					marginBottom: 0,
+					padding: 0,
+					paddingBottom: 0,
 				},
 			}}
 			onClose={closeHandler}>
@@ -80,7 +87,14 @@ function ModalComponent() {
 						</Typography>
 					)}
 
-					<Grid container justifyContent={'center'}>
+					<Grid
+						container
+						justifyContent={
+							align === 'left' ? 'flex-start' : 'center'
+						}
+						sx={{
+							width: align === 'left' ? ' 100%' : 'auto',
+						}}>
 						{children && children}
 					</Grid>
 				</DialogContent>

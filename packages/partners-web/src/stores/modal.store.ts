@@ -9,6 +9,8 @@ type ModalOpt = {
 	children?: ReactNode;
 	buttonTitle?: string;
 	width?: string;
+	align?: string;
+	maxWidth?: string;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void;
@@ -22,6 +24,8 @@ interface ModalState {
 	children?: ReactNode;
 	buttonTitle?: string;
 	width?: string;
+	align?: string;
+	maxWidth?: string;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void;
@@ -36,7 +40,9 @@ export const useModalStore = create<ModalState>((set) => ({
 	subtitle: '',
 	children: null,
 	buttonTitle: '',
+	maxWidth: '',
 	onClickButton: null,
+	align: 'center',
 	setOpen: (openState) => {
 		set((state) => ({isOpen: openState}));
 	},

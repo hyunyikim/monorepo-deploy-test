@@ -52,7 +52,13 @@ import ControlledInputComponent from '../../components/molecules/ControlledInput
 import TooltipComponent from '../../components/atoms/Tooltip';
 import InputLabelTag from '../../components/atoms/InputLabelTag';
 import Tab from '../../components/atoms/Tab';
-import {FileData, FileDataPreview} from '@/@types';
+import {
+	PartnershipInfoResponse,
+	FileData,
+	FileDataPreview,
+	CropPreviewData,
+	BlobProps,
+} from '@/@types';
 import PreviewGuarantee, {
 	ExamplePreviewGuarantee,
 } from '@/components/common/PreviewGuarantee';
@@ -64,6 +70,7 @@ import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import Header from '@/components/common/layout/Header';
 import {useLocation} from 'react-router-dom';
+import CustomiseBrandCard from './CustomiseBrandCard.modal';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -229,7 +236,7 @@ interface BoxContainerProps {
 }
 interface CategoryContainerProps {
 	required: boolean;
-	category: string;
+	category?: string;
 	exampleIdx: number;
 	sx?: object;
 	clickHandler(e: React.ChangeEvent<HTMLInputElement>): void;
@@ -287,7 +294,8 @@ function BoxContainer({
 				container
 				justifyContent="space-between"
 				alignItems="center"
-				sx={{paddingBottom: isOpen ? '40px' : 0}}>
+				sx={{paddingBottom: isOpen ? '40px' : 0, cursor: 'pointer'}}
+				onClick={openHandler}>
 				<Grid
 					container
 					flexWrap="nowrap"
@@ -311,7 +319,7 @@ function BoxContainer({
 
 				{!hasProfileLogo && (
 					<IcGreyArrowDown
-						onClick={openHandler}
+						// onClick={openHandler}
 						style={{
 							transform: isOpen
 								? 'rotate(180deg)'
@@ -479,7 +487,14 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 			minWidth="662px"
 			maxWidth="662px"
 			sx={{position: 'relative' /* zIndex : 1300 */}}>
-			<Box sx={{position: 'fixed', left: 0, top: 0}}>
+			<Box
+				sx={{
+					position: 'fixed',
+					left: 0,
+					top: 0,
+					height: '100%',
+					backgroundColor: '#08134A',
+				}}>
 				<Grid
 					container
 					gap="83px"
@@ -612,11 +627,17 @@ export function InputFormSection({
 
 	const [brandCard, setBrandCard] = useState<FileData>({
 		file: null,
+		filename: '',
 	});
 
 	const [brandCardPreview, setBrandCardPreview] = useState<FileDataPreview>({
 		preview: null,
 	});
+
+	// const [cropPreviewState, setCropPreviewState] = useState<CropPreviewData>({
+	// 	file: null,
+	// 	filename: '',
+	// });
 
 	const [tooltipState, setTooltipState] = useState<boolean>(true);
 
@@ -626,14 +647,19 @@ export function InputFormSection({
 		React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
 	const [tabState, setTabState] = useState<number>(0);
-	const [exampleList, setExampleList] = useState<string[]>([]);
+	const [exampleList, setExampleList] = useState<string[] | []>([]);
 	const [isAdding, setIsAdding] = useState<boolean>(false);
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
-	const {data} = useGetPartnershipInfo();
+	const {data}: PartnershipInfoResponse | null = useGetPartnershipInfo();
 	const b2bType = data?.b2bType; // cooperator or brand
+	const nftCustomFields: string[] | [] = data?.nftCustomFields;
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 	const hasProfileLogo = data?.profileImage;
+
+	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
+	const [moveToAfterModalClose, setMoveToAfterModalClose] =
+		useState<boolean>(true);
 
 	/**
 	 * 파일 선택 이벤트
@@ -773,6 +799,41 @@ export function InputFormSection({
 		},
 	];
 
+	const openCustomiseCardModal = () => {
+		const nftBackgroundImg = data.nftBackgroundImg as string;
+
+		setModalOption({
+			id: 'CustomiseGuranteeCard',
+			isOpen: true,
+			title: '브랜드 카드제작',
+			children: (
+				<CustomiseBrandCard
+					image={{
+						preview: brandCardPreview.preview,
+						file: brandCard.file,
+						filename: nftBackgroundImg
+							.slice(nftBackgroundImg.lastIndexOf('/'))
+							.split('/')[1],
+					}}
+					onSelectBrandImage={(_value: CropPreviewData) => {
+						setBrandCardPreview({
+							preview: _value.preview,
+						});
+						setBrandCard({
+							file: _value.file,
+							filename: _value.filename,
+						});
+					}}
+					setMoveToAfterModalClose={setMoveToAfterModalClose}
+				/>
+			),
+			align: 'left',
+			width: 'auto',
+			width: '1000px',
+			maxWidth: '1000px',
+		});
+	};
+
 	const openPreviewGuaranteeModal = () => {
 		const values = getValues();
 
@@ -823,6 +884,28 @@ export function InputFormSection({
 		});
 	};
 
+	const deleteSavedData = () => {
+		const hasSavedData = localStorage.getItem('hasInputDataSaved');
+
+		if (hasSavedData) {
+			localStorage.removeItem('hasInputDataSaved');
+			localStorage.removeItem('afterServiceInfo');
+			localStorage.removeItem('authInfo');
+			localStorage.removeItem('brandName');
+			localStorage.removeItem('brandNameEN');
+			localStorage.removeItem('customerCenterUrl');
+			localStorage.removeItem('returnInfo');
+			localStorage.removeItem('warrantyDate');
+			localStorage.removeItem('nftCustomField');
+
+			if (parsedQuery) {
+				localStorage.removeItem('cafe24context');
+				localStorage.removeItem('cafe24code');
+				localStorage.removeItem('cafe24state');
+			}
+		}
+	};
+
 	/**
 	 * Form Data 생성하기
 	 *
@@ -838,12 +921,26 @@ export function InputFormSection({
 				!key.includes('newCustomField') ||
 				key !== 'nftBackgroundImage'
 			) {
-				formData.append(key, values[key] as string | Blob);
+				if (key === 'customerCenterUrl') {
+					const centreUrl: string = values[key];
+					if (centreUrl.includes('http')) {
+						formData.append(key, values[key] as string);
+					} else {
+						formData.append(key, `https://${centreUrl}`);
+					}
+				} else {
+					formData.append(key, values[key] as string | Blob);
+				}
 			}
 		});
 
 		/* 커스텀 정보 */
-		formData.append('nftCustomField', exampleList.join(','));
+		if (exampleList.length > 0) {
+			const reverseList: string[] = [...exampleList].reverse();
+			formData.append('nftCustomField', reverseList.join(','));
+		} else {
+			formData.append('nftCustomField', exampleList.join(','));
+		}
 
 		/* 프로필 파일 */
 		if (brandLogo.file) {
@@ -864,8 +961,8 @@ export function InputFormSection({
 						color="primary"
 						variant="outlined"
 						onClick={() => {
-							updateParentPartnershipData();
 							setTimeout(() => {
+								updateParentPartnershipData();
 								goToParentUrl('/b2b/interwork');
 							}, 200);
 						}}>
@@ -875,8 +972,8 @@ export function InputFormSection({
 						color="black"
 						variant="contained"
 						onClick={() => {
-							updateParentPartnershipData();
 							setTimeout(() => {
+								updateParentPartnershipData();
 								goToParentUrl('/b2b/guarantee/register');
 							}, 200);
 						}}>
@@ -896,6 +993,7 @@ export function InputFormSection({
 	) => {
 		const response = await setGuaranteeInformation(_data);
 		if (response) {
+			deleteSavedData();
 			openCompleteSettingGuaranteeModal();
 		}
 	};
@@ -926,12 +1024,22 @@ export function InputFormSection({
 	};
 
 	useEffect(() => {
-		if (b2bType === 'brand') {
-			setExampleList([...categoryExampleList[tabState]]);
-		} else {
-			setExampleList([]);
+		{
+			/* TODO: 디자인 변경 예정이라서 일단 무조건 0번째 인덱스만 보여주기 */
 		}
-	}, [tabState]);
+
+		if (!hasProfileLogo) {
+			setExampleList([...categoryExampleList[0]]);
+		} else if (hasProfileLogo) {
+			setExampleList(() => [...nftCustomFields]);
+		}
+
+		// if (b2bType === 'brand') {
+		// 	setExampleList([...categoryExampleList[tabState]]);
+		// } else {
+		// 	setExampleList([]);
+		// }
+	}, [tabState, data]);
 
 	/* 저장 및 나가기 */
 	const saveDataToStorage = () => {
@@ -1005,7 +1113,9 @@ export function InputFormSection({
 				afterServiceInfo: data.afterServiceInfo,
 			});
 
-			setExampleList(() => [...data.nftCustomFields]);
+			if (data && data?.nftCustomFields.length > 0) {
+				setExampleList(() => [...nftCustomFields]);
+			}
 
 			setBrandLogoPreview({preview: data.profileImage});
 			setBrandCardPreview({preview: data.nftBackgroundImg});
@@ -1036,7 +1146,7 @@ export function InputFormSection({
 					sx={{maxWidth: '800px'}}>
 					{hasProfileLogo && (
 						<Grid
-							xs={6}
+							xs={hasProfileLogo ? 6 : 0}
 							sx={{
 								display: 'flex',
 								flexDirection: 'column',
@@ -1062,7 +1172,7 @@ export function InputFormSection({
 
 					<Grid
 						container
-						xs={6}
+						xs={hasProfileLogo ? 6 : 12}
 						gap="12px"
 						flexWrap={'nowrap'}
 						justifyContent={'flex-end'}>
@@ -1248,7 +1358,8 @@ export function InputFormSection({
 					title="상품 정보를 추가해주세요"
 					isFilled={false}
 					openHandler={() => boxOpenHandler(1)}>
-					{b2bType === 'brand' && (
+					{/* TODO: 디자인 변경 예정이라서 일단 주석 처리 */}
+					{/* {b2bType === 'brand' && (
 						<Grid container gap="8px" mb="24px">
 							{tabList.map((li, idx) => (
 								<Tab
@@ -1260,7 +1371,7 @@ export function InputFormSection({
 								/>
 							))}
 						</Grid>
-					)}
+					)} */}
 
 					<Grid container gap="12px">
 						{b2bType === 'brand'
@@ -1403,7 +1514,7 @@ export function InputFormSection({
 									{brandCard.file ? (
 										<CategoryContainer
 											required={false}
-											category={brandCard.file?.name}
+											category={brandCard.filename}
 											clickHandler={deleteCardPreview}
 											exampleIdx={177}
 										/>
@@ -1436,7 +1547,8 @@ export function InputFormSection({
 											paddingRight: '16px',
 										}}
 										onClick={() =>
-											brandInputFile?.current.click()
+											// brandInputFile?.current.click()
+											openCustomiseCardModal()
 										}>
 										업로드 하기
 									</Button>
