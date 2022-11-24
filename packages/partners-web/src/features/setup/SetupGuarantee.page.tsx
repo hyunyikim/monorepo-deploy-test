@@ -294,7 +294,10 @@ function BoxContainer({
 				container
 				justifyContent="space-between"
 				alignItems="center"
-				sx={{paddingBottom: isOpen ? '40px' : 0, cursor: 'pointer'}}
+				sx={{
+					paddingBottom: isOpen ? '40px' : 0,
+					cursor: hasProfileLogo ? 'auto' : 'pointer',
+				}}
 				onClick={openHandler}>
 				<Grid
 					container
@@ -619,6 +622,7 @@ export function InputFormSection({
 
 	const [brandLogo, setBrandLogo] = useState<FileData>({
 		file: null,
+		filename: '',
 	});
 	const [brandLogoError, setBrandLogoError] = useState<boolean>(false);
 	const [brandLogoPreview, setBrandLogoPreview] = useState<FileDataPreview>({
@@ -634,16 +638,11 @@ export function InputFormSection({
 		preview: null,
 	});
 
-	// const [cropPreviewState, setCropPreviewState] = useState<CropPreviewData>({
-	// 	file: null,
-	// 	filename: '',
-	// });
-
 	const [tooltipState, setTooltipState] = useState<boolean>(true);
 
 	const logoInputFile =
 		React.useRef() as React.MutableRefObject<HTMLInputElement>;
-	const brandInputFile =
+	const brandCardFile =
 		React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
 	const [tabState, setTabState] = useState<number>(0);
@@ -652,10 +651,10 @@ export function InputFormSection({
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const {data}: PartnershipInfoResponse | null = useGetPartnershipInfo();
-	const b2bType = data?.b2bType; // cooperator or brand
+	const b2bType: string = data?.b2bType; // cooperator or brand
 	const nftCustomFields: string[] | [] = data?.nftCustomFields;
+	const hasProfileLogo: string | '' = data?.profileImage;
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
-	const hasProfileLogo = data?.profileImage;
 
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
 	const [moveToAfterModalClose, setMoveToAfterModalClose] =
@@ -671,7 +670,7 @@ export function InputFormSection({
 		const files = (e.currentTarget as HTMLInputElement).files as FileList;
 		const currentFile: File = files[0];
 
-		const reader = new FileReader();
+		const reader: FileReader = new FileReader();
 		reader.onloadend = () => {
 			if (currentFile) {
 				const newFile = {
@@ -761,7 +760,7 @@ export function InputFormSection({
 	 * 링크 확인
 	 */
 	const handleCheckOutLinkClick = () => {
-		const value: string = getValues('customerCenterUrl');
+		const value: string | '' = getValues('customerCenterUrl');
 
 		if (value) {
 			if (!value.includes('https')) {
@@ -800,7 +799,7 @@ export function InputFormSection({
 	];
 
 	const openCustomiseCardModal = () => {
-		const nftBackgroundImg = data.nftBackgroundImg as string;
+		const nftBackgroundImg = data?.nftBackgroundImg as string;
 
 		setModalOption({
 			id: 'CustomiseGuranteeCard',
@@ -812,8 +811,10 @@ export function InputFormSection({
 						preview: brandCardPreview.preview,
 						file: brandCard.file,
 						filename: nftBackgroundImg
-							.slice(nftBackgroundImg.lastIndexOf('/'))
-							.split('/')[1],
+							? nftBackgroundImg
+									.slice(nftBackgroundImg.lastIndexOf('/'))
+									.split('/')[1]
+							: '',
 					}}
 					onSelectBrandImage={(_value: CropPreviewData) => {
 						setBrandCardPreview({
@@ -828,8 +829,7 @@ export function InputFormSection({
 				/>
 			),
 			align: 'left',
-			width: 'auto',
-			width: '1000px',
+			width: '100%',
 			maxWidth: '1000px',
 		});
 	};
@@ -1127,7 +1127,7 @@ export function InputFormSection({
 			item
 			container
 			position="relative"
-			justifyContent={hasProfileLogo ? 'center' : 'flex-start'}
+			justifyContent={'center'}
 			alignItems="center"
 			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px'}>
 			<FullFormStyled
@@ -1472,16 +1472,17 @@ export function InputFormSection({
 								type="file"
 								accept="image/*"
 								name="brandCard"
-								ref={brandInputFile}
-								id={`input-file-brandLogo`}
-								onChange={(e) => handleAttachFile(e)}
+								ref={brandCardFile}
+								id={`input-file-brandCard`}
+								onChange={openCustomiseCardModal}
 								// control={control}
 							/>
 
 							{brandCardPreview?.preview ? (
 								<AvatarCardStyle
-									onClick={() =>
-										logoInputFile?.current.click()
+									onClick={
+										() => openCustomiseCardModal()
+										// brandCardFile.current.click()
 									}
 									src={brandCardPreview?.preview}
 								/>
@@ -1492,14 +1493,10 @@ export function InputFormSection({
 										cursor: 'pointer',
 									}}>
 									<UploadBrandCardDesignStyle
-										onClick={() =>
-											brandInputFile?.current.click()
-										}
+										onClick={openCustomiseCardModal}
 									/>
 									<UploadPlusButtonStyle
-										onClick={() =>
-											brandInputFile?.current.click()
-										}
+										onClick={openCustomiseCardModal}
 										src={blue100Plus}
 										srcSet={`${blue100Plus} 1x, ${blue100Plus2x} 2x`}
 										alt="plus button"
@@ -1546,10 +1543,7 @@ export function InputFormSection({
 											paddingLeft: '16px',
 											paddingRight: '16px',
 										}}
-										onClick={() =>
-											// brandInputFile?.current.click()
-											openCustomiseCardModal()
-										}>
+										onClick={openCustomiseCardModal}>
 										업로드 하기
 									</Button>
 								</Grid>
@@ -1628,7 +1622,7 @@ export function InputFormSection({
 					}}>
 					<Grid
 						container
-						justifyContent="space-between"
+						justifyContent="center"
 						sx={{
 							padding: hasProfileLogo
 								? '12px 0px'

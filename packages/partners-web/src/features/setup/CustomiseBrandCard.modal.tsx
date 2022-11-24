@@ -21,6 +21,7 @@ import {
 	CropPreviewData,
 	BlobProps,
 	CropConfigProps,
+	CroppedAreaProps,
 } from '@/@types';
 
 import {useModalStore, useMessageDialog} from '@/stores';
@@ -30,20 +31,18 @@ import BrandSettingConfirm from './BrandSettingConfirm';
 
 import Cropper, {CropperProps, Point, Area} from 'react-easy-crop';
 
-interface ImgProps {
+interface ImgProps extends FileData {
 	preview?: string | ArrayBuffer | null;
-	file?: Blob | string;
-	filename: string;
 }
 
 interface CropImageProps {
-	file?: FileData;
+	file: FileData;
 	preview?: string;
 }
 
 interface CustomiseCardProps {
 	image?: ImgProps;
-	onSelectBrandImage?: (_value: CropPreviewData) => void;
+	onSelectBrandImage: (_value: CropPreviewData) => void;
 	setMoveToAfterModalClose?: (_bool: boolean) => void;
 }
 
@@ -66,7 +65,6 @@ function CustomiseBrandCard({
 	setMoveToAfterModalClose,
 }: CustomiseCardProps) {
 	const [step, setStep] = useState<number>(1);
-
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const [cropImage, setCropImage] = useState<CropImageProps | null>(null); // 새로운 이미지
 	const [cropConfig, setCropConfig] = useState<CropConfigProps | null>(null); // 크롭 관련 설정값
@@ -103,8 +101,7 @@ function CustomiseBrandCard({
 				return;
 			}
 
-			const filename: string | null = (cropImage.file as FileData)
-				.name as string;
+			const filename: string | null = cropImage.file.name as string;
 			if (typeof onSelectBrandImage === 'function') {
 				onSelectBrandImage({
 					preview: URL.createObjectURL(blob),

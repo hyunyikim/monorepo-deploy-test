@@ -8,12 +8,12 @@ export interface Option<T = any> {
 export type Options<T = any> = Option<T>[];
 
 export type FileData = {
-	file?: File | null;
-	filename?: string;
+	file: File | null;
+	filename?: string | null;
 };
 
 export type FileDataPreview = {
-	preview?: string | null | ArrayBuffer;
+	preview: string | ArrayBuffer | null;
 };
 
 /* 이하 이미지 크롭 관련 타입 */
@@ -23,8 +23,8 @@ export interface BlobProps {
 }
 
 export type CropPreviewData = {
-	preview?: string | null | ArrayBuffer;
-	file?: FileData;
+	preview: string | null | ArrayBuffer;
+	file: File | null;
 	filename?: string;
 };
 
@@ -39,3 +39,5 @@ export interface CropConfigProps {
 	} | null;
 	zoom?: number;
 }
+
+export type CroppedAreaProps = Pick<CropConfigProps, 'croppedArea'>;

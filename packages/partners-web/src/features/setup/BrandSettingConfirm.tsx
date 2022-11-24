@@ -5,9 +5,7 @@ import ImgShoppingBag from '@/assets/images/img_shopping_bag.png';
 
 import {INITIAL_CROP_CONFIG} from './cropImage';
 
-import {CropConfigProps} from '@/@types';
-
-type CroppedAreaProps = Pick<CropConfigProps, 'croppedArea'>;
+import {CropConfigProps, CroppedAreaProps} from '@/@types';
 
 const defaultVircleBgUrl = `${STATIC_URL}/files/nft/bg_nft_vircle_new.png`;
 
@@ -15,8 +13,8 @@ function BrandSettingConfirm({
 	src,
 	croppedArea,
 }: {
-	src: string;
-	croppedArea: CroppedAreaProps;
+	src?: string;
+	croppedArea?: CroppedAreaProps | null;
 }) {
 	return (
 		<Stack
