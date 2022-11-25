@@ -27,10 +27,14 @@ function ModalComponent() {
 		width,
 		align,
 		maxWidth,
+		setCloseAndReset,
 	} = useModalStore((state) => state);
 
 	const closeHandler = () => {
 		if (typeof setOpen === 'function') {
+			if (typeof setCloseAndReset === 'function') {
+				setCloseAndReset();
+			}
 			setOpen(false);
 		}
 	};
@@ -41,11 +45,17 @@ function ModalComponent() {
 			return;
 		}
 		closeChildModal();
+
+		/* 모달이 닫히면 모달옵션 초기화 */
+		if (!isOpen && typeof setCloseAndReset === 'function') {
+			setCloseAndReset();
+		}
 	}, [isOpen]);
 
 	return (
 		<Dialog
 			open={isOpen}
+			onClose={closeHandler}
 			showCloseButton={true}
 			TitleComponent={
 				<DialogTitle
@@ -57,9 +67,11 @@ function ModalComponent() {
 			}
 			sx={{
 				'& .MuiDialog-container': {
+					marginBottom: '60px',
 					'& .MuiPaper-root': {
 						padding: '24px',
 						borderRadius: '16px',
+						// height: '100%',
 						maxWidth: maxWidth ? maxWidth : '700px',
 						width: width ? width : 'auto',
 					},
@@ -93,6 +105,8 @@ function ModalComponent() {
 							align === 'left' ? 'flex-start' : 'center'
 						}
 						sx={{
+							marginBottom:
+								buttonTitle && onClickButton ? '60px' : '0px',
 							width: align === 'left' ? ' 100%' : 'auto',
 						}}>
 						{children && children}

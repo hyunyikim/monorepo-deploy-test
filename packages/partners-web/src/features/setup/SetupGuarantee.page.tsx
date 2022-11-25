@@ -12,6 +12,7 @@ import style from '@/assets/styles/style.module.scss';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {guaranteeSchemaShape} from '@/utils/schema';
+// import {parse, stringify} from 'querystring';
 
 import {useModalStore, useGetPartnershipInfo, useMessageDialog} from '@/stores';
 import {Box, Typography, Grid, Divider} from '@mui/material';
@@ -47,6 +48,12 @@ import {
 	solidLine2x,
 } from '@/assets/images';
 
+import {
+	createSearchParams,
+	useNavigate,
+	useSearchParams,
+} from 'react-router-dom';
+
 import InputWithLabel from '../../components/molecules/InputWithLabel';
 import ControlledInputComponent from '../../components/molecules/ControlledInputComponent';
 import TooltipComponent from '../../components/atoms/Tooltip';
@@ -69,7 +76,6 @@ import {
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import Header from '@/components/common/layout/Header';
-import {useLocation} from 'react-router-dom';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
 
 type BoldTextProps = {
@@ -245,11 +251,6 @@ interface InputFormProps {
 	boxIndexState: number;
 	boxOpenHandler: (_idx: number) => void;
 	justOpenBox: (_idx: number) => void;
-}
-
-interface ParsedQueryProps {
-	state?: string;
-	code?: string;
 }
 
 const tabList = ['쥬얼리', '패션의류', '가구', '전자기기'];
@@ -617,8 +618,9 @@ export function InputFormSection({
 		mode: 'onChange',
 	});
 
-	const location = useLocation();
-	const parsedQuery: ParsedQueryProps | undefined = location.state?.query;
+	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
+	const queryData = Object.fromEntries([...searchParams]);
 
 	const [brandLogo, setBrandLogo] = useState<FileData>({
 		file: null,
@@ -648,12 +650,15 @@ export function InputFormSection({
 	const [tabState, setTabState] = useState<number>(0);
 	const [exampleList, setExampleList] = useState<string[] | []>([]);
 	const [isAdding, setIsAdding] = useState<boolean>(false);
+
+	const [customFields, setCustomFields] = useState<string[] | []>([]);
+
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
-	const {data}: PartnershipInfoResponse | null = useGetPartnershipInfo();
-	const b2bType: string = data?.b2bType; // cooperator or brand
+	const {data} = useGetPartnershipInfo();
+	const b2bType = data?.b2bType; // cooperator or brand
 	const nftCustomFields: string[] | [] = data?.nftCustomFields;
-	const hasProfileLogo: string | '' = data?.profileImage;
+	const hasProfileLogo = data?.profileImage;
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
@@ -749,6 +754,8 @@ export function InputFormSection({
 
 	const wantToAddCategory = () => {
 		setIsAdding(true);
+		// customFields, setCustomFields
+		// setCustomFields()
 	};
 
 	const deleteCardPreview = () => {
@@ -760,13 +767,13 @@ export function InputFormSection({
 	 * 링크 확인
 	 */
 	const handleCheckOutLinkClick = () => {
-		const value: string | '' = getValues('customerCenterUrl');
+		const centreUrl: string | '' = getValues('customerCenterUrl');
 
-		if (value) {
-			if (!value.includes('https')) {
-				window.open(`https://${value}`);
+		if (centreUrl) {
+			if (centreUrl.includes('http')) {
+				window.open(centreUrl);
 			} else {
-				window.open(value);
+				window.open(`https://${centreUrl}`);
 			}
 		} else {
 			setError('customerCenterUrl', {
@@ -857,7 +864,8 @@ export function InputFormSection({
 				</div>
 			),
 			width: '544px',
-			buttonTitle: '개런티 설정 완료하기',
+			align: 'center',
+			buttonTitle: '확인',
 			onClickButton: () => {
 				if (typeof setOpen === 'function') {
 					setOpen(false);
@@ -876,6 +884,7 @@ export function InputFormSection({
 			children: <ExamplePreviewGuarantee />,
 			width: '544px',
 			buttonTitle: '확인',
+			align: 'center',
 			onClickButton: () => {
 				if (typeof setOpen === 'function') {
 					setOpen(false);
@@ -885,23 +894,25 @@ export function InputFormSection({
 	};
 
 	const deleteSavedData = () => {
-		const hasSavedData = localStorage.getItem('hasInputDataSaved');
+		const email = data?.email as string;
+
+		const hasSavedData = localStorage.getItem(`hasInputDataSaved=${email}`);
 
 		if (hasSavedData) {
-			localStorage.removeItem('hasInputDataSaved');
-			localStorage.removeItem('afterServiceInfo');
-			localStorage.removeItem('authInfo');
-			localStorage.removeItem('brandName');
-			localStorage.removeItem('brandNameEN');
-			localStorage.removeItem('customerCenterUrl');
-			localStorage.removeItem('returnInfo');
-			localStorage.removeItem('warrantyDate');
-			localStorage.removeItem('nftCustomField');
+			localStorage.removeItem(`hasInputDataSaved=${email}`);
+			localStorage.removeItem(`afterServiceInfo=${email}`);
+			localStorage.removeItem(`authInfo=${email}`);
+			localStorage.removeItem(`brandName=${email}`);
+			localStorage.removeItem(`brandNameEN=${email}`);
+			localStorage.removeItem(`customerCenterUrl=${email}`);
+			localStorage.removeItem(`returnInfo=${email}`);
+			localStorage.removeItem(`warrantyDate=${email}`);
+			localStorage.removeItem(`nftCustomField=${email}`);
 
 			if (parsedQuery) {
-				localStorage.removeItem('cafe24context');
-				localStorage.removeItem('cafe24code');
-				localStorage.removeItem('cafe24state');
+				localStorage.removeItem(`cafe24context=${email}`);
+				localStorage.removeItem(`cafe24code=${email}`);
+				localStorage.removeItem(`cafe24state=${email}`);
 			}
 		}
 	};
@@ -926,6 +937,7 @@ export function InputFormSection({
 					if (centreUrl.includes('http')) {
 						formData.append(key, values[key] as string);
 					} else {
+						console.log('here####', centreUrl);
 						formData.append(key, `https://${centreUrl}`);
 					}
 				} else {
@@ -935,9 +947,8 @@ export function InputFormSection({
 		});
 
 		/* 커스텀 정보 */
-		if (exampleList.length > 0) {
-			const reverseList: string[] = [...exampleList].reverse();
-			formData.append('nftCustomField', reverseList.join(','));
+		if (exampleList.length === 0) {
+			formData.append('nftCustomField', '');
 		} else {
 			formData.append('nftCustomField', exampleList.join(','));
 		}
@@ -948,6 +959,21 @@ export function InputFormSection({
 		}
 
 		return formData;
+	};
+
+	/* 개런티 수정완료 및 파트너스 데이터 업데이트 모달 */
+	const openEditSettingGuaranteeModal = () => {
+		onMessageDialogOpen({
+			title: '개런티가 수정됐습니다!',
+			showBottomCloseButton: true,
+			closeButtonValue: '확인',
+			onCloseFunc: () => {
+				setTimeout(() => {
+					updateParentPartnershipData();
+					goToParentUrl('/dashboard');
+				}, 200);
+			},
+		});
 	};
 
 	/* 개런티 설정완료 및 파트너스 데이터 업데이트 모달 */
@@ -984,6 +1010,8 @@ export function InputFormSection({
 		});
 	};
 
+	// console.log('createSearchParams(cafe24Query', createSearchParams(cafe24Query));
+
 	/**
 	 * Form Data 보내기
 	 *
@@ -994,7 +1022,36 @@ export function InputFormSection({
 		const response = await setGuaranteeInformation(_data);
 		if (response) {
 			deleteSavedData();
-			openCompleteSettingGuaranteeModal();
+
+			/* cafe24로 진입시 체크후 바로 연동 */
+			if (queryData && queryData?.context === 'cafe24') {
+				const cafe24Query = {
+					context: 'cafe24',
+					code: queryData.code,
+					state: queryData.state,
+				};
+
+				return setTimeout(() => {
+					updateParentPartnershipData();
+					goToParentUrl(
+						`/cafe24/interwork?${createSearchParams(
+							cafe24Query
+						).toString()}`
+					);
+				}, 200);
+
+				/* TODO: 나중에 모노레포로 다 옮겼을때 아래 주석으로 변경 */
+				// return navigate({
+				// 	pathname: '/cafe24/interwork',
+				// 	search: `?${createSearchParams(cafe24Query)}`,
+				// });
+			}
+
+			if (hasProfileLogo) {
+				openEditSettingGuaranteeModal();
+			} else {
+				openCompleteSettingGuaranteeModal();
+			}
 		}
 	};
 
@@ -1043,27 +1100,55 @@ export function InputFormSection({
 
 	/* 저장 및 나가기 */
 	const saveDataToStorage = () => {
-		localStorage.setItem('hasInputDataSaved', 'true');
+		const email = data?.email as string;
 
-		localStorage.setItem(
-			'afterServiceInfo',
-			watch().afterServiceInfo as string
-		);
-		localStorage.setItem('authInfo', watch().authInfo as string);
-		localStorage.setItem('brandName', watch().brandName as string);
-		localStorage.setItem('brandNameEN', watch().brandNameEN as string);
-		localStorage.setItem(
-			'customerCenterUrl',
-			watch().customerCenterUrl as string
-		);
-		localStorage.setItem('returnInfo', watch().returnInfo as string);
-		localStorage.setItem('warrantyDate', watch().warrantyDate as string);
-		localStorage.setItem('nftCustomField', exampleList.join(','));
+		if (!hasProfileLogo) {
+			/* 로고가 있을때는 저장없이 그냥 나가기 */
+			localStorage.setItem(`hasInputDataSaved=${email}`, 'true');
+			localStorage.setItem(
+				`afterServiceInfo=${email}`,
+				watch().afterServiceInfo as string
+			);
+			localStorage.setItem(
+				`authInfo=${email}`,
+				watch().authInfo as string
+			);
+			localStorage.setItem(
+				`brandName=${email}`,
+				watch().brandName as string
+			);
+			localStorage.setItem(
+				`brandNameEN=${email}`,
+				watch().brandNameEN as string
+			);
+			localStorage.setItem(
+				`customerCenterUrl=${email}`,
+				watch().customerCenterUrl as string
+			);
+			localStorage.setItem(
+				`returnInfo=${email}`,
+				watch().returnInfo as string
+			);
+			localStorage.setItem(
+				`warrantyDate=${email}`,
+				watch().warrantyDate as string
+			);
+			localStorage.setItem(
+				`nftCustomField=${email}`,
+				exampleList.join(',')
+			);
 
-		if (parsedQuery) {
-			localStorage.setItem('cafe24context', 'cafe24');
-			localStorage.setItem('cafe24code', parsedQuery.code as string);
-			localStorage.setItem('cafe24state', parsedQuery.state as string);
+			if (parsedQuery) {
+				localStorage.setItem(`cafe24context=${email}`, 'cafe24');
+				localStorage.setItem(
+					`cafe24code=${email}`,
+					parsedQuery.code as string
+				);
+				localStorage.setItem(
+					`cafe24state=${email}`,
+					parsedQuery.state as string
+				);
+			}
 		}
 
 		goToParentUrl('/dashboard');
@@ -1073,22 +1158,29 @@ export function InputFormSection({
 	 * 초기 데이터 셋팅
 	 */
 	useEffect(() => {
-		const hasInputDataSavedInStorage =
-			localStorage.getItem('hasInputDataSaved');
-		const nftCustomFieldSavedData: string | null =
-			localStorage.getItem('nftCustomField');
+		const email = data?.email as string;
+		const hasInputDataSavedInStorage = localStorage.getItem(
+			`hasInputDataSaved=${email}`
+		);
+		const nftCustomFieldSavedData: string | null = localStorage.getItem(
+			`nftCustomField=${email}`
+		);
 
 		// 임시저장된 데이터가 있을 경우
 		if (hasInputDataSavedInStorage === 'true') {
 			reset({
-				brandName: localStorage.getItem('brandName'),
-				brandNameEN: localStorage.getItem('brandNameEN'),
-				warrantyDate: localStorage.getItem('warrantyDate'),
-				customerCenterUrl: localStorage.getItem('customerCenterUrl'),
+				brandName: localStorage.getItem(`brandName=${email}`),
+				brandNameEN: localStorage.getItem(`brandNameEN=${email}`),
+				warrantyDate: localStorage.getItem(`warrantyDate=${email}`),
+				customerCenterUrl: localStorage.getItem(
+					`customerCenterUrl=${email}`
+				),
 
-				authInfo: localStorage.getItem('authInfo'),
-				returnInfo: localStorage.getItem('returnInfo'),
-				afterServiceInfo: localStorage.getItem('afterServiceInfo'),
+				authInfo: localStorage.getItem(`authInfo=${email}`),
+				returnInfo: localStorage.getItem(`returnInfo=${email}`),
+				afterServiceInfo: localStorage.getItem(
+					`afterServiceInfo=${email}`
+				),
 			});
 
 			if (nftCustomFieldSavedData) {
@@ -1628,9 +1720,7 @@ export function InputFormSection({
 								? '12px 0px'
 								: '12px 24px 12px 40px',
 							background: 'white',
-							borderTop: hasProfileLogo
-								? null
-								: '1px solid #E2E2E9',
+							borderTop: '1px solid #E2E2E9',
 							marginLeft: hasProfileLogo ? 0 : '662px',
 							width: hasProfileLogo
 								? '100%'
@@ -1648,7 +1738,7 @@ export function InputFormSection({
 								color="black"
 								height={48}
 								onClick={saveDataToStorage}>
-								저장 및 나가기
+								{hasProfileLogo ? '나가기' : '저장 후 나가기'}
 							</Button>
 
 							<Grid
@@ -1668,7 +1758,7 @@ export function InputFormSection({
 									color="primary"
 									height={48}>
 									{hasProfileLogo
-										? '수정하기'
+										? '수정완료'
 										: '설정 완료하기'}
 								</Button>
 							</Grid>

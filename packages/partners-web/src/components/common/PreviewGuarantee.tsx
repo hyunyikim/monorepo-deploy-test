@@ -429,7 +429,7 @@ export function ExamplePreviewGuarantee() {
 
 	return (
 		<>
-			<Grid container gap="10px" mb="44px">
+			<Grid container gap="10px" mb="40px">
 				{guaranteeSample.map((el, idx) => (
 					<Tab
 						text={el.name}

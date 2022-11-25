@@ -74,7 +74,7 @@ function BrandSettingSelectImage({
 			) : (
 				<BrandSettingDragDropBox
 					accept=".jpg, .jpeg, .png"
-					width="932px"
+					width="auto"
 					// height='375px'
 					handleFile={handleFile}
 				/>

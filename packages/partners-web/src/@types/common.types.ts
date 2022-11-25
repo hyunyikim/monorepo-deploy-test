@@ -41,3 +41,4 @@ export interface CropConfigProps {
 }
 
 export type CroppedAreaProps = Pick<CropConfigProps, 'croppedArea'>;
+export type croppedAreaPixelsProps = Pick<CropConfigProps, 'croppedAreaPixels'>;

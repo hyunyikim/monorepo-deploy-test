@@ -1,12 +1,11 @@
 import {useEffect, useState, useCallback, useMemo} from 'react';
 
 import {Box, Stack, Slider} from '@mui/material';
-import Cropper, {CropperProps, Point, Area} from 'react-easy-crop';
+import Cropper, {Point, Area} from 'react-easy-crop';
 
 import {INITIAL_CROP_CONFIG, CROP_AREA_ASPECT} from './cropImage';
 import imgCropInfo from '@/assets/images/img_crop_info.png';
 import icZoomPlus from '@/assets/icon/icon_zoom_plus.png';
-// import icWhiteClose from '@/assets/images/icon_white_close_16.png';
 
 import {
 	FileData,
