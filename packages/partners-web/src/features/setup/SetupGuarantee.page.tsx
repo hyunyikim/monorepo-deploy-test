@@ -659,6 +659,8 @@ export function InputFormSection({
 	const b2bType = data?.b2bType; // cooperator or brand
 	const nftCustomFields: string[] | [] = data?.nftCustomFields;
 	const hasProfileLogo = data?.profileImage;
+
+	// const hasProfileLogo = null;
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
@@ -909,7 +911,7 @@ export function InputFormSection({
 			localStorage.removeItem(`warrantyDate=${email}`);
 			localStorage.removeItem(`nftCustomField=${email}`);
 
-			if (parsedQuery) {
+			if (queryData) {
 				localStorage.removeItem(`cafe24context=${email}`);
 				localStorage.removeItem(`cafe24code=${email}`);
 				localStorage.removeItem(`cafe24state=${email}`);
@@ -1029,25 +1031,25 @@ export function InputFormSection({
 					context: 'cafe24',
 					code: queryData.code,
 					state: queryData.state,
+					isFirstTime: hasProfileLogo ? 'false' : 'true',
 				};
 
-				return setTimeout(() => {
-					updateParentPartnershipData();
+				updateParentPartnershipData();
+
+				setTimeout(() => {
 					goToParentUrl(
 						`/cafe24/interwork?${createSearchParams(
 							cafe24Query
 						).toString()}`
 					);
-				}, 200);
+				}, 500);
 
 				/* TODO: 나중에 모노레포로 다 옮겼을때 아래 주석으로 변경 */
 				// return navigate({
 				// 	pathname: '/cafe24/interwork',
 				// 	search: `?${createSearchParams(cafe24Query)}`,
 				// });
-			}
-
-			if (hasProfileLogo) {
+			} else if (hasProfileLogo) {
 				openEditSettingGuaranteeModal();
 			} else {
 				openCompleteSettingGuaranteeModal();
@@ -1138,16 +1140,10 @@ export function InputFormSection({
 				exampleList.join(',')
 			);
 
-			if (parsedQuery) {
+			if (queryData) {
 				localStorage.setItem(`cafe24context=${email}`, 'cafe24');
-				localStorage.setItem(
-					`cafe24code=${email}`,
-					parsedQuery.code as string
-				);
-				localStorage.setItem(
-					`cafe24state=${email}`,
-					parsedQuery.state as string
-				);
+				localStorage.setItem(`cafe24code=${email}`, queryData.code);
+				localStorage.setItem(`cafe24state=${email}`, queryData.state);
 			}
 		}
 
