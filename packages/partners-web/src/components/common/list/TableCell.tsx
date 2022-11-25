@@ -1,6 +1,6 @@
 import {Box, TableCell as MuiTableCell, TableCellProps} from '@mui/material';
 
-interface Props extends TableCellProps {}
+type Props = TableCellProps;
 
 function TableCell({align, children, ...props}: Props) {
 	return (

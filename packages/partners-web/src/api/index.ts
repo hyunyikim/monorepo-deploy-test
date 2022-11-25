@@ -1,6 +1,6 @@
 import axios, {Axios, AxiosRequestConfig, AxiosResponse} from 'axios';
 
-import {TOKEN_KEY, useMessageDialog} from '@/stores';
+import {useLoginStore, useMessageDialog} from '@/stores';
 import {openParantModal} from '@/utils';
 
 interface CustomAxios extends Axios {
@@ -27,11 +27,13 @@ const authInstance: CustomAxios = axios.create({
 	baseURL: API_URL,
 });
 
+let token = useLoginStore.getState().token;
+useLoginStore.subscribe((state) => {
+	token = state.token;
+});
+
 authInstance.interceptors.request.use(
 	(config: AxiosRequestConfig) => {
-		// TODO: zustand subcribe로 변경
-		const token = localStorage.getItem(TOKEN_KEY);
-
 		if (!config.headers || !token) {
 			// window.location.replace('/auth/signin');
 			// return;
@@ -43,7 +45,7 @@ authInstance.interceptors.request.use(
 	(error) => Promise.reject(error)
 );
 
-const onOpen = useMessageDialog.getState().onOpen;
+// const onOpen = useMessageDialog.getState().onOpen;
 
 authInstance.interceptors.response.use(
 	(response: AxiosResponse) => {

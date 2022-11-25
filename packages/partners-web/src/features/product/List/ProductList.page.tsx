@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList} from '@/utils/hooks';
@@ -28,14 +29,18 @@ import {
 	Select,
 	TableCell,
 } from '@/components';
+import {useGetPartnershipInfo} from '@/stores';
 
 const menu = 'itemadmin';
 const menuKo = '상품';
 
 function ProductList() {
-	const b2btype = localStorage.getItem('b2btype');
-	const useFieldModelNum =
-		localStorage.getItem('useFieldModelNum') === 'Y' ? true : false;
+	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const b2bType = useGetPartnershipInfo()?.data?.b2bType;
+	const useFieldModelNum = useMemo(() => {
+		return partnershipInfo?.useFieldModelNum === 'Y' ? true : false;
+	}, [partnershipInfo]);
+
 	const {
 		isLoading,
 		data,
@@ -58,6 +63,7 @@ function ProductList() {
 			categoryCode: '',
 		},
 	});
+
 	return (
 		<>
 			<Box>
@@ -120,7 +126,9 @@ function ProductList() {
 							<TableCell>브랜드</TableCell>
 							<TableCell>상품명</TableCell>
 							<TableCell>상품가격</TableCell>
-							<TableCell>카테고리</TableCell>
+							{b2bType !== 'brand' && (
+								<TableCell>카테고리</TableCell>
+							)}
 							{useFieldModelNum && (
 								<TableCell>모델번호</TableCell>
 							)}
@@ -168,9 +176,11 @@ function ProductList() {
 										? `${item?.price.toLocaleString()}원`
 										: '-'}
 								</TableCell>
-								<TableCell sx={{minWidth: 120}}>
-									{item?.categoryName || '-'}
-								</TableCell>
+								{b2bType === 'brand' ? null : (
+									<TableCell sx={{minWidth: 120}}>
+										{item?.categoryName || '-'}
+									</TableCell>
+								)}
 								{useFieldModelNum && (
 									<TableCell sx={{minWidth: 180}}>
 										{item?.modelNum || '-'}

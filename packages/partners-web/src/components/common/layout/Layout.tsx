@@ -1,57 +1,39 @@
 import {Outlet} from 'react-router-dom';
-import {Box, AppBar, Toolbar, Theme, useTheme} from '@mui/material';
 import styled from '@emotion/styled';
 
-import {headerHeight} from '@/data';
+import {HEADER_HEIGHT, PARTIAL_PAGE_MAX_WIDTH} from '@/data';
 
 import Header from '@/components/common/layout/Header';
 import Sidebar from '@/components/common/layout/Sidebar';
 import {useBackgroundColorStore} from '@/stores';
 
-function Layout() {
-	const theme = useTheme();
-	const bgColor = useBackgroundColorStore((state) => state.backgroundColor);
+interface Props {
+	hasHeader?: boolean;
+	hasSidebar?: boolean;
+}
 
-	const Main = styled('main')(({theme}: {theme: Theme}) => ({
+function Layout({hasHeader = true, hasSidebar = true}: Props) {
+	const Main = styled('main')(({hasHeader}: {hasHeader: boolean}) => ({
+		display: 'flex',
+		justifyContent: 'center',
+		alignContent: 'center',
 		width: '100%',
-		height: `calc(100vh - ${headerHeight})`,
+		maxWidth: PARTIAL_PAGE_MAX_WIDTH,
+		height: hasHeader ? `calc(100vh - ${HEADER_HEIGHT})` : '100vh',
 		position: 'relative',
-		top: headerHeight,
-		padding: '40px',
-		[theme.breakpoints.down('sm')]: {
-			marginLeft: 0,
-			marginRight: 0,
-			width: '100%',
-			padding: '20px',
-			height: '100%',
-		},
-		backgroundColor: bgColor ?? theme.palette.background.default,
+		top: hasHeader ? HEADER_HEIGHT : 0,
+		padding: '0 10px',
+		margin: 'auto',
 	}));
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-			}}>
-			<AppBar
-				sx={{borderBottom: '1px solid #E6E9EC', height: headerHeight}}
-				enableColorOnDark
-				position="fixed"
-				color="inherit"
-				elevation={0}>
-				<Toolbar
-					sx={{
-						padding: '10px 20px',
-						justifyContent: 'space-between',
-					}}>
-					<Header />
-				</Toolbar>
-			</AppBar>
-			<Sidebar />
-			<Main theme={theme}>
+		<>
+			{hasHeader && <Header />}
+			{hasSidebar && <Sidebar />}
+			<Main hasHeader={hasHeader}>
 				<Outlet />
 			</Main>
-		</Box>
+		</>
 	);
 }
 

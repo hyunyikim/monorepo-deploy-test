@@ -17,7 +17,7 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 
 	return (
 		<>
-			<Stack id="justify" alignItems="center">
+			<Stack alignItems="center">
 				<Box flexDirection="column">
 					<Typography
 						fontSize={{

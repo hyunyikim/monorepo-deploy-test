@@ -1,5 +1,4 @@
 import {YNType} from '@/@types';
-
 export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	idx: number;
 	parentIdx: number;
@@ -53,13 +52,33 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	nftProductBoxW: number;
 	nftProductBoxH: number;
 	useDirectMint: YNType;
+	confirmed: YNType;
+	confirmedAt: string;
 	useAutoIncrementOrderNumber: YNType;
 	excInspectorIdx: number;
 	excRepairerIdx: number;
 	warrantyDate: string;
 	blockchainPlatform: string;
-	brand: string | null;
+	lastLoggedIn: string;
+	passwordChanged: string;
+	brand: BrandType | null;
+	nftCustomFields: string[] | [];
 }
+
+export type BrandType = {
+	detailImage?: string | null;
+	englishName: string;
+	idx: number;
+	mainExposure?: YNType;
+	mainImage?: string | null;
+	name: string;
+	registered?: string;
+	registrantIdx?: string;
+	summary?: string;
+	useInspect?: YNType;
+	useRepair?: YNType;
+	viewExposure?: YNType;
+};
 
 export interface PartnershipViewMenuYN {
 	useUnipass: YNType;

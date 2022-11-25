@@ -102,6 +102,15 @@ module.exports = {
 				'@typescript-eslint/no-unsafe-assignment': 'warn',
 				'@typescript-eslint/no-unsafe-member-access': 'warn',
 			},
+			settings: {
+				'import/resolver': {
+					node: {
+						project: path.resolve(
+							__dirname + '/packages/partners-web/tsconfig.json'
+						),
+					},
+				},
+			},
 		},
 	],
 	settings: {

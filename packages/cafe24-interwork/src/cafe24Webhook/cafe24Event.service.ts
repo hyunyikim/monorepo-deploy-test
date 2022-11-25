@@ -28,7 +28,6 @@ import {
 	map,
 	groupBy,
 } from 'rxjs';
-import {KakaoAlimTalkService} from 'src/kakao-alim-talk';
 
 @Injectable()
 export class Cafe24EventService {
@@ -361,7 +360,7 @@ export class Cafe24EventService {
 		image?: Readable
 	): GuaranteeRequestPayload {
 		return {
-			productName: `${orderItem.product_name} - ${orderItem.option_value}`,
+			productName: `${orderItem.product_name}`,
 			price:
 				parseInt(orderItem.product_price) +
 				parseInt(orderItem.option_price),

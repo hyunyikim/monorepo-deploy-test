@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.3.0) (2022-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cafe24:** 관리자(master)용 Interwork Resource 컨트롤러 생성 (#162)
+
+### Features
+
+* **cafe24:** 관리자(master)용 Interwork Resource 컨트롤러 생성 ([#162](https://github.com/mass-adoption/vircle/issues/162)) ([cfdcc38](https://github.com/mass-adoption/vircle/commit/cfdcc3897b091023e88489907fb8695202aeff62))
+* **cafe24:** 상품의 옵션값을 상품 이름에 표시 ([#174](https://github.com/mass-adoption/vircle/issues/174)) ([333bc52](https://github.com/mass-adoption/vircle/commit/333bc520349aebbe6d5e8b83f3842a50ab7f457d))
+* **cafe24:** option 가격을 상품가격에 반영 ([#177](https://github.com/mass-adoption/vircle/issues/177)) ([f7bc114](https://github.com/mass-adoption/vircle/commit/f7bc1143ad88d2c6d56582addfd7d700a3db54cc))
+
+
+
+### Bug Fixes
+
+* **cafe24:** 보증서의 모델번호에 자체모델번호 적용(cafe24 model-no 사용 안함) ([#178](https://github.com/mass-adoption/vircle/issues/178)) ([35aa64c](https://github.com/mass-adoption/vircle/commit/35aa64ca2bb77452bb1857c951ab3f98a0f822c6))
+* **cafe24:** cafe24 이름 표기오류 수정 ([#175](https://github.com/mass-adoption/vircle/issues/175)) ([a962ff0](https://github.com/mass-adoption/vircle/commit/a962ff0498c99b9eaf438261c849aaed71454f0f))
+
+
 ## [0.2.0](https://github.com/mass-adoption/vircle/compare/cafe24-v0.0.2...cafe24-v0.2.0) (2022-10-28)
 
 

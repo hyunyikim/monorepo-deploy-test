@@ -1,36 +1,20 @@
-import {useEffect, useState, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import {parse} from 'qs';
+import {useQueryClient} from '@tanstack/react-query';
 
 import {Box} from '@mui/material';
 
-import {TOKEN_KEY} from '@/stores';
-import {sendResizedIframeChildHeight} from '@/utils';
+import {TOKEN_KEY, useLoginStore} from '@/stores';
 
-const MIN_HEIGHT = 550 + 10;
-const resizeIframeChildHeight = (
-	iframeChildWrapperEle: HTMLDivElement | null
-) => {
-	if (iframeChildWrapperEle) {
-		let height = (iframeChildWrapperEle?.clientHeight || 1130) + 10;
-		height = height < MIN_HEIGHT ? MIN_HEIGHT : height;
-		sendResizedIframeChildHeight(height);
-	}
-};
-const mutationObserver = (iframeChildWrapperEle: HTMLDivElement) => {
-	return new MutationObserver((mutations) => {
-		mutations.forEach(function (mutation, idx) {
-			// mutations가 일어날 때 첫 번째만 call
-			if (idx === 0) {
-				resizeIframeChildHeight(iframeChildWrapperEle);
-			}
-		});
-	});
-};
+interface Props {
+	children?: React.ReactElement;
+}
 
-function IframeChild() {
+function IframeChild({children}: Props) {
 	const location = useLocation();
-	const [token, setToken] = useState<string | null>(null);
+	const setLogin = useLoginStore((state) => state.setLogin);
+	const queryClient = useQueryClient();
 
 	const iframeChildWrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,43 +23,17 @@ function IframeChild() {
 		const parsedSearch = parse(location.search, {
 			ignoreQueryPrefix: true,
 		});
+
 		const tokenFromParsedSearch = (parsedSearch?.token as string) ?? null;
 		if (!tokenFromParsedSearch) {
+			localStorage.removeItem(TOKEN_KEY);
+			queryClient.invalidateQueries({queryKey: ['partnershipInfo']});
 			return;
 		}
 
-		setToken(tokenFromParsedSearch);
 		localStorage.setItem(TOKEN_KEY, tokenFromParsedSearch);
-		localStorage.setItem(
-			'b2btype',
-			(parsedSearch?.b2btype || '') as string
-		);
-		localStorage.setItem('email', (parsedSearch?.email || '') as string);
-		localStorage.setItem(
-			'useFieldModelNum',
-			(parsedSearch?.useFieldModelNum || 'Y') as string
-		);
-	}, [location.search, token]);
-
-	useEffect(() => {
-		let observer: MutationObserver | null = null;
-		const iframeChildWrapperEle = iframeChildWrapperRef?.current;
-		if (!iframeChildWrapperEle) {
-			return;
-		}
-
-		document.body.style.overflowY = 'hidden';
-		observer = mutationObserver(iframeChildWrapperEle);
-
-		observer.observe(iframeChildWrapperEle, {
-			childList: true, // 자식 요소에 변화 생길 경우
-			subtree: true, // 후손 요소에 변화 생길 경우
-		});
-		return () => {
-			document.body.style.overflowY = 'auto';
-			observer && observer.disconnect();
-		};
-	}, []);
+		setLogin(tokenFromParsedSearch);
+	}, [location.search]);
 
 	return (
 		<Box
@@ -83,8 +41,9 @@ function IframeChild() {
 			ref={iframeChildWrapperRef}
 			sx={{
 				height: '100%',
+				padding: '40px',
 			}}>
-			<Outlet />
+			{children ? children : <Outlet />}
 		</Box>
 	);
 }

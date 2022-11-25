@@ -14,3 +14,12 @@ export {default as ImgLogoVirclePartnersWhite} from './img-logo-vircle-partners-
 export {default as ImgLogoVirclePartnersWhite2x} from './img-logo-vircle-partners-white@2x.png';
 export {default as ImgTelegram} from './img-telegram.png';
 export {default as ImgTelegram2x} from './img-telegram@2x.png';
+
+export {default as LogoImage2x} from './logo_vircle_partners_inline_150@2x.png';
+export {default as defaultLogoImg} from './img_default_logo_78.png';
+export {default as defaultLogoImg2x} from './img_default_logo_78@2x.png';
+export {default as defaultErrorLogoImg2x} from './img_default_error_logo_78@2x.png';
+export {default as dashedLine} from './img_dashed_line.png';
+export {default as dashedLine2x} from './img_dashed_line@2x.png';
+export {default as solidLine} from './img_solid_line.png';
+export {default as solidLine2x} from './img_solid_line@2x.png';

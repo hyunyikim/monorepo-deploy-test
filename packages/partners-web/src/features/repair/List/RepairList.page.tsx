@@ -1,9 +1,9 @@
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {format, parse} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useList, useOpen} from '@/utils/hooks';
+import {useChildModalOpen, useList, useOpen} from '@/utils/hooks';
 import {
 	ListRequestParam,
 	RepairListResponse,
@@ -22,6 +22,8 @@ import {
 	trackingToParent,
 } from '@/utils';
 import {useMessageDialog} from '@/stores';
+import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
+import {useGetPartnershipInfo} from '@/stores';
 
 import {
 	ListTitle,
@@ -35,7 +37,6 @@ import {
 	Button,
 	TableCell,
 } from '@/components';
-import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
 import RepairConfirmDialog from './RepairConfirmDialog';
 
 const menu = 'repair';
@@ -46,7 +47,11 @@ function RepairList() {
 		trackingToParent('repair_pv', {pv_title: '수선신청목록 진입'});
 	}, []);
 
-	const email = localStorage.getItem('email');
+	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const email = useMemo(() => {
+		return partnershipInfo?.email || '';
+	}, [partnershipInfo]);
+
 	const {
 		isLoading,
 		data,
@@ -70,7 +75,8 @@ function RepairList() {
 		},
 	});
 
-	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
+	const {open, onOpen, onClose, modalData, onSetModalData} =
+		useChildModalOpen({});
 	const {
 		open: confirmOpen,
 		onOpen: onConfirmOpen,
@@ -202,12 +208,12 @@ function RepairList() {
 											alt={item?.pro_nm}
 											onClick={(value) => {
 												// 부모창 이미지 모달 오픈
-												openParantModal({
-													title: '이미지',
-													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-												});
-												// onSetModalData(value);
-												// onOpen();
+												// openParantModal({
+												// 	title: '이미지',
+												// 	content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												// });
+												onSetModalData(value);
+												onOpen();
 											}}
 										/>
 										<Typography

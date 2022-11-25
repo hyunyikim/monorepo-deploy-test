@@ -7,6 +7,13 @@ import {
 
 import Layout from '@/components/common/layout/Layout';
 import IframeChild from '@/components/common/layout/IframeChild';
+
+const SetupGuarantee = lazy(
+	() => import('@/features/setup/SetupGuarantee.page')
+);
+const ResetupGuarantee = lazy(
+	() => import('@/features/setup/ResetupGuarantee.page')
+);
 const Dashboard = lazy(() => import('@/features/dashboard/Dashboard.page'));
 const Guarantee = lazy(
 	() => import('@/features/guarantee/List/GuaranteeList.page')
@@ -26,6 +33,7 @@ const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const EmailVerificationFail = lazy(
 	() => import('@/features/auth/verification/EmailVerificationFail.page')
 );
+const TestFullPage = lazy(() => import('@/features/common/TestFullPage.page'));
 const NotFound = lazy(() => import('@/features/common/NotFound.page'));
 
 const privateRouter: RouteObject[] = [
@@ -56,6 +64,10 @@ const privateRouter: RouteObject[] = [
 			},
 			{path: '/b2b/inspection/v2', element: <Inspection />},
 			{path: '/b2b/repair/v2', element: <Repair />},
+			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
+			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
+
+			{path: '/test/fullpage/v2', element: <TestFullPage />},
 			{path: '*', element: <NotFound />},
 		],
 	},
@@ -63,7 +75,11 @@ const privateRouter: RouteObject[] = [
 
 const publicRouter: RouteObject[] = [
 	{
-		element: <IframeChild />,
+		element: (
+			<IframeChild>
+				<Layout hasSidebar={false} />
+			</IframeChild>
+		),
 		children: [
 			{
 				path: '/auth/signup/v2',
