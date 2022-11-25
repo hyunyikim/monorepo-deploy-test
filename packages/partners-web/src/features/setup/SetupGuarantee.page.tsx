@@ -1032,19 +1032,17 @@ export function InputFormSection({
 					context: 'cafe24',
 					code: queryData.code,
 					state: queryData.state,
-					isFirstTime: hasProfileLogo ? 'false' : 'true',
+					isFirstTime: hasProfileLogo ? 'N' : 'Y',
 				};
 
 				updateParentPartnershipData();
 				console.log('cafe24Query outside', cafe24Query);
+				console.log(
+					'createSearchParams(cafe24Query).toString()',
+					createSearchParams(cafe24Query).toString()
+				);
 
 				setTimeout(() => {
-					console.log('cafe24Query inside', cafe24Query);
-					console.log(
-						'createSearchParams(cafe24Query).toString()',
-						createSearchParams(cafe24Query).toString()
-					);
-
 					goToParentUrl(
 						`/cafe24/interwork?${createSearchParams(
 							cafe24Query
@@ -1061,7 +1059,6 @@ export function InputFormSection({
 			}
 			// else
 			if (hasProfileLogo) {
-				console.log('shouldnt be called here!!!!!');
 				openEditSettingGuaranteeModal();
 			} else {
 				openCompleteSettingGuaranteeModal();
