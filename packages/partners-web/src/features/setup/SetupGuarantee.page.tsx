@@ -940,7 +940,6 @@ export function InputFormSection({
 					if (centreUrl.includes('http')) {
 						formData.append(key, values[key] as string);
 					} else {
-						console.log('here####', centreUrl);
 						formData.append(key, `https://${centreUrl}`);
 					}
 				} else {
@@ -1042,13 +1041,11 @@ export function InputFormSection({
 					createSearchParams(cafe24Query).toString()
 				);
 
-				setTimeout(() => {
-					goToParentUrl(
-						`/cafe24/interwork?${createSearchParams(
-							cafe24Query
-						).toString()}`
-					);
-				}, 500);
+				goToParentUrl(
+					`/cafe24/interwork?${createSearchParams(
+						cafe24Query
+					).toString()}`
+				);
 				return;
 
 				/* TODO: 나중에 모노레포로 다 옮겼을때 아래 주석으로 변경 */
