@@ -661,6 +661,7 @@ export function InputFormSection({
 	const hasProfileLogo = data?.profileImage;
 
 	// const hasProfileLogo = null;
+
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
@@ -1035,21 +1036,32 @@ export function InputFormSection({
 				};
 
 				updateParentPartnershipData();
+				console.log('cafe24Query outside', cafe24Query);
 
 				setTimeout(() => {
+					console.log('cafe24Query inside', cafe24Query);
+					console.log(
+						'createSearchParams(cafe24Query).toString()',
+						createSearchParams(cafe24Query).toString()
+					);
+
 					goToParentUrl(
 						`/cafe24/interwork?${createSearchParams(
 							cafe24Query
 						).toString()}`
 					);
 				}, 500);
+				return;
 
 				/* TODO: 나중에 모노레포로 다 옮겼을때 아래 주석으로 변경 */
 				// return navigate({
 				// 	pathname: '/cafe24/interwork',
 				// 	search: `?${createSearchParams(cafe24Query)}`,
 				// });
-			} else if (hasProfileLogo) {
+			}
+			// else
+			if (hasProfileLogo) {
+				console.log('shouldnt be called here!!!!!');
 				openEditSettingGuaranteeModal();
 			} else {
 				openCompleteSettingGuaranteeModal();
