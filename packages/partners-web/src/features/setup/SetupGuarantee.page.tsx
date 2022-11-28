@@ -788,7 +788,7 @@ export function InputFormSection({
 	const additionalInfomationList = [
 		{
 			name: 'authInfo',
-			title: '브랜드 소개',
+			title: b2bType === 'brand' ? '브랜드 소개' : '판매자 검증',
 			placeholder: '브랜드를 소개하는 글을 입력해주세요.',
 			appearance: true,
 		},
@@ -1012,8 +1012,6 @@ export function InputFormSection({
 		});
 	};
 
-	// console.log('createSearchParams(cafe24Query', createSearchParams(cafe24Query));
-
 	/**
 	 * Form Data 보내기
 	 *
@@ -1035,11 +1033,6 @@ export function InputFormSection({
 				};
 
 				updateParentPartnershipData();
-				console.log('cafe24Query outside', cafe24Query);
-				console.log(
-					'createSearchParams(cafe24Query).toString()',
-					createSearchParams(cafe24Query).toString()
-				);
 
 				goToParentUrl(
 					`/cafe24/interwork?${createSearchParams(
@@ -1108,44 +1101,28 @@ export function InputFormSection({
 
 	/* 저장 및 나가기 */
 	const saveDataToStorage = () => {
+		// const values = getValues();
+		const values = watch();
 		const email = data?.email as string;
 
 		if (!hasProfileLogo) {
-			/* 로고가 있을때는 저장없이 그냥 나가기 */
+			/* 재설정일때는 저장없이 그냥 나가기 */
 			localStorage.setItem(`hasInputDataSaved=${email}`, 'true');
-			localStorage.setItem(
-				`afterServiceInfo=${email}`,
-				watch().afterServiceInfo as string
-			);
-			localStorage.setItem(
-				`authInfo=${email}`,
-				watch().authInfo as string
-			);
-			localStorage.setItem(
-				`brandName=${email}`,
-				watch().brandName as string
-			);
-			localStorage.setItem(
-				`brandNameEN=${email}`,
-				watch().brandNameEN as string
-			);
-			localStorage.setItem(
-				`customerCenterUrl=${email}`,
-				watch().customerCenterUrl as string
-			);
-			localStorage.setItem(
-				`returnInfo=${email}`,
-				watch().returnInfo as string
-			);
-			localStorage.setItem(
-				`warrantyDate=${email}`,
-				watch().warrantyDate as string
-			);
+			Object.keys(values).forEach((key) => {
+				if (values[key]) {
+					localStorage.setItem(
+						`${key}=${email}`,
+						values[key] as string
+					);
+				} else {
+					localStorage.setItem(`${key}=${email}`, '');
+				}
+			});
+
 			localStorage.setItem(
 				`nftCustomField=${email}`,
-				exampleList.join(',')
+				exampleList.length > 0 ? exampleList.join(',') : ''
 			);
-
 			if (queryData) {
 				localStorage.setItem(`cafe24context=${email}`, 'cafe24');
 				localStorage.setItem(`cafe24code=${email}`, queryData.code);
@@ -1306,7 +1283,7 @@ export function InputFormSection({
 						</Grid>
 
 						<LinkStyle
-							href="https://guide.vircle.co.kr/about-vircle"
+							href="https://guide.vircle.co.kr/guarantee-setting"
 							target="_blank"
 							rel="noreferrer"
 							className="faq_link">
