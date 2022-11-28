@@ -213,6 +213,7 @@ function GreyBoxComponent({title, desc, key}: GreyBoxProps) {
 }
 
 function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
+	console.log('values', values);
 	return (
 		<PreviewContainerStyle>
 			<PhoneFrameStyle
@@ -354,6 +355,36 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								<TitleTextStyle>{'-'}</TitleTextStyle>
 							</Grid>
 						))}
+
+						<Grid
+							container
+							justifyContent={'space-between'}
+							alignItems="center">
+							<DescTextStyle>디지털 개런티 번호</DescTextStyle>
+							<TitleTextStyle>{'-'}</TitleTextStyle>
+						</Grid>
+						<Grid
+							container
+							justifyContent={'space-between'}
+							alignItems="center">
+							<DescTextStyle>디지털 개런티 발급일</DescTextStyle>
+							<TitleTextStyle>{'-'}</TitleTextStyle>
+						</Grid>
+						<Grid
+							container
+							justifyContent={'space-between'}
+							alignItems="center">
+							<DescTextStyle>판매자</DescTextStyle>
+							<TitleTextStyle>{'-'}</TitleTextStyle>
+						</Grid>
+
+						<Grid
+							container
+							justifyContent={'space-between'}
+							alignItems="center">
+							<DescTextStyle>브랜드 소개</DescTextStyle>
+							<TitleTextStyle>{values?.authInfo}</TitleTextStyle>
+						</Grid>
 
 						<ServiceCenterButtonStyle
 							onClick={serviceCenterHandler}>
