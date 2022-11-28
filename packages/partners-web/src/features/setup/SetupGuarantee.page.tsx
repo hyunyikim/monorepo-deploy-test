@@ -1065,8 +1065,7 @@ export function InputFormSection({
 			}
 			// else
 			if (hasProfileLogo) {
-				openCompleteSettingGuaranteeModal();
-				// openEditSettingGuaranteeModal();
+				openEditSettingGuaranteeModal();
 			} else {
 				openCompleteSettingGuaranteeModal();
 			}
