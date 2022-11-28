@@ -41,11 +41,7 @@ function HeaderProfile({data}: Props) {
 	}, [data]);
 
 	return (
-		<Stack
-			className="helloo"
-			direction="row"
-			alignItems="center"
-			position="relative">
+		<Stack direction="row" alignItems="center" position="relative">
 			<Typography
 				display={'inline-block'}
 				fontSize={14}
@@ -92,6 +88,9 @@ function HeaderProfile({data}: Props) {
 						borderRadius: '8px',
 						boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 						transform: 'translateY(10px) !important',
+						'& .MuiMenuItem-root': {
+							fontSize: '13px',
+						},
 					},
 				}}>
 				<MenuItem onClick={handleLogout}>로그아웃</MenuItem>
