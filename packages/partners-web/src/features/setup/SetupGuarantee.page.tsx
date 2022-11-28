@@ -432,30 +432,32 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 			case 0:
 				result = (
 					<TipTextStyle>
-						{`고객센터는 브랜드의 카카오톡 채널에서 더보기 > URL 복사하기를 선택하신 후에 개런티 설정의 고객센터 영역에 입력해주세요!`}
+						브랜드의 카카오톡 채널에서{' '}
+						<TipBoldTextStyle>
+							{`더보기 > URL 복사하기`}
+						</TipBoldTextStyle>
+						를 선택하신 후에 개런티 설정의 고객센터 영역에
+						입력해주세요!
 					</TipTextStyle>
 				);
 				break;
 			case 1:
 				result = (
 					<TipTextStyle>
-						개런티 카드에 어떤 정보를 개런티카드에 노출할지 설정하는
+						디지털개런티에 어떤 상품 정보를 노출할지 설정하는
 						단계입니다.
-						<br />
 						<TipBoldTextStyle>
-							상품명과 보증기간 두가지의 필수정보 이외에 브랜드의
-							상품에 필요한 정보들을 자유롭게 추가해주세요!
+							상품명과 보증기간 두가지의 필수정보
 						</TipBoldTextStyle>
+						이외에 상품에 필요한 정보들을 자유롭게 추가해주세요!
 					</TipTextStyle>
 				);
 				break;
 			case 2:
 				result = (
 					<TipTextStyle>
-						브랜드의 이미지를 개런티카드에 제작 해보세요! <br />
 						이미지를 업로드해 개런티 카드의 배경 이미지를 자유롭게
-						변경할 수 있습니다.
-						<br />
+						변경할 수 있습니다.{' '}
 						<TipBoldTextStyle underline={true}>
 							개런티제작가이드를{' '}
 						</TipBoldTextStyle>
@@ -466,13 +468,12 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 			case 3:
 				result = (
 					<TipTextStyle>
-						개런티 카드에 추가로 노출 될 정보를 입력해주세요.
+						개런티 카드에 추가로 노출 될 정보를 입력하는 단계입니다.
 						<br />
 						<TipBoldTextStyle underline={true}>
 							교환 및 반품안내, A/S 주의사항
 						</TipBoldTextStyle>
-						과 같이 사후관리와 관련된 정보들을 입력해주시면 개런티가
-						발급되었을때 고객과의 접점을 확보할 수 있어요!
+						과 같이 사후관리와 관련된 정보들을 입력해주세요!
 					</TipTextStyle>
 				);
 				break;
@@ -790,21 +791,21 @@ export function InputFormSection({
 			name: 'authInfo',
 			title: b2bType === 'brand' ? '브랜드 소개' : '판매자 검증',
 			placeholder: '브랜드를 소개하는 글을 입력해주세요.',
-			appearance: true,
+			// appearance: true,
 		},
 		{
 			name: 'returnInfo',
 			title: '교환 및 반품 안내',
 			placeholder:
 				'예시 : 교환/환불이 불가능한 경우 개별 주문 제작의 경우, 주문 취소 및 환불이 불가합니다. 사전에 안내된 생산완료 예정일 기준 3주전에는 모델 및 색상변경이 불가합니다. 본 제품의 하자가 아닌 가구 소재의 특성에 대한 변심은 교환/환불이 불가합니다.',
-			appearance: b2bType === 'brand' ? true : false,
+			// appearance: b2bType === 'brand' ? true : false,
 		},
 		{
 			name: 'afterServiceInfo',
 			title: 'A/S 주의사항',
 			placeholder:
 				'예시 : 제품 하자 관련 무상 A/S 기간은 제품별로 상이합니다.',
-			appearance: b2bType === 'brand' ? true : false,
+			// appearance: b2bType === 'brand' ? true : false,
 		},
 	];
 
@@ -968,7 +969,9 @@ export function InputFormSection({
 		onMessageDialogOpen({
 			title: '개런티가 수정됐습니다!',
 			showBottomCloseButton: true,
+			disableClickBackground: true,
 			closeButtonValue: '확인',
+			useCloseIcon: false,
 			onCloseFunc: () => {
 				setTimeout(() => {
 					updateParentPartnershipData();
@@ -982,17 +985,21 @@ export function InputFormSection({
 	const openCompleteSettingGuaranteeModal = () => {
 		onMessageDialogOpen({
 			title: '개런티 설정이 완료되었어요!',
-			message: '이용 가이드를 통해 버클의 기능들을 미리 경험해보세요!',
+			disableClickBackground: true,
+			useCloseIcon: true,
+			onCloseFunc: () => {
+				goToParentUrl('/dashboard');
+			},
 			buttons: (
 				<>
 					<Button
-						color="primary"
+						color="black"
 						variant="outlined"
 						onClick={() => {
 							setTimeout(() => {
 								updateParentPartnershipData();
 								goToParentUrl('/b2b/interwork');
-							}, 200);
+							}, 300);
 						}}>
 						Cafe24 연동하기
 					</Button>
@@ -1003,7 +1010,7 @@ export function InputFormSection({
 							setTimeout(() => {
 								updateParentPartnershipData();
 								goToParentUrl('/b2b/guarantee/register');
-							}, 200);
+							}, 700);
 						}}>
 						개런티 발급하기
 					</Button>
@@ -1049,7 +1056,8 @@ export function InputFormSection({
 			}
 			// else
 			if (hasProfileLogo) {
-				openEditSettingGuaranteeModal();
+				openCompleteSettingGuaranteeModal();
+				// openEditSettingGuaranteeModal();
 			} else {
 				openCompleteSettingGuaranteeModal();
 			}
@@ -1383,37 +1391,35 @@ export function InputFormSection({
 						error={errors && errors.warrantyDate}
 					/>
 
-					{b2bType === 'brand' && (
-						<Grid container sx={{marginBottom: 0}}>
-							<Grid container justifyContent="space-between">
-								<InputLabelTag
-									required={false}
-									labelTitle={'고객센터'}
-								/>
-								<Typography
-									onClick={handleCheckOutLinkClick}
-									sx={{
-										fontSize: '14px',
-										lineHeight: '18px',
-										color: 'primary.main',
-										fontWeight: 700,
-										textDecoration: 'underline',
-										cursor: 'pointer',
-									}}>
-									연결 확인하기
-								</Typography>
-							</Grid>
-
-							<ControlledInputComponent
-								control={control}
-								name="customerCenterUrl"
-								error={errors && errors.customerCenterUrl}
-								type={'text'}
-								placeholder={'고객센터 링크를 연결해주세요'}
-								fullWidth
+					<Grid container sx={{marginBottom: 0}}>
+						<Grid container justifyContent="space-between">
+							<InputLabelTag
+								required={false}
+								labelTitle={'고객센터'}
 							/>
+							<Typography
+								onClick={handleCheckOutLinkClick}
+								sx={{
+									fontSize: '14px',
+									lineHeight: '18px',
+									color: 'primary.main',
+									fontWeight: 700,
+									textDecoration: 'underline',
+									cursor: 'pointer',
+								}}>
+								연결 확인하기
+							</Typography>
 						</Grid>
-					)}
+
+						<ControlledInputComponent
+							control={control}
+							name="customerCenterUrl"
+							error={errors && errors.customerCenterUrl}
+							type={'text'}
+							placeholder={'고객센터 링크를 연결해주세요'}
+							fullWidth
+						/>
+					</Grid>
 				</BoxContainer>
 
 				{/* 상품 정보 box */}
@@ -1665,21 +1671,18 @@ export function InputFormSection({
 					title="추가정보를 입력해주세요"
 					isFilled={false}
 					openHandler={() => boxOpenHandler(3)}>
-					{additionalInfomationList.map(
-						(li, idx) =>
-							li.appearance && (
-								<InputWithLabel
-									name={li.name}
-									control={control}
-									labelTitle={li.title}
-									placeholder={li.placeholder}
-									multiline
-									fullWidth={true}
-									inputType="textarea"
-									key={`additional-information-${idx}`}
-								/>
-							)
-					)}
+					{additionalInfomationList.map((li, idx) => (
+						<InputWithLabel
+							name={li.name}
+							control={control}
+							labelTitle={li.title}
+							placeholder={li.placeholder}
+							multiline
+							fullWidth={true}
+							inputType="textarea"
+							key={`additional-information-${idx}`}
+						/>
+					))}
 				</BoxContainer>
 
 				{/* fixed 버튼s */}
