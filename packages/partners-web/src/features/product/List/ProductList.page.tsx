@@ -36,6 +36,7 @@ const menuKo = '상품';
 
 function ProductList() {
 	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const b2bType = useGetPartnershipInfo()?.data?.b2bType;
 	const useFieldModelNum = useMemo(() => {
 		return partnershipInfo?.useFieldModelNum === 'Y' ? true : false;
 	}, [partnershipInfo]);
@@ -62,6 +63,7 @@ function ProductList() {
 			categoryCode: '',
 		},
 	});
+
 	return (
 		<>
 			<Box>
@@ -124,7 +126,9 @@ function ProductList() {
 							<TableCell>브랜드</TableCell>
 							<TableCell>상품명</TableCell>
 							<TableCell>상품가격</TableCell>
-							<TableCell>카테고리</TableCell>
+							{b2bType !== 'brand' && (
+								<TableCell>카테고리</TableCell>
+							)}
 							{useFieldModelNum && (
 								<TableCell>모델번호</TableCell>
 							)}
@@ -172,9 +176,11 @@ function ProductList() {
 										? `${item?.price.toLocaleString()}원`
 										: '-'}
 								</TableCell>
-								<TableCell sx={{minWidth: 120}}>
-									{item?.categoryName || '-'}
-								</TableCell>
+								{b2bType === 'brand' ? null : (
+									<TableCell sx={{minWidth: 120}}>
+										{item?.categoryName || '-'}
+									</TableCell>
+								)}
 								{useFieldModelNum && (
 									<TableCell sx={{minWidth: 180}}>
 										{item?.modelNum || '-'}

@@ -1,4 +1,9 @@
-import {Controller} from '@nestjs/common';
+import {Controller, Post} from '@nestjs/common';
 
 @Controller('toss-payments')
-export class TossPaymentController {}
+export class TossPaymentController {
+	@Post()
+	registerBillingCard() {
+		return null;
+	}
+}

@@ -1,19 +1,48 @@
-import {Typography, DialogContent, DialogActions} from '@mui/material';
+import {useEffect, useCallback} from 'react';
+
+import {
+	Typography,
+	Dialog,
+	DialogContent,
+	DialogActions,
+	DialogTitle,
+	Box,
+} from '@mui/material';
 
 import {useMessageDialog} from '@/stores';
+import {openChildModal, closeChildModal} from '@/utils';
 
-import {Button, Dialog} from '@/components';
-import {useCallback} from 'react';
+import {Button} from '@/components';
+import {IcClose} from '@/assets/icon';
 
 function MessageDialog() {
 	const open = useMessageDialog((state) => state.open);
 	const title = useMessageDialog((state) => state.title);
 	const message = useMessageDialog((state) => state.message);
+	const useCloseIcon = useMessageDialog((state) => state.useCloseIcon);
+	const disableClickBackground = useMessageDialog(
+		(state) => state.disableClickBackground
+	);
+	const showBottomCloseButton = useMessageDialog(
+		(state) => state.showBottomCloseButton
+	);
+	const closeButtonValue: '확인' | '취소' = useMessageDialog(
+		(state) => state.closeButtonValue
+	);
+	const buttons = useMessageDialog((state) => state.buttons);
 	const onClose = useMessageDialog((state) => state.onClose);
 	const onCloseFunc = useMessageDialog((state) => state.onCloseFunc);
 	const initMessageDialog = useMessageDialog(
 		(state) => state.initMessageDialog
 	);
+
+	useEffect(() => {
+		if (open) {
+			openChildModal();
+			return;
+		}
+		closeChildModal();
+	}, [open]);
 
 	const handleClose = useCallback(() => {
 		if (onCloseFunc) {
@@ -30,29 +59,80 @@ function MessageDialog() {
 	return (
 		<Dialog
 			open={open}
-			onClose={handleClose}
-			TitleComponent={
-				<Typography fontSize={20} fontWeight={700}>
-					{title}
-				</Typography>
-			}
-			maxWidth="md">
-			<>
-				<DialogContent>
-					<Typography
+			onClose={!disableClickBackground && handleClose}
+			sx={{
+				'& .MuiPaper-root': {
+					padding: '32px',
+					width: '520px',
+					minHeight: '197px',
+				},
+			}}>
+			{
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'flex-start',
+					}}>
+					<DialogTitle
+						fontSize={{
+							xs: 16,
+							md: 21,
+						}}
+						fontWeight={700}
 						sx={{
-							wordBreak: 'break-word',
-							minWidth: '300px',
+							padding: 0,
+							marginBottom: '16px',
 						}}>
-						{message}
-					</Typography>
-				</DialogContent>
-				<DialogActions>
-					<Button color="black" onClick={handleClose}>
-						확인
-					</Button>
-				</DialogActions>
-			</>
+						{title}
+					</DialogTitle>
+					{useCloseIcon && (
+						<IcClose
+							style={{cursor: 'pointer'}}
+							onClick={handleClose}
+						/>
+					)}
+				</Box>
+			}
+			<DialogContent
+				sx={{
+					padding: 0,
+					marginBottom: '40px',
+				}}>
+				<Typography
+					color="grey.600"
+					fontSize={{
+						xs: 12,
+						md: 16,
+					}}
+					sx={{
+						wordBreak: 'break-word',
+					}}>
+					{message}
+				</Typography>
+			</DialogContent>
+			<DialogActions
+				sx={{
+					padding: 0,
+				}}>
+				{showBottomCloseButton &&
+					(!buttons ? (
+						<Button
+							color="black"
+							variant="contained"
+							onClick={handleClose}>
+							{closeButtonValue}
+						</Button>
+					) : (
+						<Button
+							color="grey-100"
+							variant="outlined"
+							onClick={handleClose}>
+							{closeButtonValue}
+						</Button>
+					))}
+				{buttons && buttons}
+			</DialogActions>
 		</Dialog>
 	);
 }

@@ -7,6 +7,13 @@ import {
 
 import Layout from '@/components/common/layout/Layout';
 import IframeChild from '@/components/common/layout/IframeChild';
+
+const SetupGuarantee = lazy(
+	() => import('@/features/setup/SetupGuarantee.page')
+);
+const ResetupGuarantee = lazy(
+	() => import('@/features/setup/ResetupGuarantee.page')
+);
 const Dashboard = lazy(() => import('@/features/dashboard/Dashboard.page'));
 const Guarantee = lazy(
 	() => import('@/features/guarantee/List/GuaranteeList.page')
@@ -57,6 +64,10 @@ const privateRouter: RouteObject[] = [
 			},
 			{path: '/b2b/inspection/v2', element: <Inspection />},
 			{path: '/b2b/repair/v2', element: <Repair />},
+			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
+			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
+
+			{path: '/test/fullpage/v2', element: <TestFullPage />},
 			{path: '*', element: <NotFound />},
 		],
 	},
@@ -80,14 +91,6 @@ const publicRouter: RouteObject[] = [
 			},
 			{path: '*', element: <NotFound />},
 		],
-	},
-	{
-		path: '/test/fullpage/v2',
-		element: (
-			<IframeChild fullPage>
-				<TestFullPage />
-			</IframeChild>
-		),
 	},
 ];
 

@@ -1,6 +1,7 @@
-import {useMemo} from 'react';
+import {useMemo, useState, useEffect} from 'react';
 import {ButtonBase, AppBar, Toolbar} from '@mui/material';
 
+import {debounce} from 'lodash';
 import {
 	ImgLogoVirclePartners,
 	ImgLogoVirclePartners2x,
@@ -20,6 +21,9 @@ interface Props {
 }
 
 function Header({backgroundColor = 'white', borderBottom = true}: Props) {
+	let preScrollPosition = 0;
+	const [headerState, setHeaderState] = useState('top');
+
 	const logoImage = useMemo(() => {
 		return {
 			src:
@@ -35,12 +39,55 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 
 	const {data} = useGetPartnershipInfo();
 
+	const transparentBackgroundHandler = useMemo(() => {
+		return {
+			background: headerState === 'top' ? 'transparent' : 'white',
+			logo:
+				headerState === 'top'
+					? ImgLogoVirclePartnersWhite
+					: ImgLogoVirclePartners,
+			logo2x:
+				headerState === 'top'
+					? ImgLogoVirclePartnersWhite2x
+					: ImgLogoVirclePartners2x,
+		};
+	}, [headerState]);
+
+	const scrollHandlerDebounce = (e) => {
+		const liveScrollPosition = window.scrollY;
+
+		if (liveScrollPosition === 0) {
+			setHeaderState('top');
+		} else if (liveScrollPosition - preScrollPosition < 0) {
+			setHeaderState('');
+		} else if (liveScrollPosition - preScrollPosition > 0) {
+			// 스크롤 내렸을때,
+			setHeaderState('scrolling_down');
+		}
+
+		preScrollPosition = liveScrollPosition;
+	};
+
+	useEffect(() => {
+		window.addEventListener('scroll', debounce(scrollHandlerDebounce, 20));
+
+		return () => {
+			window.removeEventListener(
+				'scroll',
+				debounce(scrollHandlerDebounce, 20)
+			);
+		};
+	}, []);
+
 	return (
 		<AppBar
 			position="fixed"
 			sx={{
 				height: HEADER_HEIGHT,
-				backgroundColor: backgroundColor,
+				backgroundColor:
+					backgroundColor === 'transparent'
+						? transparentBackgroundHandler.background
+						: backgroundColor,
 				boxShadow: 'none',
 				...(borderBottom && {
 					borderBottomWidth: '1px',
@@ -65,8 +112,16 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 						goToParentUrl('/dashboard');
 					}}>
 					<img
-						src={logoImage.src}
-						srcSet={logoImage.srcSet}
+						src={
+							backgroundColor === 'transparent'
+								? transparentBackgroundHandler.logo
+								: logoImage.src
+						}
+						srcSet={
+							backgroundColor === 'transparent'
+								? transparentBackgroundHandler.logo2x
+								: logoImage.srcSet
+						}
 						alt="logo"
 						width={172}
 					/>

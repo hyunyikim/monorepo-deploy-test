@@ -45,5 +45,17 @@ export default function component(): Components {
 				},
 			},
 		},
+		MuiTooltip: {
+			styleOverrides: {
+				tooltip: {
+					backgroundColor: 'rgba(0, 0, 0, 0.6)',
+					padding: 0,
+					marginTop: '8px !important',
+				},
+				popper: {
+					zIndex: 1000,
+				},
+			},
+		},
 	};
 }

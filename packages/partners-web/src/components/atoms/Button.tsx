@@ -4,12 +4,18 @@ import {Button as MuiButton, ButtonProps, SxProps} from '@mui/material';
 
 import style from '@/assets/styles/style.module.scss';
 
-type Color = 'primary' | 'blue-50' | 'black' | 'grey-100' | 'grey-50';
+type Color =
+	| 'primary'
+	| 'blue-50'
+	| 'black'
+	| 'grey-100'
+	| 'grey-50'
+	| 'gradient';
 type Height = 60 | 48 | 40 | 32;
 
 interface Props extends Omit<ButtonProps, 'color' | 'size'> {
 	color?: Color;
-	width?: number | 'auto';
+	width?: number | string;
 	height?: Height;
 	onClick?: () => void;
 }
@@ -34,15 +40,31 @@ function Button({
 					backgroundColor: 'primary.50',
 					color: 'primary.main',
 					borderColor: 'primary.main',
-				};
-			case 'black':
-				return {
-					backgroundColor: 'black',
-					color: 'white',
 					':hover': {
-						backgroundColor: 'grey.800',
+						backgroundColor: 'primary.100',
+						boxShadow: 'none',
 					},
 				};
+			case 'black':
+				if (variant === 'outlined') {
+					return {
+						backgroundColor: 'white',
+						borderColor: 'grey.100',
+						color: 'grey.900',
+						':hover': {
+							borderColor: 'grey.100',
+							backgroundColor: 'grey.50',
+						},
+					};
+				} else {
+					return {
+						backgroundColor: 'black',
+						color: 'white',
+						':hover': {
+							backgroundColor: 'grey.800',
+						},
+					};
+				}
 			case 'grey-100':
 				return {
 					borderColor: 'grey.100',
@@ -58,6 +80,12 @@ function Button({
 					backgroundColor: 'grey.50',
 					color: 'grey.300',
 				};
+			case 'gradient':
+				return {
+					background:
+						'linear-gradient(98.38deg, #5D9BF9 43.58%, #5C3EF6 104.42%)',
+					color: 'white',
+				};
 			// primary 기본 버튼 스타일 속성 사용
 			case 'primary':
 			default:
@@ -70,6 +98,7 @@ function Button({
 			fontWeight: style.bold,
 			minHeight: `${height}px`,
 			height: `${height}px`,
+			lineHeight: `${height}px`,
 			width: typeof width === 'number' ? `${width}px` : width,
 			...(width !== 'auto' && {
 				padding: '0',
@@ -78,6 +107,9 @@ function Button({
 			...(variant === 'outlined' && {
 				// height 48 버튼부터
 				borderWidth: height > 40 ? '1.5px' : '1px',
+				'&:hover': {
+					borderWidth: height > 40 ? '1.5px' : '1px',
+				},
 			}),
 		};
 		switch (height) {

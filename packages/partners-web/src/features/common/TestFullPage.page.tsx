@@ -2,10 +2,12 @@ import {Box} from '@mui/material';
 
 import Header from '@/components/common/layout/Header';
 import BottomNavigation from '@/components/common/layout/BottomNavigation';
-import {Button} from '@/components';
+import {Button, Dialog} from '@/components';
 import {HEADER_HEIGHT} from '@/data';
+import {useChildModalOpen} from '@/utils/hooks';
 
 function TestFullPage() {
+	const {open, onOpen, onClose} = useChildModalOpen({});
 	return (
 		<>
 			<Header backgroundColor="transparent" borderBottom={false} />
@@ -23,10 +25,13 @@ function TestFullPage() {
 			))}
 			<BottomNavigation>
 				<>
-					<Button>hello</Button>
-					<Button>hello</Button>
+					<Button onClick={onOpen}>자식 모달 열기</Button>
+					<Button onClick={onClose}>자식 모달 닫기</Button>
 				</>
 			</BottomNavigation>
+			<Dialog open={open} onClose={onClose}>
+				<>자식 모달</>
+			</Dialog>
 		</>
 	);
 }

@@ -130,11 +130,12 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 					문의내용: data.content ? `\n${data.content}` : '',
 				},
 			});
-
 			onOpenMessageDialog({
 				title: '문의하신 내용이 접수되었습니다.',
 				message:
 					'문의 내용을 확인한 후 빠르 시일 내에 답변 드리겠습니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
 			});
 		} catch (e) {
 			console.log(e);

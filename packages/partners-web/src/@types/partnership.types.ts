@@ -61,9 +61,24 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	blockchainPlatform: string;
 	lastLoggedIn: string;
 	passwordChanged: string;
-	brand: string | null;
-	nftCustomFields: string[];
+	brand: BrandType | null;
+	nftCustomFields: string[] | [];
 }
+
+export type BrandType = {
+	detailImage?: string | null;
+	englishName: string;
+	idx: number;
+	mainExposure?: YNType;
+	mainImage?: string | null;
+	name: string;
+	registered?: string;
+	registrantIdx?: string;
+	summary?: string;
+	useInspect?: YNType;
+	useRepair?: YNType;
+	viewExposure?: YNType;
+};
 
 export interface PartnershipViewMenuYN {
 	useUnipass: YNType;

@@ -9,6 +9,7 @@ import RootRouter from '@/routes/RootRouter';
 
 import '@/assets/styles/common.scss';
 import {MessageDialog} from './components';
+import ModalComponent from '@/components/common/ModalComponent';
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ function App() {
 						<CssBaseline />
 						<RootRouter />
 						<MessageDialog />
+						<ModalComponent />
 					</StylesThemeProvider>
 				</ThemeProvider>
 			</StyledEngineProvider>
