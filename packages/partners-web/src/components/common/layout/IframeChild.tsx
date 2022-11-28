@@ -1,6 +1,7 @@
 import {useEffect, useRef} from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import {parse} from 'qs';
+import {useQueryClient} from '@tanstack/react-query';
 
 import {Box} from '@mui/material';
 
@@ -13,7 +14,7 @@ interface Props {
 function IframeChild({children}: Props) {
 	const location = useLocation();
 	const setLogin = useLoginStore((state) => state.setLogin);
-	const setLogout = useLoginStore((state) => state.setLogout);
+	const queryClient = useQueryClient();
 
 	const iframeChildWrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -25,7 +26,8 @@ function IframeChild({children}: Props) {
 
 		const tokenFromParsedSearch = (parsedSearch?.token as string) ?? null;
 		if (!tokenFromParsedSearch) {
-			setLogout();
+			localStorage.removeItem(TOKEN_KEY);
+			queryClient.invalidateQueries({queryKey: ['partnershipInfo']});
 			return;
 		}
 

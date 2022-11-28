@@ -11,10 +11,8 @@ interface LoginState {
 export const useLoginStore = create<LoginState>((set, get) => ({
 	token: localStorage.getItem(TOKEN_KEY),
 	setLogin: (token: string) => set(() => ({token})),
-	setLogout: () => {
-		localStorage.removeItem(TOKEN_KEY);
+	setLogout: () =>
 		set(() => ({
 			token: null,
-		}));
-	},
+		})),
 }));
