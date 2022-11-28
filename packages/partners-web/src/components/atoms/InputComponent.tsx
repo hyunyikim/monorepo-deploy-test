@@ -96,6 +96,11 @@ function InputComponent({
 						borderColor: 'red.main',
 						backgroundColor: 'red.50',
 					},
+					'&.MuiInputBase-readOnly': {
+						borderColor: 'grey.100',
+						backgroundColor: 'grey.50',
+						color: 'grey.300',
+					},
 					...sx,
 				}}
 			/>

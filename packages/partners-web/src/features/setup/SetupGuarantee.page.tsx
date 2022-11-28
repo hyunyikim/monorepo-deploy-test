@@ -11,8 +11,10 @@ import style from '@/assets/styles/style.module.scss';
 
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {guaranteeSchemaShape} from '@/utils/schema';
-// import {parse, stringify} from 'querystring';
+import {
+	brandGuaranteeSchemaShape,
+	cooperatorGuaranteeSchemaShape,
+} from '@/utils/schema';
 
 import {useModalStore, useGetPartnershipInfo, useMessageDialog} from '@/stores';
 import {Box, Typography, Grid, Divider} from '@mui/material';
@@ -605,6 +607,9 @@ export function InputFormSection({
 	boxOpenHandler,
 	justOpenBox,
 }: InputFormProps) {
+	const {data} = useGetPartnershipInfo();
+	const b2bType = data?.b2bType; // cooperator or brand
+
 	const {
 		handleSubmit,
 		watch,
@@ -615,7 +620,10 @@ export function InputFormSection({
 		getValues,
 		formState: {errors},
 	} = useForm({
-		resolver: yupResolver(guaranteeSchemaShape),
+		resolver:
+			b2bType === 'brand'
+				? yupResolver(brandGuaranteeSchemaShape)
+				: yupResolver(cooperatorGuaranteeSchemaShape),
 		mode: 'onChange',
 	});
 
@@ -656,8 +664,6 @@ export function InputFormSection({
 
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
-	const {data} = useGetPartnershipInfo();
-	const b2bType = data?.b2bType; // cooperator or brand
 	const nftCustomFields: string[] | [] = data?.nftCustomFields;
 	const hasProfileLogo = data?.profileImage;
 
@@ -988,7 +994,10 @@ export function InputFormSection({
 			disableClickBackground: true,
 			useCloseIcon: true,
 			onCloseFunc: () => {
-				goToParentUrl('/dashboard');
+				setTimeout(() => {
+					updateParentPartnershipData();
+					goToParentUrl('/dashboard');
+				}, 300);
 			},
 			buttons: (
 				<>
@@ -1010,7 +1019,7 @@ export function InputFormSection({
 							setTimeout(() => {
 								updateParentPartnershipData();
 								goToParentUrl('/b2b/guarantee/register');
-							}, 700);
+							}, 300);
 						}}>
 						개런티 발급하기
 					</Button>
@@ -1236,7 +1245,7 @@ export function InputFormSection({
 								color={'black'}
 								lineHeight="32px"
 								fontWeight={700}>
-								안녕하세요, {data?.brand?.name}님!
+								안녕하세요, {data?.companyName}님!
 							</Typography>
 							<Typography
 								fontSize={16}
@@ -1354,15 +1363,22 @@ export function InputFormSection({
 
 						<Grid container sx={{marginBottom: '24px'}}>
 							<InputLabelTag
-								required={true}
+								required={b2bType === 'brand' ? true : false}
 								labelTitle={'브랜드명'}
 							/>
 							<Grid container gap="16px" flexWrap={'nowrap'}>
 								<ControlledInputComponent
 									type={'text'}
 									name="brandName"
-									placeholder={'국문 브랜드명을 입력해주세요'}
+									placeholder={
+										b2bType === 'brand'
+											? '국문 브랜드명을 입력해주세요'
+											: '수입사는 브랜드명 입력을 받지 않습니다.'
+									}
 									required
+									readonly={
+										b2bType === 'brand' ? false : true
+									}
 									maxHeight={'48px'}
 									control={control}
 									error={errors && errors.brandName}
@@ -1371,8 +1387,15 @@ export function InputFormSection({
 									type={'text'}
 									name="brandNameEN"
 									control={control}
-									placeholder={'영문 브랜드명을 입력해주세요'}
+									placeholder={
+										b2bType === 'brand'
+											? '영문 브랜드명을 입력해주세요'
+											: '수입사는 브랜드명 입력을 받지 않습니다.'
+									}
 									required
+									readonly={
+										b2bType === 'brand' ? false : true
+									}
 									maxHeight={'48px'}
 									error={errors && errors.brandNameEN}
 								/>

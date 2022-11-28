@@ -13,7 +13,7 @@ import style from '@/assets/styles/style.module.scss';
 
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {guaranteeSchemaShape} from '@/utils/schema';
+import {brandGuaranteeSchemaShape} from '@/utils/schema';
 
 import {openParantModal} from '@/utils';
 import {useModalStore, useGetPartnershipInfo, useMessageDialog} from '@/stores';
