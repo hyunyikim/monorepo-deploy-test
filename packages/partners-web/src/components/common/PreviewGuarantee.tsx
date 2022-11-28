@@ -237,8 +237,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							/>
 						) : (
 							<BrandCardStyle
-								src={massadoptionBrandCard}
-								srcSet={`${massadoptionBrandCard} 1x, ${massadoptionBrandCard2x} 2x`}
+								src={`${STATIC_URL}/files/nft/bg_nft_vircle_new.png`}
 								alt="brand card"
 							/>
 						)}
