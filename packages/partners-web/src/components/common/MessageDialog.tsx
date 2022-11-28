@@ -6,17 +6,23 @@ import {
 	DialogContent,
 	DialogActions,
 	DialogTitle,
+	Box,
 } from '@mui/material';
 
 import {useMessageDialog} from '@/stores';
 import {openChildModal, closeChildModal} from '@/utils';
 
 import {Button} from '@/components';
+import {IcClose} from '@/assets/icon';
 
 function MessageDialog() {
 	const open = useMessageDialog((state) => state.open);
 	const title = useMessageDialog((state) => state.title);
 	const message = useMessageDialog((state) => state.message);
+	const useCloseIcon = useMessageDialog((state) => state.useCloseIcon);
+	const disableClickBackground = useMessageDialog(
+		(state) => state.disableClickBackground
+	);
 	const showBottomCloseButton = useMessageDialog(
 		(state) => state.showBottomCloseButton
 	);
@@ -53,7 +59,7 @@ function MessageDialog() {
 	return (
 		<Dialog
 			open={open}
-			onClose={handleClose}
+			onClose={!disableClickBackground && handleClose}
 			sx={{
 				'& .MuiPaper-root': {
 					padding: '32px',
@@ -61,18 +67,33 @@ function MessageDialog() {
 					minHeight: '197px',
 				},
 			}}>
-			<DialogTitle
-				fontSize={{
-					xs: 16,
-					md: 21,
-				}}
-				fontWeight={700}
-				sx={{
-					padding: 0,
-					marginBottom: '16px',
-				}}>
-				{title}
-			</DialogTitle>
+			{
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'flex-start',
+					}}>
+					<DialogTitle
+						fontSize={{
+							xs: 16,
+							md: 21,
+						}}
+						fontWeight={700}
+						sx={{
+							padding: 0,
+							marginBottom: '16px',
+						}}>
+						{title}
+					</DialogTitle>
+					{useCloseIcon && (
+						<IcClose
+							style={{cursor: 'pointer'}}
+							onClick={handleClose}
+						/>
+					)}
+				</Box>
+			}
 			<DialogContent
 				sx={{
 					padding: 0,

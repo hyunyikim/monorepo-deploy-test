@@ -5,6 +5,8 @@ interface OnOpenParamType {
 	title: string;
 	message?: string;
 	showBottomCloseButton?: boolean;
+	disableClickBackground?: boolean;
+	useCloseIcon?: boolean;
 	closeButtonValue?: '확인' | '취소';
 	buttons?: React.ReactElement;
 	onCloseFunc?: () => void;
@@ -12,6 +14,8 @@ interface OnOpenParamType {
 
 interface MessageDialogState {
 	open: boolean;
+	disableClickBackground: boolean;
+	useCloseIcon: boolean;
 	title: string | null;
 	message: string | null;
 	showBottomCloseButton: boolean;
@@ -33,6 +37,8 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 	closeButtonValue: '확인',
 	buttons: null,
 	onCloseFunc: null,
+	disableClickBackground: false,
+	useCloseIcon: true,
 	onOpen: (value: string | OnOpenParamType) => {
 		// 메시지만 바뀜
 		if (typeof value === 'string') {
@@ -49,6 +55,8 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			showBottomCloseButton: value?.showBottomCloseButton ?? false,
 			closeButtonValue: value?.closeButtonValue ?? '확인',
 			buttons: value?.buttons ?? null,
+			disableClickBackground: value?.disableClickBackground,
+			useCloseIcon: value?.useCloseIcon,
 			open: true,
 			onCloseFunc: value?.onCloseFunc ?? null,
 		}));
@@ -65,6 +73,8 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			showBottomCloseButton: false,
 			closeButtonValue: '확인',
 			buttons: null,
+			disableClickBackground: false,
+			useCloseIcon: true,
 		})),
 	setOnCloseFunc: (func: () => void) => {
 		set(() => ({
