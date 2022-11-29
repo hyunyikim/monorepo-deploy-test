@@ -258,6 +258,7 @@ export const getProductRegisterFormDataForReset = (
 		| null,
 	images?: ImageState[]
 ): {data: ProductRegisterFormData; images: ImageState[]} => {
+	const brand = partnershipInfo?.brand;
 	const customFields = partnershipInfo?.nftCustomFields;
 	let resetValue: ProductRegisterFormData = {
 		idx: '',
@@ -266,7 +267,7 @@ export const getProductRegisterFormDataForReset = (
 		code: '',
 		categoryCode: '',
 		categoryName: '',
-		brandIdx: '',
+		brandIdx: (brand && brand?.idx) || '',
 		brandName: partnershipInfo?.brand?.name || '',
 		brandNameEn: partnershipInfo?.brand?.englishName || '',
 		modelNum: '',

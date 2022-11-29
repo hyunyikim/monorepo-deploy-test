@@ -12,5 +12,4 @@ export const productRegisterSchemaShape = yup.object().shape({
 	weight: yup.string(),
 	price: yup.string().min(0),
 	warranty: yup.string().required('보증기간을 입력해주세요.'),
-	customField: yup.string(),
 });
