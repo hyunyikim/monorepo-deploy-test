@@ -20,6 +20,7 @@ interface Props {
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	value?: string;
 	fullWidth?: boolean;
+	disabled?: boolean;
 }
 
 function InputWithLabel({
@@ -36,6 +37,8 @@ function InputWithLabel({
 	onChange,
 	value,
 	fullWidth,
+	disabled,
+	...props
 }: Props) {
 	return (
 		<Grid container sx={{marginBottom: isLast ? 0 : '24px'}}>
@@ -53,7 +56,10 @@ function InputWithLabel({
 					fullWidth={fullWidth}
 					required={required}
 					multiline={multiline}
+					disabled={disabled}
 					error={error}
+					onChange={onChange}
+					{...props}
 				/>
 			) : (
 				<InputComponent
@@ -62,6 +68,7 @@ function InputWithLabel({
 					fullWidth={fullWidth}
 					required={required}
 					multiline={multiline}
+					disabled={disabled}
 					error={error}
 					onChange={onChange}
 					value={value}

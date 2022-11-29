@@ -51,6 +51,7 @@ function InputComponent({
 	error,
 	value,
 	onChange,
+	...props
 }: Props) {
 	return (
 		<Grid container flexDirection={'column'} gap="6px">
@@ -72,7 +73,8 @@ function InputComponent({
 				onKeyDown={onKeyDown}
 				error={error ? true : false}
 				sx={{
-					minHeight: `${height}px`,
+					height: multiline ? 'auto' : height,
+					minHeight: `${height}`,
 					maxHeight: maxHeight,
 					border: '1px solid',
 					borderColor: 'grey.100',
@@ -92,6 +94,9 @@ function InputComponent({
 					'&.Mui-focused': {
 						borderColor: 'grey.900',
 					},
+					'&.Mui-disabled': {
+						backgroundColor: 'grey.50',
+					},
 					'&.Mui-error': {
 						borderColor: 'red.main',
 						backgroundColor: 'red.50',
@@ -103,6 +108,7 @@ function InputComponent({
 					},
 					...sx,
 				}}
+				{...props}
 			/>
 			{error && (
 				<Typography

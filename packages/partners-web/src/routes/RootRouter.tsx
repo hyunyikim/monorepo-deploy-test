@@ -18,7 +18,13 @@ const Dashboard = lazy(() => import('@/features/dashboard/Dashboard.page'));
 const Guarantee = lazy(
 	() => import('@/features/guarantee/List/GuaranteeList.page')
 );
+const GuaranteeRegister = lazy(
+	() => import('@/features/guarantee/Register/GuaranteeRegister.page')
+);
 const Product = lazy(() => import('@/features/product/List/ProductList.page'));
+const ProductRegister = lazy(
+	() => import('@/features/product/Register/ProductRegister.page')
+);
 const Customer = lazy(
 	() => import('@/features/customer/List/CustomerList.page')
 );
@@ -56,7 +62,17 @@ const privateRouter: RouteObject[] = [
 		element: <IframeChild />,
 		children: [
 			{path: '/b2b/guarantee/v2', element: <Guarantee />},
+			{
+				path: '/b2b/guarantee/register/v2',
+				element: <GuaranteeRegister />,
+			},
+			{
+				path: '/b2b/guarantee/edit/:idx/v2',
+				element: <GuaranteeRegister />,
+			},
 			{path: '/b2b/product/v2', element: <Product />},
+			{path: '/b2b/product/register/v2', element: <ProductRegister />},
+			{path: '/b2b/product/edit/:idx/v2', element: <ProductRegister />},
 			{path: '/b2b/customer/v2', element: <Customer />},
 			{
 				path: '/b2b/customer/:name/:phone/v2',

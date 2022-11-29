@@ -47,7 +47,6 @@ function TextField(
 			{...(ref && {
 				inputRef: ref,
 			})}
-			defaultValue={defaultValue}
 			sx={{
 				width: typeof width === 'number' ? `${width}px` : width,
 				height: `${height}px`,

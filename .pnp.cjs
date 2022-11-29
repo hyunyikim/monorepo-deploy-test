@@ -88,6 +88,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     ],\
     "fallbackPool": [\
       [\
+        "@amplitude/analytics-connector",\
+        "npm:1.4.6"\
+      ],\
+      [\
+        "@amplitude/types",\
+        "npm:1.10.2"\
+      ],\
+      [\
+        "@amplitude/ua-parser-js",\
+        "npm:0.7.31"\
+      ],\
+      [\
+        "@amplitude/utils",\
+        "npm:1.10.2"\
+      ],\
+      [\
         "@ampproject/remapping",\
         "npm:2.2.0"\
       ],\
@@ -1588,6 +1604,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.0.2"\
       ],\
       [\
+        "@types/amplitude-js",\
+        "npm:8.16.2"\
+      ],\
+      [\
         "@types/amqplib",\
         "npm:0.8.2"\
       ],\
@@ -2200,6 +2220,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:0.1.2"\
       ],\
       [\
+        "amplitude-js",\
+        "npm:8.21.2"\
+      ],\
+      [\
         "amqp-connection-manager",\
         "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:4.1.3"\
       ],\
@@ -2538,6 +2562,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "bluebird",\
         "npm:3.7.2"\
+      ],\
+      [\
+        "blueimp-md5",\
+        "npm:2.19.0"\
       ],\
       [\
         "bn.js",\
@@ -7845,6 +7873,45 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=a1c5e5"]\
           ],\
           "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@amplitude/analytics-connector", [\
+        ["npm:1.4.6", {\
+          "packageLocation": "./.yarn/cache/@amplitude-analytics-connector-npm-1.4.6-d9e949e37c-0a2acfa54e.zip/node_modules/@amplitude/analytics-connector/",\
+          "packageDependencies": [\
+            ["@amplitude/analytics-connector", "npm:1.4.6"],\
+            ["@amplitude/ua-parser-js", "npm:0.7.31"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@amplitude/types", [\
+        ["npm:1.10.2", {\
+          "packageLocation": "./.yarn/cache/@amplitude-types-npm-1.10.2-937358e04b-206ef52097.zip/node_modules/@amplitude/types/",\
+          "packageDependencies": [\
+            ["@amplitude/types", "npm:1.10.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@amplitude/ua-parser-js", [\
+        ["npm:0.7.31", {\
+          "packageLocation": "./.yarn/cache/@amplitude-ua-parser-js-npm-0.7.31-540ed0892d-c72e7c8656.zip/node_modules/@amplitude/ua-parser-js/",\
+          "packageDependencies": [\
+            ["@amplitude/ua-parser-js", "npm:0.7.31"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@amplitude/utils", [\
+        ["npm:1.10.2", {\
+          "packageLocation": "./.yarn/cache/@amplitude-utils-npm-1.10.2-fb81fc3ccf-9b5d365272.zip/node_modules/@amplitude/utils/",\
+          "packageDependencies": [\
+            ["@amplitude/utils", "npm:1.10.2"],\
+            ["@amplitude/types", "npm:1.10.2"],\
+            ["tslib", "npm:2.4.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@ampproject/remapping", [\
@@ -15363,6 +15430,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regenerator-runtime", "npm:0.13.10"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:7.20.1", {\
+          "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.20.1-8f9256f2ed-00567a333d.zip/node_modules/@babel/runtime/",\
+          "packageDependencies": [\
+            ["@babel/runtime", "npm:7.20.1"],\
+            ["regenerator-runtime", "npm:0.13.10"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@babel/template", [\
@@ -22875,6 +22950,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/amplitude-js", [\
+        ["npm:8.16.2", {\
+          "packageLocation": "./.yarn/cache/@types-amplitude-js-npm-8.16.2-2f0f0baea9-4b6763098a.zip/node_modules/@types/amplitude-js/",\
+          "packageDependencies": [\
+            ["@types/amplitude-js", "npm:8.16.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/amqplib", [\
         ["npm:0.8.2", {\
           "packageLocation": "./.yarn/cache/@types-amqplib-npm-0.8.2-82e1372d99-8b30e22cf8.zip/node_modules/@types/amqplib/",\
@@ -24667,6 +24751,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@svgr/webpack", "npm:6.5.1"],\
             ["@tabler/icons", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:1.108.0"],\
             ["@tanstack/react-query", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:4.16.1"],\
+            ["@types/amplitude-js", "npm:8.16.2"],\
             ["@types/lodash", "npm:4.14.189"],\
             ["@types/node", "npm:18.7.16"],\
             ["@types/qs", "npm:6.9.7"],\
@@ -24676,6 +24761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-slick", "npm:0.23.10"],\
             ["@types/slick-carousel", "npm:1.6.37"],\
             ["@types/yup", "npm:0.29.14"],\
+            ["amplitude-js", "npm:8.21.2"],\
             ["apexcharts", "npm:3.36.0"],\
             ["axios", "npm:0.27.2"],\
             ["clean-webpack-plugin", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:4.0.0"],\
@@ -25837,6 +25923,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["amp-message", "npm:0.1.2"],\
             ["amp", "npm:0.3.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["amplitude-js", [\
+        ["npm:8.21.2", {\
+          "packageLocation": "./.yarn/cache/amplitude-js-npm-8.21.2-2e57893eb9-5f93418092.zip/node_modules/amplitude-js/",\
+          "packageDependencies": [\
+            ["amplitude-js", "npm:8.21.2"],\
+            ["@amplitude/analytics-connector", "npm:1.4.6"],\
+            ["@amplitude/ua-parser-js", "npm:0.7.31"],\
+            ["@amplitude/utils", "npm:1.10.2"],\
+            ["@babel/runtime", "npm:7.20.1"],\
+            ["blueimp-md5", "npm:2.19.0"],\
+            ["query-string", "npm:5.1.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -27385,6 +27486,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/bluebird-npm-3.7.2-6a54136ee3-869417503c.zip/node_modules/bluebird/",\
           "packageDependencies": [\
             ["bluebird", "npm:3.7.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["blueimp-md5", [\
+        ["npm:2.19.0", {\
+          "packageLocation": "./.yarn/cache/blueimp-md5-npm-2.19.0-0a19585c8c-28095dcbd2.zip/node_modules/blueimp-md5/",\
+          "packageDependencies": [\
+            ["blueimp-md5", "npm:2.19.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -41810,6 +41920,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["query-string", [\
+        ["npm:5.1.1", {\
+          "packageLocation": "./.yarn/cache/query-string-npm-5.1.1-86edac70d6-4ac760d977.zip/node_modules/query-string/",\
+          "packageDependencies": [\
+            ["query-string", "npm:5.1.1"],\
+            ["decode-uri-component", "npm:0.2.0"],\
+            ["object-assign", "npm:4.1.1"],\
+            ["strict-uri-encode", "npm:1.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:7.1.1", {\
           "packageLocation": "./.yarn/cache/query-string-npm-7.1.1-55c6f31f52-b227d1f588.zip/node_modules/query-string/",\
           "packageDependencies": [\
@@ -45229,6 +45349,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["strict-uri-encode", [\
+        ["npm:1.1.0", {\
+          "packageLocation": "./.yarn/cache/strict-uri-encode-npm-1.1.0-a79c6f7f24-9466d371f7.zip/node_modules/strict-uri-encode/",\
+          "packageDependencies": [\
+            ["strict-uri-encode", "npm:1.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:2.0.0", {\
           "packageLocation": "./.yarn/cache/strict-uri-encode-npm-2.0.0-1ec3189376-eaac4cf978.zip/node_modules/strict-uri-encode/",\
           "packageDependencies": [\

@@ -30,6 +30,9 @@ export {default as IcHotelBuilding} from './ic-hotel-building.svg';
 export {default as IcPhone} from './ic-phone.svg';
 export {default as IcEye} from './ic-eye.svg';
 export {default as IcGreyArrowDown} from './icon_grey_arrow_down_24.svg';
+export {default as IcCamera} from './ic-camera.svg';
+export {default as IcPlus} from './ic-plus.svg';
+export {default as IcPencil} from './ic-pencil.svg';
 
 export {default as exampleBrandIcon} from './icon_example_brands_icon.png';
 export {default as exampleBrandIcon2x} from './icon_example_brands_icon@2x.png';

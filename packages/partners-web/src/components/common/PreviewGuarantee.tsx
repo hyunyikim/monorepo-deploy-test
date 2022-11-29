@@ -1,15 +1,6 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import styled from '@emotion/styled';
-import {
-	Box,
-	Typography,
-	Grid,
-	useTheme,
-	// Button,
-	Input,
-	InputLabel,
-	Divider,
-} from '@mui/material';
+import {Typography, Grid} from '@mui/material';
 
 import smallPhoneFrame from '@/assets/images/img_small_phone_frame.png';
 import smallPhoneFrame2x from '@/assets/images/img_small_phone_frame@2x.png';
@@ -18,6 +9,8 @@ import massadoptionBrandCard2x from '@/assets/images/img_massadoption_brand_card
 
 import greyArrowButton from '@/assets/icon/icon_grey_up_arrow_button_18@2x.png';
 import Tab from '../atoms/Tab';
+
+import {useGetPartnershipInfo} from '@/stores';
 
 type LogoProps = {
 	logo: string | undefined;
@@ -79,6 +72,22 @@ const BrandCardStyle = styled.img`
 	border-radius: 10px;
 `;
 
+const ProductBoxStyle = styled.div`
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	background: #fff;
+	border-radius: 16px;
+`;
+
+const ProductCardStyle = styled.img`
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+`;
+
 const TabBoxStyle = styled.ul`
 	list-style: none;
 	margin: 0 0 29px;
@@ -134,22 +143,39 @@ const DescTextStyle = styled.h4`
 	color: #aeaeba;
 `;
 
-const UnRollButtonStyle = styled.img`
+const UnRollButtonStyle = styled.img<{open: boolean}>`
 	max-width: 18px;
-	maxheight: 18px;
+	max-height: 18px;
 	min-width: 18px;
-	minheight: 18px;
+	min-height: 18px;
 	margin: 0;
-	transform: rotate(180deg);
+	transition: all 0.25s ease-in-out;
+	transform: ${(props) => (props.open ? 'rotate(0)' : 'rotate(-180deg)')};
+	cursor: pointer;
 `;
 
-const HiddenBoxStyle = styled.div`
+const HiddenBoxStyle = styled.div<{open: boolean}>`
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 	padding: 0;
 	background: #222227;
 	border-radius: 5px;
+	transition: all 0.25s ease-in-out;
+	${(props) => {
+		if (props.open) {
+			return {
+				height: '100%',
+				overflow: 'visible',
+				paddingTop: '20px',
+			};
+		}
+		return {
+			height: '0px',
+			overflow: 'hidden',
+			paddingTop: '0',
+		};
+	}}
 `;
 
 const ServiceCenterButtonStyle = styled.div`
@@ -180,12 +206,22 @@ type ValueTypes = {
 	nftBackgroundImage?: string | ArrayBuffer | null;
 	profileImage?: string | ArrayBuffer | null;
 	returnInfo?: string;
+
+	// 개런티 발급 페이지
+	productName?: string;
+	price?: string;
+	nftCustomFieldValue?: Record<string, any> | null;
+	previewImage?: string;
+	orderDate?: string;
+	platformName?: string;
+	orderId?: string;
+	nftRequestId?: string;
+	nftIssueDt?: string;
 };
 
 interface GreyBoxProps {
 	title: string;
 	desc: string;
-	key: string;
 }
 
 interface PreviewProps {
@@ -193,27 +229,99 @@ interface PreviewProps {
 	serviceCenterHandler: () => void;
 }
 
-function GreyBoxComponent({title, desc, key}: GreyBoxProps) {
+function GreyBoxComponent({title, desc}: GreyBoxProps) {
+	const [open, setOpen] = useState(false);
 	return (
-		<GreyInfoBoxStyle>
+		<GreyInfoBoxStyle
+			style={{
+				gap: '0',
+			}}>
 			<Grid
 				container
 				justifyContent="space-between" /* onClick={certificationBoxHandler} */
 			>
 				<TitleTextStyle>{title}</TitleTextStyle>
 
-				<UnRollButtonStyle src={greyArrowButton} />
+				<UnRollButtonStyle
+					src={greyArrowButton}
+					onClick={() => {
+						setOpen((prev) => !prev);
+					}}
+					open={open}
+				/>
 			</Grid>
-
-			<HiddenBoxStyle>
-				<DescTextStyle>{desc}</DescTextStyle>
+			<HiddenBoxStyle open={open} className="hidden-box">
+				<DescTextStyle className="desc-text">{desc}</DescTextStyle>
 			</HiddenBoxStyle>
 		</GreyInfoBoxStyle>
 	);
 }
 
+const productImageRatio = 0.252;
+const productBoxRatio = 0.252;
+
 function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
-	console.log('values', values);
+	const {previewImage} = values;
+	const {data: partnershipData} = useGetPartnershipInfo();
+
+	const productImageStyle = useMemo(() => {
+		if (!partnershipData) {
+			return {};
+		}
+		const {
+			nftProductImageW,
+			nftProductImageH,
+			nftProductImageX,
+			nftProductImageY,
+		} = partnershipData;
+		return {
+			backgroundImage: `url('${previewImage || ''}')`,
+			width: `${nftProductImageW * productImageRatio}px`,
+			height: `${nftProductImageH * productImageRatio}px`,
+			top: nftProductImageY?.includes('px')
+				? `calc((${nftProductImageY} * ${productImageRatio}))`
+				: nftProductImageY,
+			left: nftProductImageX?.includes('px')
+				? `calc(${nftProductImageX} * ${productImageRatio})`
+				: nftProductImageX,
+			...(nftProductImageY?.includes('%') && {
+				marginTop: `-${(nftProductImageW * productImageRatio) / 2}px`,
+			}),
+			...(nftProductImageX?.includes('%') && {
+				marginLeft: `-${(nftProductImageH * productImageRatio) / 2}px`,
+			}),
+		};
+	}, [previewImage, partnershipData]);
+
+	const productBoxStyle = useMemo(() => {
+		if (!partnershipData) {
+			return {};
+		}
+
+		const {nftProductBoxW, nftProductBoxH, nftProductBoxX, nftProductBoxY} =
+			partnershipData;
+		return {
+			width: `${nftProductBoxW * productBoxRatio}px`,
+			height: `${nftProductBoxH * productBoxRatio}px`,
+			top: nftProductBoxY?.includes('px')
+				? `calc(${nftProductBoxY} * ${productBoxRatio})`
+				: nftProductBoxY,
+			left: nftProductBoxX?.includes('px')
+				? `calc(${nftProductBoxX} * ${productBoxRatio})`
+				: nftProductBoxX,
+			...(nftProductBoxY?.includes('%') && {
+				marginTop: `-${(nftProductBoxW * productBoxRatio) / 2}px`,
+			}),
+			...(nftProductBoxX?.includes('%') && {
+				marginLeft: `-${(nftProductBoxH * productBoxRatio) / 2}px`,
+			}),
+		};
+	}, [partnershipData]);
+
+	if (!partnershipData) {
+		return <></>;
+	}
+
 	return (
 		<PreviewContainerStyle>
 			<PhoneFrameStyle
@@ -221,7 +329,6 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 				srcSet={`${smallPhoneFrame} 1x, ${smallPhoneFrame2x} 2x`}
 				alt="phone frame"
 			/>
-
 			<PreviewBoxStyle>
 				<PreviewInnerStyle>
 					<BrandCardBoxStyle>
@@ -241,8 +348,30 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								alt="brand card"
 							/>
 						)}
-					</BrandCardBoxStyle>
 
+						{/* 상품 이미지 */}
+						{partnershipData.useNftProdImage &&
+							values.previewImage && (
+								<>
+									{partnershipData?.useNftProdBox === 'Y' && (
+										<ProductBoxStyle
+											style={productBoxStyle}
+											id="product-box-style"
+										/>
+									)}
+									<ProductCardStyle
+										id="product-card-style"
+										src={values.previewImage}
+										srcSet={`${values.previewImage} 1x, ${values.previewImage} 2x`}
+										alt="product card"
+										className={`brand-${
+											partnershipData?.email || ''
+										}`}
+										style={productImageStyle}
+									/>
+								</>
+							)}
+					</BrandCardBoxStyle>
 					<Typography
 						variant="h6"
 						fontSize={'10px'}
@@ -259,7 +388,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 						fontWeight={700}
 						lineHeight={'21px'}
 						mb="8.5px">
-						{'상품명'}
+						{values?.productName || '상품명'}
 					</Typography>
 					<Typography
 						variant="h6"
@@ -268,7 +397,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 						fontWeight={700}
 						lineHeight={'17px'}
 						mb="26px">
-						{'0,000,000원'}
+						{values?.price || '0,000,000원'}
 					</Typography>
 
 					<TabBoxStyle className="tabs">
@@ -276,7 +405,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 					</TabBoxStyle>
 
 					<Grid container flexDirection="column" gap="20px">
-						<GreyInfoBoxStyle key={'afterServiceInfo'}>
+						<GreyInfoBoxStyle key="product-info">
 							<Grid container flexWrap={'nowrap'} gap="10px">
 								{/* 로고, 날짜 */}
 								<LogoImgStyle
@@ -307,7 +436,6 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									</Typography>
 								</Grid>
 							</Grid>
-
 							<Grid
 								container
 								flexDirection="column"
@@ -345,29 +473,70 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							key={'afterServiceInfo'}
 						/>
 
-						{values?.nftCustomField.map((el: string) => (
+						{values?.nftCustomField &&
+							values?.nftCustomField.map((el: string) => (
+								<Grid
+									container
+									justifyContent={'space-between'}
+									alignItems="center">
+									<DescTextStyle>{el}</DescTextStyle>
+									<TitleTextStyle>
+										{(values?.nftCustomFieldValue &&
+											values?.nftCustomFieldValue[el]) ??
+											'-'}
+									</TitleTextStyle>
+								</Grid>
+							))}
+						{values?.orderDate && (
 							<Grid
 								container
 								justifyContent={'space-between'}
 								alignItems="center">
-								<DescTextStyle>{el}</DescTextStyle>
-								<TitleTextStyle>{'-'}</TitleTextStyle>
+								<DescTextStyle>주문일자</DescTextStyle>
+								<TitleTextStyle>
+									{values.orderDate}
+								</TitleTextStyle>
 							</Grid>
-						))}
-
+						)}
+						{values?.platformName && (
+							<Grid
+								container
+								justifyContent={'space-between'}
+								alignItems="center">
+								<DescTextStyle>판매처</DescTextStyle>
+								<TitleTextStyle>
+									{values.platformName}
+								</TitleTextStyle>
+							</Grid>
+						)}
+						{values?.orderId && (
+							<Grid
+								container
+								justifyContent={'space-between'}
+								alignItems="center">
+								<DescTextStyle>주문번호</DescTextStyle>
+								<TitleTextStyle>
+									{values.orderId}
+								</TitleTextStyle>
+							</Grid>
+						)}
 						<Grid
 							container
 							justifyContent={'space-between'}
 							alignItems="center">
 							<DescTextStyle>디지털 개런티 번호</DescTextStyle>
-							<TitleTextStyle>{'-'}</TitleTextStyle>
+							<TitleTextStyle>
+								{values?.nftRequestId || '-'}
+							</TitleTextStyle>
 						</Grid>
 						<Grid
 							container
 							justifyContent={'space-between'}
 							alignItems="center">
 							<DescTextStyle>디지털 개런티 발급일</DescTextStyle>
-							<TitleTextStyle>{'-'}</TitleTextStyle>
+							<TitleTextStyle>
+								{values?.nftIssueDt || '-'}
+							</TitleTextStyle>
 						</Grid>
 						<Grid
 							container
@@ -376,13 +545,14 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							<DescTextStyle>판매자</DescTextStyle>
 							<TitleTextStyle>{'-'}</TitleTextStyle>
 						</Grid>
-
 						<Grid
 							container
 							justifyContent={'space-between'}
 							alignItems="center">
 							<DescTextStyle>브랜드 소개</DescTextStyle>
-							<TitleTextStyle>{values?.authInfo}</TitleTextStyle>
+							<TitleTextStyle>
+								{values?.authInfo || '-'}
+							</TitleTextStyle>
 						</Grid>
 
 						<ServiceCenterButtonStyle

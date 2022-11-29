@@ -42,3 +42,32 @@ export interface CropConfigProps {
 
 export type CroppedAreaProps = Pick<CropConfigProps, 'croppedArea'>;
 export type croppedAreaPixelsProps = Pick<CropConfigProps, 'croppedAreaPixels'>;
+
+export type InputTypeList = InputType[];
+export type InputType =
+	| {
+			type: string;
+			name: string;
+			placeholder: string;
+			label: string;
+			autoComplete?: 'on' | 'off';
+			required?: boolean;
+			multiline?: boolean;
+			inputProps?: Record<string, any>;
+	  }
+	| SelectInputType
+	| HiddenInputType;
+
+export type SelectInputType = {
+	type: string;
+	name: string;
+	placeholder: string;
+	label: string;
+	required?: boolean;
+	options: Options<any>;
+};
+
+export type HiddenInputType = {
+	type: 'hidden';
+	name: string;
+};

@@ -5,6 +5,39 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@amplitude/analytics-connector@npm:^1.4.5":
+  version: 1.4.6
+  resolution: "@amplitude/analytics-connector@npm:1.4.6"
+  dependencies:
+    "@amplitude/ua-parser-js": 0.7.31
+  checksum: 0a2acfa54e02b405e1b66ec522aa5802f938f525ad0e81a864f9370b53a3a18f166962d891a5372c12938ec7c3fbbb3453304261845bd57e5617963c8285c2dc
+  languageName: node
+  linkType: hard
+
+"@amplitude/types@npm:^1.10.2":
+  version: 1.10.2
+  resolution: "@amplitude/types@npm:1.10.2"
+  checksum: 206ef520979c76a69baa145679a60c96249c165ff8354c0b58d183b917ae3abb35569cb0e9587ecf6c7b8636b2cc69d05ea9ecbd1cc9cade503256860bd80afe
+  languageName: node
+  linkType: hard
+
+"@amplitude/ua-parser-js@npm:0.7.31":
+  version: 0.7.31
+  resolution: "@amplitude/ua-parser-js@npm:0.7.31"
+  checksum: c72e7c8656dd77a6c2ece9e3817929022aeadf731470e53fecddce03232d87977fd5b09d76c570a2a5bed97f5dd463fe6379aac7a6c4b2d2393f14486d385eec
+  languageName: node
+  linkType: hard
+
+"@amplitude/utils@npm:^1.10.1":
+  version: 1.10.2
+  resolution: "@amplitude/utils@npm:1.10.2"
+  dependencies:
+    "@amplitude/types": ^1.10.2
+    tslib: ^2.0.0
+  checksum: 9b5d3652725e30add1e42a1f221a3954c844d9aeb9d73b197c5ea2a0b91a86ccdedd4878e829cdae0eca287e68d37016347b97860069fa233d8d9ec78821d1c9
+  languageName: node
+  linkType: hard
+
 "@ampproject/remapping@npm:^2.1.0":
   version: 2.2.0
   resolution: "@ampproject/remapping@npm:2.2.0"
@@ -4223,6 +4256,15 @@ __metadata:
   dependencies:
     regenerator-runtime: ^0.13.4
   checksum: fa69c351bb05e1db3ceb9a02fdcf620c234180af68cdda02152d3561015f6d55277265d3109815992f96d910f3db709458cae4f8df1c3def66f32e0867d82294
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.3.4":
+  version: 7.20.1
+  resolution: "@babel/runtime@npm:7.20.1"
+  dependencies:
+    regenerator-runtime: ^0.13.10
+  checksum: 00567a333d3357925742a6f5e39394dcc0af6e6029103fe188158bf7ae8b0b3ee3c6c0f68fccc217f0a6cfa455f6be252298baf56b3f5ff37b34313b170cd9f6
   languageName: node
   linkType: hard
 
@@ -9063,6 +9105,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/amplitude-js@npm:^8.16.2":
+  version: 8.16.2
+  resolution: "@types/amplitude-js@npm:8.16.2"
+  checksum: 4b6763098af5f0a5b06030cd094bd834ba11eeed7625f2ac040ecaf8f1a951b1420ece0f1ed7a086ebbcd29f1ae959715c3b70e21b42e5dda4ef38a4f07d7391
+  languageName: node
+  linkType: hard
+
 "@types/amqplib@npm:^0":
   version: 0.8.2
   resolution: "@types/amqplib@npm:0.8.2"
@@ -10530,6 +10579,7 @@ __metadata:
     "@svgr/webpack": ^6.3.1
     "@tabler/icons": ^1.100.0
     "@tanstack/react-query": ^4.16.1
+    "@types/amplitude-js": ^8.16.2
     "@types/lodash": ^4.14.189
     "@types/node": ^18.7.16
     "@types/qs": ^6
@@ -10539,6 +10589,7 @@ __metadata:
     "@types/react-slick": ^0
     "@types/slick-carousel": ^1
     "@types/yup": ^0
+    amplitude-js: ^8.21.2
     apexcharts: ^3.35.5
     axios: ^0.27.2
     clean-webpack-plugin: ^4.0.0
@@ -11411,6 +11462,20 @@ __metadata:
   version: 0.3.1
   resolution: "amp@npm:0.3.1"
   checksum: d87c786ff03681b4a1d16396a84b9fefdbfc293d9aad4b2a10aa7ae53256f614ce103096b6e38f3cd93d5269fa13b152f9ce33f0f83551362530f4b8169c9ba2
+  languageName: node
+  linkType: hard
+
+"amplitude-js@npm:^8.21.2":
+  version: 8.21.2
+  resolution: "amplitude-js@npm:8.21.2"
+  dependencies:
+    "@amplitude/analytics-connector": ^1.4.5
+    "@amplitude/ua-parser-js": 0.7.31
+    "@amplitude/utils": ^1.10.1
+    "@babel/runtime": ^7.3.4
+    blueimp-md5: ^2.10.0
+    query-string: 5
+  checksum: 5f93418092446eeb9124ce26f00a1af055c2788589d0ace2f93457a7b52a5288bfd83eebcaaf611f1ad42e8c7a710233a4a4ebf170c7f6b6ff577c07e0d199e0
   languageName: node
   linkType: hard
 
@@ -12569,6 +12634,13 @@ __metadata:
   version: 3.7.2
   resolution: "bluebird@npm:3.7.2"
   checksum: 869417503c722e7dc54ca46715f70e15f4d9c602a423a02c825570862d12935be59ed9c7ba34a9b31f186c017c23cac6b54e35446f8353059c101da73eac22ef
+  languageName: node
+  linkType: hard
+
+"blueimp-md5@npm:^2.10.0":
+  version: 2.19.0
+  resolution: "blueimp-md5@npm:2.19.0"
+  checksum: 28095dcbd2c67152a2938006e8d7c74c3406ba6556071298f872505432feb2c13241b0476644160ee0a5220383ba94cb8ccdac0053b51f68d168728f9c382530
   languageName: node
   linkType: hard
 
@@ -23517,7 +23589,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-assign@npm:^4, object-assign@npm:^4.0.1, object-assign@npm:^4.1.1":
+"object-assign@npm:^4, object-assign@npm:^4.0.1, object-assign@npm:^4.1.0, object-assign@npm:^4.1.1":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
   checksum: fcc6e4ea8c7fe48abfbb552578b1c53e0d194086e2e6bbbf59e0a536381a292f39943c6e9628af05b5528aa5e3318bb30d6b2e53cadaf5b8fe9e12c4b69af23f
@@ -25103,6 +25175,17 @@ __metadata:
   dependencies:
     side-channel: ^1.0.4
   checksum: 6e1f29dd5385f7488ec74ac7b6c92f4d09a90408882d0c208414a34dd33badc1a621019d4c799a3df15ab9b1d0292f97c1dd71dc7c045e69f81a8064e5af7297
+  languageName: node
+  linkType: hard
+
+"query-string@npm:5":
+  version: 5.1.1
+  resolution: "query-string@npm:5.1.1"
+  dependencies:
+    decode-uri-component: ^0.2.0
+    object-assign: ^4.1.0
+    strict-uri-encode: ^1.0.0
+  checksum: 4ac760d9778d413ef5f94f030ed14b1a07a1708dd13fd3bc54f8b9ef7b425942c7577f30de0bf5a7d227ee65a9a0350dfa3a43d1d266880882fb7ce4c434a4dd
   languageName: node
   linkType: hard
 
@@ -27709,6 +27792,13 @@ __metadata:
   version: 0.1.2
   resolution: "streamsearch@npm:0.1.2"
   checksum: d2db57cbfbf7947ab9c75a7b4c80a8ef8d24850cf0a1a24258bb6956c97317ce1eab7dbcbf9c5aba3e6198611af1053b02411057bbedb99bf9c64b8275248997
+  languageName: node
+  linkType: hard
+
+"strict-uri-encode@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "strict-uri-encode@npm:1.1.0"
+  checksum: 9466d371f7b36768d43f7803f26137657559e4c8b0161fb9e320efb8edba3ae22f8e99d4b0d91da023b05a13f62ec5412c3f4f764b5788fac11d1fea93720bb3
   languageName: node
   linkType: hard
 

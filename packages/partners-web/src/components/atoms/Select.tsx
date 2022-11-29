@@ -1,4 +1,4 @@
-import {forwardRef, Ref} from 'react';
+import {forwardRef, Ref, useEffect, useState} from 'react';
 
 import {
 	FormControl,
@@ -14,7 +14,7 @@ import {IcChevronDown} from '@/assets/icon';
 
 type Height = 48 | 32;
 
-interface Props<T> extends SelectProps {
+export interface Props<T> extends SelectProps {
 	width?: number | 'auto';
 	height?: Height;
 	options: Options<T>;
@@ -34,10 +34,23 @@ function Select<T>(
 		value,
 		defaultValue,
 		onChange,
+		placeholder,
 		...props
 	}: Props<T>,
 	ref: Ref<unknown>
 ) {
+	const [textColor, setTextColor] = useState({
+		color: '#AEAEBA',
+	});
+
+	useEffect(() => {
+		if (value || defaultValue) {
+			setTextColor({
+				color: '#222227',
+			});
+		}
+	}, [value, defaultValue]);
+
 	return (
 		<FormControl>
 			<MuiSelect
@@ -65,6 +78,23 @@ function Select<T>(
 						<IcChevronDown />
 					</SvgIcon>
 				)}
+				{...(placeholder && {
+					renderValue: (selected) => {
+						if (selected || value) {
+							const selectedLabel =
+								options.find((option) => {
+									const optionValue = String(option.value);
+									return (
+										optionValue === String(selected) ||
+										optionValue === String(value)
+									);
+								})?.label || placeholder;
+							return selectedLabel;
+						}
+						return <>{placeholder}</>;
+					},
+				})}
+				displayEmpty={true}
 				sx={{
 					'& .MuiSelect-select': {
 						paddingRight: '50px !important',
@@ -74,9 +104,20 @@ function Select<T>(
 					},
 					width: typeof width === 'number' ? `${width}px` : width,
 					height: `${height}px`,
+					...textColor,
 					...sx,
 				}}
 				{...props}>
+				{placeholder && (
+					<MenuItem
+						value={''}
+						disabled
+						sx={{
+							fontSize: '14px',
+						}}>
+						{placeholder}
+					</MenuItem>
+				)}
 				{options.map((item, idx) => {
 					return (
 						<MenuItem
@@ -84,6 +125,11 @@ function Select<T>(
 							value={item.value as unknown as string}
 							sx={{
 								fontSize: '14px',
+							}}
+							onClick={() => {
+								setTextColor({
+									color: '#222227',
+								});
 							}}>
 							{item.label}
 						</MenuItem>
