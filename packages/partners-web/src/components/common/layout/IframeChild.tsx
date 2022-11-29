@@ -1,11 +1,10 @@
 import {useEffect, useRef} from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import {parse} from 'qs';
-import {useQueryClient} from '@tanstack/react-query';
 
 import {Box} from '@mui/material';
 
-import {TOKEN_KEY, useLoginStore} from '@/stores';
+import {useLoginStore} from '@/stores';
 
 interface Props {
 	children?: React.ReactElement;
@@ -14,7 +13,7 @@ interface Props {
 function IframeChild({children}: Props) {
 	const location = useLocation();
 	const setLogin = useLoginStore((state) => state.setLogin);
-	const queryClient = useQueryClient();
+	const setLogout = useLoginStore((state) => state.setLogout);
 
 	const iframeChildWrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -24,14 +23,17 @@ function IframeChild({children}: Props) {
 			ignoreQueryPrefix: true,
 		});
 
-		const tokenFromParsedSearch = (parsedSearch?.token as string) ?? null;
-		if (!tokenFromParsedSearch) {
-			localStorage.removeItem(TOKEN_KEY);
-			queryClient.invalidateQueries({queryKey: ['partnershipInfo']});
+		// 쿼리스트링에 토큰이 넘어오는 경우에만 체크
+		const searchHasToken = parsedSearch.hasOwnProperty('token');
+		if (!searchHasToken) {
 			return;
 		}
 
-		localStorage.setItem(TOKEN_KEY, tokenFromParsedSearch);
+		const tokenFromParsedSearch = (parsedSearch?.token as string) ?? null;
+		if (!tokenFromParsedSearch) {
+			setLogout();
+			return;
+		}
 		setLogin(tokenFromParsedSearch);
 	}, [location.search]);
 
