@@ -1,3 +1,5 @@
+import {B2BType} from '@/@types';
+
 export interface SignInRequestRequestParam {
 	email: string;
 	password: string;
@@ -28,7 +30,7 @@ export interface SignUpResponse {
 	phoneNum: string;
 	companyName: string;
 	businessNum: string;
-	b2bType: string;
+	b2bType: B2BType;
 	profileImage: string;
 	authInfo: string;
 	returnInfo: string;

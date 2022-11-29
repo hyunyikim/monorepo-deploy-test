@@ -9,6 +9,7 @@ interface Props<D, F> {
 	apiFunc: (value: F, ...rest: any[]) => Promise<D>;
 	apiRestParam?: unknown[];
 	initialFilter: F;
+	isQueryChange?: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ const useList = <
 	apiFunc,
 	apiRestParam = [],
 	initialFilter,
+	isQueryChange = true,
 }: Props<D, F>) => {
 	const navigate = useNavigate();
 	const {pathname, search} = useLocation();

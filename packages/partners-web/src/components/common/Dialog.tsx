@@ -1,9 +1,4 @@
-import {
-	Dialog as MuiDialog,
-	DialogProps,
-	DialogTitle,
-	SxProps,
-} from '@mui/material';
+import {Dialog as MuiDialog, DialogProps, DialogTitle} from '@mui/material';
 
 import {IcClose} from '@/assets/icon';
 
@@ -32,6 +27,7 @@ function Dialog({
 			sx={{
 				'& .MuiPaper-root': {
 					padding: '32px',
+					borderRadius: '16px',
 				},
 				'& .MuiDialogTitle-root': {
 					marginBottom: '8px',

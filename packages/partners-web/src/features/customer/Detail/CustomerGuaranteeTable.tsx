@@ -11,7 +11,7 @@ import {
 	initialSearchFilter,
 	DATE_FORMAT,
 	getGroupingGuaranteeStatusChip,
-	groupingGuaranteeRequestStates,
+	groupingCustomerGuaranteeRequestStates,
 	orderDirectionSearchFilter,
 } from '@/data';
 import {goToParentUrl} from '@/utils';
@@ -62,7 +62,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 					<Select
 						height={32}
 						value={filter?.status ?? 'ALL'}
-						options={groupingGuaranteeRequestStates}
+						options={groupingCustomerGuaranteeRequestStates}
 						onChange={(e) =>
 							handleChangeFilter({
 								status: e.target.value,

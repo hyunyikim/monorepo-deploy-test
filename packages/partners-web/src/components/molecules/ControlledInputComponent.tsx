@@ -50,6 +50,7 @@ function ControlledInputComponent({
 	autoFocus = false,
 	onBlur,
 	onKeyDown,
+	onChange,
 	error,
 	...props
 }: Props) {
@@ -58,7 +59,7 @@ function ControlledInputComponent({
 			control={control}
 			name={name}
 			defaultValue={defaultValue}
-			render={({field: {onChange, value}}) => (
+			render={({field: {onChange: hookFormOnChange, value}}) => (
 				<InputComponent
 					type={type}
 					defaultValue={defaultValue}
@@ -74,7 +75,10 @@ function ControlledInputComponent({
 					onBlur={onBlur}
 					onKeyDown={onKeyDown}
 					error={error}
-					onChange={onChange}
+					onChange={(e) => {
+						onChange && onChange(e);
+						hookFormOnChange(e);
+					}}
 					value={value}
 					{...props}
 				/>

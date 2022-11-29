@@ -609,6 +609,7 @@ export function InputFormSection({
 }: InputFormProps) {
 	const {data} = useGetPartnershipInfo();
 	const b2bType = data?.b2bType; // cooperator or brand
+	const email = data?.email as string;
 
 	const {
 		handleSubmit,
@@ -649,6 +650,9 @@ export function InputFormSection({
 		preview: null,
 	});
 
+	const [brandLogo64String, setBrandLogo64String] = useState<string>('');
+	const [brandCard64String, setBrandCard64String] = useState<string>('');
+
 	const [tooltipState, setTooltipState] = useState<boolean>(true);
 
 	const logoInputFile =
@@ -675,6 +679,24 @@ export function InputFormSection({
 	const [moveToAfterModalClose, setMoveToAfterModalClose] =
 		useState<boolean>(true);
 
+	/* base64 file을 FileData로 변환 */
+	const covertBase64ToFileData = (_stringUrl: string) => {
+		const arr: string[] = _stringUrl.split(',');
+		const mime = arr[0].match(/:(.*?);/)[1];
+		const bstr = atob(arr[1]);
+		let n = bstr.length;
+		const u8arr = new Uint8Array(n);
+
+		while (n--) {
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		const FileData = new File([u8arr], `savedBrandLogo=${email}`, {
+			type: mime,
+		});
+
+		return FileData;
+	};
+
 	/**
 	 * 파일 선택 이벤트
 	 *
@@ -688,16 +710,20 @@ export function InputFormSection({
 		const reader: FileReader = new FileReader();
 		reader.onloadend = () => {
 			if (currentFile) {
+				const base64String: string = reader.result as string;
 				const newFile = {
 					file: currentFile,
 				};
 
-				if (targetName === 'brandCard') {
-					setBrandCard(newFile);
-					setBrandCardPreview({
-						preview: reader.result,
-					});
-				} else {
+				// if (targetName === 'brandCard') {
+				// 	setBrandCard(newFile);
+				// 	setBrandCardPreview({
+				// 		preview: reader.result,
+				// 	});
+				// }
+
+				if (targetName === 'brandLogo') {
+					setBrandLogo64String(base64String);
 					setBrandLogo(newFile);
 					setBrandLogoPreview({
 						preview: reader.result,
@@ -705,6 +731,7 @@ export function InputFormSection({
 				}
 			}
 		};
+
 		reader.readAsDataURL(currentFile);
 		setBrandLogoError(false);
 	};
@@ -815,6 +842,10 @@ export function InputFormSection({
 		},
 	];
 
+	const base64Convertor = (_value: string) => {
+		setBrandCard64String(_value);
+	};
+
 	const openCustomiseCardModal = () => {
 		const nftBackgroundImg = data?.nftBackgroundImg as string;
 
@@ -841,8 +872,10 @@ export function InputFormSection({
 							file: _value.file,
 							filename: _value.filename,
 						});
+						setBrandCard64String(_value.base64String);
 					}}
 					setMoveToAfterModalClose={setMoveToAfterModalClose}
+					convertToBase64={base64Convertor}
 				/>
 			),
 			align: 'left',
@@ -864,6 +897,7 @@ export function InputFormSection({
 				<div>
 					<PreviewGuarantee
 						serviceCenterHandler={handleCheckOutLinkClick}
+						b2bType={b2bType}
 						values={{
 							...values,
 							nftCustomField: exampleList,
@@ -904,8 +938,7 @@ export function InputFormSection({
 	};
 
 	const deleteSavedData = () => {
-		const email = data?.email as string;
-
+		// const email = data?.email as string;
 		const hasSavedData = localStorage.getItem(`hasInputDataSaved=${email}`);
 
 		if (hasSavedData) {
@@ -918,6 +951,8 @@ export function InputFormSection({
 			localStorage.removeItem(`returnInfo=${email}`);
 			localStorage.removeItem(`warrantyDate=${email}`);
 			localStorage.removeItem(`nftCustomField=${email}`);
+			localStorage.removeItem(`brandLogo=${email}`);
+			localStorage.removeItem(`brandCard=${email}`);
 
 			if (queryData) {
 				localStorage.removeItem(`cafe24context=${email}`);
@@ -944,7 +979,7 @@ export function InputFormSection({
 			) {
 				if (key === 'customerCenterUrl') {
 					const centreUrl: string = values[key];
-					if (centreUrl.includes('http')) {
+					if (centreUrl && centreUrl.includes('http')) {
 						formData.append(key, values[key] as string);
 					} else {
 						formData.append(key, `https://${centreUrl}`);
@@ -965,6 +1000,9 @@ export function InputFormSection({
 		/* 프로필 파일 */
 		if (brandLogo.file) {
 			formData.append('profileImage', brandLogo.file);
+		} else if (brandLogo64String) {
+			const savedLogoImg = covertBase64ToFileData(brandLogo64String);
+			formData.append('profileImage', savedLogoImg);
 		}
 
 		return formData;
@@ -1084,10 +1122,18 @@ export function InputFormSection({
 
 		const formData = new FormData();
 		const data = handleFormData();
-
-		/* 브랜드 카드 파일 */
 		if (brandCard.file) {
+			/* 브랜드 카드 파일 */
 			formData.append('nftBackgroundImage', brandCard.file);
+			const response = await setCustomizedBrandCard(formData);
+			if (response) {
+				await reqestSetupInputData(data);
+			}
+		} else if (brandCard64String) {
+			const savedCustomisedCard =
+				covertBase64ToFileData(brandCard64String);
+			formData.append('nftBackgroundImage', savedCustomisedCard);
+
 			const response = await setCustomizedBrandCard(formData);
 			if (response) {
 				await reqestSetupInputData(data);
@@ -1119,10 +1165,11 @@ export function InputFormSection({
 	const saveDataToStorage = () => {
 		// const values = getValues();
 		const values = watch();
-		const email = data?.email as string;
+		// const email = data?.email as string;
 
 		if (!hasProfileLogo) {
 			/* 재설정일때는 저장없이 그냥 나가기 */
+			/* 최초일때만, 로컬에 데이터 저장 */
 			localStorage.setItem(`hasInputDataSaved=${email}`, 'true');
 			Object.keys(values).forEach((key) => {
 				if (values[key]) {
@@ -1134,6 +1181,13 @@ export function InputFormSection({
 					localStorage.setItem(`${key}=${email}`, '');
 				}
 			});
+
+			if (brandLogo64String) {
+				localStorage.setItem(`brandLogo=${email}`, brandLogo64String);
+			}
+			if (brandCard64String) {
+				localStorage.setItem(`brandCard=${email}`, brandCard64String);
+			}
 
 			localStorage.setItem(
 				`nftCustomField=${email}`,
@@ -1149,11 +1203,16 @@ export function InputFormSection({
 		goToParentUrl('/dashboard');
 	};
 
+	// useEffect(() => {
+	// 	console.log('getValues@!##@!', getValues());
+	// 	console.log('errors', errors);
+	// }, [errors]);
+
 	/**
 	 * 초기 데이터 셋팅
 	 */
 	useEffect(() => {
-		const email = data?.email as string;
+		// const email = data?.email as string;
 		const hasInputDataSavedInStorage = localStorage.getItem(
 			`hasInputDataSaved=${email}`
 		);
@@ -1164,30 +1223,34 @@ export function InputFormSection({
 		// 임시저장된 데이터가 있을 경우
 		if (hasInputDataSavedInStorage === 'true') {
 			reset({
-				brandName: localStorage.getItem(`brandName=${email}`),
-				brandNameEN: localStorage.getItem(`brandNameEN=${email}`),
-				warrantyDate: localStorage.getItem(`warrantyDate=${email}`),
-				customerCenterUrl: localStorage.getItem(
-					`customerCenterUrl=${email}`
-				),
+				brandName: localStorage.getItem(`brandName=${email}`) || '',
+				brandNameEN: localStorage.getItem(`brandNameEN=${email}`) || '',
+				warrantyDate:
+					localStorage.getItem(`warrantyDate=${email}`) || '',
+				customerCenterUrl:
+					localStorage.getItem(`customerCenterUrl=${email}`) || '',
 
-				authInfo: localStorage.getItem(`authInfo=${email}`),
-				returnInfo: localStorage.getItem(`returnInfo=${email}`),
-				afterServiceInfo: localStorage.getItem(
-					`afterServiceInfo=${email}`
-				),
+				authInfo: localStorage.getItem(`authInfo=${email}`) || '',
+				returnInfo: localStorage.getItem(`returnInfo=${email}`) || '',
+				afterServiceInfo:
+					localStorage.getItem(`afterServiceInfo=${email}`) || '',
 			});
 
 			if (nftCustomFieldSavedData) {
 				setExampleList(() => [...nftCustomFieldSavedData.split(',')]);
 			}
 
-			/* 개런티 수정할때, 저장 및 나가기 눌렀을경우에 이미지 불러와야함 */
-			if (data?.profileImage) {
-				setBrandLogoPreview({preview: data.profileImage});
+			const savedBrandLogo =
+				localStorage.getItem(`brandLogo=${email}`) || null;
+			const savedBrandCard =
+				localStorage.getItem(`brandCard=${email}`) || null;
+			if (savedBrandLogo) {
+				setBrandLogo64String(savedBrandLogo);
+				setBrandLogoPreview({preview: savedBrandLogo});
 			}
-			if (data?.nftBackgroundImg) {
-				setBrandCardPreview({preview: data.nftBackgroundImg});
+			if (savedBrandCard) {
+				setBrandCard64String(savedBrandCard);
+				setBrandCardPreview({preview: savedBrandCard});
 			}
 		} else if (hasProfileLogo && data) {
 			reset({
@@ -1702,6 +1765,7 @@ export function InputFormSection({
 							multiline
 							fullWidth={true}
 							inputType="textarea"
+							defaultValue=""
 							key={`additional-information-${idx}`}
 						/>
 					))}

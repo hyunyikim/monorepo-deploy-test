@@ -103,6 +103,18 @@ function GuaranteeList() {
 					</Button>
 					<Button
 						color="primary"
+						variant="outlined"
+						height={32}
+						onClick={() => {
+							goToParentUrl('/b2b/interwork');
+						}}
+						sx={{
+							marginRight: '8px',
+						}}>
+						쇼핑몰 주문 연동하기
+					</Button>
+					<Button
+						color="primary"
 						height={32}
 						onClick={() => {
 							trackingToParent(
@@ -154,7 +166,7 @@ function GuaranteeList() {
 													3
 												) {
 													goToParentUrl(
-														`/b2b/guarantee/modify/${item.nft_req_idx}`
+														`/b2b/guarantee/edit/${item.nft_req_idx}`
 													);
 												} else {
 													goToParentUrl(

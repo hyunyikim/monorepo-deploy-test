@@ -127,7 +127,12 @@ export default async function getCroppedImgBlob(
 		return new Promise((resolve, reject) => {
 			croppedCanvas.toBlob(
 				(file) => {
-					resolve(file);
+					const reader = new FileReader();
+					reader.readAsDataURL(file);
+					reader.onloadend = function () {
+						const base64String = reader.result;
+						resolve({file, base64String});
+					};
 				},
 				'image/png',
 				0.95

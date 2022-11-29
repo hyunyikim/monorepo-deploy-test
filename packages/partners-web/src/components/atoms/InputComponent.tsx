@@ -13,8 +13,8 @@ type Height = '60px' | '48px' | '40px' | '32px' | 'auto';
 
 interface Props extends Omit<InputProps, 'control' | 'name' | 'error'> {
 	type: string;
-	value: string;
-	onChange(e: React.ChangeEvent<HTMLInputElement>): void;
+	value?: string;
+	onChange?(e: React.ChangeEvent<HTMLInputElement>): void;
 	defaultValue?: string;
 	height?: Height;
 	maxHeight?: Height;
@@ -51,6 +51,7 @@ function InputComponent({
 	error,
 	value,
 	onChange,
+	...props
 }: Props) {
 	return (
 		<Grid container flexDirection={'column'} gap="6px">
@@ -72,7 +73,8 @@ function InputComponent({
 				onKeyDown={onKeyDown}
 				error={error ? true : false}
 				sx={{
-					minHeight: `${height}px`,
+					height: multiline ? 'auto' : height,
+					minHeight: `${height}`,
 					maxHeight: maxHeight,
 					border: '1px solid',
 					borderColor: 'grey.100',
@@ -92,6 +94,9 @@ function InputComponent({
 					'&.Mui-focused': {
 						borderColor: 'grey.900',
 					},
+					'&.Mui-disabled': {
+						backgroundColor: 'grey.50',
+					},
 					'&.Mui-error': {
 						borderColor: 'red.main',
 						backgroundColor: 'red.50',
@@ -100,9 +105,13 @@ function InputComponent({
 						borderColor: 'grey.100',
 						backgroundColor: 'grey.50',
 						color: 'grey.300',
+						input: {
+							color: 'grey.300',
+						},
 					},
 					...sx,
 				}}
+				{...props}
 			/>
 			{error && (
 				<Typography

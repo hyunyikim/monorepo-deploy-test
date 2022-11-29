@@ -105,11 +105,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 		}
 	}, [onClose, setOnCloseFunc]);
 
-	const {
-		control,
-		handleSubmit,
-		formState: {errors},
-	} = useForm<FormProps>({
+	const {control, handleSubmit} = useForm<FormProps>({
 		resolver: yupResolver(introductionInquirySchemaShape),
 		mode: 'onSubmit',
 		reValidateMode: 'onBlur',

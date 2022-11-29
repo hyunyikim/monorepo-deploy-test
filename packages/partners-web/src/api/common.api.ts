@@ -1,17 +1,11 @@
 import {instance, nonAuthInstance} from '@/api';
 
-import {ListResponse, Options} from '@/@types';
+import {Options} from '@/@types';
 
-// TODO: react-query
-export const getSearchBrandList = async () => {
-	return await instance.get<ListResponse<Options<number>>>(
-		'/admin/nft/brand',
-		{
-			params: {
-				main_yn: true,
-			},
-		}
-	);
+export const getSearchBrandList = async (params = {main_yn: true}) => {
+	return await instance.get<Options<number>>('/admin/nft/brand', {
+		params,
+	});
 };
 
 export const sendSlack = async (data: Record<string, any>) => {

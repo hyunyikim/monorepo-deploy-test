@@ -6,6 +6,7 @@ import {
 	ProductListRequestSearchType,
 	ProductListRequestParam,
 	ProductListResponse,
+	ProductDetailResponse,
 } from '@/@types';
 
 export const getProductList = async (
@@ -35,4 +36,25 @@ export const getProductList = async (
 			},
 		}
 	);
+};
+
+export const getProductDetail = async (idx: number) => {
+	return await instance.get<ProductDetailResponse>(
+		`/v1/admin/partners-product/${idx}`
+	);
+};
+
+export const registerProduct = async (formData: FormData) => {
+	return await instance.post<ProductDetailResponse>(
+		`/v1/admin/partners-product`,
+		formData
+	);
+};
+
+export const editProduct = async (idx: number, formData: FormData) => {
+	return await instance.patch(`/v1/admin/partners-product/${idx}`, formData);
+};
+
+export const deleteProduct = async (idx: number) => {
+	await instance.delete(`/v1/admin/partners-product/${idx}`);
 };
