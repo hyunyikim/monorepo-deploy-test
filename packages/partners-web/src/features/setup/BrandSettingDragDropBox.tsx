@@ -110,8 +110,8 @@ function BrandSettingDragDropBox({
 						sx={{
 							fontSize: '16px !important',
 							fontWeight: 600,
-							color: `grey.300 !important`,
-							marginBottom: '48px',
+							color: `grey.300`,
+							marginBottom: '52px',
 						}}>
 						(PNG,JPG,JPEG, 최대 파일 크기 2MB)
 					</Typography>
@@ -121,7 +121,7 @@ function BrandSettingDragDropBox({
 							fontSize: '18px',
 							fontWeight: 700,
 							color: `primary.main`,
-							marginBottom: '48px',
+							marginBottom: '0px',
 							lineHeight: '32px',
 							textDecoration: 'underline',
 						}}

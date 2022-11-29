@@ -133,6 +133,7 @@ const TitleTextStyle = styled.h4`
 	font-size: 14px;
 	line-height: 19px;
 	color: #ffffff;
+	max-width: 120px;
 `;
 
 const DescTextStyle = styled.h4`
@@ -226,6 +227,7 @@ interface GreyBoxProps {
 
 interface PreviewProps {
 	values: ValueTypes;
+	b2bType?: string;
 	serviceCenterHandler: () => void;
 }
 
@@ -260,7 +262,11 @@ function GreyBoxComponent({title, desc}: GreyBoxProps) {
 const productImageRatio = 0.252;
 const productBoxRatio = 0.252;
 
-function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
+function PreviewGuarantee({
+	values,
+	serviceCenterHandler,
+	b2bType,
+}: PreviewProps) {
 	const {previewImage} = values;
 	const {data: partnershipData} = useGetPartnershipInfo();
 
@@ -478,7 +484,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								<Grid
 									container
 									justifyContent={'space-between'}
-									alignItems="center">
+									alignItems="flex-start">
 									<DescTextStyle>{el}</DescTextStyle>
 									<TitleTextStyle>
 										{(values?.nftCustomFieldValue &&
@@ -491,7 +497,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							<Grid
 								container
 								justifyContent={'space-between'}
-								alignItems="center">
+								alignItems="flex-start">
 								<DescTextStyle>주문일자</DescTextStyle>
 								<TitleTextStyle>
 									{values.orderDate}
@@ -502,7 +508,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							<Grid
 								container
 								justifyContent={'space-between'}
-								alignItems="center">
+								alignItems="flex-start">
 								<DescTextStyle>판매처</DescTextStyle>
 								<TitleTextStyle>
 									{values.platformName}
@@ -513,7 +519,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							<Grid
 								container
 								justifyContent={'space-between'}
-								alignItems="center">
+								alignItems="flex-start">
 								<DescTextStyle>주문번호</DescTextStyle>
 								<TitleTextStyle>
 									{values.orderId}
@@ -523,7 +529,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 						<Grid
 							container
 							justifyContent={'space-between'}
-							alignItems="center">
+							alignItems="flex-start">
 							<DescTextStyle>디지털 개런티 번호</DescTextStyle>
 							<TitleTextStyle>
 								{values?.nftRequestId || '-'}
@@ -532,7 +538,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 						<Grid
 							container
 							justifyContent={'space-between'}
-							alignItems="center">
+							alignItems="flex-start">
 							<DescTextStyle>디지털 개런티 발급일</DescTextStyle>
 							<TitleTextStyle>
 								{values?.nftIssueDt || '-'}
@@ -541,15 +547,19 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 						<Grid
 							container
 							justifyContent={'space-between'}
-							alignItems="center">
+							alignItems="flex-start">
 							<DescTextStyle>판매자</DescTextStyle>
 							<TitleTextStyle>{'-'}</TitleTextStyle>
 						</Grid>
 						<Grid
 							container
 							justifyContent={'space-between'}
-							alignItems="center">
-							<DescTextStyle>브랜드 소개</DescTextStyle>
+							alignItems="flex-start">
+							<DescTextStyle>
+								{b2bType === 'brand'
+									? '브랜드 소개'
+									: '판매자 검증'}
+							</DescTextStyle>
 							<TitleTextStyle>
 								{values?.authInfo || '-'}
 							</TitleTextStyle>

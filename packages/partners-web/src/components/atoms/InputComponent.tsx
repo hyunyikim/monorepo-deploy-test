@@ -13,8 +13,8 @@ type Height = '60px' | '48px' | '40px' | '32px' | 'auto';
 
 interface Props extends Omit<InputProps, 'control' | 'name' | 'error'> {
 	type: string;
-	value: string;
-	onChange(e: React.ChangeEvent<HTMLInputElement>): void;
+	value?: string;
+	onChange?(e: React.ChangeEvent<HTMLInputElement>): void;
 	defaultValue?: string;
 	height?: Height;
 	maxHeight?: Height;
@@ -105,6 +105,9 @@ function InputComponent({
 						borderColor: 'grey.100',
 						backgroundColor: 'grey.50',
 						color: 'grey.300',
+						input: {
+							color: 'grey.300',
+						},
 					},
 					...sx,
 				}}

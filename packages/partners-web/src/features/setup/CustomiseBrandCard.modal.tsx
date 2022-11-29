@@ -38,12 +38,14 @@ interface ImgProps extends FileData {
 interface CropImageProps {
 	file: FileData;
 	preview?: string;
+	base64String: string;
 }
 
 interface CustomiseCardProps {
 	image?: ImgProps;
 	onSelectBrandImage: (_value: CropPreviewData) => void;
 	setMoveToAfterModalClose?: (_bool: boolean) => void;
+	convertToBase64?: (_value: string) => void;
 }
 
 const MEGA_PER_BYTE = 1048576;
@@ -63,6 +65,7 @@ function CustomiseBrandCard({
 	image,
 	onSelectBrandImage,
 	setMoveToAfterModalClose,
+	convertToBase64,
 }: CustomiseCardProps) {
 	const [step, setStep] = useState<number>(1);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
@@ -82,12 +85,16 @@ function CustomiseBrandCard({
 	 *
 	 * 최종적으로 선택된 이미지를 크롭해 preview, file 객체로 넘겨준다.
 	 */
+
 	const handleUploadImage = async () => {
+		const reader: FileReader = new FileReader();
+
 		if (cropImage) {
-			const blob: Blob = await getCroppedImgBlob(
-				cropImage.preview as string,
-				(cropConfig as CropConfigProps).croppedAreaPixels as Area
-			);
+			const blob: {file: Blob; base64String: string} =
+				await getCroppedImgBlob(
+					cropImage.preview as string,
+					(cropConfig as CropConfigProps).croppedAreaPixels as Area
+				);
 
 			if (blob.size > FILE_SIZE_LIMIT) {
 				if (typeof setMoveToAfterModalClose === 'function') {
@@ -104,9 +111,10 @@ function CustomiseBrandCard({
 			const filename: string | null = cropImage.file.name as string;
 			if (typeof onSelectBrandImage === 'function') {
 				onSelectBrandImage({
-					preview: URL.createObjectURL(blob),
-					file: blob,
+					preview: URL.createObjectURL(blob.file),
+					file: blob.file,
 					filename,
+					base64String: blob.base64String,
 				});
 			}
 		} else {
@@ -116,6 +124,7 @@ function CustomiseBrandCard({
 					preview: null,
 					file: null,
 					filename: '',
+					base64String: '',
 				});
 			}
 		}

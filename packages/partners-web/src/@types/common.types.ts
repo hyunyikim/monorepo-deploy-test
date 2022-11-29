@@ -26,6 +26,7 @@ export type CropPreviewData = {
 	preview: string | null | ArrayBuffer;
 	file: File | null;
 	filename?: string;
+	base64String: string;
 };
 
 export interface CropConfigProps {

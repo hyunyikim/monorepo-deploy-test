@@ -21,6 +21,7 @@ interface Props {
 	value?: string;
 	fullWidth?: boolean;
 	disabled?: boolean;
+	defaultValue?: string;
 }
 
 function InputWithLabel({
@@ -38,6 +39,7 @@ function InputWithLabel({
 	value,
 	fullWidth,
 	disabled,
+	defaultValue,
 	...props
 }: Props) {
 	return (
@@ -59,11 +61,13 @@ function InputWithLabel({
 					disabled={disabled}
 					error={error}
 					onChange={onChange}
+					defaultValue={defaultValue}
 					{...props}
 				/>
 			) : (
 				<InputComponent
 					type={inputType}
+					defaultValue={defaultValue}
 					placeholder={placeholder}
 					fullWidth={fullWidth}
 					required={required}
@@ -72,6 +76,7 @@ function InputWithLabel({
 					error={error}
 					onChange={onChange}
 					value={value}
+					{...props}
 				/>
 			)}
 		</Grid>
