@@ -12,8 +12,8 @@ import {useMessageDialog} from '@/stores';
 interface Props {
 	product: Partial<ProductRegisterFormData> | null;
 	setProduct: (value: Partial<ProductRegisterFormData> | null) => void;
-	productImages: ImageState[];
-	setProductImages: Dispatch<SetStateAction<ImageState[]>>;
+	productImages: ImageState[] | null;
+	setProductImages: Dispatch<SetStateAction<ImageState[] | null>>;
 	onNewProductModalOpen: () => void;
 	onSelectProductModalOpen: () => void;
 }
@@ -145,9 +145,7 @@ const SelectedProduct = ({
 						fontSize={14}
 						lineHeight="14px"
 						color="grey.600">
-						{data?.price
-							? `${Number(data?.price).toLocaleString()}원`
-							: '-'}
+						{data?.price ? `${data?.price}원` : '-'}
 					</Typography>
 				</Stack>
 			</Stack>

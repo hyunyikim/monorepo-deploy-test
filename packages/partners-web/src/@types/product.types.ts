@@ -50,18 +50,22 @@ export interface Brand {
 }
 
 // 상품 등록 요청시 보낼 타입
-export interface ProductRegisterRequestParam {
+export interface ProductRegisterRequestParam
+	extends CooperatorProductRegisterRequestParam {
 	idx?: number;
 	name: string;
-	code?: string;
-	categoryCode?: string;
-	categoryName?: string;
 	brandIdx: number;
-	modelNum?: string;
 	price?: string;
 	warranty: string;
 	customField?: string;
 	productImage?: ImageState;
+}
+
+export interface CooperatorProductRegisterRequestParam {
+	categoryCode?: string;
+	categoryName?: string;
+	code?: string;
+	modelNum?: string;
 }
 
 // 입력시 사용하는 타입

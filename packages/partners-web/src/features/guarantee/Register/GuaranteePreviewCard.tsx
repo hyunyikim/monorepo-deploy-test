@@ -49,9 +49,12 @@ function GuaranteePreviewCard() {
 			});
 		}
 
+		// 상품의 보증기간이 설정되기 전에는 사용자의 보증기간 정보 보여줌
+		const warrantyDate =
+			previewData?.product?.warranty || partnershipData?.warrantyDate;
 		return {
 			brandNameEN: brandName,
-			warrantyDate: previewData?.warranty,
+			warrantyDate,
 			nftCustomField: partnershipData?.nftCustomFields || [],
 			afterServiceInfo: partnershipData?.afterServiceInfo,
 			authInfo: partnershipData?.authInfo,
@@ -69,13 +72,9 @@ function GuaranteePreviewCard() {
 
 			// 상품
 			productName: previewData?.product?.name || '상품명',
-			price:
-				previewData?.product?.price &&
-				!isNaN(Number(previewData?.product?.price))
-					? `${Number(
-							previewData?.product?.price
-					  ).toLocaleString()}원`
-					: '',
+			price: previewData?.product?.price
+				? `${String(previewData?.product?.price)}원`
+				: '',
 			nftCustomFieldValue: nftCustomFieldValue || null,
 			previewImage: previewData?.productImage?.preview,
 			nftRequestId: previewData?.nft_req_idx || '000000000000',
@@ -118,7 +117,11 @@ function GuaranteePreviewCard() {
 						const customerCenterUrl =
 							partnershipData.customerCenterUrl;
 						if (customerCenterUrl) {
-							window.open(customerCenterUrl);
+							if (customerCenterUrl.includes('http')) {
+								window.open(customerCenterUrl);
+								return;
+							}
+							window.open(`https://${customerCenterUrl}`);
 						}
 					}}
 				/>

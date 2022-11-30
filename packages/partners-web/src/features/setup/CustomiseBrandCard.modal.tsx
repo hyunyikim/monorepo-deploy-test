@@ -155,8 +155,8 @@ function CustomiseBrandCard({
 	};
 
 	return (
-		<Box sx={{width: '100%'}}>
-			<DialogContent>
+		<>
+			<Box sx={{width: '100%'}}>
 				<Stack
 					direction="row"
 					sx={{
@@ -206,8 +206,7 @@ function CustomiseBrandCard({
 						croppedArea={cropConfig?.croppedArea}
 					/>
 				)}
-			</DialogContent>
-
+			</Box>
 			<DialogActions
 				sx={{
 					display: 'flex',
@@ -270,7 +269,7 @@ function CustomiseBrandCard({
 					</Stack>
 				)}
 			</DialogActions>
-		</Box>
+		</>
 	);
 }
 

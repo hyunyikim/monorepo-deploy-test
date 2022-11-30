@@ -1,6 +1,6 @@
 import {Checkbox as MuiCheckbox, CheckboxProps} from '@mui/material';
 
-export default function Checkbox(props: CheckboxProps) {
+export default function Checkbox({sx = {}, ...props}: CheckboxProps) {
 	return (
 		<MuiCheckbox
 			sx={{
@@ -9,6 +9,7 @@ export default function Checkbox(props: CheckboxProps) {
 				'& svg': {
 					fontSize: '20px',
 				},
+				...sx,
 			}}
 			{...props}
 		/>

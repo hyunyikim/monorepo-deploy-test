@@ -73,16 +73,18 @@ function GuaranteeRegister() {
 			flexDirection={{
 				xs: 'column',
 				md: 'row',
-			}}
-			margin="auto">
+			}}>
 			<Stack
 				flexDirection="column"
 				width="100%"
 				maxWidth={PAGE_MAX_WIDTH}
-				marginLeft="auto"
 				marginRight={{
 					xs: 'auto',
-					md: '50px',
+					md: '40px',
+				}}
+				marginLeft={{
+					xs: 'auto',
+					md: '0',
 				}}
 				mb="60px">
 				<Typography

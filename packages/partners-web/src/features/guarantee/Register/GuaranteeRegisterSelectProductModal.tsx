@@ -4,8 +4,9 @@ import {
 	useState,
 	SetStateAction,
 	Dispatch,
+	useMemo,
 } from 'react';
-import {Box, Stack, TableRow, Typography, DialogActions} from '@mui/material';
+import {Box, TableRow, Typography} from '@mui/material';
 
 import {ProductRegisterFormData, ImageState} from '@/@types';
 import {Checkbox, Dialog} from '@/components';
@@ -37,7 +38,7 @@ import {
 	Select,
 	TableCell,
 } from '@/components';
-import {useMessageDialog} from '@/stores';
+import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 
 const menu = 'guarantee_publish_pluspopup_query_click';
 const menuKo = '';
@@ -45,7 +46,7 @@ interface Props {
 	open: boolean;
 	onClose: () => void;
 	setProduct: (value: Partial<ProductRegisterFormData> | null) => void;
-	setImages: Dispatch<SetStateAction<ImageState[]>>;
+	setImages: Dispatch<SetStateAction<ImageState[] | null>>;
 	setRegisterNewProduct: (value: boolean) => void;
 }
 
@@ -79,6 +80,11 @@ function GuaranteeRegisterSelectProductModal({
 		},
 		isQueryChange: false,
 	});
+	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const isCooperator = useMemo(
+		() => (partnershipInfo?.b2bType === 'cooperator' ? true : false),
+		[partnershipInfo]
+	);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const [selectedProduct, setSelectedProduct] =
 		useState<ProductListResponse | null>(null);
@@ -110,7 +116,7 @@ function GuaranteeRegisterSelectProductModal({
 			name,
 			brandName: brand.name,
 			brandIdx,
-			price: String(price || ''),
+			price: price ? price.toLocaleString() : '',
 			customField: customField || {},
 		});
 		if (productImage) {
@@ -142,148 +148,15 @@ function GuaranteeRegisterSelectProductModal({
 		<Dialog
 			open={open}
 			onClose={onClose}
-			sx={{
-				'& .MuiPaper-root.MuiDialog-paper': {
-					overflowY: 'hidden',
-					padding: 0,
-					width: '900px',
-				},
-			}}>
-			<Stack position="relative">
-				<Box
-					sx={{
-						height: '636px',
-						overflowY: 'auto',
-						padding: '32px',
-						paddingBottom: '76px',
-					}}>
-					<Typography fontSize={18} fontWeight="bold" pb="24px">
-						상품 추가
-					</Typography>
-					<SearchFilter
-						menu={menu}
-						menuKo={menuKo}
-						filter={filter}
-						filterComponent={
-							guaranteeRegisterProductListSearchFilter
-						}
-						periodIdx={6}
-						onSearch={handleSearch}
-						onReset={handleReset}
-						onChangeFilter={handleChangeFilter}
-					/>
-					<Typography fontSize={14} fontWeight="bold" pt="40px">
-						상품 목록
-					</Typography>
-					<TableInfo
-						totalSize={totalSize}
-						unit="건"
-						sx={{
-							marginTop: '12px',
-							marginBottom: '20px',
-							'& .table-info-count': {
-								fontSize: 13,
-							},
-						}}>
-						<Select
-							height={32}
-							value={filter?.sort ?? 'latest'}
-							options={sortSearchFilter}
-							onChange={(e) => {
-								const sortLabel =
-									sortSearchFilter.find(
-										(item) => item.value === e.target.value
-									)?.label || '';
-								sendAmplitudeLog(
-									`guarantee_publish_pluspopup_query_click`,
-									{
-										button_title: `정렬선택_${sortLabel}`,
-									}
-								);
-								handleChangeFilter({
-									sort: e.target.value,
-								});
-							}}
-							sx={{
-								minWidth: '150px',
-							}}
-						/>
-						<PageSelect
-							value={filter.pageMaxNum}
-							onChange={(value: {[key: string]: any}) =>
-								handleChangeFilter(value)
-							}
-						/>
-					</TableInfo>
-					<Table
-						isLoading={isLoading}
-						totalSize={totalSize}
-						headcell={
-							<>
-								<TableCell></TableCell>
-								<TableCell>브랜드</TableCell>
-								<TableCell>상품명</TableCell>
-								<TableCell>상품가격</TableCell>
-								<TableCell>카테고리</TableCell>
-							</>
-						}>
-						{data &&
-							data?.data?.length > 0 &&
-							data?.data.map((item, idx) => (
-								<TableRow key={`item_${idx}`}>
-									<TableCell width="52px">
-										<Checkbox
-											onChange={(e, checked) =>
-												handleSelectProduct(
-													item,
-													checked
-												)
-											}
-											checked={
-												selectedProduct &&
-												selectedProduct?.idx == item.idx
-													? true
-													: false
-											}
-											data-tracking={`guarantee_publish_pluspopup_select_click,{'button_title': '상품선택 클릭'}`}
-										/>
-									</TableCell>
-									<TableCell>
-										{item?.brand?.name || '-'}
-									</TableCell>
-									<TableCell width="500px">
-										<Typography
-											fontSize={14}
-											lineHeight={'18px'}>
-											{item?.name ?? '-'}
-										</Typography>
-									</TableCell>
-									<TableCell sx={{minWidth: 120}}>
-										{item?.price
-											? `${item?.price.toLocaleString()}원`
-											: '-'}
-									</TableCell>
-									<TableCell sx={{minWidth: 120}}>
-										{item?.categoryName || '-'}
-									</TableCell>
-								</TableRow>
-							))}
-					</Table>
-					<Pagination {...paginationProps} />
-				</Box>
-				<DialogActions
-					sx={{
-						width: '100%',
-						justifyContent: 'center',
-						columnGap: '12px',
-						padding: 0,
-						position: 'absolute',
-						bottom: '0px',
-						backgroundColor: '#FFF',
-						borderTop: (theme) =>
-							`1px solid ${theme.palette.grey[100]}`,
-						paddingY: '16px',
-					}}>
+			width={900}
+			height={600}
+			TitleComponent={
+				<Typography fontSize={18} fontWeight="bold">
+					상품 추가
+				</Typography>
+			}
+			ActionComponent={
+				<>
 					<Button
 						variant="outlined"
 						color="grey-100"
@@ -296,8 +169,138 @@ function GuaranteeRegisterSelectProductModal({
 						onClick={() => handleAddProduct(selectedProduct)}>
 						추가
 					</Button>
-				</DialogActions>
-			</Stack>
+				</>
+			}
+			sx={{
+				'& .MuiDialogContent-root': {
+					marginBottom: '65px',
+				},
+				'& .MuiDialogActions-root': {
+					backgroundColor: 'grey.10',
+					paddingY: '16px',
+					borderTop: (theme) =>
+						`1px solid ${theme.palette.grey[100]}`,
+				},
+			}}>
+			<Box>
+				<SearchFilter
+					menu={menu}
+					menuKo={menuKo}
+					filter={filter}
+					filterComponent={
+						isCooperator
+							? guaranteeRegisterProductListSearchFilter
+							: guaranteeRegisterProductListSearchFilter.slice(
+									0,
+									1
+							  )
+					}
+					periodIdx={6}
+					onSearch={handleSearch}
+					onReset={handleReset}
+					onChangeFilter={handleChangeFilter}
+				/>
+				<Typography fontSize={14} fontWeight="bold" pt="40px">
+					상품 목록
+				</Typography>
+				<TableInfo
+					totalSize={totalSize}
+					unit="건"
+					sx={{
+						marginTop: '12px',
+						marginBottom: '20px',
+						'& .table-info-count': {
+							fontSize: 13,
+						},
+					}}>
+					<Select
+						height={32}
+						value={filter?.sort ?? 'latest'}
+						options={sortSearchFilter}
+						onChange={(e) => {
+							const sortLabel =
+								sortSearchFilter.find(
+									(item) => item.value === e.target.value
+								)?.label || '';
+							sendAmplitudeLog(
+								`guarantee_publish_pluspopup_query_click`,
+								{
+									button_title: `정렬선택_${sortLabel}`,
+								}
+							);
+							handleChangeFilter({
+								sort: e.target.value,
+							});
+						}}
+						sx={{
+							minWidth: '150px',
+						}}
+					/>
+					<PageSelect
+						value={filter.pageMaxNum}
+						onChange={(value: {[key: string]: any}) =>
+							handleChangeFilter(value)
+						}
+					/>
+				</TableInfo>
+				<Table
+					isLoading={isLoading}
+					totalSize={totalSize}
+					headcell={
+						<>
+							<TableCell></TableCell>
+							<TableCell>브랜드</TableCell>
+							<TableCell>상품명</TableCell>
+							<TableCell>상품가격</TableCell>
+							{isCooperator && <TableCell>카테고리</TableCell>}
+						</>
+					}>
+					{data &&
+						data?.data?.length > 0 &&
+						data?.data.map((item, idx) => (
+							<TableRow key={`item_${idx}`}>
+								<TableCell width="50px">
+									<Checkbox
+										onChange={(e, checked) =>
+											handleSelectProduct(item, checked)
+										}
+										checked={
+											selectedProduct &&
+											selectedProduct?.idx == item.idx
+												? true
+												: false
+										}
+										sx={{
+											padding: '0 !important',
+										}}
+										data-tracking={`guarantee_publish_pluspopup_select_click,{'button_title': '상품선택 클릭'}`}
+									/>
+								</TableCell>
+								<TableCell width="180px">
+									{item?.brand?.name || '-'}
+								</TableCell>
+								<TableCell width="400px">
+									<Typography
+										fontSize={14}
+										lineHeight={'18px'}>
+										{item?.name ?? '-'}
+									</Typography>
+								</TableCell>
+								<TableCell sx={{minWidth: 120}}>
+									{item?.price
+										? `${item?.price.toLocaleString()}원`
+										: '-'}
+								</TableCell>
+								{isCooperator && (
+									<TableCell sx={{minWidth: 120}}>
+										{item?.categoryName || '-'}
+									</TableCell>
+								)}
+							</TableRow>
+						))}
+				</Table>
+				<Pagination {...paginationProps} />
+			</Box>
 		</Dialog>
 	);
 }

@@ -8,9 +8,6 @@ import {
 	TableCell,
 } from '@mui/material';
 
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 
 import {Dialog, Button} from '@/components';
@@ -751,9 +748,12 @@ interface Props {
 function AgreementModal({open, type, onClose}: Props) {
 	if (!type) return null;
 	return (
-		<Dialog open={open} onClose={onClose} maxWidth="md">
-			<>
-				<DialogTitle
+		<Dialog
+			open={open}
+			onClose={onClose}
+			maxWidth="md"
+			TitleComponent={
+				<Typography
 					fontSize={20}
 					fontWeight="bold"
 					padding={'0 !important'}>
@@ -761,96 +761,105 @@ function AgreementModal({open, type, onClose}: Props) {
 						? '서비스 이용약관'
 						: '개인정보 처리방침'}{' '}
 					({agreementContents[type].date})
-				</DialogTitle>
-				<DialogContent sx={{p: 4}}>
-					{agreementContents[type].contents?.map((li, i: number) => (
-						<Box key={`using-policy-box-${i}`} sx={{my: 4}}>
-							{li.h2 && (
-								<Typography
-									variant="h2"
-									fontWeight="bold"
-									sx={{
-										fontSize: '18px !important',
-										my: 1,
-									}}>
-									{li.h2}
-								</Typography>
+				</Typography>
+			}
+			ActionComponent={
+				<Button variant="contained" onClick={onClose} autoFocus>
+					확인
+				</Button>
+			}
+			sx={{
+				'& .MuiDialogActions-root': {
+					justifyContent: 'flex-end',
+				},
+			}}>
+			<>
+				{agreementContents[type].contents?.map((li, i: number) => (
+					<Box key={`using-policy-box-${i}`} sx={{mb: 4}}>
+						{li.h2 && (
+							<Typography
+								variant="h2"
+								fontWeight="bold"
+								sx={{
+									fontSize: '18px !important',
+									my: 1,
+								}}>
+								{li.h2}
+							</Typography>
+						)}
+						{li.h3 && (
+							<Typography
+								variant="h3"
+								fontWeight="bold"
+								sx={{
+									fontSize: '16px !important',
+									mb: 1,
+								}}>
+								{li.h3}
+							</Typography>
+						)}
+						{li.contents &&
+							(li.contents as string[]).map((line, i) =>
+								line === '' ? (
+									<br key={i} />
+								) : (
+									<Typography
+										key={i}
+										fontSize={14}
+										fontWeight={400}
+										marginY="14px">
+										{line}
+									</Typography>
+								)
 							)}
-							{li.h3 && (
-								<Typography
-									variant="h3"
-									fontWeight="bold"
-									sx={{
-										fontSize: '16px !important',
-										mb: 1,
-									}}>
-									{li.h3}
-								</Typography>
-							)}
-							{li.contents &&
-								(li.contents as string[]).map((line, i) =>
-									line === '' ? (
-										<br key={i} />
-									) : (
-										<Typography
-											key={i}
-											fontSize={14}
-											fontWeight={400}
-											marginY="14px">
-											{line}
-										</Typography>
-									)
-								)}
-							{li && li?.table && (
-								<TableContainer>
-									<Table
-										size="small"
-										sx={(theme) => ({
-											minWidth: 750,
-											borderRadius: '8px',
-											border: `1px solid ${theme.palette.grey[100]}`,
-											'& thead': {
-												'& tr th': {
-													padding: '20px 16px',
-													fontSize: '16px',
-													background: '#F3F3F5',
-													borderLeft: `0.5px solid ${theme.palette.grey[100]}`,
-													'&:first-of-type': {
-														borderLeft: 'none',
-													},
-												},
-											},
-											'& tbody': {
-												'& td': {
-													padding: '5px 16px',
-													borderLeft: `0.5px solid ${theme.palette.grey[100]}`,
-												},
-												'& td:first-of-type': {
+						{li && li?.table && (
+							<TableContainer>
+								<Table
+									size="small"
+									sx={(theme) => ({
+										minWidth: 750,
+										borderRadius: '8px',
+										border: `1px solid ${theme.palette.grey[100]}`,
+										'& thead': {
+											'& tr th': {
+												padding: '20px 16px',
+												fontSize: '16px',
+												background: '#F3F3F5',
+												borderLeft: `0.5px solid ${theme.palette.grey[100]}`,
+												'&:first-of-type': {
 													borderLeft: 'none',
 												},
 											},
-										})}>
-										{li?.table?.thead && (
-											<TableHead>
-												{(
-													li?.table
-														?.thead as string[][]
-												).map((tr, j) => (
-													<TableRow key={i}>
-														{tr.map((td, k) => (
-															<TableCell key={k}>
-																{td}
-															</TableCell>
-														))}
-													</TableRow>
-												))}
-											</TableHead>
-										)}
-										{li.table.tbody && (
-											<TableBody>
-												{(
-													li.table.tbody as string[][]
-												).map((tr, j) => (
+										},
+										'& tbody': {
+											'& td': {
+												padding: '5px 16px',
+												borderLeft: `0.5px solid ${theme.palette.grey[100]}`,
+											},
+											'& td:first-of-type': {
+												borderLeft: 'none',
+											},
+										},
+									})}>
+									{li?.table?.thead && (
+										<TableHead>
+											{(
+												li?.table?.thead as string[][]
+											).map((tr, j) => (
+												<TableRow key={i}>
+													{tr.map((td, k) => (
+														<TableCell key={k}>
+															{td}
+														</TableCell>
+													))}
+												</TableRow>
+											))}
+										</TableHead>
+									)}
+									{li.table.tbody && (
+										<TableBody>
+											{(li.table.tbody as string[][]).map(
+												(tr, j) => (
 													<TableRow key={j}>
 														{tr.map((td, k) => (
 															<TableCell key={k}>
@@ -858,20 +867,15 @@ function AgreementModal({open, type, onClose}: Props) {
 															</TableCell>
 														))}
 													</TableRow>
-												))}
-											</TableBody>
-										)}
-									</Table>
-								</TableContainer>
-							)}
-						</Box>
-					))}
-				</DialogContent>
-				<DialogActions sx={{pr: 2.5}}>
-					<Button variant="contained" onClick={onClose} autoFocus>
-						확인
-					</Button>
-				</DialogActions>
+												)
+											)}
+										</TableBody>
+									)}
+								</Table>
+							</TableContainer>
+						)}
+					</Box>
+				))}
 			</>
 		</Dialog>
 	);

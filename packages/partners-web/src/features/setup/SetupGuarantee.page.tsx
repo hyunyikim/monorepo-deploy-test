@@ -894,10 +894,9 @@ export function InputFormSection({
 			subtitle:
 				'개런티 설정 완료 전에 입력한 정보들을 미리보기를 통해 확인해보세요.',
 			children: (
-				<div>
+				<Box className="flex-center">
 					<PreviewGuarantee
 						serviceCenterHandler={handleCheckOutLinkClick}
-						b2bType={b2bType}
 						values={{
 							...values,
 							nftCustomField: exampleList,
@@ -905,7 +904,7 @@ export function InputFormSection({
 							nftBackgroundImage: brandCardPreview.preview,
 						}}
 					/>
-				</div>
+				</Box>
 			),
 			width: '544px',
 			align: 'center',

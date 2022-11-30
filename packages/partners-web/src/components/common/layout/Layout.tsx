@@ -5,7 +5,6 @@ import {HEADER_HEIGHT, PARTIAL_PAGE_MAX_WIDTH} from '@/data';
 
 import Header from '@/components/common/layout/Header';
 import Sidebar from '@/components/common/layout/Sidebar';
-import {useBackgroundColorStore} from '@/stores';
 
 interface Props {
 	hasHeader?: boolean;

@@ -21,6 +21,7 @@ function LabeledCheckbox({
 			<FormControlLabel
 				sx={{
 					margin: 0,
+					width: 'fit-content',
 					'& .MuiFormControlLabel-label': {
 						fontSize: 14,
 						color: 'grey.900',

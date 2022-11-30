@@ -1,4 +1,5 @@
 import {forwardRef, Ref, useEffect, useState} from 'react';
+import {FieldError} from 'react-hook-form';
 
 import {
 	FormControl,
@@ -6,6 +7,7 @@ import {
 	MenuItem,
 	SelectProps,
 	SvgIcon,
+	FormHelperText,
 } from '@mui/material';
 
 import {Options} from '@/@types';
@@ -14,10 +16,11 @@ import {IcChevronDown} from '@/assets/icon';
 
 type Height = 48 | 32;
 
-export interface Props<T> extends SelectProps {
+export interface Props<T> extends Omit<SelectProps, 'error'> {
 	width?: number | 'auto';
 	height?: Height;
 	options: Options<T>;
+	error?: FieldError;
 }
 
 /**
@@ -35,6 +38,7 @@ function Select<T>(
 		defaultValue,
 		onChange,
 		placeholder,
+		error,
 		...props
 	}: Props<T>,
 	ref: Ref<unknown>
@@ -50,9 +54,14 @@ function Select<T>(
 			});
 		}
 	}, [value, defaultValue]);
-
 	return (
-		<FormControl>
+		<FormControl
+			error={error ? true : false}
+			sx={{
+				'& .MuiInputBase-root.Mui-error': {
+					backgroundColor: 'red.50',
+				},
+			}}>
 			<MuiSelect
 				// 제어
 				{...((value || value === '') && {
@@ -136,6 +145,19 @@ function Select<T>(
 					);
 				})}
 			</MuiSelect>
+			{error?.message && (
+				<FormHelperText
+					sx={{
+						marginLeft: 0,
+						marginTop: '6px',
+						fontSize: '13',
+						fontWeight: '500',
+						color: 'red.main',
+						lineHeight: '13px',
+					}}>
+					{error?.message}
+				</FormHelperText>
+			)}
 		</FormControl>
 	);
 }

@@ -11,7 +11,7 @@ import {
 } from '@/data';
 import {useGetPartnershipInfo, useGetSearchBrandList} from '@/stores';
 
-import {Stack, Typography, Box, DialogActions} from '@mui/material';
+import {Stack, Typography, Box} from '@mui/material';
 
 import {Dialog, LabeledCheckbox, Button} from '@/components';
 import ProductRegisterFormInput from '@/features/product/Register/ProductRegisterFormInput';
@@ -21,8 +21,8 @@ interface Props {
 	onClose: () => void;
 	product: Partial<ProductRegisterFormData> | null;
 	setProduct: (value: Partial<ProductRegisterFormData> | null) => void;
-	images: ImageState[];
-	setImages: Dispatch<SetStateAction<ImageState[]>>;
+	images: ImageState[] | null;
+	setImages: Dispatch<SetStateAction<ImageState[] | null>>;
 	registerNewProduct: boolean;
 	setRegisterNewProduct: (value: boolean) => void;
 }
@@ -72,14 +72,12 @@ function GuaranteeRegisterNewProductModal({
 		const customFields = partnershipInfo?.nftCustomFields;
 		setProduct({
 			...data,
-			price: data.price ? data.price.replace(/\,/g, '') : '',
+			price: data.price ? data.price : '',
 			...(customFields && {
 				customField: getProductCustomFieldValue(data, customFields),
 			}),
 		});
-		if (inputImages?.length > 0) {
-			setImages(inputImages);
-		}
+		setImages(inputImages);
 		onClose();
 	};
 
@@ -95,82 +93,67 @@ function GuaranteeRegisterNewProductModal({
 		<Dialog
 			open={open}
 			onClose={onClose}
-			sx={{
-				'& .MuiPaper-root.MuiDialog-paper': {
-					overflowY: 'hidden',
-					padding: 0,
-				},
-			}}>
-			<Stack position="relative">
-				<form noValidate onSubmit={handleSubmit(onSubmit)}>
-					<Box
-						sx={{
-							height: '90vh',
-							overflowY: 'auto',
-							padding: '24px',
-							paddingBottom: '76px',
+			width={400}
+			padding={24}
+			TitleComponent={
+				<Typography fontSize={18} fontWeight="bold">
+					상품정보 입력하기
+				</Typography>
+			}
+			ActionComponent={
+				<>
+					<Button
+						width="100%"
+						variant="outlined"
+						color="grey-100"
+						onClick={() => {
+							onClose();
+							setInputImages([]);
+							if (!isEditInputProduct) {
+								setProduct(null);
+							}
+						}}
+						data-tracking={`guarantee_publish_pluspopup_close_click,{'button_title': '닫기 클릭'}`}>
+						취소
+					</Button>
+					<Button
+						type="submit"
+						width="100%"
+						onClick={() => {
+							handleSubmit(onSubmit)();
 						}}>
-						<Typography fontSize={18} fontWeight="bold" mb="32px">
-							상품정보 입력하기
-						</Typography>
-						<Stack
-							mb="24px"
-							pb="24px"
-							borderBottom={(theme) =>
-								`1px solid ${theme.palette.grey[100]}`
-							}>
-							<ProductRegisterFormInput
-								inputList={inputList}
-								images={inputImages}
-								setImages={setInputImages}
-								control={control}
-								setValue={setValue}
-								errors={errors}
-							/>
-						</Stack>
-						<Box mt="26px" mb="50px">
-							<LabeledCheckbox
-								label="상품정보 저장하기"
-								checked={registerNewProduct}
-								onChange={(e, checked) => {
-									setRegisterNewProduct(checked);
-								}}
-							/>
-						</Box>
-					</Box>
-					<DialogActions
-						sx={{
-							width: '100%',
-							justifyContent: 'center',
-							columnGap: '12px',
-							padding: '16px',
-							position: 'absolute',
-							bottom: '0px',
-							backgroundColor: '#FFF',
-							borderTop: (theme) =>
-								`1px solid ${theme.palette.grey[100]}`,
-						}}>
-						<Button
-							width="100%"
-							variant="outlined"
-							color="grey-100"
-							onClick={() => {
-								onClose();
-
-								setInputImages([]);
-								if (!isEditInputProduct) {
-									setProduct(null);
-								}
+						{isEditInputProduct ? '수정' : ' 입력완료'}
+					</Button>
+				</>
+			}>
+			<form noValidate>
+				<Stack position="relative">
+					<Stack
+						mb="24px"
+						pb="24px"
+						borderBottom={(theme) =>
+							`1px solid ${theme.palette.grey[100]}`
+						}>
+						<ProductRegisterFormInput
+							inputList={inputList}
+							images={inputImages}
+							setImages={setInputImages}
+							control={control}
+							setValue={setValue}
+							errors={errors}
+						/>
+					</Stack>
+					<Box mt="26px" mb="30px">
+						<LabeledCheckbox
+							label="상품정보 저장하기"
+							checked={registerNewProduct}
+							onChange={(e, checked) => {
+								setRegisterNewProduct(checked);
 							}}
-							data-tracking={`guarantee_publish_pluspopup_close_click,{'button_title': '닫기 클릭'}`}>
-							취소
-						</Button>
-						<Button type="submit" width="100%">
-							{isEditInputProduct ? '수정' : ' 입력완료'}
-						</Button>
-					</DialogActions>
-				</form>
-			</Stack>
+						/>
+					</Box>
+				</Stack>
+			</form>
 		</Dialog>
 	);
 }
