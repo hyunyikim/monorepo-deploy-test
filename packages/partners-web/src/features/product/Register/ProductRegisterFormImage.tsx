@@ -84,7 +84,7 @@ function ProductRegisterFormImage({images, setImages}: Props) {
 				})}
 				data-tracking={`itemadmin_imageregist_click,{'button_title': '사진 등록 버튼 클릭 시 finder 노출'}`}>
 				<IcCamera />
-				<Typography fontSize={14} mt="14px">
+				<Typography fontSize={14} mt="8px">
 					사진 추가
 				</Typography>
 			</Stack>

@@ -1,9 +1,8 @@
 import {ReactNode, useEffect} from 'react';
-import amplitude from 'amplitude-js';
 
 import {sendAmplitudeLog} from '@/utils';
 
-import {Container} from '@mui/material';
+import {Box} from '@mui/material';
 
 const handleClick = (e) => {
 	const target = e.target;
@@ -32,7 +31,7 @@ function AmplitudeTrackingInterceptor({children}: {children: ReactNode}) {
 		};
 	}, []);
 
-	return <Container>{children}</Container>;
+	return <Box className="amplitude-tracking-interceptor">{children}</Box>;
 }
 
 export default AmplitudeTrackingInterceptor;

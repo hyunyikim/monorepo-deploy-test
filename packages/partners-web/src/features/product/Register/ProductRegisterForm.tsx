@@ -195,6 +195,10 @@ function ProductRegisterForm({mode, initialData}: Props) {
 		return getProductRegisterInputList(partnershipInfo, brandList);
 	}, [partnershipInfo, brandList]);
 
+	if (!partnershipInfo) {
+		return <></>;
+	}
+
 	return (
 		<>
 			<form noValidate onSubmit={handleSubmit(onSubmit)}>

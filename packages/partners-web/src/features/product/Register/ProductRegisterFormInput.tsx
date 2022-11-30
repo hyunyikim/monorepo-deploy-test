@@ -4,6 +4,7 @@ import {
 	UseFormSetValue,
 	FieldErrors,
 	Control,
+	FieldError,
 } from 'react-hook-form';
 
 import {ProductRegisterFormData, InputType, InputTypeList} from '@/@types';
@@ -52,11 +53,10 @@ function ProductRegisterFormInput({
 								placeholder={input.placeholder}
 								inputType={input.type}
 								required={input?.required || false}
-								// TODO: type error
 								error={
 									errors[
 										name as keyof ProductRegisterFormData
-									]
+									] as FieldError
 								}
 								{...restInput}
 								onChange={(e) => {
@@ -105,6 +105,11 @@ function ProductRegisterFormInput({
 											{...restField}
 											options={
 												input.options as Options<any>
+											}
+											error={
+												errors[
+													name as keyof ProductRegisterFormData
+												] as FieldError
 											}
 											onChange={(e) => {
 												const value = e.target.value;

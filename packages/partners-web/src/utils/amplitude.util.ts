@@ -16,9 +16,12 @@ export const initAmplitudeTracking = () => {
 
 export const sendAmplitudeLog = (
 	event: string,
-	props?: Record<string, string>
+	props?: Record<string, string> | string
 ) => {
 	try {
+		if (typeof props === 'string') {
+			props = JSON.parse(props);
+		}
 		amplitude.getInstance().logEvent(event, props);
 	} catch (e) {
 		// console.log(e);

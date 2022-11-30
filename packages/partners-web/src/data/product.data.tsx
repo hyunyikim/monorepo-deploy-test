@@ -91,6 +91,9 @@ export const productRegisterInputList: InputTypeList = [
 		autoComplete: 'off',
 		required: false,
 	},
+];
+
+export const productRegisterInputListForCooperator: InputTypeList = [
 	{
 		type: 'select',
 		name: 'categoryCode',
@@ -127,7 +130,7 @@ export const getProductRegisterInputList = (
 	const b2bType = partnershipInfo?.b2bType;
 	const customFields = partnershipInfo?.nftCustomFields;
 
-	let normalInputList = [...productRegisterInputList];
+	const normalInputList = [...productRegisterInputList];
 	let brandInputs = [
 		{
 			type: 'hidden',
@@ -144,8 +147,28 @@ export const getProductRegisterInputList = (
 		},
 	] as InputTypeList;
 
-	// 병행업체는 브랜드 선택
-	if (b2bType === 'cooperator' && brandList && brandList?.length > 0) {
+	// 커스텀 필드
+	let customFieldInputList: InputTypeList = [];
+	if (customFields && customFields?.length > 0) {
+		customFieldInputList = customFields.map(
+			(field) =>
+				({
+					type: 'text',
+					name: field,
+					label: field,
+					autoComplete: 'off',
+				} as InputType)
+		);
+	}
+
+	// 일반 브랜드 타입
+	if (b2bType === 'brand') {
+		return [...brandInputs, ...normalInputList, ...customFieldInputList];
+	}
+
+	let cooperatorInputList = [...productRegisterInputListForCooperator];
+	// 병행업체
+	if (brandList && brandList?.length > 0) {
 		brandInputs = [
 			{
 				type: 'select',
@@ -171,7 +194,7 @@ export const getProductRegisterInputList = (
 			partnerCategories.includes(item.value)
 		);
 	}
-	normalInputList = normalInputList.map((item) => {
+	cooperatorInputList = cooperatorInputList.map((item) => {
 		if (item.name !== 'categoryCode') {
 			return item;
 		}
@@ -180,27 +203,17 @@ export const getProductRegisterInputList = (
 			options: selectedCategories,
 		};
 	});
-
-	let customFieldInputList: InputTypeList = [];
-
-	// 커스텀 필드
-	if (customFields && customFields?.length > 0) {
-		customFieldInputList = customFields.map(
-			(field) =>
-				({
-					type: 'text',
-					name: field,
-					label: field,
-					autoComplete: 'off',
-				} as InputType)
-		);
-	}
-	return [...brandInputs, ...normalInputList, ...customFieldInputList];
+	return [
+		...brandInputs,
+		...normalInputList,
+		...cooperatorInputList,
+		...customFieldInputList,
+	];
 };
 
 export const convertProductRegisterFormData = (
 	data: ProductRegisterFormData,
-	images: ImageState[],
+	images: ImageState[] | null,
 	customFields?: string[]
 ) => {
 	const formData = new FormData();
@@ -228,7 +241,7 @@ export const convertProductRegisterFormData = (
 	if (customFields) {
 		formData.append('customField', JSON.stringify(customFieldObj));
 	}
-	if (images.length > 0) {
+	if (images && images.length > 0) {
 		images.forEach((image) => {
 			image?.file && formData.append('productImage', image.file);
 		});
@@ -256,7 +269,7 @@ export const getProductRegisterFormDataForReset = (
 		| ProductDetailResponse
 		| Partial<ProductRegisterFormData>
 		| null,
-	images?: ImageState[]
+	images?: ImageState[] | null
 ): {data: ProductRegisterFormData; images: ImageState[]} => {
 	const brand = partnershipInfo?.brand;
 	const customFields = partnershipInfo?.nftCustomFields;

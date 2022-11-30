@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import styled from '@emotion/styled';
-import {Typography, Grid} from '@mui/material';
+import {Typography, Grid, Box} from '@mui/material';
 
 import smallPhoneFrame from '@/assets/images/img_small_phone_frame.png';
 import smallPhoneFrame2x from '@/assets/images/img_small_phone_frame@2x.png';
@@ -169,6 +169,8 @@ const HiddenBoxStyle = styled.div<{open: boolean}>`
 				height: '100%',
 				overflow: 'visible',
 				paddingTop: '20px',
+				marginTop: '20px',
+				borderTop: '1px solid #47474F',
 			};
 		}
 		return {
@@ -199,14 +201,14 @@ type ValueTypes = {
 	brandNameEN?: string;
 	warrantyDate?: string;
 	nftCustomField?: string[] | [];
-	afterServiceInfo?: string;
+	afterServiceInfo?: string | null;
 	authInfo?: string;
-	customerCenterUrl?: string;
+	customerCenterUrl?: string | null;
 	'newCustomField-6'?: string;
 	'newCustomField-7'?: string;
 	nftBackgroundImage?: string | ArrayBuffer | null;
 	profileImage?: string | ArrayBuffer | null;
-	returnInfo?: string;
+	returnInfo?: string | null;
 
 	// 개런티 발급 페이지
 	productName?: string;
@@ -227,7 +229,6 @@ interface GreyBoxProps {
 
 interface PreviewProps {
 	values: ValueTypes;
-	b2bType?: string;
 	serviceCenterHandler: () => void;
 }
 
@@ -262,13 +263,10 @@ function GreyBoxComponent({title, desc}: GreyBoxProps) {
 const productImageRatio = 0.252;
 const productBoxRatio = 0.252;
 
-function PreviewGuarantee({
-	values,
-	serviceCenterHandler,
-	b2bType,
-}: PreviewProps) {
+function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 	const {previewImage} = values;
 	const {data: partnershipData} = useGetPartnershipInfo();
+	const b2bType = useMemo(() => partnershipData?.b2bType, [partnershipData]);
 
 	const productImageStyle = useMemo(() => {
 		if (!partnershipData) {
@@ -486,7 +484,7 @@ function PreviewGuarantee({
 									justifyContent={'space-between'}
 									alignItems="flex-start">
 									<DescTextStyle>{el}</DescTextStyle>
-									<TitleTextStyle>
+									<TitleTextStyle className="text-ellipsis">
 										{(values?.nftCustomFieldValue &&
 											values?.nftCustomFieldValue[el]) ??
 											'-'}
@@ -504,24 +502,13 @@ function PreviewGuarantee({
 								</TitleTextStyle>
 							</Grid>
 						)}
-						{values?.platformName && (
-							<Grid
-								container
-								justifyContent={'space-between'}
-								alignItems="flex-start">
-								<DescTextStyle>판매처</DescTextStyle>
-								<TitleTextStyle>
-									{values.platformName}
-								</TitleTextStyle>
-							</Grid>
-						)}
 						{values?.orderId && (
 							<Grid
 								container
 								justifyContent={'space-between'}
 								alignItems="flex-start">
 								<DescTextStyle>주문번호</DescTextStyle>
-								<TitleTextStyle>
+								<TitleTextStyle className="text-ellipsis">
 									{values.orderId}
 								</TitleTextStyle>
 							</Grid>
@@ -531,7 +518,7 @@ function PreviewGuarantee({
 							justifyContent={'space-between'}
 							alignItems="flex-start">
 							<DescTextStyle>디지털 개런티 번호</DescTextStyle>
-							<TitleTextStyle>
+							<TitleTextStyle className="text-ellipsis">
 								{values?.nftRequestId || '-'}
 							</TitleTextStyle>
 						</Grid>
@@ -544,13 +531,17 @@ function PreviewGuarantee({
 								{values?.nftIssueDt || '-'}
 							</TitleTextStyle>
 						</Grid>
-						<Grid
-							container
-							justifyContent={'space-between'}
-							alignItems="flex-start">
-							<DescTextStyle>판매자</DescTextStyle>
-							<TitleTextStyle>{'-'}</TitleTextStyle>
-						</Grid>
+						{values?.platformName && (
+							<Grid
+								container
+								justifyContent={'space-between'}
+								alignItems="flex-start">
+								<DescTextStyle>구입처</DescTextStyle>
+								<TitleTextStyle className="text-ellipsis">
+									{values.platformName}
+								</TitleTextStyle>
+							</Grid>
+						)}
 						<Grid
 							container
 							justifyContent={'space-between'}
@@ -560,7 +551,13 @@ function PreviewGuarantee({
 									? '브랜드 소개'
 									: '판매자 검증'}
 							</DescTextStyle>
-							<TitleTextStyle>
+							<TitleTextStyle
+								style={{
+									maxWidth: '170px',
+									fontSize: 14,
+									fontWeight: 400,
+									lineHeight: '16px',
+								}}>
 								{values?.authInfo || '-'}
 							</TitleTextStyle>
 						</Grid>
@@ -650,20 +647,22 @@ export function ExamplePreviewGuarantee() {
 				))}
 			</Grid>
 
-			<PreviewContainerStyle>
-				<PhoneFrameStyle
-					src={smallPhoneFrame}
-					srcSet={`${smallPhoneFrame} 1x, ${smallPhoneFrame2x} 2x`}
-					alt="phone frame"
-				/>
-
-				<PreviewBoxStyle>
-					<ExampleImgStyle
-						src={`${STATIC_URL}/files/img/${guaranteeSample[exampleIdx]?.src}`}
-						alt={`example-${exampleIdx}`}
+			<Box className="flex-center">
+				<PreviewContainerStyle>
+					<PhoneFrameStyle
+						src={smallPhoneFrame}
+						srcSet={`${smallPhoneFrame} 1x, ${smallPhoneFrame2x} 2x`}
+						alt="phone frame"
 					/>
-				</PreviewBoxStyle>
-			</PreviewContainerStyle>
+
+					<PreviewBoxStyle>
+						<ExampleImgStyle
+							src={`${STATIC_URL}/files/img/${guaranteeSample[exampleIdx]?.src}`}
+							alt={`example-${exampleIdx}`}
+						/>
+					</PreviewBoxStyle>
+				</PreviewContainerStyle>
+			</Box>
 		</>
 	);
 }

@@ -72,7 +72,11 @@ function ProductList() {
 					menu={menu}
 					menuKo={menuKo}
 					filter={filter}
-					filterComponent={productListSearchFilter}
+					filterComponent={
+						b2bType === 'brand'
+							? productListSearchFilter.slice(0, 2)
+							: productListSearchFilter
+					}
 					periodIdx={6}
 					onSearch={handleSearch}
 					onReset={handleReset}

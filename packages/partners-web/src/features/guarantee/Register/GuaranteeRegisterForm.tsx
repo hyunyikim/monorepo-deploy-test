@@ -18,6 +18,7 @@ import {guaranteeRegisterSchemaShape} from '@/utils/schema';
 import {goToParentUrl, handleChangeDataFormat} from '@/utils';
 import {
 	convertProductRegisterFormData,
+	getProductCustomFieldValue,
 	guaranteeRegisterInputList as inputList,
 } from '@/data';
 import {
@@ -78,7 +79,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 	const [products, setProducts] = useState<
 		Partial<ProductRegisterFormData>[] | null
 	>(null);
-	const [productImages, setProductImages] = useState<ImageState[]>([]);
+	const [productImages, setProductImages] = useState<ImageState[] | null>([]);
 	const [registerNewProduct, setRegisterNewProduct] =
 		useState<boolean>(false);
 
@@ -88,60 +89,75 @@ function GuaranteeRegisterForm({initialData}: Props) {
 		if (!partnershipInfo) {
 			return;
 		}
-		if (initialData) {
-			const {data} = initialData;
-			const {
-				// 개런티
-				nft_req_idx,
-				nft_req_state,
-				orderer_nm,
-				orderer_tel,
-				order_platform_nm,
-				order_dt,
-				ref_order_id,
-				brand_idx,
-				brand_nm,
-				brand_nm_en,
-				// 상품
-				productIdx,
-				pro_nm,
-				price,
-				cate_cd,
-				cate_cd_text,
-				warranty_dt,
-				model_num,
-				custom_field,
-				product_img,
-			} = data;
 
+		// 최초 입력
+		if (!initialData) {
 			reset({
-				nft_req_idx,
-				nft_req_state: nft_req_state as Extract<
-					GuaranteeRequestState,
-					'1' | '2'
-				>,
-				orderer_nm,
-				orderer_tel,
-				order_dt,
-				platform_nm: order_platform_nm,
-				ref_order_id,
-				productIdx,
+				orderer_nm: '',
+				orderer_tel: '',
+				order_dt: '',
+				platform_nm: '',
+				ref_order_id: '',
+				productIdx: '',
 			});
-			setProducts([
-				{
-					idx: productIdx || '',
-					name: pro_nm || '',
-					categoryCode: cate_cd || '',
-					categoryName: cate_cd_text || '',
-					brandIdx: brand_idx,
-					brandName: brand_nm || '',
-					brandNameEn: brand_nm_en || '',
-					modelNum: model_num || '',
-					price: price ? String(price) : '',
-					warranty: warranty_dt || '',
-					customField: custom_field || {},
-				},
-			]);
+			return;
+		}
+
+		// 임시저장 후 재입력시
+		const {data} = initialData;
+		const {
+			// 개런티
+			nft_req_idx,
+			nft_req_state,
+			orderer_nm,
+			orderer_tel,
+			order_platform_nm,
+			order_dt,
+			ref_order_id,
+			brand_idx,
+			brand_nm,
+			brand_nm_en,
+			// 상품
+			productIdx,
+			pro_nm,
+			price,
+			cate_cd,
+			cate_cd_text,
+			warranty_dt,
+			model_num,
+			custom_field,
+			product_img,
+		} = data;
+
+		reset({
+			nft_req_idx,
+			nft_req_state: nft_req_state as Extract<
+				GuaranteeRequestState,
+				'1' | '2'
+			>,
+			orderer_nm,
+			orderer_tel,
+			order_dt,
+			platform_nm: order_platform_nm,
+			ref_order_id,
+			productIdx,
+		});
+		setProducts([
+			{
+				idx: productIdx || '',
+				name: pro_nm || '',
+				categoryCode: cate_cd || '',
+				categoryName: cate_cd_text || '',
+				brandIdx: brand_idx,
+				brandName: brand_nm || '',
+				brandNameEn: brand_nm_en || '',
+				modelNum: model_num || '',
+				price: price ? price.toLocaleString() : '',
+				warranty: warranty_dt || '',
+				customField: custom_field || {},
+			},
+		]);
+		if (product_img) {
 			setProductImages([
 				{
 					file: null,
@@ -178,6 +194,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			return;
 		}
 		const formData = new FormData();
+		const customFields = partnershipInfo?.nftCustomFields;
 		Object.keys(data).forEach((key: string) => {
 			const value =
 				data[
@@ -191,15 +208,8 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			}
 		});
 		const product = products[0];
-		const customFields = partnershipInfo?.nftCustomFields;
-		const customFieldObj: Record<string, string> = {};
 		Object.keys(product).forEach((key: string) => {
 			const value = product[key as keyof ProductRegisterFormData];
-			if (customFields && customFields?.includes(key)) {
-				customFieldObj[key] = String(value) || '';
-				return;
-			}
-
 			// 상품 등록 파라미터와 개런티 발급시 이뤄지는 상품 등록 파라미터 맞추기
 			if (!value) return;
 
@@ -218,24 +228,26 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					formData.append('price', String(value).replace(/\,/g, ''));
 					return;
 				}
-				if (key === 'categoryCode') {
-					formData.append('cate_cd', String(value));
-					return;
-				}
 				if (key === 'warranty') {
 					formData.append('warranty_dt', String(value));
 					return;
 				}
-				if (key === 'modelNum') {
-					formData.append('model_num', String(value));
-					return;
+				// 병행업체만 아래 필드 저장
+				if (partnershipInfo?.b2bType === 'cooperator') {
+					if (key === 'categoryCode') {
+						formData.append('cate_cd', String(value));
+						return;
+					}
+					if (key === 'modelNum') {
+						formData.append('model_num', String(value));
+						return;
+					}
 				}
 			}
 		});
-		formData.append('custom_field', JSON.stringify(customFieldObj));
 
 		// 상품 신규등록 아닐 떄
-		if (!registerNewProduct && productImages.length > 0) {
+		if (!registerNewProduct && productImages && productImages.length > 0) {
 			productImages.forEach((image) => {
 				image?.file && formData.append('product_img', image.file);
 			});
@@ -243,14 +255,25 @@ function GuaranteeRegisterForm({initialData}: Props) {
 		const registerType =
 			data.nft_req_state === '1' ? 'temperary' : 'register';
 
+		// 임시저장은 팝업 없이 바로 저장
+		if (registerType === 'temperary') {
+			handleRegister(
+				registerType,
+				formData,
+				registerNewProduct,
+				products[0],
+				productImages,
+				customFields,
+				initialData
+			);
+			return;
+		}
+
 		sendAmplitudeLog('guarantee_publish_complete_popupview', {
 			button_title: '개런티 발급하시겠습니까 팝업 노출',
 		});
 		onOpenMessageDialog({
-			title:
-				registerType === 'register'
-					? '개런티를 발급하시겠습니까?'
-					: '개런티를 임시발급하시겠습니까?',
+			title: '개런티를 발급하시겠습니까?',
 			showBottomCloseButton: true,
 			closeButtonValue: '취소',
 			buttons: (
@@ -289,9 +312,11 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			formData: FormData,
 			registerNewProduct: boolean,
 			product: ProductRegisterFormData,
-			productImages: ImageState[],
+			productImages: ImageState[] | null,
 			customFields?: string[]
 		) => {
+			formData.delete('productIdx'); // 기존에 있던 productIdx를 지우고 다시 set
+
 			// 상품을 따로 등록
 			if (registerNewProduct) {
 				const productFormData = convertProductRegisterFormData(
@@ -312,6 +337,12 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			}
 
 			// 상품을 선택하지 않고 상품을 개런티와 함께 등록
+			formData.append(
+				'custom_field',
+				JSON.stringify(
+					getProductCustomFieldValue(product, customFields)
+				)
+			);
 			formData.append('productIdx', '0');
 		},
 		[]
@@ -319,23 +350,16 @@ function GuaranteeRegisterForm({initialData}: Props) {
 
 	const handleDeleteGuaranteeImage = useCallback(
 		async (
-			productImages: ImageState[],
+			productImages: ImageState[] | null,
 			images?: GuaranteeImageResponse[] | null
 		) => {
+			// 상품의 이미지가 있다가 없어진 경우, 해당 api 호출
 			if (
-				!productImages ||
-				productImages?.length < 1 ||
-				!images ||
-				images?.length < 1
+				images &&
+				images?.length > 0 &&
+				productImages &&
+				productImages?.length === 0
 			) {
-				return;
-			}
-
-			// 새로 등록된 상품 이미지 파일이 있는지 여부 확인
-			const newProductImageFile = productImages.find((item) => item.file);
-
-			// 있다면 기존 개런티 이미지 삭제
-			if (newProductImageFile) {
 				images.forEach(async (image) => {
 					await deleteGuaranteeImage(image.nft_req_img_idx);
 				});
@@ -350,7 +374,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			formData: FormData,
 			registerNewProduct: boolean,
 			product: ProductRegisterFormData | Partial<ProductRegisterFormData>,
-			productImages: ImageState[],
+			productImages: ImageState[] | null,
 			customFields?: string[],
 			initialData?: GauranteeDetailResponse | null
 		) => {
@@ -372,7 +396,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					title:
 						registerType === 'register'
 							? '개런티가 발급되었습니다.'
-							: '개런티 발급정보가 임시저장 되었습니다.',
+							: '개런티 발급 정보를 임시저장했습니다.',
 					showBottomCloseButton: true,
 					onCloseFunc: () => {
 						goToParentUrl('/b2b/guarantee');
@@ -455,9 +479,14 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			<form noValidate onSubmit={handleSubmit(onSubmit)}>
 				<Stack
 					p="32px"
-					mb="60px"
+					mb="24px"
 					border={(theme) => `1px solid ${theme.palette.grey[100]}`}
-					borderRadius="8px">
+					borderRadius="8px"
+					sx={{
+						'& > .MuiGrid-root:nth-last-of-type(1)': {
+							marginBottom: '0px',
+						},
+					}}>
 					{inputList.map((input) => {
 						const {name, type, ...restInput} = input;
 						if (type === 'text') {
@@ -507,7 +536,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					onNewProductModalOpen={onNewProductModalOpen}
 					onSelectProductModalOpen={onSelectProductModalOpen}
 				/>
-				<BottomNavigation maxWidth="930px">
+				<BottomNavigation maxWidth="936px">
 					<Stack
 						flexDirection="row"
 						width="100%"
