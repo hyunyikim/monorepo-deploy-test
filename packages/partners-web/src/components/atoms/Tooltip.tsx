@@ -49,6 +49,9 @@ function TooltipComponent({
 }: Props) {
 	return (
 		<Tooltip
+			sx={{
+				marginTop: '8px',
+			}}
 			title={
 				<Box
 					sx={{
@@ -73,7 +76,7 @@ function TooltipComponent({
 							position: 'absolute',
 							left: '12px',
 							top: '-4px',
-							backgroundColor: 'transparent',
+							backgroundColor: 'white',
 						},
 					}}>
 					{title}

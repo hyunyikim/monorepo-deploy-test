@@ -50,10 +50,11 @@ export default function component(): Components {
 				tooltip: {
 					backgroundColor: 'rgba(0, 0, 0, 0.6)',
 					padding: 0,
-					marginTop: '8px !important',
+					marginTop: '0px !important',
 				},
 				popper: {
 					zIndex: 1000,
+					marginTop: '8px !important',
 				},
 			},
 		},
