@@ -7,7 +7,13 @@ import {
 	SxProps,
 	Theme,
 } from '@mui/material';
-import {Controller, FieldValues, FieldError} from 'react-hook-form';
+import {
+	Controller,
+	FieldValues,
+	FieldError,
+	FieldErrorsImpl,
+	Merge,
+} from 'react-hook-form';
 import InputComponent from '../atoms/InputComponent';
 
 type Height = '60px' | '48px' | '40px' | '32px' | 'auto';
@@ -25,7 +31,7 @@ interface Props extends Omit<InputProps, 'error'> {
 	sx?: SxProps<Theme>;
 	multiline?: boolean;
 	autoFocus?: boolean;
-	error?: FieldError;
+	error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
 	onBlur?: (
 		event: React.FocusEventHandler<HTMLInputElement> | undefined
 	) => void;
