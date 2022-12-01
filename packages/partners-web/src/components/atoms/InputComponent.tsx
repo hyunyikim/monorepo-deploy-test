@@ -81,10 +81,11 @@ function InputComponent({
 					borderRadius: '6px',
 					padding: multiline ? '17px 16px' : 0,
 					input: {
-						padding: '17px 16px',
+						padding: '0px 16px',
 						color: 'grey.900',
 						fontSize: '14px',
-						lineHeight: '18px',
+						// lineHeight: `${height}`,
+						lineHeight: '0px',
 
 						'&::placeholder': {
 							color: 'grey.300',
