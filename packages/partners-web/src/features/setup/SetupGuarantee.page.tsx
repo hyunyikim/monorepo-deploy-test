@@ -1872,7 +1872,7 @@ export function InputFormSection({
 						justifyContent="center"
 						sx={{
 							padding: hasProfileLogo
-								? '12px 0px'
+								? '12px 40px'
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
@@ -1887,7 +1887,7 @@ export function InputFormSection({
 							sx={{
 								maxWidth: '800px',
 								margin: hasProfileLogo ? 'auto' : 0,
-								marginRight: '12px',
+								marginRight: hasProfileLogo ? 'auto' : '12px',
 							}}>
 							<Button
 								variant="outlined"
