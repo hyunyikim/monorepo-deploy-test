@@ -1,9 +1,11 @@
+import {ResponsiveStyleValue} from '@mui/system';
+
 import {Stack, Box} from '@mui/material';
 
 import {PAGE_MAX_WIDTH} from '@/data';
 
 interface Props {
-	maxWidth?: string;
+	maxWidth?: string | ResponsiveStyleValue<any>;
 	children: React.ReactElement;
 }
 

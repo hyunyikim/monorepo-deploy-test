@@ -143,7 +143,7 @@ function GuaranteeRegisterNewProductModal({
 							errors={errors}
 						/>
 					</Stack>
-					<Box mt="26px" mb="30px">
+					<Box mb="30px">
 						<LabeledCheckbox
 							label="상품정보 저장하기"
 							checked={registerNewProduct}

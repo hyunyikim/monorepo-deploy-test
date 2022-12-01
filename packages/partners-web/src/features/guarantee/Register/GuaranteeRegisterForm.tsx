@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useForm, useWatch} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useNavigate} from 'react-router-dom';
@@ -20,6 +20,7 @@ import {
 	convertProductRegisterFormData,
 	getProductCustomFieldValue,
 	guaranteeRegisterInputList as inputList,
+	PAGE_MAX_WIDTH,
 } from '@/data';
 import {
 	registerGuarantee,
@@ -82,6 +83,11 @@ function GuaranteeRegisterForm({initialData}: Props) {
 	const [productImages, setProductImages] = useState<ImageState[] | null>([]);
 	const [registerNewProduct, setRegisterNewProduct] =
 		useState<boolean>(false);
+
+	const isInitialRegister = useMemo(
+		() => (initialData ? false : true),
+		[initialData]
+	);
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -536,20 +542,28 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					onNewProductModalOpen={onNewProductModalOpen}
 					onSelectProductModalOpen={onSelectProductModalOpen}
 				/>
-				<BottomNavigation maxWidth="936px">
+				<BottomNavigation
+					maxWidth={{
+						xs: PAGE_MAX_WIDTH,
+						md: '926px',
+					}}>
 					<Stack
 						flexDirection="row"
 						width="100%"
-						justifyContent="space-between">
-						<Button
-							variant="outlined"
-							color="grey-100"
-							onClick={() => {
-								handleDeleteGuarantee();
-							}}
-							data-tracking={`guarantee_publish_delete_click,{'button_title': '삭제 클릭'}`}>
-							삭제
-						</Button>
+						justifyContent={
+							isInitialRegister ? 'flex-end' : 'space-between'
+						}>
+						{!isInitialRegister && (
+							<Button
+								variant="outlined"
+								color="grey-100"
+								onClick={() => {
+									handleDeleteGuarantee();
+								}}
+								data-tracking={`guarantee_publish_delete_click,{'button_title': '삭제 클릭'}`}>
+								삭제
+							</Button>
+						)}
 						<Stack flexDirection="row" columnGap="12px">
 							<Button
 								variant="outlined"
