@@ -17,7 +17,7 @@ import {
 } from '@/utils/schema';
 
 import {useModalStore, useGetPartnershipInfo, useMessageDialog} from '@/stores';
-import {Box, Typography, Grid, Divider} from '@mui/material';
+import {Box, Typography, Grid, Divider, Stack} from '@mui/material';
 
 import CapsuleButton from '@/components/atoms/CapsuleButton';
 import InputComponent from '@/components/atoms/InputComponent';
@@ -675,7 +675,8 @@ export function InputFormSection({
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const nftCustomFields: string[] | undefined = data?.nftCustomFields;
-	const hasProfileLogo = data?.profileImage;
+	// const hasProfileLogo = data?.profileImage;
+	const hasProfileLogo = null;
 
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
@@ -1011,7 +1012,12 @@ export function InputFormSection({
 		if (productInfoState.length === 0) {
 			formData.append('nftCustomField', '');
 		} else {
-			formData.append('nftCustomField', productInfoState.join(','));
+			const productInfoList = productInfoState.filter((el: string) => {
+				if (el) {
+					return el;
+				}
+			});
+			formData.append('nftCustomField', productInfoList.join(','));
 		}
 
 		/* 프로필 파일 */
@@ -1308,41 +1314,50 @@ export function InputFormSection({
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
 				autoComplete="off">
+				{hasProfileLogo && (
+					<Stack
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '20px',
+							marginBottom: '12px',
+						}}>
+						<Typography
+							fontSize={28}
+							color={'black'}
+							lineHeight="32px"
+							fontWeight={700}>
+							안녕하세요, {data?.companyName}님!
+						</Typography>
+					</Stack>
+				)}
+
 				<Grid
-					container
+					display={'flex'}
 					flexWrap={'nowrap'}
-					alignItems={'flex-end'}
+					alignItems={'center'}
 					justifyContent={
 						hasProfileLogo ? 'space-between' : 'flex-end'
 					}
 					gap="12px"
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
-					{hasProfileLogo && (
-						<Grid
-							xs={hasProfileLogo ? 6 : 0}
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								gap: '20px',
-							}}>
-							<Typography
-								fontSize={28}
-								color={'black'}
-								lineHeight="32px"
-								fontWeight={700}>
-								안녕하세요, {data?.companyName}님!
-							</Typography>
-							<Typography
-								fontSize={16}
-								color={'grey.300'}
-								lineHeight="24px"
-								fontWeight={500}>
-								개런티 설정을 완료하고 버클 개런티 카드를
-								발급해보세요
-							</Typography>
-						</Grid>
-					)}
+					{/* <Grid
+						container
+						xs={hasProfileLogo ? 6 : 0}
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '20px',
+						}}> */}
+					<Typography
+						fontSize={16}
+						color={'grey.300'}
+						lineHeight="24px"
+						fontWeight={500}>
+						개런티 설정을 완료하고 버클 개런티 카드를 발급해보세요
+					</Typography>
+					{/* </Grid> */}
 
 					<Grid
 						container
@@ -1856,7 +1871,7 @@ export function InputFormSection({
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
-							marginLeft: hasProfileLogo ? 0 : '662px',
+							marginLeft: hasProfileLogo ? 0 : '654px',
 							width: hasProfileLogo
 								? '100%'
 								: 'calc(100% - 662px)',

@@ -72,7 +72,7 @@ function TooltipComponent({
 							borderRight: '6px solid transparent',
 							position: 'absolute',
 							left: '12px',
-							top: '-5px',
+							top: '-4px',
 							backgroundColor: 'transparent',
 						},
 					}}>
