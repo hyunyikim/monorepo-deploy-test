@@ -14,7 +14,7 @@ function TableInfo({totalSize, unit, children, sx = {}}: Props) {
 				marginBottom: '20px',
 				...sx,
 			}}>
-			<Box className="bold">
+			<Box className="bold table-info-count">
 				전체
 				<Box
 					component="span"

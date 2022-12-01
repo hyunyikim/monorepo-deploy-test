@@ -1,4 +1,6 @@
 import {YNType} from '@/@types';
+
+export type B2BType = 'brand' | 'cooperator' | 'platform';
 export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	idx: number;
 	parentIdx: number;
@@ -9,7 +11,7 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	companyName: string;
 	businessNum: string;
 	businessPaperImage: string;
-	b2bType: string;
+	b2bType: B2BType;
 	corporationNum: string;
 	zipcode: string;
 	bizAddr1: string;

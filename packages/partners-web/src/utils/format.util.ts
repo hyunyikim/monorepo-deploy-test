@@ -1,6 +1,6 @@
 import {ChangeEvent} from 'react';
 
-type HandleChangeDataFormat = 'phoneNum' | 'businessNum';
+type HandleChangeDataFormat = 'phoneNum' | 'businessNum' | 'date' | 'commaNum';
 
 export const handleChangeDataFormat = (
 	type: HandleChangeDataFormat,
@@ -12,16 +12,20 @@ export const handleChangeDataFormat = (
 			return formatPhoneNum(value);
 		case 'businessNum':
 			return formatBusinessNum(value);
+		case 'date':
+			return formatDate(value);
+		case 'commaNum':
+			return formatCommaNum(value);
 	}
 };
 
-export const formatPhoneNum = (_phoneNum: string, _separator = '-') => {
-	let pureNumber = (_phoneNum || '')
+export const formatPhoneNum = (phoneNum: string, separator = '-') => {
+	let pureNumber = (phoneNum || '')
 		.toString()
 		.replace('+82', '')
 		.replace(/[^0-9]/g, '');
 
-	if (_phoneNum) {
+	if (phoneNum) {
 		if (pureNumber.startsWith('10')) {
 			pureNumber = `0${pureNumber}`;
 		}
@@ -29,60 +33,88 @@ export const formatPhoneNum = (_phoneNum: string, _separator = '-') => {
 		if (pureNumber.length === 11) {
 			const regEx = /(\d{3})(\d{4})(\d{4})/;
 
-			return pureNumber.replace(
-				regEx,
-				`$1${_separator}$2${_separator}$3`
-			);
+			return pureNumber.replace(regEx, `$1${separator}$2${separator}$3`);
 		}
 
 		if (pureNumber.length >= 7) {
 			const regEx = /(\d{3})(\d{3})(\d)/;
 
-			return pureNumber.replace(
-				regEx,
-				`$1${_separator}$2${_separator}$3`
-			);
+			return pureNumber.replace(regEx, `$1${separator}$2${separator}$3`);
 		}
 
 		if (pureNumber.length >= 4) {
 			const regEx = /(\d{3})(\d)/;
 
-			return pureNumber.replace(regEx, `$1${_separator}$2`);
+			return pureNumber.replace(regEx, `$1${separator}$2`);
 		}
 
 		return pureNumber;
 	}
-	return _phoneNum;
+	return phoneNum;
 };
 
-export const formatBusinessNum = (_businessNum: string, _separator = '-') => {
-	const pureNumber = _businessNum?.replace(/[^0-9]/g, '');
-	if (_businessNum) {
+export const formatBusinessNum = (businessNum: string, separator = '-') => {
+	const pureNumber = businessNum?.replace(/[^0-9]/g, '');
+	if (businessNum) {
 		if (pureNumber.length === 10) {
 			const regEx = /(\d{3})(\d{2})(\d)/;
 
-			return pureNumber.replace(
-				regEx,
-				`$1${_separator}$2${_separator}$3`
-			);
+			return pureNumber.replace(regEx, `$1${separator}$2${separator}$3`);
 		}
 
 		if (pureNumber.length >= 6) {
 			const regEx = /(\d{3})(\d{2})(\d)/;
 
-			return pureNumber.replace(
-				regEx,
-				`$1${_separator}$2${_separator}$3`
-			);
+			return pureNumber.replace(regEx, `$1${separator}$2${separator}$3`);
 		}
 
 		if (pureNumber.length >= 4) {
 			const regEx = /(\d{3})(\d)/;
 
-			return pureNumber.replace(regEx, `$1${_separator}$2`);
+			return pureNumber.replace(regEx, `$1${separator}$2`);
 		}
 
 		return pureNumber;
 	}
-	return _businessNum;
+	return businessNum;
+};
+
+const formatDate = (value: string, separator = '-') => {
+	const pureNumber = (value || '')
+		.toString()
+		.replace(/[^0-9]/g, '')
+		.substring(0, 8);
+
+	if (pureNumber.length === 8) {
+		const regEx = /(\d{4})(\d{2})(\d{2})/g;
+
+		return pureNumber.replace(regEx, `$1${separator}$2${separator}$3`);
+	}
+
+	if (pureNumber.length === 7) {
+		const regEx = /(\d{4})(\d{2})(\d{1})/g;
+
+		return pureNumber.replace(regEx, `$1${separator}$2${separator}$3`);
+	}
+
+	if (pureNumber.length === 6) {
+		const regEx = /(\d{4})(\d{2})/;
+
+		return pureNumber.replace(regEx, `$1${separator}$2`);
+	}
+
+	if (pureNumber.length === 5) {
+		const regEx = /(\d{4})(\d{1})/;
+
+		return pureNumber.replace(regEx, `$1${separator}$2`);
+	}
+	return pureNumber;
+};
+
+const formatCommaNum = (value: string) => {
+	const pureNumber = Number(value.split(',').join(''));
+	if (isNaN(pureNumber)) {
+		return '';
+	}
+	return pureNumber.toLocaleString();
 };

@@ -10,8 +10,13 @@ import RootRouter from '@/routes/RootRouter';
 import '@/assets/styles/common.scss';
 import {MessageDialog} from './components';
 import ModalComponent from '@/components/common/ModalComponent';
+import AmplitudeTrackingInterceptor from '@/components/common/layout/AmplitudeTrackingInterceptor';
+
+import {initAmplitudeTracking} from '@/utils';
 
 const queryClient = new QueryClient();
+
+initAmplitudeTracking();
 
 function App() {
 	const theme = useMemo(() => getTheme(), []);
@@ -21,9 +26,11 @@ function App() {
 				<ThemeProvider theme={theme}>
 					<StylesThemeProvider theme={theme}>
 						<CssBaseline />
-						<RootRouter />
-						<MessageDialog />
-						<ModalComponent />
+						<AmplitudeTrackingInterceptor>
+							<RootRouter />
+							<MessageDialog />
+							<ModalComponent />
+						</AmplitudeTrackingInterceptor>
 					</StylesThemeProvider>
 				</ThemeProvider>
 			</StyledEngineProvider>

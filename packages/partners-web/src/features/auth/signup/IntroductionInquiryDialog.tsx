@@ -105,11 +105,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 		}
 	}, [onClose, setOnCloseFunc]);
 
-	const {
-		control,
-		handleSubmit,
-		formState: {errors},
-	} = useForm<FormProps>({
+	const {control, handleSubmit} = useForm<FormProps>({
 		resolver: yupResolver(introductionInquirySchemaShape),
 		mode: 'onSubmit',
 		reValidateMode: 'onBlur',
@@ -152,9 +148,15 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 					병행수입 서비스 도입 문의
 				</Typography>
 			}
+			ActionComponent={
+				<Button width="100%" type="submit">
+					문의하기
+				</Button>
+			}
 			maxWidth="sm"
+			height="580px"
 			fullWidth>
-			<>
+			<Stack flexDirection="column">
 				<Typography fontSize={15} fontWeight={400} mb="24px">
 					문의사항을 남겨주시면, 확인 후 바로 연락드리겠습니다
 				</Typography>
@@ -247,10 +249,9 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 								);
 							}}
 						/>
-						<Button type="submit">문의하기</Button>
 					</Stack>
 				</form>
-			</>
+			</Stack>
 		</Dialog>
 	);
 }

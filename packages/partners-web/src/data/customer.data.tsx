@@ -42,7 +42,7 @@ export const nftCustomerListSearchFilter: ListSearchFilters = [
 	},
 ];
 
-export const groupingGuaranteeRequestStates: Options<NftCustomerGuaranteeStatus> =
+export const groupingCustomerGuaranteeRequestStates: Options<NftCustomerGuaranteeStatus> =
 	[
 		{value: 'ALL', label: '전체'},
 		{value: 'READY', label: '신청대기'},

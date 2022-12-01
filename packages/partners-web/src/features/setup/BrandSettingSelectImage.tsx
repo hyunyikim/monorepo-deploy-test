@@ -15,6 +15,7 @@ import {useMessageDialog} from '@/stores';
 interface CropImageProps {
 	file?: FileData;
 	preview?: string;
+	base64String: string;
 }
 
 interface BrandSettingSelectImageProps {
@@ -55,9 +56,11 @@ function BrandSettingSelectImage({
 		}
 		const reader = new FileReader();
 		reader.onloadend = () => {
+			const base64String: string = reader.result as string;
 			setCropImage({
 				file: currentFile as FileData,
 				preview: reader.result as string,
+				base64String: base64String,
 			});
 		};
 		reader.readAsDataURL(currentFile);

@@ -1,6 +1,6 @@
 import {useQuery} from '@tanstack/react-query';
 
-import {getPartnershipInfo} from '@/api/partnership.api';
+import {getPartnershipInfo, getSearchBrandList} from '@/api/partnership.api';
 import {useLoginStore} from '@/stores/auth.store';
 
 export const useGetPartnershipInfo = () => {
@@ -8,6 +8,14 @@ export const useGetPartnershipInfo = () => {
 	return useQuery({
 		queryKey: ['partnershipInfo', token],
 		queryFn: () => (token ? getPartnershipInfo() : null),
+	});
+};
+
+export const useGetSearchBrandList = () => {
+	const token = useLoginStore().token;
+	return useQuery({
+		queryKey: ['searchBrandList', token],
+		queryFn: () => (token ? getSearchBrandList({main_yn: true}) : null),
 	});
 };
 

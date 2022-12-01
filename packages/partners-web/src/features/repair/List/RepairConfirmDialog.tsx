@@ -1,4 +1,4 @@
-import {Typography, Stack} from '@mui/material';
+import {Typography} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 
 import {Button, Dialog} from '@/components';
@@ -53,11 +53,33 @@ function RepairConfirmDialog({
 			open={open}
 			onClose={onClose}
 			showCloseButton={true}
+			height={200}
 			TitleComponent={
 				<Typography fontSize={20} fontWeight={700} mb={'8px'}>
 					수선 견적 확인
 				</Typography>
-			}>
+			}
+			ActionComponent={
+				<>
+					<Button
+						color="grey-100"
+						variant="outlined"
+						onClick={onCancelRepair}
+						sx={{
+							marginRight: '8px',
+						}}>
+						수선취소
+					</Button>
+					<Button color="black" onClick={onAcceptRepair}>
+						견적승인
+					</Button>
+				</>
+			}
+			sx={{
+				'& .MuiDialogActions-root': {
+					justifyContent: 'flex-end',
+				},
+			}}>
 			<>
 				<table
 					className={classes.table}
@@ -101,20 +123,6 @@ function RepairConfirmDialog({
 						</tr>
 					</tbody>
 				</table>
-				<Stack justifyContent="end" flexDirection="row" mt={2}>
-					<Button
-						color="grey-100"
-						variant="outlined"
-						onClick={onCancelRepair}
-						sx={{
-							marginRight: '8px',
-						}}>
-						수선취소
-					</Button>
-					<Button color="black" onClick={onAcceptRepair}>
-						견적승인
-					</Button>
-				</Stack>
 			</>
 		</Dialog>
 	);

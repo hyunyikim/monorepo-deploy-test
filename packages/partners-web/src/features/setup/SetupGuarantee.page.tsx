@@ -9,7 +9,7 @@ import React, {
 import styled from '@emotion/styled';
 import style from '@/assets/styles/style.module.scss';
 
-import {useForm} from 'react-hook-form';
+import {useForm, FormValue} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {
 	brandGuaranteeSchemaShape,
@@ -17,9 +17,10 @@ import {
 } from '@/utils/schema';
 
 import {useModalStore, useGetPartnershipInfo, useMessageDialog} from '@/stores';
-import {Box, Typography, Grid, Divider} from '@mui/material';
+import {Box, Typography, Grid, Divider, Stack} from '@mui/material';
 
 import CapsuleButton from '@/components/atoms/CapsuleButton';
+import InputComponent from '@/components/atoms/InputComponent';
 
 import {Button} from '@/components';
 
@@ -238,21 +239,26 @@ interface BoxContainerProps {
 	hasProfileLogo?: string;
 	isOpen: boolean;
 	title: string;
-	isFilled?: boolean;
+	isFilled?: boolean | '' | null;
 	useLabel?: boolean;
 	openHandler: () => void;
 }
 interface CategoryContainerProps {
 	required: boolean;
-	category?: string;
+	category?: string | null;
 	exampleIdx: number;
 	sx?: object;
-	clickHandler(e: React.ChangeEvent<HTMLInputElement>): void;
+	clickHandler?(e: React.ChangeEvent<HTMLInputElement>): void;
 }
 interface InputFormProps {
 	boxIndexState: number;
 	boxOpenHandler: (_idx: number) => void;
 	justOpenBox: (_idx: number) => void;
+}
+
+interface productInfoValueProps {
+	appearance: boolean;
+	newValue: string;
 }
 
 const tabList = ['쥬얼리', '패션의류', '가구', '전자기기'];
@@ -344,9 +350,9 @@ function BoxContainer({
 function CategoryContainer({
 	required = false,
 	category,
-	clickHandler,
 	exampleIdx,
 	sx,
+	clickHandler,
 }: CategoryContainerProps) {
 	const containerSx = useMemo(() => {
 		switch (required) {
@@ -435,9 +441,7 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 				result = (
 					<TipTextStyle>
 						브랜드의 카카오톡 채널에서{' '}
-						<TipBoldTextStyle>
-							{`더보기 > URL 복사하기`}
-						</TipBoldTextStyle>
+						<TipBoldTextStyle>{`더보기 > URL 복사하기`}</TipBoldTextStyle>
 						를 선택하신 후에 개런티 설정의 고객센터 영역에
 						입력해주세요!
 					</TipTextStyle>
@@ -491,8 +495,10 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 		<Grid
 			item
 			container
-			minWidth="662px"
-			maxWidth="662px"
+			minWidth="622px"
+			maxWidth="622px"
+			// minWidth="662px"
+			// maxWidth="662px"
 			sx={{position: 'relative' /* zIndex : 1300 */}}>
 			<Box
 				sx={{
@@ -609,6 +615,7 @@ export function InputFormSection({
 }: InputFormProps) {
 	const {data} = useGetPartnershipInfo();
 	const b2bType = data?.b2bType; // cooperator or brand
+	const email = data?.email as string;
 
 	const {
 		handleSubmit,
@@ -649,6 +656,9 @@ export function InputFormSection({
 		preview: null,
 	});
 
+	const [brandLogo64String, setBrandLogo64String] = useState<string>('');
+	const [brandCard64String, setBrandCard64String] = useState<string>('');
+
 	const [tooltipState, setTooltipState] = useState<boolean>(true);
 
 	const logoInputFile =
@@ -657,23 +667,41 @@ export function InputFormSection({
 		React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
 	const [tabState, setTabState] = useState<number>(0);
-	const [exampleList, setExampleList] = useState<string[] | []>([]);
-	const [isAdding, setIsAdding] = useState<boolean>(false);
-
-	const [customFields, setCustomFields] = useState<string[] | []>([]);
+	const [productInfoState, setProductInfoState] = useState<string[]>([]);
+	const [productInfoValue, setProductInfoValue] =
+		useState<productInfoValueProps>({
+			appearance: false,
+			newValue: '',
+		});
 
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
-	const nftCustomFields: string[] | [] = data?.nftCustomFields;
+	const nftCustomFields: string[] | undefined = data?.nftCustomFields;
 	const hasProfileLogo = data?.profileImage;
-
-	// const hasProfileLogo = null;
 
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
 	const [moveToAfterModalClose, setMoveToAfterModalClose] =
 		useState<boolean>(true);
+
+	/* base64 file을 FileData로 변환 */
+	const covertBase64ToFileData = (_stringUrl: string) => {
+		const arr: string[] = _stringUrl.split(',');
+		const mime = arr[0].match(/:(.*?);/)[1];
+		const bstr = atob(arr[1]);
+		let n = bstr.length;
+		const u8arr = new Uint8Array(n);
+
+		while (n--) {
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		const FileData = new File([u8arr], `savedBrandLogo=${email}`, {
+			type: mime,
+		});
+
+		return FileData;
+	};
 
 	/**
 	 * 파일 선택 이벤트
@@ -688,16 +716,20 @@ export function InputFormSection({
 		const reader: FileReader = new FileReader();
 		reader.onloadend = () => {
 			if (currentFile) {
+				const base64String: string = reader.result as string;
 				const newFile = {
 					file: currentFile,
 				};
 
-				if (targetName === 'brandCard') {
-					setBrandCard(newFile);
-					setBrandCardPreview({
-						preview: reader.result,
-					});
-				} else {
+				// if (targetName === 'brandCard') {
+				// 	setBrandCard(newFile);
+				// 	setBrandCardPreview({
+				// 		preview: reader.result,
+				// 	});
+				// }
+
+				if (targetName === 'brandLogo') {
+					setBrandLogo64String(base64String);
 					setBrandLogo(newFile);
 					setBrandLogoPreview({
 						preview: reader.result,
@@ -705,6 +737,7 @@ export function InputFormSection({
 				}
 			}
 		};
+
 		reader.readAsDataURL(currentFile);
 		setBrandLogoError(false);
 	};
@@ -719,53 +752,67 @@ export function InputFormSection({
 		setTabState(Number(targetIdx));
 	};
 
-	const deleteList = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const targetIdx = e.target.dataset.exampleidx;
+	const addNewProductInfoToList = () => {
+		if (
+			productInfoValue.newValue &&
+			productInfoState.length < maximumAdditionalCategory
+		) {
+			setProductInfoState((pre) => [...pre, productInfoValue.newValue]);
 
-		setExampleList((pre) => {
-			const filteredList = pre.filter((el, idx) => {
-				if (idx !== Number(targetIdx)) {
-					return el;
-				}
-			});
-
-			return [...filteredList];
-		});
-	};
-
-	const addCategoryToList = (
-		e: React.ChangeEvent<HTMLInputElement> | KeyboardEvent<HTMLImageElement>
-	) => {
-		const target = (e.target as HTMLButtonElement).value;
-
-		if (target) {
-			setExampleList((pre: string[]) => {
-				if (pre.includes(target)) {
-					/* 이미 추가된 상품일때, 모달 */
-					onMessageDialogOpen({
-						title: '이미 추가된 상품 정보입니다.',
-						showBottomCloseButton: true,
-						closeButtonValue: '확인',
-					});
-					return [...pre];
-				}
-
-				return [...pre, target];
-			});
+			setProductInfoValue(() => ({
+				newValue: '',
+				appearance: false,
+			}));
 		}
-		setIsAdding(false);
 	};
 
 	const enterHandler = (e: KeyboardEvent<HTMLImageElement>) => {
 		if (e.key === 'Enter') {
-			addCategoryToList(e);
+			e.preventDefault();
+			addNewProductInfoToList();
+			return;
 		}
 	};
 
-	const wantToAddCategory = () => {
-		setIsAdding(true);
-		// customFields, setCustomFields
-		// setCustomFields()
+	const addNewProductHandler = () => {
+		setProductInfoValue((pre) => ({
+			// ...pre,
+			newValue: '',
+			appearance: true,
+		}));
+	};
+
+	const productInfoInputHandler = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const targetVal = e.target.value;
+
+		setProductInfoValue((pre) => ({
+			...pre,
+			newValue: targetVal,
+		}));
+	};
+
+	const editProductInfoInputHandler = (
+		e: React.ChangeEvent<HTMLInputElement>,
+		_idx: number
+	) => {
+		const tempData = [...productInfoState];
+		const targetVal = e.target.value;
+		tempData[_idx] = targetVal;
+
+		setProductInfoState(() => [...tempData]);
+	};
+
+	const deleteProductInfoFromList = (_idx: number) => {
+		const tempData = [...productInfoState];
+		const result = tempData.filter((el, idx) => {
+			if (_idx !== idx) {
+				return el;
+			}
+		});
+
+		setProductInfoState([...result]);
 	};
 
 	const deleteCardPreview = () => {
@@ -815,6 +862,10 @@ export function InputFormSection({
 		},
 	];
 
+	const base64Convertor = (_value: string) => {
+		setBrandCard64String(_value);
+	};
+
 	const openCustomiseCardModal = () => {
 		const nftBackgroundImg = data?.nftBackgroundImg as string;
 
@@ -841,8 +892,10 @@ export function InputFormSection({
 							file: _value.file,
 							filename: _value.filename,
 						});
+						setBrandCard64String(_value.base64String);
 					}}
 					setMoveToAfterModalClose={setMoveToAfterModalClose}
+					convertToBase64={base64Convertor}
 				/>
 			),
 			align: 'left',
@@ -861,17 +914,17 @@ export function InputFormSection({
 			subtitle:
 				'개런티 설정 완료 전에 입력한 정보들을 미리보기를 통해 확인해보세요.',
 			children: (
-				<div>
+				<Box className="flex-center">
 					<PreviewGuarantee
 						serviceCenterHandler={handleCheckOutLinkClick}
 						values={{
 							...values,
-							nftCustomField: exampleList,
+							nftCustomField: productInfoState,
 							profileImage: brandLogoPreview.preview,
 							nftBackgroundImage: brandCardPreview.preview,
 						}}
 					/>
-				</div>
+				</Box>
 			),
 			width: '544px',
 			align: 'center',
@@ -904,8 +957,7 @@ export function InputFormSection({
 	};
 
 	const deleteSavedData = () => {
-		const email = data?.email as string;
-
+		// const email = data?.email as string;
 		const hasSavedData = localStorage.getItem(`hasInputDataSaved=${email}`);
 
 		if (hasSavedData) {
@@ -918,6 +970,8 @@ export function InputFormSection({
 			localStorage.removeItem(`returnInfo=${email}`);
 			localStorage.removeItem(`warrantyDate=${email}`);
 			localStorage.removeItem(`nftCustomField=${email}`);
+			localStorage.removeItem(`brandLogo=${email}`);
+			localStorage.removeItem(`brandCard=${email}`);
 
 			if (queryData) {
 				localStorage.removeItem(`cafe24context=${email}`);
@@ -944,7 +998,7 @@ export function InputFormSection({
 			) {
 				if (key === 'customerCenterUrl') {
 					const centreUrl: string = values[key];
-					if (centreUrl.includes('http')) {
+					if (centreUrl && centreUrl.includes('http')) {
 						formData.append(key, values[key] as string);
 					} else {
 						formData.append(key, `https://${centreUrl}`);
@@ -956,15 +1010,23 @@ export function InputFormSection({
 		});
 
 		/* 커스텀 정보 */
-		if (exampleList.length === 0) {
+		if (productInfoState.length === 0) {
 			formData.append('nftCustomField', '');
 		} else {
-			formData.append('nftCustomField', exampleList.join(','));
+			const productInfoList = productInfoState.filter((el: string) => {
+				if (el) {
+					return el;
+				}
+			});
+			formData.append('nftCustomField', productInfoList.join(','));
 		}
 
 		/* 프로필 파일 */
 		if (brandLogo.file) {
 			formData.append('profileImage', brandLogo.file);
+		} else if (brandLogo64String) {
+			const savedLogoImg = covertBase64ToFileData(brandLogo64String);
+			formData.append('profileImage', savedLogoImg);
 		}
 
 		return formData;
@@ -1084,10 +1146,18 @@ export function InputFormSection({
 
 		const formData = new FormData();
 		const data = handleFormData();
-
-		/* 브랜드 카드 파일 */
 		if (brandCard.file) {
+			/* 브랜드 카드 파일 */
 			formData.append('nftBackgroundImage', brandCard.file);
+			const response = await setCustomizedBrandCard(formData);
+			if (response) {
+				await reqestSetupInputData(data);
+			}
+		} else if (brandCard64String) {
+			const savedCustomisedCard =
+				covertBase64ToFileData(brandCard64String);
+			formData.append('nftBackgroundImage', savedCustomisedCard);
+
 			const response = await setCustomizedBrandCard(formData);
 			if (response) {
 				await reqestSetupInputData(data);
@@ -1103,41 +1173,54 @@ export function InputFormSection({
 		}
 
 		if (!hasProfileLogo) {
-			setExampleList([...categoryExampleList[0]]);
-		} else if (hasProfileLogo) {
-			setExampleList(() => [...nftCustomFields]);
+			setProductInfoState([...categoryExampleList[0]]);
+		} else if (
+			hasProfileLogo &&
+			nftCustomFields &&
+			nftCustomFields?.length > 0
+		) {
+			setProductInfoState(() => [...nftCustomFields]);
 		}
 
 		// if (b2bType === 'brand') {
-		// 	setExampleList([...categoryExampleList[tabState]]);
+		// 	setProductInfoState([...categoryExampleList[tabState]]);
 		// } else {
-		// 	setExampleList([]);
+		// 	setProductInfoState([]);
 		// }
 	}, [tabState, data]);
 
 	/* 저장 및 나가기 */
 	const saveDataToStorage = () => {
-		// const values = getValues();
-		const values = watch();
-		const email = data?.email as string;
+		const values = getValues();
+		// const values = watch();
 
 		if (!hasProfileLogo) {
 			/* 재설정일때는 저장없이 그냥 나가기 */
+			/* 최초일때만, 로컬에 데이터 저장 */
 			localStorage.setItem(`hasInputDataSaved=${email}`, 'true');
 			Object.keys(values).forEach((key) => {
-				if (values[key]) {
-					localStorage.setItem(
-						`${key}=${email}`,
-						values[key] as string
-					);
-				} else {
-					localStorage.setItem(`${key}=${email}`, '');
+				if (typeof values[key] === 'string') {
+					if (values[key]) {
+						localStorage.setItem(
+							`${key}=${email}`,
+							values[key] as string
+						);
+					} else {
+						localStorage.setItem(`${key}=${email}`, '');
+					}
 				}
 			});
 
+			if (brandLogo64String) {
+				localStorage.setItem(`brandLogo=${email}`, brandLogo64String);
+			}
+			if (brandCard64String) {
+				localStorage.setItem(`brandCard=${email}`, brandCard64String);
+			}
+
 			localStorage.setItem(
 				`nftCustomField=${email}`,
-				exampleList.length > 0 ? exampleList.join(',') : ''
+				productInfoState.length > 0 ? productInfoState.join(',') : ''
 			);
 			if (queryData) {
 				localStorage.setItem(`cafe24context=${email}`, 'cafe24');
@@ -1149,11 +1232,16 @@ export function InputFormSection({
 		goToParentUrl('/dashboard');
 	};
 
+	// useEffect(() => {
+	// 	console.log('getValues@!##@!', getValues());
+	// 	console.log('errors', errors);
+	// }, [errors]);
+
 	/**
 	 * 초기 데이터 셋팅
 	 */
 	useEffect(() => {
-		const email = data?.email as string;
+		// const email = data?.email as string;
 		const hasInputDataSavedInStorage = localStorage.getItem(
 			`hasInputDataSaved=${email}`
 		);
@@ -1164,30 +1252,36 @@ export function InputFormSection({
 		// 임시저장된 데이터가 있을 경우
 		if (hasInputDataSavedInStorage === 'true') {
 			reset({
-				brandName: localStorage.getItem(`brandName=${email}`),
-				brandNameEN: localStorage.getItem(`brandNameEN=${email}`),
-				warrantyDate: localStorage.getItem(`warrantyDate=${email}`),
-				customerCenterUrl: localStorage.getItem(
-					`customerCenterUrl=${email}`
-				),
+				brandName: localStorage.getItem(`brandName=${email}`) || '',
+				brandNameEN: localStorage.getItem(`brandNameEN=${email}`) || '',
+				warrantyDate:
+					localStorage.getItem(`warrantyDate=${email}`) || '',
+				customerCenterUrl:
+					localStorage.getItem(`customerCenterUrl=${email}`) || '',
 
-				authInfo: localStorage.getItem(`authInfo=${email}`),
-				returnInfo: localStorage.getItem(`returnInfo=${email}`),
-				afterServiceInfo: localStorage.getItem(
-					`afterServiceInfo=${email}`
-				),
+				authInfo: localStorage.getItem(`authInfo=${email}`) || '',
+				returnInfo: localStorage.getItem(`returnInfo=${email}`) || '',
+				afterServiceInfo:
+					localStorage.getItem(`afterServiceInfo=${email}`) || '',
 			});
 
 			if (nftCustomFieldSavedData) {
-				setExampleList(() => [...nftCustomFieldSavedData.split(',')]);
+				setProductInfoState(() => [
+					...nftCustomFieldSavedData.split(','),
+				]);
 			}
 
-			/* 개런티 수정할때, 저장 및 나가기 눌렀을경우에 이미지 불러와야함 */
-			if (data?.profileImage) {
-				setBrandLogoPreview({preview: data.profileImage});
+			const savedBrandLogo =
+				localStorage.getItem(`brandLogo=${email}`) || null;
+			const savedBrandCard =
+				localStorage.getItem(`brandCard=${email}`) || null;
+			if (savedBrandLogo) {
+				setBrandLogo64String(savedBrandLogo);
+				setBrandLogoPreview({preview: savedBrandLogo});
 			}
-			if (data?.nftBackgroundImg) {
-				setBrandCardPreview({preview: data.nftBackgroundImg});
+			if (savedBrandCard) {
+				setBrandCard64String(savedBrandCard);
+				setBrandCardPreview({preview: savedBrandCard});
 			}
 		} else if (hasProfileLogo && data) {
 			reset({
@@ -1201,7 +1295,7 @@ export function InputFormSection({
 			});
 
 			if (data && data?.nftCustomFields.length > 0) {
-				setExampleList(() => [...nftCustomFields]);
+				setProductInfoState(() => [...nftCustomFields]);
 			}
 
 			setBrandLogoPreview({preview: data.profileImage});
@@ -1216,15 +1310,33 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={'center'}
 			alignItems="center"
-			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px'}>
+			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px 40px'}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
 				autoComplete="off">
+				{hasProfileLogo && (
+					<Stack
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '20px',
+							marginBottom: '12px',
+						}}>
+						<Typography
+							fontSize={28}
+							color={'black'}
+							lineHeight="32px"
+							fontWeight={700}>
+							안녕하세요, {data?.companyName}님!
+						</Typography>
+					</Stack>
+				)}
+
 				<Grid
-					container
+					display={'flex'}
 					flexWrap={'nowrap'}
-					alignItems={'flex-end'}
+					alignItems={'flex-start'}
 					justifyContent={
 						hasProfileLogo ? 'space-between' : 'flex-end'
 					}
@@ -1232,36 +1344,31 @@ export function InputFormSection({
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
 					{hasProfileLogo && (
-						<Grid
-							xs={hasProfileLogo ? 6 : 0}
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								gap: '20px',
-							}}>
-							<Typography
-								fontSize={28}
-								color={'black'}
-								lineHeight="32px"
-								fontWeight={700}>
-								안녕하세요, {data?.companyName}님!
-							</Typography>
-							<Typography
-								fontSize={16}
-								color={'grey.300'}
-								lineHeight="24px"
-								fontWeight={500}>
-								개런티 설정을 완료하고 버클 개런티 카드를
-								발급해보세요
-							</Typography>
-						</Grid>
+						<Typography
+							fontSize={16}
+							color={'grey.300'}
+							fontWeight={500}>
+							개런티 설정을 완료하고 버클 개런티 카드를
+							발급해보세요
+						</Typography>
 					)}
-
+					<Typography
+						fontSize={16}
+						color={'grey.300'}
+						fontWeight={500}>
+						개런티 설정을 완료하고 버클 개런티 카드를 발급해보세요
+					</Typography>
 					<Grid
 						container
 						xs={hasProfileLogo ? 6 : 12}
+						sx={{
+							'& .MuiBox-root': {
+								marginTop: '0px !important',
+							},
+						}}
 						gap="12px"
 						flexWrap={'nowrap'}
+						alignItems={'center'}
 						justifyContent={'flex-end'}>
 						<Grid item sx={{position: 'relative'}}>
 							<TooltipComponent
@@ -1478,9 +1585,8 @@ export function InputFormSection({
 									<CategoryContainer
 										required={true}
 										category={li}
-										clickHandler={deleteList}
 										exampleIdx={idx}
-										key={`example-list-${idx}`}
+										key={`example-required-list-${idx}`}
 									/>
 							  ))
 							: b2bType === 'cooperator'
@@ -1488,37 +1594,81 @@ export function InputFormSection({
 									<CategoryContainer
 										required={true}
 										category={li}
-										clickHandler={deleteList}
 										exampleIdx={idx}
-										key={`example-list-${idx}`}
+										key={`example-required-list-${idx}`}
 									/>
 							  ))
 							: null}
 
-						{exampleList.map((li, idx) => (
-							<CategoryContainer
-								required={false}
-								category={li}
-								clickHandler={deleteList}
-								exampleIdx={idx}
-								key={`example-list-${idx}`}
-							/>
+						{productInfoState.map((li, idx) => (
+							<Box sx={{position: 'relative', width: '100%'}}>
+								<InputComponent
+									type={'text'}
+									placeholder=""
+									height={'48px'}
+									maxHeight={'48px'}
+									fullWidth
+									sx={{
+										input: {
+											paddingRight: '50px',
+											paddingLeft: '16px',
+										},
+									}}
+									onChange={(e) =>
+										editProductInfoInputHandler(e, idx)
+									}
+									value={li}
+								/>
+
+								<Box
+									sx={{
+										position: 'absolute',
+										right: '0px',
+										top: '0px',
+										height: '48px',
+										width: '48px',
+										zIndex: 20,
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}>
+									<Divider
+										orientation="vertical"
+										sx={{
+											height: '36px',
+											position: 'absolute',
+											left: '-1px',
+											top: '6px',
+										}}
+									/>
+									<IcBin
+										color={style.vircleGrey900}
+										style={{cursor: 'pointer'}}
+										data-exampleidx={idx}
+										onClick={() =>
+											deleteProductInfoFromList(idx)
+										}
+									/>
+								</Box>
+							</Box>
 						))}
 
-						{isAdding && (
+						{productInfoValue.appearance && (
 							<ControlledInputComponent
 								type="text"
 								maxHeight="48px"
 								placeholder="상품정보 명칭을 입력해 주세요"
-								onBlur={addCategoryToList}
+								onBlur={addNewProductInfoToList}
 								onKeyDown={enterHandler}
 								control={control}
 								autoFocus={true}
-								name={`newCustomField-${exampleList.length}`}
+								value={productInfoValue.newValue}
+								onChange={productInfoInputHandler}
+								name={`newCustomField-${productInfoState.length}`}
 							/>
 						)}
 
-						{exampleList.length >=
+						{productInfoState.length >=
 						maximumAdditionalCategory ? null : (
 							<Grid
 								item
@@ -1527,7 +1677,7 @@ export function InputFormSection({
 								alignItems="center"
 								sx={{cursor: 'pointer'}}
 								mt="8px"
-								onClick={wantToAddCategory}>
+								onClick={addNewProductHandler}>
 								<img
 									src={bluePlus}
 									srcSet={`${bluePlus} 1x, ${bluePlus2x} 2x`}
@@ -1583,7 +1733,7 @@ export function InputFormSection({
 										() => openCustomiseCardModal()
 										// brandCardFile.current.click()
 									}
-									src={brandCardPreview?.preview}
+									src={brandCardPreview?.preview as string}
 								/>
 							) : (
 								<Box
@@ -1702,6 +1852,7 @@ export function InputFormSection({
 							multiline
 							fullWidth={true}
 							inputType="textarea"
+							defaultValue=""
 							key={`additional-information-${idx}`}
 						/>
 					))}
@@ -1721,7 +1872,7 @@ export function InputFormSection({
 						justifyContent="center"
 						sx={{
 							padding: hasProfileLogo
-								? '12px 0px'
+								? '12px 40px'
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
@@ -1736,6 +1887,7 @@ export function InputFormSection({
 							sx={{
 								maxWidth: '800px',
 								margin: hasProfileLogo ? 'auto' : 0,
+								marginRight: hasProfileLogo ? 'auto' : '12px',
 							}}>
 							<Button
 								variant="outlined"

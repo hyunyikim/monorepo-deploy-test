@@ -1,11 +1,4 @@
-import {
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Grid,
-	Typography,
-} from '@mui/material';
-import {IcClose} from '@/assets/icon';
+import {DialogActions, Typography, Stack} from '@mui/material';
 import {useModalStore} from '@/stores';
 import Button from '../atoms/Button';
 
@@ -58,61 +51,48 @@ function ModalComponent() {
 			onClose={closeHandler}
 			showCloseButton={true}
 			TitleComponent={
-				<DialogTitle
-					fontSize={20}
-					fontWeight="bold"
-					padding={'0 !important'}>
+				<Typography fontSize={20} fontWeight="bold">
 					{title}
-				</DialogTitle>
+				</Typography>
 			}
 			sx={{
 				'& .MuiDialog-container': {
-					marginBottom: '60px',
 					'& .MuiPaper-root': {
-						padding: '24px',
-						borderRadius: '16px',
-						// height: '100%',
 						maxWidth: maxWidth ? maxWidth : '700px',
 						width: width ? width : 'auto',
+						'& .MuiDialogContent-root': {
+							paddingTop: '4px !important',
+						},
 					},
-				},
-				'& .MuiDialogContent-root': {
-					marginBottom: 0,
-					padding: 0,
-					paddingBottom: 0,
+					'& .MuiDialogContent-root': {
+						paddingBottom: '32px',
+					},
 				},
 			}}
 			onClose={closeHandler}>
 			<>
-				<DialogContent sx={{padding: 0, paddingBottom: '60px'}}>
-					{subtitle && (
-						<Typography
-							variant="h6"
-							sx={{
-								fontSize: '16px',
-								fontWeight: 500,
-								lineHeight: '16px',
-								color: 'grey.300',
-								marginBottom: '60px',
-							}}>
-							{subtitle}
-						</Typography>
-					)}
-
-					<Grid
-						container
-						justifyContent={
-							align === 'left' ? 'flex-start' : 'center'
-						}
+				{subtitle && (
+					<Typography
+						variant="h6"
 						sx={{
-							marginBottom:
-								buttonTitle && onClickButton ? '60px' : '0px',
-							width: align === 'left' ? ' 100%' : 'auto',
+							fontSize: '16px',
+							fontWeight: 500,
+							lineHeight: '16px',
+							color: 'grey.300',
+							marginBottom: '60px',
 						}}>
-						{children && children}
-					</Grid>
-				</DialogContent>
-
+						{subtitle}
+					</Typography>
+				)}
+				<Stack
+					justifyContent={align === 'left' ? 'flex-start' : 'center'}
+					sx={{
+						marginBottom:
+							buttonTitle && onClickButton ? '60px' : '0px',
+						width: align === 'left' ? ' 100%' : 'auto',
+					}}>
+					{children && children}
+				</Stack>
 				{buttonTitle && onClickButton && (
 					<DialogActions sx={{p: 0}}>
 						<Button

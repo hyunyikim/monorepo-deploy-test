@@ -6,6 +6,7 @@ import {
 	GuaranteeListRequestParam,
 	GuaranteeListRequestSearchType,
 	GuaranteeListResponse,
+	GauranteeDetailResponse,
 } from '@/@types';
 
 export const getGuaranteeList = async (
@@ -34,4 +35,23 @@ export const setCustomizedBrandCard = async (params: FormData) => {
 		'/v1/admin/partnerships/nft-background',
 		params
 	);
+};
+
+export const getGuaranteeDetail = async (idx: number) => {
+	return await instance.get<GauranteeDetailResponse>(`/admin/nft/${idx}`);
+};
+
+// 임시저장 및 등록
+export const registerGuarantee = async (formData: FormData) => {
+	return await instance.post<GuaranteeListResponse>(`/admin/nft`, formData);
+};
+
+export const deleteGuarantee = async (idx: number) => {
+	await instance.delete(`/admin/nft/${idx}`);
+};
+
+export const deleteGuaranteeImage = async (nft_req_img_idx: number) => {
+	await instance.delete('/admin/nft/image', {
+		data: {nft_req_img_idx},
+	});
 };

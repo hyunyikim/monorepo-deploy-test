@@ -1,4 +1,5 @@
-import {forwardRef, Ref} from 'react';
+import {forwardRef, Ref, useEffect, useState} from 'react';
+import {FieldError} from 'react-hook-form';
 
 import {
 	FormControl,
@@ -6,6 +7,7 @@ import {
 	MenuItem,
 	SelectProps,
 	SvgIcon,
+	FormHelperText,
 } from '@mui/material';
 
 import {Options} from '@/@types';
@@ -14,10 +16,11 @@ import {IcChevronDown} from '@/assets/icon';
 
 type Height = 48 | 32;
 
-interface Props<T> extends SelectProps {
+export interface Props<T> extends Omit<SelectProps, 'error'> {
 	width?: number | 'auto';
 	height?: Height;
 	options: Options<T>;
+	error?: FieldError;
 }
 
 /**
@@ -34,12 +37,31 @@ function Select<T>(
 		value,
 		defaultValue,
 		onChange,
+		placeholder,
+		error,
 		...props
 	}: Props<T>,
 	ref: Ref<unknown>
 ) {
+	const [textColor, setTextColor] = useState({
+		color: '#AEAEBA',
+	});
+
+	useEffect(() => {
+		if (value || defaultValue) {
+			setTextColor({
+				color: '#222227',
+			});
+		}
+	}, [value, defaultValue]);
 	return (
-		<FormControl>
+		<FormControl
+			error={error ? true : false}
+			sx={{
+				'& .MuiInputBase-root.Mui-error': {
+					backgroundColor: 'red.50',
+				},
+			}}>
 			<MuiSelect
 				// 제어
 				{...((value || value === '') && {
@@ -65,6 +87,23 @@ function Select<T>(
 						<IcChevronDown />
 					</SvgIcon>
 				)}
+				{...(placeholder && {
+					renderValue: (selected) => {
+						if (selected || value) {
+							const selectedLabel =
+								options.find((option) => {
+									const optionValue = String(option.value);
+									return (
+										optionValue === String(selected) ||
+										optionValue === String(value)
+									);
+								})?.label || placeholder;
+							return selectedLabel;
+						}
+						return <>{placeholder}</>;
+					},
+				})}
+				displayEmpty={true}
 				sx={{
 					'& .MuiSelect-select': {
 						paddingRight: '50px !important',
@@ -74,9 +113,20 @@ function Select<T>(
 					},
 					width: typeof width === 'number' ? `${width}px` : width,
 					height: `${height}px`,
+					...textColor,
 					...sx,
 				}}
 				{...props}>
+				{placeholder && (
+					<MenuItem
+						value={''}
+						disabled
+						sx={{
+							fontSize: '14px',
+						}}>
+						{placeholder}
+					</MenuItem>
+				)}
 				{options.map((item, idx) => {
 					return (
 						<MenuItem
@@ -84,12 +134,30 @@ function Select<T>(
 							value={item.value as unknown as string}
 							sx={{
 								fontSize: '14px',
+							}}
+							onClick={() => {
+								setTextColor({
+									color: '#222227',
+								});
 							}}>
 							{item.label}
 						</MenuItem>
 					);
 				})}
 			</MuiSelect>
+			{error?.message && (
+				<FormHelperText
+					sx={{
+						marginLeft: 0,
+						marginTop: '6px',
+						fontSize: '13',
+						fontWeight: '500',
+						color: 'red.main',
+						lineHeight: '13px',
+					}}>
+					{error?.message}
+				</FormHelperText>
+			)}
 		</FormControl>
 	);
 }
