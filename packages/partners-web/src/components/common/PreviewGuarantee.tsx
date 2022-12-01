@@ -199,6 +199,7 @@ const ServiceCenterButtonStyle = styled.div`
 type ValueTypes = {
 	brandName?: string;
 	brandNameEN?: string;
+	certificationBrandName?: string;
 	warrantyDate?: string;
 	nftCustomField?: string[] | [];
 	afterServiceInfo?: string | null;
@@ -426,7 +427,8 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 										fontWeight={700}
 										lineHeight={'15px'}
 										mb="3.5px">
-										{values?.brandNameEN || '브랜드명'}
+										{values?.certificationBrandName ||
+											'브랜드명'}
 									</Typography>
 									<Typography
 										variant="h6"

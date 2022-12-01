@@ -21,19 +21,10 @@ function GuaranteePreviewCard() {
 	const {data: partnershipData} = useGetPartnershipInfo();
 
 	const values = useMemo(() => {
-		let brandName: string = previewData?.product?.brandName;
-		const brandNameEn = partnershipData?.brand?.englishName;
-
-		// 병행수입은 브랜드명 / 로 분리되어 있음
-		if (
-			brandName &&
-			brandName?.includes(' / ') &&
-			brandName.split(' / ')?.length === 2
-		) {
-			brandName = brandName.split(' / ')[1];
-		} else {
-			// 일반 브랜드는 영어명으로
-			brandName = brandNameEn || brandName;
+		const brandNameEn: string = previewData?.product?.brandNameEn;
+		let certificationBrandName = brandNameEn?.toLocaleUpperCase();
+		if (partnershipData?.b2bType === 'cooperator') {
+			certificationBrandName = partnershipData?.companyName || '';
 		}
 
 		// 커스텀 필드 값 세팅
@@ -53,7 +44,8 @@ function GuaranteePreviewCard() {
 		const warrantyDate =
 			previewData?.product?.warranty || partnershipData?.warrantyDate;
 		return {
-			brandNameEN: brandName,
+			brandNameEN: brandNameEn,
+			certificationBrandName,
 			warrantyDate,
 			nftCustomField: partnershipData?.nftCustomFields || [],
 			afterServiceInfo: partnershipData?.afterServiceInfo,

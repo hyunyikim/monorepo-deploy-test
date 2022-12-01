@@ -115,6 +115,7 @@ function GuaranteeRegisterSelectProductModal({
 			idx,
 			name,
 			brandName: brand.name,
+			brandNameEn: brand.englishName,
 			brandIdx,
 			price: price ? price.toLocaleString() : '',
 			customField: customField || {},
