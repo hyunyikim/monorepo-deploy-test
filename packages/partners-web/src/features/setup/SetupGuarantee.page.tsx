@@ -1352,12 +1352,6 @@ export function InputFormSection({
 							발급해보세요
 						</Typography>
 					)}
-					<Typography
-						fontSize={16}
-						color={'grey.300'}
-						fontWeight={500}>
-						개런티 설정을 완료하고 버클 개런티 카드를 발급해보세요
-					</Typography>
 					<Grid
 						container
 						xs={hasProfileLogo ? 6 : 12}
@@ -1861,11 +1855,12 @@ export function InputFormSection({
 				{/* fixed 버튼s */}
 				<Box
 					sx={{
-						background: 'transparent',
+						background: 'white',
 						position: 'fixed',
 						bottom: '0',
 						left: '0',
 						right: '0',
+						zIndex: 100,
 					}}>
 					<Grid
 						container
