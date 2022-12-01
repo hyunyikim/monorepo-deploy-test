@@ -112,7 +112,10 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 							<TableRow key={`item_${idx}`}>
 								<TableCell width="180px">
 									{item?.requestedAt
-										? format(new Date(), DATE_FORMAT)
+										? format(
+												new Date(item?.requestedAt),
+												DATE_FORMAT
+										  )
 										: '-'}
 								</TableCell>
 								<TableCell width="180px">
