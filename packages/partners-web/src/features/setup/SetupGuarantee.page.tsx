@@ -495,8 +495,10 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 		<Grid
 			item
 			container
-			minWidth="662px"
-			maxWidth="662px"
+			minWidth="622px"
+			maxWidth="622px"
+			// minWidth="662px"
+			// maxWidth="662px"
 			sx={{position: 'relative' /* zIndex : 1300 */}}>
 			<Box
 				sx={{
@@ -1308,7 +1310,7 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={'center'}
 			alignItems="center"
-			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px'}>
+			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px 40px'}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
@@ -1334,35 +1336,39 @@ export function InputFormSection({
 				<Grid
 					display={'flex'}
 					flexWrap={'nowrap'}
-					alignItems={'center'}
+					alignItems={'flex-start'}
 					justifyContent={
 						hasProfileLogo ? 'space-between' : 'flex-end'
 					}
 					gap="12px"
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
-					{/* <Grid
-						container
-						xs={hasProfileLogo ? 6 : 0}
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: '20px',
-						}}> */}
+					{hasProfileLogo && (
+						<Typography
+							fontSize={16}
+							color={'grey.300'}
+							fontWeight={500}>
+							개런티 설정을 완료하고 버클 개런티 카드를
+							발급해보세요
+						</Typography>
+					)}
 					<Typography
 						fontSize={16}
 						color={'grey.300'}
-						lineHeight="24px"
 						fontWeight={500}>
 						개런티 설정을 완료하고 버클 개런티 카드를 발급해보세요
 					</Typography>
-					{/* </Grid> */}
-
 					<Grid
 						container
 						xs={hasProfileLogo ? 6 : 12}
+						sx={{
+							'& .MuiBox-root': {
+								marginTop: '0px !important',
+							},
+						}}
 						gap="12px"
 						flexWrap={'nowrap'}
+						alignItems={'center'}
 						justifyContent={'flex-end'}>
 						<Grid item sx={{position: 'relative'}}>
 							<TooltipComponent
@@ -1870,7 +1876,7 @@ export function InputFormSection({
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
-							marginLeft: hasProfileLogo ? 0 : '654px',
+							marginLeft: hasProfileLogo ? 0 : '662px',
 							width: hasProfileLogo
 								? '100%'
 								: 'calc(100% - 662px)',
@@ -1881,6 +1887,7 @@ export function InputFormSection({
 							sx={{
 								maxWidth: '800px',
 								margin: hasProfileLogo ? 'auto' : 0,
+								marginRight: '12px',
 							}}>
 							<Button
 								variant="outlined"
