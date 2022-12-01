@@ -3,7 +3,7 @@ import {Grid, Button, InputLabel, SxProps, Theme} from '@mui/material';
 import InputComponent from '../atoms/InputComponent';
 import InputLabelTag from '../atoms/InputLabelTag';
 
-import {FieldValues, FieldError} from 'react-hook-form';
+import {FieldValues, FieldError, Merge, FieldErrorsImpl} from 'react-hook-form';
 import ControlledInputComponent from './ControlledInputComponent';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 	multiline?: boolean;
 	name: string;
 	control: FieldValues;
-	error?: FieldError;
+	error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	value?: string;
 	fullWidth?: boolean;
