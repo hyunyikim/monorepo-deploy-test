@@ -136,8 +136,26 @@ function ProductRegisterFormInput({
 																item.value ===
 																selectedValue
 														)?.label || '';
+													const labels =
+														label.split('/');
+													if (labels?.length > 1) {
+														setValue(
+															'brandName',
+															labels[0]
+														);
+														setValue(
+															'brandNameEn',
+															labels[1]
+														);
+														onChange(e);
+														return;
+													}
 													setValue(
 														'brandName',
+														label
+													);
+													setValue(
+														'brandNameEn',
 														label
 													);
 												}
