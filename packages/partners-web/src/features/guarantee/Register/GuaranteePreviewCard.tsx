@@ -74,7 +74,7 @@ function GuaranteePreviewCard() {
 			productName: previewData?.product?.name || '상품명',
 			price: previewData?.product?.price
 				? `${String(previewData?.product?.price)}원`
-				: '',
+				: '0원',
 			nftCustomFieldValue: nftCustomFieldValue || null,
 			previewImage: previewData?.productImage?.preview,
 			nftRequestId: previewData?.nft_req_idx || '000000000000',

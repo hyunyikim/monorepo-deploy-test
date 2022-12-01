@@ -91,15 +91,8 @@ function GuaranteeList() {
 						color="grey-100"
 						variant="outlined"
 						height={32}
-						onClick={downloadGuaranteeExcel}>
-						엑셀양식 다운로드
-					</Button>
-					<Button
-						color="grey-100"
-						variant="outlined"
-						height={32}
 						onClick={goToGuaranteeExcelUploadPage}>
-						엑셀등록
+						대량등록
 					</Button>
 					<Button
 						color="primary"
