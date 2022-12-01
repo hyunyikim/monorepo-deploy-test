@@ -675,8 +675,7 @@ export function InputFormSection({
 	const {setOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const nftCustomFields: string[] | undefined = data?.nftCustomFields;
-	// const hasProfileLogo = data?.profileImage;
-	const hasProfileLogo = null;
+	const hasProfileLogo = data?.profileImage;
 
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
