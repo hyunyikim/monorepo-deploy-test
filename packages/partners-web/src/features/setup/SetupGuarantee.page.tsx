@@ -922,6 +922,7 @@ export function InputFormSection({
 							nftCustomField: productInfoState,
 							profileImage: brandLogoPreview.preview,
 							nftBackgroundImage: brandCardPreview.preview,
+							certificationBrandName: values?.brandNameEN || '',
 						}}
 					/>
 				</Box>

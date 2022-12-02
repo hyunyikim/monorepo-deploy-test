@@ -65,6 +65,15 @@ export const guaranteeRegisterProductListSearchFilter: ListSearchFilters = [
 	},
 ];
 
+const productRegisterProductCodeInput: InputType = {
+	type: 'text',
+	name: 'code',
+	placeholder: '상품코드를 입력해주세요',
+	label: '상품코드',
+	autoComplete: 'off',
+	required: false,
+};
+
 export const productRegisterInputList: InputTypeList = [
 	{
 		type: 'text',
@@ -105,14 +114,7 @@ export const productRegisterInputListForCooperator: InputTypeList = [
 		type: 'hidden',
 		name: 'categoryName',
 	},
-	{
-		type: 'text',
-		name: 'code',
-		placeholder: '상품코드를 입력해주세요',
-		label: '상품코드',
-		autoComplete: 'off',
-		required: false,
-	},
+	productRegisterProductCodeInput,
 	{
 		type: 'text',
 		name: 'modelNum',
@@ -163,7 +165,12 @@ export const getProductRegisterInputList = (
 
 	// 일반 브랜드 타입
 	if (b2bType === 'brand') {
-		return [...brandInputs, ...normalInputList, ...customFieldInputList];
+		return [
+			...brandInputs,
+			...normalInputList,
+			productRegisterProductCodeInput,
+			...customFieldInputList,
+		];
 	}
 
 	let cooperatorInputList = [...productRegisterInputListForCooperator];
