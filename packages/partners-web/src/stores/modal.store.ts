@@ -1,7 +1,7 @@
 import {ReactNode} from 'react';
 import create from 'zustand';
 
-type alignType = 'left' | 'center' | 'centre';
+type alignType = 'left' | 'center';
 
 type ModalOpt = {
 	id: string;
@@ -12,6 +12,8 @@ type ModalOpt = {
 	buttonTitle?: string;
 	width?: string;
 	align?: alignType;
+	titleAlign?: alignType;
+	customisedButton?: React.ReactElement | null;
 	maxWidth?: string;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
@@ -28,11 +30,13 @@ interface ModalState {
 	buttonTitle?: string;
 	width?: string;
 	align?: string;
+	titleAlign?: string;
+	customisedButton?: React.ReactElement | null;
 	maxWidth?: string;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void;
-	setOpen?: (openState: boolean) => void;
+	setModalOpenState?: (openState: boolean) => void;
 	setCloseAndReset?: () => void;
 	setModalOption: (opt: ModalOpt) => void;
 }
@@ -47,7 +51,9 @@ export const useModalStore = create<ModalState>((set) => ({
 	maxWidth: '',
 	onClickButton: undefined,
 	align: 'center',
-	setOpen: (openState) => {
+	titleAlign: 'left',
+	customisedButton: null,
+	setModalOpenState: (openState: boolean) => {
 		set((state) => ({isOpen: openState}));
 	},
 	setModalOption: (opt) => {
@@ -66,6 +72,8 @@ export const useModalStore = create<ModalState>((set) => ({
 			maxWidth: '',
 			align: 'center',
 			onClickButton: undefined,
+			titleAlign: 'left',
+			customisedButton: null,
 		}));
 	},
 }));

@@ -23,3 +23,5 @@ export {default as dashedLine} from './img_dashed_line.png';
 export {default as dashedLine2x} from './img_dashed_line@2x.png';
 export {default as solidLine} from './img_solid_line.png';
 export {default as solidLine2x} from './img_solid_line@2x.png';
+export {default as infoCooperation} from './img_information_for_cooperation.png';
+export {default as infoCooperation2x} from './img_information_for_cooperation@2x.png';

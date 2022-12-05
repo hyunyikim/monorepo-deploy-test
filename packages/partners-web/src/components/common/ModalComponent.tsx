@@ -15,20 +15,22 @@ function ModalComponent() {
 		subtitle,
 		children,
 		buttonTitle,
-		setOpen,
+		setModalOpenState,
 		onClickButton,
 		width,
 		align,
+		titleAlign,
 		maxWidth,
 		setCloseAndReset,
+		customisedButton,
 	} = useModalStore((state) => state);
 
 	const closeHandler = () => {
-		if (typeof setOpen === 'function') {
+		if (typeof setModalOpenState === 'function') {
 			if (typeof setCloseAndReset === 'function') {
 				setCloseAndReset();
 			}
-			setOpen(false);
+			setModalOpenState(false);
 		}
 	};
 
@@ -50,6 +52,7 @@ function ModalComponent() {
 			open={isOpen}
 			onClose={closeHandler}
 			showCloseButton={true}
+			titleAlign={titleAlign}
 			TitleComponent={
 				<Typography fontSize={20} fontWeight="bold">
 					{title}
@@ -93,7 +96,24 @@ function ModalComponent() {
 					}}>
 					{children && children}
 				</Stack>
-				{buttonTitle && onClickButton && (
+
+				{customisedButton
+					? customisedButton
+					: buttonTitle &&
+					  onClickButton && (
+							<DialogActions sx={{p: 0}}>
+								<Button
+									variant="contained"
+									width={'100%'}
+									color={'gradient'}
+									onClick={onClickButton}
+									autoFocus>
+									{buttonTitle}
+								</Button>
+							</DialogActions>
+					  )}
+
+				{/* {buttonTitle && onClickButton && (
 					<DialogActions sx={{p: 0}}>
 						<Button
 							variant="contained"
@@ -104,7 +124,7 @@ function ModalComponent() {
 							{buttonTitle}
 						</Button>
 					</DialogActions>
-				)}
+				)} */}
 			</>
 		</Dialog>
 	);

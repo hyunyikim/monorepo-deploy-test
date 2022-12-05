@@ -18,6 +18,7 @@ interface Props extends Omit<DialogProps, 'open' | 'onclose'> {
 	TitleComponent?: React.ReactElement;
 	ActionComponent?: React.ReactElement;
 	children: React.ReactElement;
+	titleAlign?: string;
 	onClose: () => void;
 }
 
@@ -34,6 +35,7 @@ function Dialog({
 	sx = {},
 	children,
 	onClose,
+	titleAlign,
 	...props
 }: Props) {
 	const dialogPadding = useMemo(() => {
@@ -64,7 +66,9 @@ function Dialog({
 					sx={{
 						display: 'flex',
 						justifyContent:
-							TitleComponent && showCloseButton
+							titleAlign === 'center'
+								? 'center'
+								: TitleComponent && showCloseButton
 								? 'space-between'
 								: !showCloseButton
 								? 'flex-start'
@@ -79,7 +83,7 @@ function Dialog({
 						background: '#FFF',
 					}}>
 					{TitleComponent && TitleComponent}
-					{showCloseButton && (
+					{titleAlign !== 'center' && showCloseButton && (
 						<IcClose cursor="pointer" onClick={onClose} />
 					)}
 				</DialogTitle>
