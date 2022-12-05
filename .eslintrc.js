@@ -95,6 +95,27 @@ module.exports = {
 			},
 		},
 		{
+			files: [
+				'packages/payment/**/*.ts?(x)',
+				'packages/payment/**/*.js?(x)',
+			],
+			rules: {
+				'@typescript-eslint/no-unsafe-member-access': 'warn',
+				'@typescript-eslint/no-unsafe-call': 'warn',
+				'@typescript-eslint/no-unsafe-assignment': 'warn',
+				'@typescript-eslint/no-unsafe-return': 'warn',
+			},
+			settings: {
+				'import/resolver': {
+					node: {
+						project: path.resolve(
+							__dirname + '/packages/payment/tsconfig.json'
+						),
+					},
+				},
+			},
+		},
+		{
 			files: ['packages/partners-web/**/*.ts?(x)'],
 			rules: {
 				'@typescript-eslint/no-misused-promises': 'warn',

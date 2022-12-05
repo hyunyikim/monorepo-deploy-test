@@ -10634,6 +10634,7 @@ __metadata:
     "@nestjs/config": ^2.2.0
     "@nestjs/core": ^8.0.0
     "@nestjs/cqrs": ^9.0.1
+    "@nestjs/jwt": ^9.0.0
     "@nestjs/platform-express": ^8.0.0
     "@nestjs/schematics": ^8.0.0
     "@nestjs/testing": ^8.0.0
@@ -10645,12 +10646,16 @@ __metadata:
     "@types/supertest": ^2.0.11
     "@typescript-eslint/eslint-plugin": ^5.0.0
     "@typescript-eslint/parser": ^5.0.0
+    aws-sdk: ^2.1262.0
     axios: ^1.2.0
+    class-transformer: ^0.5.1
+    class-validator: ^0.13.2
     eslint: ^8.0.1
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
     jest: ^27.2.5
-    luxon: ^3.0.4
+    luxon: ^3.1.0
+    nest-winston: ^1.8.0
     prettier: ^2.3.2
     reflect-metadata: ^0.1.13
     rimraf: ^3.0.2
@@ -10660,10 +10665,12 @@ __metadata:
     supertest: ^6.1.3
     ts-jest: ^27.0.3
     ts-loader: ^9.2.3
-    ts-node: ^10.0.0
+    ts-node: ^10.7.0
     tsconfig-paths: ^3.10.1
     typeorm: ^0.3.10
-    typescript: ^4.3.5
+    typescript: ^4.6.4
+    winston: ^3.8.2
+    winston-cloudwatch: ^6.0.1
   languageName: unknown
   linkType: soft
 
@@ -12075,6 +12082,24 @@ __metadata:
     uuid: 8.0.0
     xml2js: 0.4.19
   checksum: 326537e687c7e634a98cd276517d92aea01b9c2eb70e245a9c2e5808ba6b610f70cd352ab654d7b2716bde4e31ef5cfaa0aae20b9978ac072e6671946416f457
+  languageName: node
+  linkType: hard
+
+"aws-sdk@npm:^2.1262.0":
+  version: 2.1262.0
+  resolution: "aws-sdk@npm:2.1262.0"
+  dependencies:
+    buffer: 4.9.2
+    events: 1.1.1
+    ieee754: 1.1.13
+    jmespath: 0.16.0
+    querystring: 0.2.0
+    sax: 1.2.1
+    url: 0.10.3
+    util: ^0.12.4
+    uuid: 8.0.0
+    xml2js: 0.4.19
+  checksum: 2407baac41a88acc7ef4d29ad15dfdf3d014508062e0eac0f90562045a4123b37a846c531b307a370ee3538b4123de208d8899e363cd39f862a013fcbbf10ea5
   languageName: node
   linkType: hard
 
@@ -22314,10 +22339,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "luxon@npm:3.0.4"
-  checksum: d0908c3951da2a10ccf23040210ead23b0da5366a9d0954e7d5db3560189a7bd703d8af1e00084f197effc9cd7158d1bddf32886d98a70d59ce9bc3fe88bbce0
+"luxon@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "luxon@npm:3.1.0"
+  checksum: f8a850b759ba7a2e009d904c522ed7bc264bf4add57578f8948e52a0ed96b627b025b5aad8032295b570ae19fac41f0ffab91bdb128715fb0cc020798a7ba886
   languageName: node
   linkType: hard
 
@@ -23258,6 +23283,18 @@ __metadata:
     "@nestjs/common": ^5.0.0 || ^6.6.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
     winston: ^3.0.0
   checksum: 3b3df188abaa1d21c00a569324fc84130fcaad6d79b8b5b924be0bfdd16313a9a7357eca9aca0c9df0ec0a454eb08efd485939caacfc5b38afd2e760292cf8a0
+  languageName: node
+  linkType: hard
+
+"nest-winston@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "nest-winston@npm:1.8.0"
+  dependencies:
+    fast-safe-stringify: ^2.1.1
+  peerDependencies:
+    "@nestjs/common": ^5.0.0 || ^6.6.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
+    winston: ^3.0.0
+  checksum: 7837eea05d68af3b4b6b6a1771adbf915086f4b6dff03c0131be1b0800b562e6fde7ef580a5e626f5a3ab92996845889230ac037432fe1d0e14a61da93668314
   languageName: node
   linkType: hard
 
@@ -28906,44 +28943,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.0.0":
-  version: 10.9.1
-  resolution: "ts-node@npm:10.9.1"
-  dependencies:
-    "@cspotcode/source-map-support": ^0.8.0
-    "@tsconfig/node10": ^1.0.7
-    "@tsconfig/node12": ^1.0.7
-    "@tsconfig/node14": ^1.0.0
-    "@tsconfig/node16": ^1.0.2
-    acorn: ^8.4.1
-    acorn-walk: ^8.1.1
-    arg: ^4.1.0
-    create-require: ^1.1.0
-    diff: ^4.0.1
-    make-error: ^1.1.1
-    v8-compile-cache-lib: ^3.0.1
-    yn: 3.1.1
-  peerDependencies:
-    "@swc/core": ">=1.2.50"
-    "@swc/wasm": ">=1.2.50"
-    "@types/node": "*"
-    typescript: ">=2.7"
-  peerDependenciesMeta:
-    "@swc/core":
-      optional: true
-    "@swc/wasm":
-      optional: true
-  bin:
-    ts-node: dist/bin.js
-    ts-node-cwd: dist/bin-cwd.js
-    ts-node-esm: dist/bin-esm.js
-    ts-node-script: dist/bin-script.js
-    ts-node-transpile-only: dist/bin-transpile.js
-    ts-script: dist/bin-script-deprecated.js
-  checksum: 090adff1302ab20bd3486e6b4799e90f97726ed39e02b39e566f8ab674fd5bd5f727f43615debbfc580d33c6d9d1c6b1b3ce7d8e3cca3e20530a145ffa232c35
-  languageName: node
-  linkType: hard
-
 "ts-node@npm:^10.7.0":
   version: 10.7.0
   resolution: "ts-node@npm:10.7.0"
@@ -29429,16 +29428,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.3.5":
-  version: 4.8.4
-  resolution: "typescript@npm:4.8.4"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 3e4f061658e0c8f36c820802fa809e0fd812b85687a9a2f5430bc3d0368e37d1c9605c3ce9b39df9a05af2ece67b1d844f9f6ea8ff42819f13bcb80f85629af0
-  languageName: node
-  linkType: hard
-
 "typescript@npm:^4.7.2":
   version: 4.7.2
   resolution: "typescript@npm:4.7.2"
@@ -29476,16 +29465,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 1cb434fbc637d347be90e3a0c6cd05e33c38f941713c8786d3031faf1842c2c148ba91d2fac01e7276b0ae3249b8633f1660e32686cc7a8c6a8fd5361dc52c66
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^4.3.5#~builtin<compat/typescript>":
-  version: 4.8.4
-  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
   languageName: node
   linkType: hard
 
@@ -30960,6 +30939,25 @@ __metadata:
     triple-beam: ^1.3.0
     winston-transport: ^4.5.0
   checksum: 14637222a4239f1ee7e629dbbf0c65161abe95eeb7acd275caf210c5d47d93254fdb007291ea75b5e241d4bb6dd3c29d000bd04ae5420a347711ae7cd0b2da88
+  languageName: node
+  linkType: hard
+
+"winston@npm:^3.8.2":
+  version: 3.8.2
+  resolution: "winston@npm:3.8.2"
+  dependencies:
+    "@colors/colors": 1.5.0
+    "@dabh/diagnostics": ^2.0.2
+    async: ^3.2.3
+    is-stream: ^2.0.0
+    logform: ^2.4.0
+    one-time: ^1.0.0
+    readable-stream: ^3.4.0
+    safe-stable-stringify: ^2.3.1
+    stack-trace: 0.0.x
+    triple-beam: ^1.3.0
+    winston-transport: ^4.5.0
+  checksum: f7b901798b92ab9e93c850110bf6e98500e9a0e762b62dab410cf928b2a4145533dfa6d3d2b24f7bf0dc94b53808d5bd28aaaeff9a4b43b89ea4c798cce308ea
   languageName: node
   linkType: hard
 
