@@ -30,7 +30,7 @@ interface ModalState {
 	buttonTitle?: string;
 	width?: string;
 	align?: string;
-	titleAlign?: string;
+	titleAlign?: alignType;
 	customisedButton?: React.ReactElement | null;
 	maxWidth?: string;
 	onClickButton?: (

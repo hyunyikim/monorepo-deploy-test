@@ -98,7 +98,6 @@ interface FormProps {
  * 루트 경로에서 도입문의, 회원가입에서 병행업체 가입문의와 함께 사용됨
  */
 function IntroductionInquiryDialog({open, onClose}: Props) {
-	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const setOnCloseFunc = useMessageDialog((state) => state.setOnCloseFunc);
 	const {setModalOpenState, setModalOption} = useModalStore((state) => state);
 
@@ -108,7 +107,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 		}
 	}, [onClose, setOnCloseFunc]);
 
-	const {control, handleSubmit} = useForm<FormProps>({
+	const {control, handleSubmit, reset} = useForm<FormProps>({
 		resolver: yupResolver(introductionInquirySchemaShape),
 		mode: 'onSubmit',
 		reValidateMode: 'onBlur',
@@ -147,7 +146,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 							sx={{
 								background: `url(${infoCooperation2x}) center no-repeat`,
 								backgroundSize: 'cover',
-								height: '319px',
+								height: '320px',
 								width: '728px',
 								margin: 'auto',
 							}}
@@ -175,6 +174,14 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 							}}
 							onClick={() => {
 								setModalOpenState(false);
+								reset({
+									담당자: '',
+									이메일: '',
+									회사명: '',
+									핸드폰: '',
+									'담당부서 및 직책': '',
+									문의내용: '',
+								});
 								onClose();
 							}}>
 							확인
