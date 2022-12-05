@@ -125,7 +125,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 											className="underline"
 											onClick={() => {
 												goToParentUrl(
-													`/b2b/guarantee/detail/${item.idx}`
+													`/b2b/guarantee/detail/${item.idx}?name=${name}&phone=${phone}`
 												);
 											}}>
 											{item?.serialNo}
