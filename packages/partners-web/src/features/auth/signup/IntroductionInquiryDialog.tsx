@@ -149,7 +149,12 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 				</Typography>
 			}
 			ActionComponent={
-				<Button width="100%" type="submit">
+				<Button
+					width="100%"
+					type="submit"
+					onClick={() => {
+						handleSubmit(handleDataSubmit)();
+					}}>
 					문의하기
 				</Button>
 			}
@@ -160,7 +165,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 				<Typography fontSize={15} fontWeight={400} mb="24px">
 					문의사항을 남겨주시면, 확인 후 바로 연락드리겠습니다
 				</Typography>
-				<form onSubmit={handleSubmit(handleDataSubmit)}>
+				<form noValidate>
 					<Stack direction="column" rowGap="10px">
 						{inputList.map((input) => (
 							<Controller
