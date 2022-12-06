@@ -21,6 +21,8 @@ import {handleChangeDataFormat} from '@/utils';
 
 import {sendSlack} from '@/api/common.api';
 import {useMessageDialog} from '@/stores';
+import {useModalStore} from '../../../stores/modal.store';
+import {infoCooperation2x} from '@/assets/images';
 
 const inputList = [
 	{
@@ -96,8 +98,8 @@ interface FormProps {
  * 루트 경로에서 도입문의, 회원가입에서 병행업체 가입문의와 함께 사용됨
  */
 function IntroductionInquiryDialog({open, onClose}: Props) {
-	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const setOnCloseFunc = useMessageDialog((state) => state.setOnCloseFunc);
+	const {setModalOpenState, setModalOption} = useModalStore((state) => state);
 
 	useEffect(() => {
 		if (onClose) {
@@ -105,7 +107,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 		}
 	}, [onClose, setOnCloseFunc]);
 
-	const {control, handleSubmit} = useForm<FormProps>({
+	const {control, handleSubmit, reset} = useForm<FormProps>({
 		resolver: yupResolver(introductionInquirySchemaShape),
 		mode: 'onSubmit',
 		reValidateMode: 'onBlur',
@@ -126,12 +128,66 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 					문의내용: data.content ? `\n${data.content}` : '',
 				},
 			});
-			onOpenMessageDialog({
-				title: '문의하신 내용이 접수되었습니다.',
-				message:
-					'문의 내용을 확인한 후 빠르 시일 내에 답변 드리겠습니다.',
-				showBottomCloseButton: true,
-				closeButtonValue: '확인',
+
+			setModalOption({
+				id: 'cooperatorInfo',
+				isOpen: true,
+				title: '병행수입 계정 생성 문의가 접수되었습니다.',
+				children: (
+					<Box
+						sx={{
+							width: '100%',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							marginTop: '35px',
+						}}>
+						<Box
+							sx={{
+								background: `url(${infoCooperation2x}) center no-repeat`,
+								backgroundSize: 'cover',
+								height: '320px',
+								width: '728px',
+								margin: 'auto',
+							}}
+						/>
+					</Box>
+				),
+				align: 'left',
+				titleAlign: 'center',
+				width: '100%',
+				maxWidth: '900px',
+				buttonTitle: '확인',
+				customisedButton: (
+					<Box
+						sx={{
+							display: 'flex',
+							justifyContent: 'center',
+							marginTop: '38px',
+						}}>
+						<Button
+							variant="contained"
+							color="primary"
+							width="220px"
+							sx={{
+								margin: 'auto',
+							}}
+							onClick={() => {
+								setModalOpenState(false);
+								reset({
+									담당자: '',
+									이메일: '',
+									회사명: '',
+									핸드폰: '',
+									'담당부서 및 직책': '',
+									문의내용: '',
+								});
+								onClose();
+							}}>
+							확인
+						</Button>
+					</Box>
+				),
 			});
 		} catch (e) {
 			console.log(e);
