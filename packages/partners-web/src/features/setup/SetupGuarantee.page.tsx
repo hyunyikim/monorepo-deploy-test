@@ -1175,12 +1175,12 @@ export function InputFormSection({
 
 		if (!hasProfileLogo) {
 			setProductInfoState([...categoryExampleList[0]]);
-		} else if (
-			hasProfileLogo &&
-			nftCustomFields &&
-			nftCustomFields?.length > 0
-		) {
-			setProductInfoState(() => [...nftCustomFields]);
+		} else {
+			if (nftCustomFields && nftCustomFields?.length > 0) {
+				setProductInfoState(() => [...nftCustomFields]);
+			} else {
+				setProductInfoState(() => []);
+			}
 		}
 
 		// if (b2bType === 'brand') {
