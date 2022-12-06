@@ -674,7 +674,7 @@ export function InputFormSection({
 			newValue: '',
 		});
 
-	const {setOpen, setModalOption} = useModalStore((state) => state);
+	const {setModalOpenState, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const nftCustomFields: string[] | undefined = data?.nftCustomFields;
 	const hasProfileLogo = data?.profileImage;
@@ -931,8 +931,8 @@ export function InputFormSection({
 			align: 'center',
 			buttonTitle: '확인',
 			onClickButton: () => {
-				if (typeof setOpen === 'function') {
-					setOpen(false);
+				if (typeof setModalOpenState === 'function') {
+					setModalOpenState(false);
 				}
 			},
 		});
@@ -950,8 +950,8 @@ export function InputFormSection({
 			buttonTitle: '확인',
 			align: 'center',
 			onClickButton: () => {
-				if (typeof setOpen === 'function') {
-					setOpen(false);
+				if (typeof setModalOpenState === 'function') {
+					setModalOpenState(false);
 				}
 			},
 		});
@@ -1175,12 +1175,12 @@ export function InputFormSection({
 
 		if (!hasProfileLogo) {
 			setProductInfoState([...categoryExampleList[0]]);
-		} else if (
-			hasProfileLogo &&
-			nftCustomFields &&
-			nftCustomFields?.length > 0
-		) {
-			setProductInfoState(() => [...nftCustomFields]);
+		} else {
+			if (nftCustomFields && nftCustomFields?.length > 0) {
+				setProductInfoState(() => [...nftCustomFields]);
+			} else {
+				setProductInfoState(() => []);
+			}
 		}
 
 		// if (b2bType === 'brand') {

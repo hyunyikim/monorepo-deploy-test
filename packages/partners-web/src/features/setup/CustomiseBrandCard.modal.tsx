@@ -71,7 +71,7 @@ function CustomiseBrandCard({
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const [cropImage, setCropImage] = useState<CropImageProps | null>(null); // 새로운 이미지
 	const [cropConfig, setCropConfig] = useState<CropConfigProps | null>(null); // 크롭 관련 설정값
-	const {isOpen, setOpen} = useModalStore((state) => state);
+	const {isOpen, setModalOpenState} = useModalStore((state) => state);
 
 	// Dialog 새로 열릴 때 step 1부터 시작
 	useEffect(() => {
@@ -128,8 +128,8 @@ function CustomiseBrandCard({
 				});
 			}
 		}
-		if (typeof setOpen === 'function') {
-			setOpen(false);
+		if (typeof setModalOpenState === 'function') {
+			setModalOpenState(false);
 		}
 	};
 
