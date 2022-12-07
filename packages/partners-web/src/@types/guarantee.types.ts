@@ -1,6 +1,6 @@
 import {ProductRegisterFormData} from './product.types';
 
-export type GuaranteeListRequestSearchType = 'all' | 'nft_req_num';
+export type GuaranteeListRequestSearchType = 'all' | 'nft_req_num' | 'pro_nm';
 
 export type GuaranteeStatus = 'READY' | 'CONFIRMED' | 'COMPLETED' | 'CANCELED';
 
