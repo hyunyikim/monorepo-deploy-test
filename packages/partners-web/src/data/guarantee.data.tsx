@@ -12,6 +12,7 @@ export const guaranteeListSearchTypes: Options<GuaranteeListRequestSearchType> =
 	[
 		{label: '전체', value: 'all'},
 		{label: '신청번호', value: 'nft_req_num'},
+		{label: '상품명', value: 'pro_nm'},
 	];
 
 export const guaranteeRequestStates: Options<GuaranteeRequestState> = [
