@@ -1,4 +1,4 @@
-import {Module, Logger, Provider} from '@nestjs/common';
+import {Logger, Module, Provider} from '@nestjs/common';
 import {BillingController} from './interface/billing.controller';
 import {CqrsModule} from '@nestjs/cqrs';
 import {TossPaymentsAPI} from './infrastructure/api-client';
@@ -7,16 +7,22 @@ import {
 	CancelPaymentHandler,
 	RegisterBillingHandler,
 } from './application/command';
-import {BillingApprovedEvent, BillingRegisteredEvent} from './domain/event';
+import {FindBillingByCustomerKeyHandler} from './application/query';
+import {
+	BillingRegisteredHandler,
+	BillingUnregisteredHandler,
+} from './application/event';
 import {PlanBillingRepository} from './infrastructure/respository/billing.repository';
 import {PlanPaymentRepository} from './infrastructure/respository/payment.repository';
+import {PricePlanRepository} from './infrastructure/respository/plan.repository';
 import {
 	PlanBilling,
+	PlanBillingFactory,
 	PlanPayment,
 	PlanPaymentFactory,
-	PlanBillingFactory,
 } from './domain';
 import {InjectionToken} from '../injection.token';
+import {BillingSaga} from './application/sagas';
 
 const infra: Provider[] = [
 	{
@@ -31,16 +37,32 @@ const infra: Provider[] = [
 	},
 	PlanPaymentRepository,
 	PlanBillingRepository,
+	PricePlanRepository,
 ];
 
 const app: Provider[] = [
+	// Command Handler
 	CancelPaymentHandler,
 	RegisterBillingHandler,
-	BillingRegisteredEvent,
-	BillingApprovedEvent,
+
+	// Event Handler
+	BillingRegisteredHandler,
+	BillingUnregisteredHandler,
+
+	// Query Handler
+	FindBillingByCustomerKeyHandler,
+
+	// Saga
+	BillingSaga,
 ];
 
 const domain: Provider[] = [
+	{
+		provide: InjectionToken.PLAN_TABLE_NAME,
+		useFactory: (configService: ConfigService) =>
+			configService.getOrThrow('PLAN_TABLE_NAME'),
+		inject: [ConfigService],
+	},
 	{
 		provide: InjectionToken.PAYMENT_TABLE_NAME,
 		useFactory: (configService: ConfigService) =>

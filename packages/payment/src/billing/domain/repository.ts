@@ -1,5 +1,6 @@
 import {Payment} from './payment';
-import {Billing} from './billing';
+import {Billing, PricePlan} from './billing';
+
 export interface PaymentRepository {
 	savePayment: (payment: Payment) => Promise<void>;
 	findByKey: (key: string) => Promise<Payment | null>;
@@ -11,4 +12,9 @@ export interface BillingRepository {
 	saveBilling: (billing: Billing) => Promise<void>;
 	findByKey: (billingKey: string) => Promise<Billing | null>;
 	findByCustomerKey: (customerKey: string) => Promise<Billing | null>;
+}
+
+export interface PlanRepository {
+	getAll: (activated: boolean) => Promise<PricePlan[]>;
+	findByPlanId: (planId: string) => Promise<PricePlan | null>;
 }
