@@ -4,6 +4,7 @@ import qs from 'qs';
 
 import {defaultPageSize} from '@/data';
 import {sortObjectByKey, scrollUpParent} from '@/utils';
+import {useMessageDialog} from '@/stores';
 
 interface Props<D, F> {
 	apiFunc: (value: F, ...rest: any[]) => Promise<D>;
@@ -51,6 +52,7 @@ const useList = <
 	// TODO: 선언적으로 로딩/에러 다룰 수 있도록 변경하기
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<any | null>(null);
+	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
 	const handleLoadData = useCallback((params: F) => {
 		(async () => {
@@ -62,6 +64,11 @@ const useList = <
 			} catch (e: any) {
 				console.log('e :>> ', e);
 				setError(e);
+				onOpenMessageDialog({
+					title: '알림',
+					message: '네트워크 에러',
+					showBottomCloseButton: false,
+				});
 			} finally {
 				setIsLoading(false);
 			}
@@ -118,11 +125,11 @@ const useList = <
 		[pathname, parsedSearch]
 	);
 
-	const handleSearch = (param: F) => {
+	const handleSearch = (param?: F) => {
 		const sortedParsedSearch = sortObjectByKey(parsedSearch);
 		const newParam = {
 			...parsedSearch,
-			...param,
+			...(param && param),
 		};
 		const sortedParam = sortObjectByKey(newParam);
 

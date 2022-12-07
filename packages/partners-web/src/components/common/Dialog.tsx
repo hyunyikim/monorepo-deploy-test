@@ -9,7 +9,7 @@ import {
 import {IcClose} from '@/assets/icon';
 import {useMemo} from 'react';
 
-interface Props extends Omit<DialogProps, 'open' | 'onclose'> {
+interface Props extends Omit<DialogProps, 'open' | 'onClose'> {
 	open: boolean;
 	showCloseButton?: boolean;
 	width?: number | string;
@@ -19,7 +19,10 @@ interface Props extends Omit<DialogProps, 'open' | 'onclose'> {
 	ActionComponent?: React.ReactElement;
 	children: React.ReactElement;
 	titleAlign?: string;
-	onClose: () => void;
+	onClose?: (
+		event: object,
+		reason: 'backdropClick' | 'escapeKeyDown'
+	) => void;
 }
 
 const DIALOG_PADDING = '32px';
@@ -46,7 +49,7 @@ function Dialog({
 		<MuiDialog
 			open={open}
 			maxWidth="md"
-			onBackdropClick={onClose}
+			onClose={onClose}
 			sx={{
 				'& .MuiPaper-root': {
 					borderRadius: '16px',

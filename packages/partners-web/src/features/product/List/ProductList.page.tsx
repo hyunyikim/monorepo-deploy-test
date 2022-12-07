@@ -1,8 +1,9 @@
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
+
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useList} from '@/utils/hooks';
-import {getProductList} from '@/api/product.api';
+import {useList, useCheckboxList} from '@/utils/hooks';
+import {bulkDeleteProduct, getProductList} from '@/api/product.api';
 import {
 	ProductListRequestParam,
 	ProductListResponse,
@@ -17,6 +18,7 @@ import {
 	sortSearchFilter,
 } from '@/data';
 import {goToParentUrl, trackingToParent} from '@/utils';
+import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
 import {
 	ListTitle,
@@ -27,9 +29,12 @@ import {
 	Pagination,
 	Button,
 	Select,
+	HeadTableCell,
 	TableCell,
+	SearchFilterTab,
+	Checkbox,
+	Loading,
 } from '@/components';
-import {useGetPartnershipInfo} from '@/stores';
 
 const menu = 'itemadmin';
 const menuKo = '상품';
@@ -40,13 +45,16 @@ function ProductList() {
 	const useFieldModelNum = useMemo(() => {
 		return partnershipInfo?.useFieldModelNum === 'Y' ? true : false;
 	}, [partnershipInfo]);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
 	const {
 		isLoading,
 		data,
 		totalSize,
 		filter,
-		paginationProps,
+		paginationProps: {onChange: onChangePage, ...paginationProps},
 		handleChangeFilter,
 		handleSearch,
 		handleReset,
@@ -63,6 +71,59 @@ function ProductList() {
 			categoryCode: '',
 		},
 	});
+	const {
+		checkedIdxList,
+		checkedTotal,
+		onCheckItem,
+		onCheckTotalItem,
+		onResetCheckedItem,
+		onHandleChangeFilter,
+	} = useCheckboxList({
+		idxList:
+			data && data?.data && data?.data?.length > 0
+				? data?.data?.map((item) => item.idx)
+				: [],
+		handleChangeFilter,
+	});
+
+	const handleDeleteProduct = async (checkedItems: number[]) => {
+		try {
+			if (checkedItems?.length < 1) {
+				onOpenMessageDialog({
+					title: '삭제할 상품을 선택해주세요.',
+					showBottomCloseButton: true,
+					closeButtonValue: '확인',
+				});
+				return;
+			}
+			setIsSubmitting(true);
+			await bulkDeleteProduct(checkedItems);
+			onOpenMessageDialog({
+				title: '상품이 삭제됐습니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+				onCloseFunc: () => {
+					handleSearch();
+					onResetCheckedItem();
+				},
+			});
+		} catch (e) {
+			onOpenMessageDialog({
+				title: '네트워크 에러',
+				message: e?.response?.data || '',
+				showBottomCloseButton: true,
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const isNotValidCheck = useMemo(() => {
+		if (!data?.data || data?.data?.length < 1) {
+			return true;
+		}
+		return false;
+	}, [data?.data]);
 
 	return (
 		<>
@@ -78,9 +139,55 @@ function ProductList() {
 							: productListSearchFilter
 					}
 					periodIdx={6}
-					onSearch={handleSearch}
-					onReset={handleReset}
-					onChangeFilter={handleChangeFilter}
+					onSearch={(param) => {
+						handleSearch(param);
+						onResetCheckedItem();
+					}}
+					onReset={() => {
+						handleReset();
+						onResetCheckedItem();
+					}}
+					onChangeFilter={onHandleChangeFilter}
+				/>
+				<SearchFilterTab
+					options={[
+						{
+							label: '전체',
+							value: '',
+						},
+					]}
+					selectedTab={''}
+					tabLabel="product request state"
+					onChangeTab={() => {
+						console.log('');
+					}}
+					buttons={
+						<>
+							<Button
+								variant="outlined"
+								color="grey-100"
+								height={32}
+								onClick={() => {
+									goToParentUrl('/b2b/product/excel-upload');
+								}}>
+								대량 등록
+							</Button>
+							<Button
+								color="primary"
+								height={32}
+								onClick={() => {
+									trackingToParent(
+										`${menu}_list_regist_click`,
+										{
+											button_title: `신규등록 클릭`,
+										}
+									);
+									goToParentUrl('/b2b/product/register');
+								}}>
+								상품 등록
+							</Button>
+						</>
+					}
 				/>
 				<TableInfo totalSize={totalSize} unit="건">
 					<Select
@@ -95,7 +202,7 @@ function ProductList() {
 							trackingToParent(`${menu}_unit_view_click`, {
 								button_title: `정렬_${sortLabel}`,
 							});
-							handleChangeFilter({
+							onHandleChangeFilter({
 								sort: e.target.value,
 							});
 						}}
@@ -106,19 +213,38 @@ function ProductList() {
 					<PageSelect
 						value={filter.pageMaxNum}
 						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
+							onHandleChangeFilter(value)
 						}
 					/>
 					<Button
-						color="primary"
+						variant="outlined"
+						color="grey-100"
 						height={32}
 						onClick={() => {
-							trackingToParent(`${menu}_list_regist_click`, {
-								button_title: `신규등록 클릭`,
+							onOpenMessageDialog({
+								title: '선택하신 상품을 삭제하시겠습니까?',
+								showBottomCloseButton: true,
+								closeButtonValue: '취소',
+								buttons: (
+									<>
+										<Button
+											color="black"
+											variant="contained"
+											onClick={() => {
+												handleDeleteProduct(
+													checkedIdxList
+												);
+											}}>
+											삭제
+										</Button>
+									</>
+								),
 							});
-							goToParentUrl('/b2b/product/register');
+						}}
+						sx={{
+							marginRight: '0',
 						}}>
-						상품 등록
+						선택 삭제
 					</Button>
 				</TableInfo>
 				<Table
@@ -126,24 +252,56 @@ function ProductList() {
 					totalSize={totalSize}
 					headcell={
 						<>
-							<TableCell>No.</TableCell>
-							<TableCell>브랜드</TableCell>
-							<TableCell>상품명</TableCell>
-							<TableCell>상품가격</TableCell>
+							<HeadTableCell minWidth={52}>
+								<Checkbox
+									disabled={isNotValidCheck}
+									checked={checkedTotal}
+									onChange={(e) => {
+										onCheckTotalItem(
+											e?.target?.checked || false
+										);
+									}}
+								/>
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>No.</HeadTableCell>
+							<HeadTableCell minWidth={180}>브랜드</HeadTableCell>
+							<HeadTableCell minWidth={520}>상품명</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								상품가격
+							</HeadTableCell>
 							{b2bType !== 'brand' && (
-								<TableCell>카테고리</TableCell>
+								<HeadTableCell minWidth={180}>
+									카테고리
+								</HeadTableCell>
 							)}
 							{useFieldModelNum && (
-								<TableCell>모델번호</TableCell>
+								<HeadTableCell minWidth={180}>
+									모델번호
+								</HeadTableCell>
 							)}
-							<TableCell>상품코드</TableCell>
+							<HeadTableCell minWidth={180}>
+								상품코드
+							</HeadTableCell>
 						</>
 					}>
 					{data &&
 						data?.data?.length > 0 &&
 						data?.data.map((item, idx) => (
 							<TableRow key={`item_${idx}`}>
-								<TableCell sx={{minWidth: 120}}>
+								<TableCell>
+									<Checkbox
+										disabled={isNotValidCheck}
+										checked={checkedIdxList.includes(
+											item.idx
+										)}
+										onChange={(e) => {
+											const checked =
+												e?.target?.checked || false;
+											onCheckItem(item.idx, checked);
+										}}
+									/>
+								</TableCell>
+								<TableCell>
 									{item.num ? (
 										<Typography
 											fontSize={14}
@@ -162,7 +320,7 @@ function ProductList() {
 								<TableCell>
 									{item?.brand?.name || '-'}
 								</TableCell>
-								<TableCell width="500px">
+								<TableCell>
 									<Typography
 										fontSize={14}
 										lineHeight={'18px'}
@@ -175,29 +333,34 @@ function ProductList() {
 										{item?.name ?? '-'}
 									</Typography>
 								</TableCell>
-								<TableCell sx={{minWidth: 120}}>
+								<TableCell>
 									{item?.price
 										? `${item?.price.toLocaleString()}원`
 										: '-'}
 								</TableCell>
 								{b2bType === 'brand' ? null : (
-									<TableCell sx={{minWidth: 120}}>
+									<TableCell>
 										{item?.categoryName || '-'}
 									</TableCell>
 								)}
 								{useFieldModelNum && (
-									<TableCell sx={{minWidth: 180}}>
+									<TableCell>
 										{item?.modelNum || '-'}
 									</TableCell>
 								)}
-								<TableCell sx={{minWidth: 180}}>
-									{item?.code || '-'}
-								</TableCell>
+								<TableCell>{item?.code || '-'}</TableCell>
 							</TableRow>
 						))}
 				</Table>
-				<Pagination {...paginationProps} />
+				<Pagination
+					{...paginationProps}
+					onChange={(_, page) => {
+						onResetCheckedItem();
+						onChangePage(_, page);
+					}}
+				/>
 			</Box>
+			<Loading loading={isSubmitting} showCircularProgress={false} />
 		</>
 	);
 }

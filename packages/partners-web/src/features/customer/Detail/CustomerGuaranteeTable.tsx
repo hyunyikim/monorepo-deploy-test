@@ -22,6 +22,7 @@ import {
 	PageSelect,
 	Pagination,
 	Select,
+	HeadTableCell,
 	TableCell,
 } from '@/components';
 import {getNftCustomerGuaranteeList} from '@/api/customer.api';
@@ -99,11 +100,19 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 					totalSize={totalSize}
 					headcell={
 						<>
-							<TableCell>신청일</TableCell>
-							<TableCell>개런티 번호</TableCell>
-							<TableCell>상품 정보</TableCell>
-							<TableCell>상품금액</TableCell>
-							<TableCell>개런티 상태</TableCell>
+							<HeadTableCell minWidth={180}>신청일</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								개런티 번호
+							</HeadTableCell>
+							<HeadTableCell minWidth={880}>
+								상품 정보
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								상품금액
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								개런티 상태
+							</HeadTableCell>
 						</>
 					}>
 					{data &&
@@ -134,7 +143,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 										'-'
 									)}
 								</TableCell>
-								<TableCell sx={{minWidth: 200}}>
+								<TableCell>
 									<Typography
 										fontSize={14}
 										lineHeight={'18px'}>

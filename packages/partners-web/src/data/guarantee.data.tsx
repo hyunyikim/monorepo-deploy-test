@@ -42,12 +42,6 @@ export const guaranteeListSearchFilter: ListSearchFilters = [
 		label: '기간',
 		component: 'searchDate',
 	},
-	{
-		name: 'nft_req_state',
-		label: '개런티 상태',
-		component: 'radioGroup',
-		options: groupingGuaranteeRequestStates,
-	},
 ];
 
 export const getGuaranteeStatusChip = (status: string, text: string) => {

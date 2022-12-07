@@ -36,6 +36,7 @@ import {
 	ImageModal,
 	Button,
 	TableCell,
+	HeadTableCell,
 } from '@/components';
 import RepairConfirmDialog from './RepairConfirmDialog';
 
@@ -154,13 +155,21 @@ function RepairList() {
 					totalSize={totalSize}
 					headcell={
 						<>
-							<TableCell>신청일</TableCell>
-							<TableCell>신청번호</TableCell>
-							<TableCell>이름</TableCell>
-							<TableCell>연락처</TableCell>
-							<TableCell>상품정보</TableCell>
-							<TableCell>신청현황</TableCell>
-							<TableCell>수선견적</TableCell>
+							<HeadTableCell minWidth={180}>신청일</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								신청번호
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>이름</HeadTableCell>
+							<HeadTableCell minWidth={180}>연락처</HeadTableCell>
+							<HeadTableCell minWidth={480}>
+								상품정보
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								신청현황
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								수선견적
+							</HeadTableCell>
 						</>
 					}>
 					{data &&

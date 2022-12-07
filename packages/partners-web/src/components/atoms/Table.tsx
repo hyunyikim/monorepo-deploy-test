@@ -15,7 +15,7 @@ interface Props extends TableProps {
 	headcell: React.ReactNode;
 }
 
-function Table({isLoading, totalSize, headcell, children, sx}: Props) {
+function Table({isLoading, totalSize, headcell, children}: Props) {
 	return (
 		<TableContainer
 			sx={(theme) => ({
@@ -57,7 +57,6 @@ function Table({isLoading, totalSize, headcell, children, sx}: Props) {
 				'& .MuiTableBody-root .MuiTableCell-root > .MuiBox-root': {
 					minHeight: '48px',
 				},
-				...(sx && sx),
 			})}>
 			<MuiTable aria-label="simple table">
 				<TableHead>

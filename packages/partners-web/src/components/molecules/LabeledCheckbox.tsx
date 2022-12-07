@@ -31,7 +31,14 @@ function LabeledCheckbox({
 				label={label}
 				value={value}
 				checked={checked}
-				control={<Checkbox onChange={onChange} />}
+				control={
+					<Checkbox
+						onChange={onChange}
+						sx={{
+							paddingRight: '8px',
+						}}
+					/>
+				}
 				{...props}
 			/>
 		</FormGroup>

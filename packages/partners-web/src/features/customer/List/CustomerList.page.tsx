@@ -1,6 +1,5 @@
 import {useEffect} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
-import {TableCell} from '@/components';
 
 import {useList} from '@/utils/hooks';
 import {getNftCustomerList} from '@/api/customer.api';
@@ -15,6 +14,7 @@ import {
 	nftCustomerListSearchFilter,
 	getWalletLinkChip,
 	calculatePeriod,
+	walletLinkOption,
 } from '@/data';
 import {
 	formatPhoneNum,
@@ -32,6 +32,9 @@ import {
 	Pagination,
 	Avatar,
 	TableSellWithSort,
+	HeadTableCell,
+	TableCell,
+	SearchFilterTab,
 } from '@/components';
 
 const menu = 'useradmin';
@@ -69,6 +72,7 @@ function CustomerList() {
 			orderDirection: 'DESC',
 		},
 	});
+
 	return (
 		<>
 			<Box>
@@ -82,6 +86,16 @@ function CustomerList() {
 					onSearch={handleSearch}
 					onReset={handleReset}
 					onChangeFilter={handleChangeFilter}
+				/>
+				<SearchFilterTab
+					options={walletLinkOption}
+					selectedTab={filter.wallet}
+					tabLabel={'customer wallet link'}
+					onChangeTab={(value) =>
+						handleChangeFilter({
+							wallet: value,
+						})
+					}
 				/>
 				<TableInfo totalSize={totalSize} unit="명">
 					<PageSelect
@@ -112,19 +126,14 @@ function CustomerList() {
 										value as {[key: string]: any}
 									)
 								}
-								colSpan={2}
-								sx={{
-									minWidth: '150px',
-								}}
+								minWidth={240}
 							/>
-							<TableCell>지갑 연동 상태</TableCell>
-							<TableCell
-								colSpan={3}
-								sx={{
-									minWidth: '300px',
-								}}>
+							<HeadTableCell minWidth={180}>
+								지갑 연동 상태
+							</HeadTableCell>
+							<HeadTableCell minWidth={460}>
 								전화번호
-							</TableCell>
+							</HeadTableCell>
 							<TableSellWithSort
 								label="총 발급건수"
 								name="NO_OF_GUARANTEE"
@@ -135,6 +144,7 @@ function CustomerList() {
 										value as {[key: string]: any}
 									)
 								}
+								minWidth={240}
 							/>
 							<TableSellWithSort
 								label="총 상품금액"
@@ -146,6 +156,7 @@ function CustomerList() {
 										value as {[key: string]: any}
 									)
 								}
+								minWidth={240}
 							/>
 							<TableSellWithSort
 								label="최근 발급 시간"
@@ -157,6 +168,7 @@ function CustomerList() {
 										value as {[key: string]: any}
 									)
 								}
+								minWidth={240}
 							/>
 						</>
 					}>
@@ -164,7 +176,7 @@ function CustomerList() {
 						data?.list?.length > 0 &&
 						data?.list.map((item, idx) => (
 							<TableRow key={`item_${idx}`}>
-								<TableCell colSpan={2}>
+								<TableCell>
 									{item?.customerName ? (
 										<Box flexDirection="row">
 											<Avatar
@@ -197,7 +209,7 @@ function CustomerList() {
 								<TableCell>
 									{getWalletLinkChip(item?.walletLinked)}
 								</TableCell>
-								<TableCell colSpan={3}>
+								<TableCell>
 									{item.phone
 										? formatPhoneNum(item.phone)
 										: '-'}

@@ -3,12 +3,13 @@ import create from 'zustand';
 
 interface OnOpenParamType {
 	title: string;
-	message?: string;
+	message?: string | React.ReactElement;
 	showBottomCloseButton?: boolean;
 	disableClickBackground?: boolean;
 	useCloseIcon?: boolean;
 	closeButtonValue?: '확인' | '취소';
 	buttons?: React.ReactElement;
+	sendCloseModalControlToParent?: boolean;
 	onCloseFunc?: () => void;
 }
 
@@ -17,10 +18,11 @@ interface MessageDialogState {
 	disableClickBackground: boolean;
 	useCloseIcon: boolean;
 	title: string | null;
-	message: string | null;
+	message: string | React.ReactElement | null;
 	showBottomCloseButton: boolean;
 	closeButtonValue: '확인' | '취소';
 	buttons: React.ReactElement | null;
+	sendCloseModalControlToParent: boolean;
 	onCloseFunc: (() => void) | null;
 	onOpen: (value: string | OnOpenParamType) => void;
 	onClose: () => void;
@@ -39,6 +41,7 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 	onCloseFunc: null,
 	disableClickBackground: false,
 	useCloseIcon: true,
+	sendCloseModalControlToParent: true,
 	onOpen: (value: string | OnOpenParamType) => {
 		// 메시지만 바뀜
 		if (typeof value === 'string') {
@@ -48,6 +51,7 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			}));
 			return;
 		}
+
 		// 메시지 외 다른 데이터도 바뀜
 		set(() => ({
 			title: value?.title,
@@ -59,6 +63,8 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			useCloseIcon: value?.useCloseIcon,
 			open: true,
 			onCloseFunc: value?.onCloseFunc ?? null,
+			sendCloseModalControlToParent:
+				value?.sendCloseModalControlToParent ?? true,
 		}));
 	},
 	onClose: () => {
@@ -75,6 +81,7 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			buttons: null,
 			disableClickBackground: false,
 			useCloseIcon: true,
+			sendCloseModalControlToParent: true,
 		})),
 	setOnCloseFunc: (func: () => void) => {
 		set(() => ({

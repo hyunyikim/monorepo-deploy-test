@@ -5,9 +5,12 @@ export default function Checkbox({sx = {}, ...props}: CheckboxProps) {
 		<MuiCheckbox
 			sx={{
 				padding: 0,
-				paddingRight: '8px',
+				'&.Mui-checked svg': {
+					color: 'primary.main',
+				},
 				'& svg': {
 					fontSize: '20px',
+					color: 'grey.100',
 				},
 				...sx,
 			}}

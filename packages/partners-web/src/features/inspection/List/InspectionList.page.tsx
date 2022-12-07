@@ -33,6 +33,7 @@ import {
 	ImagePopup,
 	ImageModal,
 	Select,
+	HeadTableCell,
 	TableCell,
 } from '@/components';
 import {getInspectionList} from '@/api/inspection.api';
@@ -122,13 +123,21 @@ function InspectionList() {
 					totalSize={totalSize}
 					headcell={
 						<>
-							<TableCell>신청일</TableCell>
-							<TableCell>신청번호</TableCell>
-							<TableCell>이름</TableCell>
-							<TableCell>연락처</TableCell>
-							<TableCell>상품정보</TableCell>
-							<TableCell>감정 결과</TableCell>
-							<TableCell>신청 현황</TableCell>
+							<HeadTableCell minWidth={180}>신청일</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								신청번호
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>이름</HeadTableCell>
+							<HeadTableCell minWidth={180}>연락처</HeadTableCell>
+							<HeadTableCell minWidth={480}>
+								상품정보
+							</HeadTableCell>
+							<HeadTableCell minWidth={100}>
+								감정 결과
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								신청 현황
+							</HeadTableCell>
 						</>
 					}>
 					{data &&

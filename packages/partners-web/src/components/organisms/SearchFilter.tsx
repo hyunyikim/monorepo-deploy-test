@@ -17,7 +17,7 @@ interface Props<F> {
 	filterComponent: ListSearchFilters;
 	periodIdx?: number;
 	onChangeFilter: (value: object) => void;
-	onSearch: (value: F) => void;
+	onSearch: (value?: F) => void;
 	onReset: () => void;
 }
 
@@ -43,24 +43,37 @@ function SearchFilter<F extends object>({
 			sx={(theme) => ({
 				backgroundColor: 'grey.10',
 				borderRadius: '4px',
-				gridTemplateColumns: '150px auto',
+				gridTemplateColumns: {
+					xs: 'auto',
+					sm: '150px auto',
+				},
 				// 테이블 좌측 라벨
 				'& > .MuiBox-root > .MuiFormLabel-root': {
 					fontSize: '14px',
 					fontWeight: 'bold',
 					color: 'grey.700',
-					marginLeft: '16px',
+					// marginLeft: '16px',
+					margin: {
+						xs: '6px auto',
+						sm: '0 0 0 16px',
+					},
 				},
 				// border style
 				'&': {
 					border: `1px solid ${theme.palette.grey[100]}`,
 				},
 				'& > .MuiBox-root': {
-					borderRight: `1px solid ${theme.palette.grey[100]}`,
+					borderRight: {
+						xs: 'none',
+						sm: `1px solid ${theme.palette.grey[100]}`,
+					},
 				},
 				'& > .MuiBox-root:not(:nth-last-of-type(-n+2)), & > .MuiGrid-root.MuiGrid-container:not(:nth-last-of-type(1))':
 					{
-						borderBottom: `1px solid ${theme.palette.grey[100]}`,
+						borderBottom: {
+							xs: 'none',
+							sm: `1px solid ${theme.palette.grey[100]}`,
+						},
 					},
 				// height, padding
 				'& > .MuiGrid-root.MuiGrid-container': {
