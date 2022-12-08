@@ -58,3 +58,11 @@ export const editProduct = async (idx: number, formData: FormData) => {
 export const deleteProduct = async (idx: number) => {
 	await instance.delete(`/v1/admin/partners-product/${idx}`);
 };
+
+export const bulkDeleteProduct = async (productIdxList: number[]) => {
+	await instance.delete(`/v1/admin/partners-product/bulk`, {
+		data: {
+			productIdxList,
+		},
+	});
+};

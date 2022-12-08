@@ -1,7 +1,7 @@
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useList} from '@/utils/hooks';
+import {useCheckboxList, useList} from '@/utils/hooks';
 import {getGuaranteeList} from '@/api/guarantee.api';
 import {
 	GuaranteeListRequestParam,
@@ -14,12 +14,12 @@ import {
 	initialSearchFilter,
 	guaranteeListSearchFilter,
 	getGuaranteeStatusChip,
+	groupingGuaranteeRequestStates,
 } from '@/data';
 import {
 	formatPhoneNum,
 	goToParentUrl,
 	trackingToParent,
-	downloadGuaranteeExcel,
 	goToGuaranteeExcelUploadPage,
 } from '@/utils';
 
@@ -31,8 +31,12 @@ import {
 	PageSelect,
 	Pagination,
 	Button,
+	HeadTableCell,
 	TableCell,
+	SearchFilterTab,
+	Checkbox,
 } from '@/components';
+import GuaranteeCheckboxButton from '@/features/guarantee/List/GuaranteeCheckboxButton';
 
 const menu = 'guarantee';
 const menuKo = '개런티';
@@ -41,12 +45,13 @@ function GuaranteeList() {
 	useEffect(() => {
 		trackingToParent('guarantee_pv', {pv_title: '개런티목록 노출'});
 	}, []);
+
 	const {
 		isLoading,
 		data,
 		totalSize,
 		filter,
-		paginationProps,
+		paginationProps: {onChange: onChangePage, ...paginationProps},
 		handleChangeFilter,
 		handleSearch,
 		handleReset,
@@ -61,6 +66,30 @@ function GuaranteeList() {
 			nft_req_state: '',
 		},
 	});
+
+	const {
+		checkedIdxList,
+		checkedTotal,
+		onCheckItem,
+		onCheckTotalItem,
+		onResetCheckedItem,
+		onHandleChangeFilter,
+	} = useCheckboxList({
+		idxList:
+			data && data?.data && data?.data?.length > 0
+				? data?.data?.map((item) => item.nft_req_idx)
+				: [],
+		handleChangeFilter,
+	});
+
+	const isNotValidCheck = useMemo(() => {
+		const nftReqState = filter?.nft_req_state;
+		if (!nftReqState || nftReqState === '9') {
+			return true;
+		}
+		return false;
+	}, [filter.nft_req_state]);
+
 	return (
 		<>
 			<Box>
@@ -70,9 +99,57 @@ function GuaranteeList() {
 					menuKo={menuKo}
 					filter={filter}
 					filterComponent={guaranteeListSearchFilter}
-					onSearch={handleSearch}
-					onReset={handleReset}
-					onChangeFilter={handleChangeFilter}
+					onSearch={(param) => {
+						handleSearch(param);
+						onResetCheckedItem();
+					}}
+					onReset={() => {
+						handleReset();
+						onResetCheckedItem();
+					}}
+					onChangeFilter={onHandleChangeFilter}
+				/>
+				<SearchFilterTab
+					options={groupingGuaranteeRequestStates}
+					selectedTab={filter.nft_req_state}
+					tabLabel={'nft request state'}
+					onChangeTab={(value) =>
+						onHandleChangeFilter({
+							nft_req_state: value,
+						})
+					}
+					buttons={
+						<>
+							<Button
+								color="grey-100"
+								variant="outlined"
+								height={32}
+								onClick={goToGuaranteeExcelUploadPage}>
+								대량등록
+							</Button>
+							<Button
+								color="primary"
+								variant="outlined"
+								height={32}
+								onClick={() => {
+									goToParentUrl('/b2b/interwork');
+								}}>
+								쇼핑몰 주문 연동하기
+							</Button>
+							<Button
+								color="primary"
+								height={32}
+								onClick={() => {
+									trackingToParent(
+										'guarantee_list_firstexcelregistration_click',
+										{button_title: `신규등록 클릭`}
+									);
+									goToParentUrl('/b2b/guarantee/register');
+								}}>
+								신규등록
+							</Button>
+						</>
+					}
 				/>
 				<TableInfo totalSize={totalSize} unit="건">
 					<PageSelect
@@ -84,59 +161,66 @@ function GuaranteeList() {
 							trackingToParent(`${menu}_unit_view_click`, {
 								button_title: `노출수_${value.pageMaxNum}개씩`,
 							});
-							handleChangeFilter(value);
+							onHandleChangeFilter(value);
 						}}
 					/>
-					<Button
-						color="grey-100"
-						variant="outlined"
-						height={32}
-						onClick={goToGuaranteeExcelUploadPage}>
-						대량등록
-					</Button>
-					<Button
-						color="primary"
-						variant="outlined"
-						height={32}
-						onClick={() => {
-							goToParentUrl('/b2b/interwork');
-						}}
-						sx={{
-							marginRight: '8px',
-						}}>
-						쇼핑몰 주문 연동하기
-					</Button>
-					<Button
-						color="primary"
-						height={32}
-						onClick={() => {
-							trackingToParent(
-								'guarantee_list_firstexcelregistration_click',
-								{button_title: `신규등록 클릭`}
-							);
-							goToParentUrl('/b2b/guarantee/register');
-						}}>
-						신규등록
-					</Button>
+					<GuaranteeCheckboxButton
+						nftReqState={filter.nft_req_state}
+						checkedItems={checkedIdxList}
+						onHandleChangeFilter={onHandleChangeFilter}
+						onResetCheckedItem={onResetCheckedItem}
+						onSearch={handleSearch}
+					/>
 				</TableInfo>
 				<Table
 					isLoading={isLoading}
 					totalSize={totalSize}
 					headcell={
 						<>
-							<TableCell>신청일</TableCell>
-							<TableCell>신청번호</TableCell>
-							<TableCell>판매처</TableCell>
-							<TableCell>이름</TableCell>
-							<TableCell>연락처</TableCell>
-							<TableCell>상품정보</TableCell>
-							<TableCell>개런티 상태</TableCell>
+							<HeadTableCell width={52}>
+								<Checkbox
+									disabled={isNotValidCheck}
+									checked={checkedTotal}
+									onChange={(e) => {
+										onCheckTotalItem(
+											e?.target?.checked || false
+										);
+									}}
+								/>
+							</HeadTableCell>
+							<HeadTableCell minWidth={120}>신청일</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								신청번호
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>판매처</HeadTableCell>
+							<HeadTableCell minWidth={180}>이름</HeadTableCell>
+							<HeadTableCell minWidth={180}>연락처</HeadTableCell>
+							<HeadTableCell minWidth={360}>
+								상품정보
+							</HeadTableCell>
+							<HeadTableCell minWidth={120}>
+								개런티 상태
+							</HeadTableCell>
 						</>
 					}>
 					{data &&
 						data?.data?.length > 0 &&
 						data?.data.map((item, idx) => (
 							<TableRow key={`item_${idx}`}>
+								<TableCell>
+									<Checkbox
+										disabled={isNotValidCheck}
+										checked={checkedIdxList.includes(
+											item.nft_req_idx
+										)}
+										onChange={(e) => {
+											const checked =
+												e?.target?.checked || false;
+											const nftReqIdx = item.nft_req_idx;
+											onCheckItem(nftReqIdx, checked);
+										}}
+									/>
+								</TableCell>
 								<TableCell>
 									{item.reg_dt
 										? item?.reg_dt.substr(0, 10)
@@ -200,7 +284,7 @@ function GuaranteeList() {
 										? formatPhoneNum(item.orderer_tel)
 										: '-'}
 								</TableCell>
-								<TableCell width="500px">
+								<TableCell width="400px">
 									<Typography
 										fontSize={14}
 										lineHeight={'18px'}>
@@ -219,7 +303,13 @@ function GuaranteeList() {
 							</TableRow>
 						))}
 				</Table>
-				<Pagination {...paginationProps} />
+				<Pagination
+					{...paginationProps}
+					onChange={(_, page) => {
+						onResetCheckedItem();
+						onChangePage(_, page);
+					}}
+				/>
 			</Box>
 		</>
 	);

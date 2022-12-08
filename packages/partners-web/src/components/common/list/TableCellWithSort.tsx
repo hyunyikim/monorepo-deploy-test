@@ -1,6 +1,6 @@
 import {TableCellProps, Box, Typography, IconButton} from '@mui/material';
 
-import {TableCell} from '@/components';
+import {HeadTableCell} from '@/components';
 import {IcSort} from '@/assets/icon';
 
 import {OrderDirectionType} from '@/@types';
@@ -12,6 +12,7 @@ interface Props extends Omit<TableCellProps, 'name'> {
 	orderDirection: OrderDirectionType;
 	defaultOrderDirection?: OrderDirectionType;
 	onSortClick: (value: {[key: string]: any}) => void;
+	minWidth: number;
 }
 
 function TableCellWithSort({
@@ -21,10 +22,11 @@ function TableCellWithSort({
 	orderDirection,
 	defaultOrderDirection = 'ASC',
 	onSortClick,
+	minWidth,
 	...props
 }: Props) {
 	return (
-		<TableCell {...props}>
+		<HeadTableCell minWidth={minWidth} {...props}>
 			<Box className="flex justify-between w-full">
 				<Typography fontSize={14} noWrap={false}>
 					{label}
@@ -45,7 +47,7 @@ function TableCellWithSort({
 					<IcSort className="cursor-pointer" />
 				</IconButton>
 			</Box>
-		</TableCell>
+		</HeadTableCell>
 	);
 }
 

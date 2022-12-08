@@ -1,7 +1,6 @@
 import axios, {Axios, AxiosRequestConfig, AxiosResponse} from 'axios';
 
-import {useLoginStore, useMessageDialog} from '@/stores';
-import {openParantModal} from '@/utils';
+import {useLoginStore} from '@/stores';
 
 interface CustomAxios extends Axios {
 	get<T = any, R = T, D = any>(
@@ -20,6 +19,11 @@ interface CustomAxios extends Axios {
 	): Promise<R>;
 	delete<T = any, R = T, D = any>(
 		url: string,
+		config?: AxiosRequestConfig<D>
+	): Promise<R>;
+	patch<T = any, R = T, D = any>(
+		url: string,
+		data?: D,
 		config?: AxiosRequestConfig<D>
 	): Promise<R>;
 }
@@ -50,21 +54,11 @@ authInstance.interceptors.request.use(
 	(error) => Promise.reject(error)
 );
 
-// const onOpen = useMessageDialog.getState().onOpen;
-
 authInstance.interceptors.response.use(
 	(response: AxiosResponse) => {
 		return response?.data as unknown;
 	},
 	(error) => {
-		// 공통 예외 처리
-		// onOpen('네트워크 에러');
-
-		// 부모창으로 에러 모달 띄움
-		openParantModal({
-			title: '알림',
-			content: `<div style="min-width: 300px;font-size: 14px;font-weight: 500;">네트워크 에러</div>`,
-		});
 		return Promise.reject(error);
 	}
 );

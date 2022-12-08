@@ -1,7 +1,15 @@
 import Grid from '@mui/material/Grid';
 import {CircularProgress} from '@mui/material';
 
-export default function Loading({loading = false}) {
+interface Props {
+	loading: boolean;
+	showCircularProgress?: boolean;
+}
+
+export default function Loading({
+	loading = false,
+	showCircularProgress = true,
+}: Props) {
 	return loading ? (
 		<Grid
 			container
@@ -15,13 +23,15 @@ export default function Loading({loading = false}) {
 				bottom: 0,
 				zIndex: 9999,
 			}}>
-			<Grid item>
-				<CircularProgress
-					sx={{
-						color: 'grey.700',
-					}}
-				/>
-			</Grid>
+			{showCircularProgress && (
+				<Grid item>
+					<CircularProgress
+						sx={{
+							color: 'grey.700',
+						}}
+					/>
+				</Grid>
+			)}
 		</Grid>
 	) : null;
 }

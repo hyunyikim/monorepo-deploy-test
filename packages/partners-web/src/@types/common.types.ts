@@ -72,3 +72,10 @@ export type HiddenInputType = {
 	type: 'hidden';
 	name: string;
 };
+
+export interface BulkResponse {
+	total: number;
+	success: number;
+	failure: number;
+	error: {idx: number; message: string}[];
+}

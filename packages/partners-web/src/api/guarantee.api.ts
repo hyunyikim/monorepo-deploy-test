@@ -7,6 +7,7 @@ import {
 	GuaranteeListRequestSearchType,
 	GuaranteeListResponse,
 	GauranteeDetailResponse,
+	BulkResponse,
 } from '@/@types';
 
 export const getGuaranteeList = async (
@@ -46,12 +47,39 @@ export const registerGuarantee = async (formData: FormData) => {
 	return await instance.post<GuaranteeListResponse>(`/admin/nft`, formData);
 };
 
+// 대량 발급
+export const bulkRegisterGuarantee = async (nftIdxList: number[]) => {
+	return await instance.patch<BulkResponse>(`/v1/admin/nft/complete/bulk`, {
+		nftIdxList,
+	});
+};
+
+// 삭제(임시저장 상태에서 호출)
 export const deleteGuarantee = async (idx: number) => {
-	await instance.delete(`/admin/nft/${idx}`);
+	await instance.delete(`/v1/admin/nft/${idx}`);
+};
+
+export const bulkDeleteGuarantee = async (nftIdxList: number[]) => {
+	await instance.delete(`/v1/admin/nft/bulk`, {
+		data: {
+			nftIdxList,
+		},
+	});
 };
 
 export const deleteGuaranteeImage = async (nft_req_img_idx: number) => {
 	await instance.delete('/admin/nft/image', {
 		data: {nft_req_img_idx},
+	});
+};
+
+// 취소(발급완료 상태에서 호출)
+export const cancelGuarantee = async (idx: number) => {
+	await instance.patch(`/v1/admin/nft/cancel/${idx}`);
+};
+
+export const bulkCancelGuarantee = async (nftIdxList: number[]) => {
+	await instance.patch(`/v1/admin/nft/cancel/bulk`, {
+		nftIdxList,
 	});
 };

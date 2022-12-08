@@ -2,5 +2,9 @@ import {IEvent} from '@nestjs/cqrs';
 import {BillingProps} from '../billing';
 
 export class BillingRegisteredEvent implements IEvent {
-	readonly billing: BillingProps;
+	constructor(public readonly billing: BillingProps) {}
+}
+
+export class BillingUnregisteredEvent implements IEvent {
+	constructor(public readonly billing: BillingProps) {}
 }

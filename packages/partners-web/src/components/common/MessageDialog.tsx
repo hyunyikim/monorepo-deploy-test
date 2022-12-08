@@ -1,7 +1,6 @@
 import {useEffect, useCallback} from 'react';
 
 import {
-	Typography,
 	Dialog,
 	DialogContent,
 	DialogActions,
@@ -20,6 +19,9 @@ function MessageDialog() {
 	const title = useMessageDialog((state) => state.title);
 	const message = useMessageDialog((state) => state.message);
 	const useCloseIcon = useMessageDialog((state) => state.useCloseIcon);
+	const sendCloseModalControlToParent = useMessageDialog(
+		(state) => state.sendCloseModalControlToParent
+	);
 	const disableClickBackground = useMessageDialog(
 		(state) => state.disableClickBackground
 	);
@@ -41,8 +43,8 @@ function MessageDialog() {
 			openChildModal();
 			return;
 		}
-		closeChildModal();
-	}, [open]);
+		sendCloseModalControlToParent && closeChildModal();
+	}, [open, sendCloseModalControlToParent]);
 
 	const handleClose = useCallback(() => {
 		if (onCloseFunc) {
@@ -59,12 +61,15 @@ function MessageDialog() {
 	return (
 		<Dialog
 			open={open}
-			onClose={!disableClickBackground && handleClose}
+			{...(!disableClickBackground && {
+				onClose: handleClose,
+			})}
 			sx={{
 				'& .MuiPaper-root': {
 					padding: '32px',
 					width: '520px',
 					minHeight: '197px',
+					borderRadius: '16px',
 				},
 			}}>
 			{
@@ -99,7 +104,7 @@ function MessageDialog() {
 					padding: 0,
 					marginBottom: '40px',
 				}}>
-				<Typography
+				<Box
 					color="grey.600"
 					fontSize={{
 						xs: 12,
@@ -109,7 +114,7 @@ function MessageDialog() {
 						wordBreak: 'break-word',
 					}}>
 					{message}
-				</Typography>
+				</Box>
 			</DialogContent>
 			<DialogActions
 				sx={{

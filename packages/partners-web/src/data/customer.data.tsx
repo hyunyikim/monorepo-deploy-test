@@ -34,12 +34,6 @@ export const nftCustomerListSearchFilter: ListSearchFilters = [
 		label: '개런티 발급 기간',
 		component: 'searchDate',
 	},
-	{
-		name: 'wallet',
-		label: '지갑 연동 상태',
-		component: 'radioGroup',
-		options: walletLinkOption,
-	},
 ];
 
 export const groupingCustomerGuaranteeRequestStates: Options<NftCustomerGuaranteeStatus> =

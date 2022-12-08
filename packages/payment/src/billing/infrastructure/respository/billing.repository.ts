@@ -49,15 +49,13 @@ export class PlanBillingRepository
 		const {Items} = await this.query({
 			TableName: this.tableName,
 			IndexName: 'customerKey-index',
-			KeyConditionExpression:
-				'customerKey = :key and unregisteredAt = :unregisteredAt',
+			KeyConditionExpression: 'customerKey = :key',
 			ExpressionAttributeValues: {
 				':key': customerKey,
-				':unregisteredAt': null,
 			},
 		}).promise();
 
-		if (!Items) return null;
+		if (!Items || Items.length === 0) return null;
 
 		const [first] = Items;
 

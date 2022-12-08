@@ -3,6 +3,8 @@ import {BillingProps} from '../billing';
 import {PaymentProps} from '../payment';
 
 export class BillingApprovedEvent implements IEvent {
-	readonly payment: PaymentProps;
-	readonly billing: BillingProps;
+	constructor(
+		public readonly billing: BillingProps,
+		public readonly payment: PaymentProps
+	) {}
 }

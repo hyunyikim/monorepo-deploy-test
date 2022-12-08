@@ -239,7 +239,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					return;
 				}
 				// 병행업체만 아래 필드 저장
-				if (partnershipInfo?.b2bType === 'cooperator') {
+				if (partnershipInfo?.b2bType !== 'brand') {
 					if (key === 'categoryCode') {
 						formData.append('cate_cd', String(value));
 						return;
@@ -416,9 +416,22 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					sendAmplitudeLog('guarantee_publish_saved');
 				}
 			} catch (e: any) {
+				const message = String(e?.response?.data?.message || '');
+				const result = String(e?.response?.data?.result || '');
+				if (
+					message.includes('상품정보') &&
+					result.includes('NOT FOUND')
+				) {
+					onOpenMessageDialog({
+						title: '삭제된 상품입니다.',
+						message: '상품을 다시 선택하고 발급해주세요.',
+						showBottomCloseButton: true,
+					});
+					return;
+				}
 				onOpenMessageDialog({
 					title: '네트워크 에러',
-					message: e?.response?.data || '',
+					message: message,
 					showBottomCloseButton: true,
 				});
 			} finally {
@@ -465,7 +478,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 							} catch (e: any) {
 								onOpenMessageDialog({
 									title: '네트워크 에러',
-									message: e?.response?.data || '',
+									message: e?.response?.data?.message || '',
 									showBottomCloseButton: true,
 								});
 							} finally {
