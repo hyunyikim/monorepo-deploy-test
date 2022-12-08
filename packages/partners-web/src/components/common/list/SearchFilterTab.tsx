@@ -22,7 +22,7 @@ function SearchFilterTab({
 		(event: React.SyntheticEvent, newValue: any) => {
 			onChangeTab(newValue);
 		},
-		[]
+		[onChangeTab]
 	);
 	return (
 		<>
@@ -45,8 +45,6 @@ function SearchFilterTab({
 						width: 'fit-content',
 						'& .MuiButtonBase-root.MuiTab-root': {
 							fontSize: 14,
-							padding: '24px 4px',
-							marginX: '8px',
 							minWidth: '0',
 							'&.Mui-selected': {
 								fontWeight: 700,

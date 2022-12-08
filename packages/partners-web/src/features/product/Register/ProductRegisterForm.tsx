@@ -124,7 +124,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 			} catch (e: any) {
 				onOpenMessageDialog({
 					title: '네트워크 에러',
-					message: e?.response?.data || '',
+					message: e?.response?.data?.message || '',
 					showBottomCloseButton: true,
 				});
 			} finally {
@@ -148,7 +148,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 			} catch (e: any) {
 				onOpenMessageDialog({
 					title: '네트워크 에러',
-					message: e?.response?.data || '',
+					message: e?.response?.data?.message || '',
 					showBottomCloseButton: true,
 				});
 			}
@@ -178,7 +178,8 @@ function ProductRegisterForm({mode, initialData}: Props) {
 								} catch (e: any) {
 									onOpenMessageDialog({
 										title: '네트워크 에러',
-										message: e?.response?.data || '',
+										message:
+											e?.response?.data?.message || '',
 										showBottomCloseButton: true,
 									});
 								}

@@ -38,8 +38,8 @@ function Table({isLoading, totalSize, headcell, children}: Props) {
 					},
 					padding: 0,
 					'& > .MuiBox-root': {
-						paddingLeft: '16px',
-						paddingRight: '16px',
+						paddingX: '16px',
+						paddingY: '4px',
 					},
 				},
 				'& .MuiTableRow-root > .MuiTableCell-root:nth-of-type(1)': {

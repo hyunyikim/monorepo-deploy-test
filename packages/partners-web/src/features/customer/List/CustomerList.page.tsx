@@ -131,7 +131,7 @@ function CustomerList() {
 							<HeadTableCell minWidth={180}>
 								지갑 연동 상태
 							</HeadTableCell>
-							<HeadTableCell minWidth={460}>
+							<HeadTableCell minWidth={300}>
 								전화번호
 							</HeadTableCell>
 							<TableSellWithSort

@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 
 import {Button, Loading} from '@/components';
 
@@ -38,6 +38,21 @@ function GuaranteeCheckboxButton({
 	} = useChildModalOpen({});
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
+
+	const isCheckedItemsExisted = useCallback(
+		(checkedItems: number[], message: string) => {
+			if (checkedItems?.length < 1) {
+				onOpenMessageDialog({
+					title: message,
+					showBottomCloseButton: true,
+					closeButtonValue: '확인',
+				});
+				return false;
+			}
+			return true;
+		},
+		[onOpenMessageDialog]
+	);
 
 	const handleRegisterGuaranteeList = async (checkedItems: number[]) => {
 		setIsSubmitting(true);
@@ -138,14 +153,6 @@ function GuaranteeCheckboxButton({
 
 	const handleCancelGuaranteeList = async (checkedItems: number[]) => {
 		try {
-			if (checkedItems?.length < 1) {
-				onOpenMessageDialog({
-					title: '발급 취소할 개런티를 선택해주세요.',
-					showBottomCloseButton: true,
-					closeButtonValue: '확인',
-				});
-				return;
-			}
 			setIsSubmitting(true);
 			await bulkCancelGuarantee(checkedItems);
 			onOpenMessageDialog({
@@ -187,38 +194,18 @@ function GuaranteeCheckboxButton({
 				nftReqState === '1' && (
 					<>
 						<Button
-							variant="contained"
-							color="black"
-							height={32}
-							onClick={() => {
-								onOpenMessageDialog({
-									title: '선택한 개런티를 발급하시겠습니까?',
-									showBottomCloseButton: true,
-									closeButtonValue: '취소',
-									buttons: (
-										<>
-											<Button
-												color="black"
-												variant="contained"
-												onClick={() => {
-													handleRegisterGuaranteeList(
-														checkedItems
-													);
-												}}>
-												발급하기
-											</Button>
-										</>
-									),
-									sendCloseModalControlToParent: false,
-								});
-							}}>
-							개런티 발급
-						</Button>
-						<Button
 							variant="outlined"
 							color="grey-100"
 							height={32}
 							onClick={() => {
+								if (
+									!isCheckedItemsExisted(
+										checkedItems,
+										'삭제할 개런티를 선택해주세요.'
+									)
+								) {
+									return;
+								}
 								onOpenMessageDialog({
 									title: '선택한 개런티를 삭제하시겠습니까?',
 									showBottomCloseButton: true,
@@ -239,11 +226,47 @@ function GuaranteeCheckboxButton({
 									),
 									sendCloseModalControlToParent: false,
 								});
+							}}>
+							선택 삭제
+						</Button>
+						<Button
+							variant="contained"
+							color="black"
+							height={32}
+							onClick={() => {
+								if (
+									!isCheckedItemsExisted(
+										checkedItems,
+										'발급할 개런티를 선택해주세요.'
+									)
+								) {
+									return;
+								}
+								onOpenMessageDialog({
+									title: '선택한 개런티를 발급하시겠습니까?',
+									showBottomCloseButton: true,
+									closeButtonValue: '취소',
+									buttons: (
+										<>
+											<Button
+												color="black"
+												variant="contained"
+												onClick={() => {
+													handleRegisterGuaranteeList(
+														checkedItems
+													);
+												}}>
+												발급하기
+											</Button>
+										</>
+									),
+									sendCloseModalControlToParent: false,
+								});
 							}}
 							sx={{
 								marginRight: 0,
 							}}>
-							개런티 삭제
+							개런티 발급
 						</Button>
 					</>
 				)
@@ -254,6 +277,14 @@ function GuaranteeCheckboxButton({
 					color="black"
 					height={32}
 					onClick={() => {
+						if (
+							!isCheckedItemsExisted(
+								checkedItems,
+								'발급 취소할 개런티를 선택해주세요.'
+							)
+						) {
+							return;
+						}
 						onOpenMessageDialog({
 							title: '선택하신 개런티를 발급 취소하시겠습니까?',
 							showBottomCloseButton: true,

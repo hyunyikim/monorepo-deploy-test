@@ -3,7 +3,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import qs from 'qs';
 
 import {defaultPageSize} from '@/data';
-import {sortObjectByKey, scrollUpParent} from '@/utils';
+import {sortObjectByKey} from '@/utils';
 import {useMessageDialog} from '@/stores';
 
 interface Props<D, F> {
@@ -38,7 +38,7 @@ const useList = <
 			email: string;
 			useFieldModelNum?: string;
 		};
-		const {token, b2btype, email, useFieldModelNum, ...otherSearch} = res;
+		const {token, ...otherSearch} = res;
 		return otherSearch as F;
 	}, [search]);
 
@@ -119,8 +119,7 @@ const useList = <
 			});
 
 			// 조회 후 scroll up
-			scrollUpParent();
-			// window.scrollTo(0, 0);
+			window.scrollTo(0, 0);
 		},
 		[pathname, parsedSearch]
 	);

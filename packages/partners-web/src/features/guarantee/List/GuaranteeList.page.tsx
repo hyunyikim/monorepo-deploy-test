@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {useCheckboxList, useList} from '@/utils/hooks';
@@ -195,7 +195,7 @@ function GuaranteeList() {
 							<HeadTableCell minWidth={180}>판매처</HeadTableCell>
 							<HeadTableCell minWidth={180}>이름</HeadTableCell>
 							<HeadTableCell minWidth={180}>연락처</HeadTableCell>
-							<HeadTableCell minWidth={428}>
+							<HeadTableCell minWidth={360}>
 								상품정보
 							</HeadTableCell>
 							<HeadTableCell minWidth={120}>

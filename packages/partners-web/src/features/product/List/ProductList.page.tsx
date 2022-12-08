@@ -88,14 +88,6 @@ function ProductList() {
 
 	const handleDeleteProduct = async (checkedItems: number[]) => {
 		try {
-			if (checkedItems?.length < 1) {
-				onOpenMessageDialog({
-					title: '삭제할 상품을 선택해주세요.',
-					showBottomCloseButton: true,
-					closeButtonValue: '확인',
-				});
-				return;
-			}
 			setIsSubmitting(true);
 			await bulkDeleteProduct(checkedItems);
 			onOpenMessageDialog({
@@ -110,7 +102,7 @@ function ProductList() {
 		} catch (e) {
 			onOpenMessageDialog({
 				title: '네트워크 에러',
-				message: e?.response?.data || '',
+				message: e?.response?.data?.message || '',
 				showBottomCloseButton: true,
 			});
 		} finally {
@@ -221,6 +213,14 @@ function ProductList() {
 						color="grey-100"
 						height={32}
 						onClick={() => {
+							if (checkedIdxList?.length < 1) {
+								onOpenMessageDialog({
+									title: '삭제할 상품을 선택해주세요.',
+									showBottomCloseButton: true,
+									closeButtonValue: '확인',
+								});
+								return;
+							}
 							onOpenMessageDialog({
 								title: '선택하신 상품을 삭제하시겠습니까?',
 								showBottomCloseButton: true,
@@ -265,7 +265,7 @@ function ProductList() {
 							</HeadTableCell>
 							<HeadTableCell minWidth={180}>No.</HeadTableCell>
 							<HeadTableCell minWidth={180}>브랜드</HeadTableCell>
-							<HeadTableCell minWidth={520}>상품명</HeadTableCell>
+							<HeadTableCell minWidth={360}>상품명</HeadTableCell>
 							<HeadTableCell minWidth={180}>
 								상품가격
 							</HeadTableCell>
