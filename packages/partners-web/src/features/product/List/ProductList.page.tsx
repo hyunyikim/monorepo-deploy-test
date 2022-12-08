@@ -252,7 +252,7 @@ function ProductList() {
 					totalSize={totalSize}
 					headcell={
 						<>
-							<HeadTableCell minWidth={52}>
+							<HeadTableCell width={52}>
 								<Checkbox
 									disabled={isNotValidCheck}
 									checked={checkedTotal}

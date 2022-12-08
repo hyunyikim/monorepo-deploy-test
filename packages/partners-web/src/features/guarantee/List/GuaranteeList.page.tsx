@@ -177,7 +177,7 @@ function GuaranteeList() {
 					totalSize={totalSize}
 					headcell={
 						<>
-							<HeadTableCell minWidth={52}>
+							<HeadTableCell width={52}>
 								<Checkbox
 									disabled={isNotValidCheck}
 									checked={checkedTotal}
@@ -284,7 +284,7 @@ function GuaranteeList() {
 										? formatPhoneNum(item.orderer_tel)
 										: '-'}
 								</TableCell>
-								<TableCell width="500px">
+								<TableCell width="400px">
 									<Typography
 										fontSize={14}
 										lineHeight={'18px'}>
