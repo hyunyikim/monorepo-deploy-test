@@ -247,7 +247,6 @@ function ProfileSetting() {
 		const values = getValues();
 		passwordErrorHandler();
 
-		// if (Object.keys(errors).length === 0) {
 		if (passwordErrorHandler()) {
 			const {basicInfo, password} = handleFormData();
 
@@ -495,7 +494,11 @@ function ProfileSetting() {
 							justifyContent: 'flex-end',
 						},
 					}}>
-					<Button variant="contained" color="primary" type="submit">
+					<Button
+						variant="contained"
+						color="primary"
+						type="submit"
+						height={48}>
 						저장하기
 					</Button>
 				</FixedBottomNavBar>
