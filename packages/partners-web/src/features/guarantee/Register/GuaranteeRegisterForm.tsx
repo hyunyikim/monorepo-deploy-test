@@ -570,6 +570,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 							<Button
 								variant="outlined"
 								color="grey-100"
+								height={48}
 								onClick={() => {
 									handleDeleteGuarantee();
 								}}
@@ -581,6 +582,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 							<Button
 								variant="outlined"
 								color="grey-100"
+								height={48}
 								type="submit"
 								onClick={() => {
 									setValue('nft_req_state', '1');
@@ -590,6 +592,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 							</Button>
 							<Button
 								type="submit"
+								height={48}
 								onClick={() => {
 									setValue('nft_req_state', '2');
 								}}

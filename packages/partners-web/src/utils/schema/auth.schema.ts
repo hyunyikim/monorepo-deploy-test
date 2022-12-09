@@ -6,6 +6,7 @@ import {
 	phoneNumberSchemaValidation,
 	passwordSchemaValidation,
 	termSchemaValidation,
+	profileSettingPasswordSchemaValidation,
 } from '@/utils/schema';
 import {
 	checkBusinessNumberDuplicated,
@@ -57,4 +58,15 @@ export const introductionInquirySchemaShape = yup.object().shape({
 	department: yup.string(),
 	content: yup.string(),
 	isAgree: termSchemaValidation,
+});
+
+// 프로필 설정 수정정보
+export const profileSettingSchemaShape = yup.object().shape({
+	companyName: yup.string().required('회사명을 입력해주세요.'),
+	businessNum: businessNumberSchemaValidation,
+	phoneNum: phoneNumberSchemaValidation,
+	name: yup.string(),
+	currentPassword: yup.string(),
+	newPassword: profileSettingPasswordSchemaValidation,
+	passwordConfirm: profileSettingPasswordSchemaValidation,
 });

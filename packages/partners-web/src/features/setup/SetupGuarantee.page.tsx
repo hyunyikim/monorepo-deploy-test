@@ -80,6 +80,7 @@ import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import Header from '@/components/common/layout/Header';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
+import PageTitle from '@/components/atoms/PageTitle';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -507,6 +508,7 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 					top: 0,
 					height: '100%',
 					backgroundColor: '#08134A',
+					zIndex: 101,
 				}}>
 				<Grid
 					container
@@ -674,7 +676,7 @@ export function InputFormSection({
 			newValue: '',
 		});
 
-	const {setModalOpenState, setModalOption} = useModalStore((state) => state);
+	const {setIsOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const nftCustomFields: string[] | undefined = data?.nftCustomFields;
 	const hasProfileLogo = data?.profileImage;
@@ -931,8 +933,8 @@ export function InputFormSection({
 			align: 'center',
 			buttonTitle: '확인',
 			onClickButton: () => {
-				if (typeof setModalOpenState === 'function') {
-					setModalOpenState(false);
+				if (typeof setIsOpen === 'function') {
+					setIsOpen(false);
 				}
 			},
 		});
@@ -950,8 +952,8 @@ export function InputFormSection({
 			buttonTitle: '확인',
 			align: 'center',
 			onClickButton: () => {
-				if (typeof setModalOpenState === 'function') {
-					setModalOpenState(false);
+				if (typeof setIsOpen === 'function') {
+					setIsOpen(false);
 				}
 			},
 		});
@@ -1175,12 +1177,12 @@ export function InputFormSection({
 
 		if (!hasProfileLogo) {
 			setProductInfoState([...categoryExampleList[0]]);
-		} else {
-			if (nftCustomFields && nftCustomFields?.length > 0) {
-				setProductInfoState(() => [...nftCustomFields]);
-			} else {
-				setProductInfoState(() => []);
-			}
+		} else if (
+			hasProfileLogo &&
+			nftCustomFields &&
+			nftCustomFields?.length > 0
+		) {
+			setProductInfoState(() => [...nftCustomFields]);
 		}
 
 		// if (b2bType === 'brand') {
@@ -1324,13 +1326,9 @@ export function InputFormSection({
 							gap: '20px',
 							marginBottom: '12px',
 						}}>
-						<Typography
-							fontSize={28}
-							color={'black'}
-							lineHeight="32px"
-							fontWeight={700}>
+						<PageTitle>
 							안녕하세요, {data?.companyName}님!
-						</Typography>
+						</PageTitle>
 					</Stack>
 				)}
 

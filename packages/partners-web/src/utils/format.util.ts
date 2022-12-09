@@ -7,6 +7,7 @@ export const handleChangeDataFormat = (
 	e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) => {
 	const value = e?.target?.value || '';
+
 	switch (type) {
 		case 'phoneNum':
 			return formatPhoneNum(value);

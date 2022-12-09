@@ -92,6 +92,7 @@ function GuaranteeCheckboxButton({
 			});
 			onCloseRegisterGuaranteeListModal();
 
+			// TODO: 기타 예외 처리
 			// 개런티 발급 완료 안내 모달
 			onOpenMessageDialog({
 				title: '개런티가 발급됐습니다',
@@ -102,8 +103,9 @@ function GuaranteeCheckboxButton({
 						{failCount > 0 && (
 							<>
 								<br />
-								{failCount}건은 필수항목이 누락돼서 발급되지
-								않았습니다.
+								{failCount}건은 상품 정보가 삭제되어 발급되지
+								않았습니다. <br />
+								상품정보를 다시 입력해주세요.
 							</>
 						)}
 					</>

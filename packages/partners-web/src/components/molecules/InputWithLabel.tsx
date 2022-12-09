@@ -22,6 +22,7 @@ interface Props {
 	fullWidth?: boolean;
 	disabled?: boolean;
 	defaultValue?: string;
+	inputProps?: {maxLength: number} | null;
 }
 
 function InputWithLabel({

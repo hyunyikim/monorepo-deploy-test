@@ -91,7 +91,11 @@ function InputComponent({
 							color: 'grey.300',
 						},
 					},
-
+					textarea: {
+						'&::placeholder': {
+							color: 'grey.300',
+						},
+					},
 					'&.Mui-focused': {
 						borderColor: 'grey.900',
 					},

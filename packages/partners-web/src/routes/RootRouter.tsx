@@ -31,6 +31,9 @@ const Customer = lazy(
 const CustomerDetail = lazy(
 	() => import('@/features/customer/Detail/CustomerDetail.page')
 );
+const ProfileSetting = lazy(
+	() => import('@/features/profileSetting/ProfileSetting.page')
+);
 const Inspection = lazy(
 	() => import('@/features/inspection/List/InspectionList.page')
 );
@@ -80,6 +83,9 @@ const privateRouter: RouteObject[] = [
 			},
 			{path: '/b2b/inspection/v2', element: <Inspection />},
 			{path: '/b2b/repair/v2', element: <Repair />},
+
+			{path: '/setting/profile/v2', element: <ProfileSetting />},
+
 			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
 			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
 

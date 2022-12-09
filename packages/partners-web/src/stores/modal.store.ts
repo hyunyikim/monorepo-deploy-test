@@ -36,7 +36,7 @@ interface ModalState {
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void;
-	setModalOpenState?: (openState: boolean) => void;
+	setIsOpen?: (openState: boolean) => void;
 	setCloseAndReset?: () => void;
 	setModalOption: (opt: ModalOpt) => void;
 }
@@ -53,7 +53,7 @@ export const useModalStore = create<ModalState>((set) => ({
 	align: 'center',
 	titleAlign: 'left',
 	customisedButton: null,
-	setModalOpenState: (openState: boolean) => {
+	setIsOpen: (openState: boolean) => {
 		set((state) => ({isOpen: openState}));
 	},
 	setModalOption: (opt) => {
