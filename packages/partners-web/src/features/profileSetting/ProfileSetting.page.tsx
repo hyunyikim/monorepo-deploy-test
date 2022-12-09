@@ -12,7 +12,12 @@ import FixedBottomNavBar from '@/components/atoms/FixedBottomNavBar';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 
 import {changePassword, changeProfileInfo} from '@/api/auth.api';
-import {handleChangeDataFormat} from '@/utils';
+import {
+	handleChangeDataFormat,
+	formatPhoneNum,
+	formatBusinessNum,
+	updateParentPartnershipData,
+} from '@/utils';
 
 function ProfileSetting() {
 	const {
@@ -64,7 +69,7 @@ function ProfileSetting() {
 		},
 		{
 			title: '담당자 이름',
-			placeholder: '담당지 이름을 입력해주세요',
+			placeholder: '담당자 이름을 입력해주세요',
 			readonly: false,
 			value: data?.name,
 			type: 'text',
@@ -150,7 +155,7 @@ function ProfileSetting() {
 					},
 					{shouldFocus: true}
 				);
-				return;
+				return false;
 			} else if (!values.newPassword) {
 				setError(
 					'newPassword',
@@ -160,7 +165,7 @@ function ProfileSetting() {
 					},
 					{shouldFocus: true}
 				);
-				return;
+				return false;
 			} else if (!values.passwordConfirm) {
 				setError(
 					'passwordConfirm',
@@ -170,7 +175,7 @@ function ProfileSetting() {
 					},
 					{shouldFocus: true}
 				);
-				return;
+				return false;
 			}
 
 			/* 새로운 비밀번호랑 비밀번호 확인이 같지 않으면 에러 */
@@ -184,7 +189,7 @@ function ProfileSetting() {
 						},
 						{shouldFocus: true}
 					);
-					return;
+					return false;
 				}
 			}
 		} else if (
@@ -210,7 +215,7 @@ function ProfileSetting() {
 					},
 					{shouldFocus: true}
 				);
-				return;
+				return false;
 			} else if (!values.newPassword) {
 				setError(
 					'newPassword',
@@ -220,9 +225,13 @@ function ProfileSetting() {
 					},
 					{shouldFocus: true}
 				);
-				return;
+				return false;
 			}
+
+			return false;
 		}
+
+		return true;
 	};
 
 	const onSubmit: () => Promise<void> = async () => {
@@ -230,7 +239,8 @@ function ProfileSetting() {
 		const values = getValues();
 		passwordErrorHandler();
 
-		if (Object.keys(errors).length === 0) {
+		// if (Object.keys(errors).length === 0) {
+		if (passwordErrorHandler()) {
 			const {basicInfo, password} = handleFormData();
 
 			try {
@@ -245,20 +255,25 @@ function ProfileSetting() {
 						const basicInfoResponse = await changeProfileInfo(
 							basicInfo
 						);
-						reset({
-							email: data?.email,
-							companyName: data?.companyName,
-							businessNum: data?.businessNum,
-							phoneNum: data?.phoneNum,
-							name: data?.name,
-							currentPassword: '',
-							newPassword: '',
-							passwordConfirm: '',
-						});
 						if (basicInfoResponse) {
+							reset({
+								email: values?.email,
+								companyName: values?.companyName,
+								businessNum: values?.businessNum,
+								phoneNum: values?.phoneNum,
+								name: values?.name,
+								currentPassword: '',
+								newPassword: '',
+								passwordConfirm: '',
+							});
 							onMessageDialogOpen({
 								title: '프로필이 수정되었습니다.',
 								showBottomCloseButton: true,
+								onCloseFunc: () => {
+									setTimeout(() => {
+										updateParentPartnershipData();
+									}, 300);
+								},
 							});
 						}
 					}
@@ -270,6 +285,11 @@ function ProfileSetting() {
 						onMessageDialogOpen({
 							title: '프로필이 수정되었습니다.',
 							showBottomCloseButton: true,
+							onCloseFunc: () => {
+								setTimeout(() => {
+									updateParentPartnershipData();
+								}, 300);
+							},
 						});
 					}
 				}
@@ -292,8 +312,12 @@ function ProfileSetting() {
 			reset({
 				email: data?.email,
 				companyName: data?.companyName,
-				businessNum: data?.businessNum,
-				phoneNum: data?.phoneNum,
+				businessNum: !data?.businessNum.includes('-')
+					? formatBusinessNum(data?.businessNum)
+					: data?.businessNum,
+				phoneNum: !data?.phoneNum.includes('-')
+					? formatPhoneNum(data?.phoneNum)
+					: data?.phoneNum,
 				name: data?.name,
 			});
 		}

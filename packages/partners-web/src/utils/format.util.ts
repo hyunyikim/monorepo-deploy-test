@@ -7,10 +7,18 @@ export const handleChangeDataFormat = (
 	e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) => {
 	const value = e?.target?.value || '';
+	console.log('e?.target?.value', e?.target?.value);
+	console.log('type', type);
+	console.log('e', e);
+
 	switch (type) {
 		case 'phoneNum':
+			console.log('type', type);
+			console.log('value', value);
 			return formatPhoneNum(value);
 		case 'businessNum':
+			console.log('type', type);
+			console.log('value', value);
 			return formatBusinessNum(value);
 		case 'date':
 			return formatDate(value);
