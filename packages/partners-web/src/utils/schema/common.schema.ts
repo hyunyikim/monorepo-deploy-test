@@ -27,6 +27,14 @@ export const passwordSchemaValidation = yup
 		'비밀번호는 8자리 이상 영문, 숫자, 특수문자 조합으로 설정되어야 합니다.'
 	);
 
+export const profileSettingPasswordSchemaValidation = yup
+	.string()
+	.matches(passwordFormat, {
+		message:
+			'비밀번호는 8자리 이상 영문, 숫자, 특수문자 조합으로 설정되어야 합니다.',
+		excludeEmptyString: true,
+	});
+
 export const termSchemaValidation = yup
 	.boolean()
 	.oneOf([true], '약관에 동의해주세요.');

@@ -99,7 +99,7 @@ interface FormProps {
  */
 function IntroductionInquiryDialog({open, onClose}: Props) {
 	const setOnCloseFunc = useMessageDialog((state) => state.setOnCloseFunc);
-	const {setModalOpenState, setModalOption} = useModalStore((state) => state);
+	const {setIsOpen, setModalOption} = useModalStore((state) => state);
 
 	useEffect(() => {
 		if (onClose) {
@@ -173,7 +173,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 								margin: 'auto',
 							}}
 							onClick={() => {
-								setModalOpenState(false);
+								setIsOpen(false);
 								reset({
 									담당자: '',
 									이메일: '',

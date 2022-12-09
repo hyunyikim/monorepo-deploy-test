@@ -15,7 +15,7 @@ function ModalComponent() {
 		subtitle,
 		children,
 		buttonTitle,
-		setModalOpenState,
+		setIsOpen,
 		onClickButton,
 		width,
 		align,
@@ -26,11 +26,11 @@ function ModalComponent() {
 	} = useModalStore((state) => state);
 
 	const closeHandler = () => {
-		if (typeof setModalOpenState === 'function') {
+		if (typeof setIsOpen === 'function') {
 			if (typeof setCloseAndReset === 'function') {
 				setCloseAndReset();
 			}
-			setModalOpenState(false);
+			setIsOpen(false);
 		}
 	};
 

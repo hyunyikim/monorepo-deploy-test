@@ -3,7 +3,7 @@ import {
 	SignInResponse,
 	SignUpResponse,
 } from '@/@types';
-import {nonAuthInstance} from '@/api';
+import {nonAuthInstance, instance} from '@/api';
 
 export const signIn = async (params: SignInRequestRequestParam) => {
 	return await nonAuthInstance.post<SignInResponse>(
@@ -55,4 +55,17 @@ export const sendEmailVerification = async (email: string) => {
 	return await nonAuthInstance.post('/v1/admin/partnerships/email/confirm', {
 		email,
 	});
+};
+
+// 프로필 설정 - 패스워드 수정
+export const changePassword = async (params: {
+	curPassword: string;
+	newPassword: string;
+}) => {
+	return await instance.patch('/v1/admin/partnerships/password', params);
+};
+
+// 프로필 설정 - 기본정보 수정
+export const changeProfileInfo = async (params: FormData) => {
+	return await instance.patch('/v1/admin/partnerships', params);
 };
