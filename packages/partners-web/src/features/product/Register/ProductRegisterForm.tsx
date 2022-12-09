@@ -226,6 +226,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 						}>
 						{mode === 'register' ? (
 							<Button
+								height={48}
 								type="submit"
 								data-tracking={`itemadmin_reregistbutton_click,{'button_title': '상품등록 완료'}`}>
 								상품등록
@@ -234,6 +235,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 							<>
 								<Button
 									variant="outlined"
+									height={48}
 									color="grey-100"
 									onClick={() => {
 										initialData?.idx &&
@@ -242,6 +244,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 									삭제
 								</Button>
 								<Button
+									height={48}
 									type="submit"
 									data-tracking={`itemadmin_reregisteditbutton_click,{'button_title': '상품수정 완료'}`}>
 									상품수정

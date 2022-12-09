@@ -86,7 +86,7 @@ export const productRegisterInputList: InputTypeList = [
 	{
 		type: 'text',
 		name: 'warranty',
-		placeholder: '보증기간을 입력해주세요',
+		placeholder: '',
 		label: '보증기간',
 		autoComplete: 'off',
 		required: true,
