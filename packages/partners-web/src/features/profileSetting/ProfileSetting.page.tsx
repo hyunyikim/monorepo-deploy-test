@@ -145,6 +145,7 @@ function ProfileSetting() {
 				},
 				{shouldFocus: true}
 			);
+			return false;
 		}
 
 		if (currentPassword) {

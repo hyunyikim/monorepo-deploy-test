@@ -508,6 +508,7 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 					top: 0,
 					height: '100%',
 					backgroundColor: '#08134A',
+					zIndex: 101,
 				}}>
 				<Grid
 					container
