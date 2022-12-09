@@ -134,11 +134,22 @@ function ProfileSetting() {
 	};
 
 	const passwordErrorHandler = () => {
-		const values = getValues();
+		const {currentPassword, newPassword, passwordConfirm} = getValues();
 
-		if (values.currentPassword) {
+		if (currentPassword === newPassword && newPassword !== '') {
+			setError(
+				'newPassword',
+				{
+					type: 'required',
+					message: '현재 비밀번호와 새 비밀번호가 같습니다.',
+				},
+				{shouldFocus: true}
+			);
+		}
+
+		if (currentPassword) {
 			/* 현재 비밀번호만 입력하고 신규번호를 입력하지 않았을때 */
-			if (!values.newPassword && !values.passwordConfirm) {
+			if (!newPassword && !passwordConfirm) {
 				setError(
 					'newPassword',
 					{
@@ -156,7 +167,7 @@ function ProfileSetting() {
 					{shouldFocus: true}
 				);
 				return false;
-			} else if (!values.newPassword) {
+			} else if (!newPassword) {
 				setError(
 					'newPassword',
 					{
@@ -166,7 +177,7 @@ function ProfileSetting() {
 					{shouldFocus: true}
 				);
 				return false;
-			} else if (!values.passwordConfirm) {
+			} else if (!passwordConfirm) {
 				setError(
 					'passwordConfirm',
 					{
@@ -179,8 +190,8 @@ function ProfileSetting() {
 			}
 
 			/* 새로운 비밀번호랑 비밀번호 확인이 같지 않으면 에러 */
-			if (values.passwordConfirm && values.newPassword) {
-				if (values.passwordConfirm !== values.newPassword) {
+			if (passwordConfirm && newPassword) {
+				if (passwordConfirm !== newPassword) {
 					setError(
 						'passwordConfirm',
 						{
@@ -192,10 +203,7 @@ function ProfileSetting() {
 					return false;
 				}
 			}
-		} else if (
-			!values.currentPassword &&
-			(values.newPassword || values.passwordConfirm)
-		) {
+		} else if (!currentPassword && (newPassword || passwordConfirm)) {
 			/* 현재 비밀번호만 입력 '안'하고 신규번호만 입력했을때 */
 			setError(
 				'currentPassword',
@@ -206,7 +214,7 @@ function ProfileSetting() {
 				{shouldFocus: true}
 			);
 
-			if (!values.passwordConfirm) {
+			if (!passwordConfirm) {
 				setError(
 					'passwordConfirm',
 					{
@@ -216,7 +224,7 @@ function ProfileSetting() {
 					{shouldFocus: true}
 				);
 				return false;
-			} else if (!values.newPassword) {
+			} else if (!newPassword) {
 				setError(
 					'newPassword',
 					{
@@ -333,7 +341,7 @@ function ProfileSetting() {
 				gap: '40px',
 				maxWidth: '800px',
 				margin: 'auto',
-				pb: '160px',
+				pb: '85px',
 			}}>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
