@@ -20,3 +20,13 @@ export class FindBillingDTO {
 	@IsString()
 	readonly customerKey: string;
 }
+
+export class ChangeBillingPlanBodyDTO {
+	@IsNumber()
+	readonly planId: string;
+}
+
+export class PauseBillingParamDTO {
+	@IsString()
+	readonly customerKey: string;
+}

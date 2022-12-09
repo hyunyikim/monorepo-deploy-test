@@ -47,8 +47,6 @@ export class RegisterBillingHandler
 				customerKey
 			);
 
-		console.log(tossBilling);
-
 		const registered = this.factory.create({
 			...tossBilling,
 			authKey,
@@ -78,7 +76,7 @@ export class UnregisterBillingHandler
 		);
 
 		if (!billing) {
-			throw new NotFoundException('NOT_FOUND_BILLING');
+			throw new NotFoundException('NOT_FOUND_BILLING_RESOURCE');
 		}
 
 		billing.unregister();

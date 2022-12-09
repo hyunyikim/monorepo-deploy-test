@@ -5,6 +5,7 @@ import {Payment} from 'src/billing/domain/payment';
 import {DynamoDB} from 'aws-sdk';
 import {PaymentProps} from 'src/billing/domain/payment';
 import {InjectionToken} from 'src/injection.token';
+import {DateTime} from 'luxon';
 
 type PaymentEntity = PaymentProps;
 
@@ -26,11 +27,16 @@ export class PlanPaymentRepository
 
 	async savePayment(payment: Payment): Promise<void> {
 		const entity = this.modelToEntity(payment);
-		await this.put({
-			TableName: this.tableName,
-			Item: entity,
-			ReturnValues: 'ALL_OLD',
-		}).promise();
+		try {
+			await this.put({
+				TableName: this.tableName,
+				Item: entity,
+				ReturnValues: 'ALL_OLD',
+			}).promise();
+		} catch (e) {
+			console.log(e);
+			throw e;
+		}
 	}
 
 	async findByKey(paymentKey: string): Promise<Payment | null> {
@@ -66,6 +72,26 @@ export class PlanPaymentRepository
 	}
 	async findByOrderId(id: string): Promise<Payment | null> {
 		return await Promise.resolve<null>(null);
+	}
+
+	async search(key: string, range: {startAt: Date; endAt: Date}) {
+		const {startAt, endAt} = range;
+		const {Items} = await this.query({
+			TableName: this.tableName,
+			IndexName: 'customerKey-approvedAt-index',
+			KeyConditionExpression: 'customerKey = :key',
+			FilterExpression: 'approvedAt between :startAt and :endAt',
+			ExpressionAttributeValues: {
+				':key': key,
+				':startAt': DateTime.fromJSDate(startAt).toISO(),
+				':endAt': DateTime.fromJSDate(endAt).toISO(),
+			},
+		}).promise();
+
+		if (!Items || Items.length === 0) return [];
+		const entities = Items as PaymentEntity[];
+
+		return entities.map((entity) => this.factory.create(entity));
 	}
 
 	private entityToModel(entity: PaymentEntity) {

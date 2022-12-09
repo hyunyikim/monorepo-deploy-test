@@ -3,18 +3,32 @@ import {BillingController} from './interface/billing.controller';
 import {CqrsModule} from '@nestjs/cqrs';
 import {TossPaymentsAPI} from './infrastructure/api-client';
 import {ConfigModule, ConfigService} from '@nestjs/config';
+import {WinstonModule, utilities} from 'nest-winston';
+import {transports, format} from 'winston';
+import WinstonCloudWatch from 'winston-cloudwatch';
+import {JwtModule} from '@nestjs/jwt';
+
 import {
 	CancelPaymentHandler,
 	RegisterBillingHandler,
+	ApproveBillingPaymentHandler,
+	ChangeBillingPlanHandler,
 } from './application/command';
-import {FindBillingByCustomerKeyHandler} from './application/query';
+import {
+	FindBillingByCustomerKeyHandler,
+	FindPaymentsQuery,
+} from './application/query';
 import {
 	BillingRegisteredHandler,
 	BillingUnregisteredHandler,
+	BillingApprovedHandler,
+	BillingPlanChangedHandleHandler,
 } from './application/event';
-import {PlanBillingRepository} from './infrastructure/respository/billing.repository';
-import {PlanPaymentRepository} from './infrastructure/respository/payment.repository';
-import {PricePlanRepository} from './infrastructure/respository/plan.repository';
+import {
+	PlanBillingRepository,
+	PlanPaymentRepository,
+	PricePlanRepository,
+} from './infrastructure/respository';
 import {
 	PlanBilling,
 	PlanBillingFactory,
@@ -23,6 +37,9 @@ import {
 } from './domain';
 import {InjectionToken} from '../injection.token';
 import {BillingSaga} from './application/sagas';
+import {JwtService} from '@nestjs/jwt';
+import {ScheduleModule} from '@nestjs/schedule';
+import {FindPaymentsHandler} from './application/query/find-payments.query';
 
 const infra: Provider[] = [
 	{
@@ -44,16 +61,22 @@ const app: Provider[] = [
 	// Command Handler
 	CancelPaymentHandler,
 	RegisterBillingHandler,
-
+	ApproveBillingPaymentHandler,
+	ChangeBillingPlanHandler,
 	// Event Handler
 	BillingRegisteredHandler,
 	BillingUnregisteredHandler,
+	BillingApprovedHandler,
+	BillingPlanChangedHandleHandler,
 
 	// Query Handler
 	FindBillingByCustomerKeyHandler,
-
+	FindPaymentsHandler,
 	// Saga
 	BillingSaga,
+
+	// Service
+	JwtService,
 ];
 
 const domain: Provider[] = [
@@ -89,10 +112,57 @@ const domain: Provider[] = [
 
 @Module({
 	imports: [
+		ScheduleModule.forRoot(),
 		CqrsModule,
 		ConfigModule.forRoot({
 			envFilePath:
 				process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
+		}),
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			useFactory: (configService: ConfigService) => ({
+				secret: configService.getOrThrow('JWT_SECRET_KEY'),
+			}),
+			inject: [ConfigService],
+		}),
+		WinstonModule.forRootAsync({
+			imports: [ConfigModule],
+			useFactory: (configService: ConfigService) => {
+				const transportList = [
+					new WinstonCloudWatch({
+						level:
+							process.env.NODE_ENV === 'production'
+								? 'info'
+								: 'silly',
+						logGroupName: configService.getOrThrow(
+							'AWS_CLOUDWATCH_LOG_GROUP'
+						),
+						logStreamName: configService.getOrThrow(
+							'AWS_CLOUDWATCH_LOG_STREAM'
+						),
+						jsonMessage: true,
+						awsRegion: configService.getOrThrow(
+							'AWS_CLOUDWATCH_REGION'
+						),
+					}),
+					new transports.Console({
+						level:
+							process.env.NODE_ENV === 'production'
+								? 'info'
+								: 'silly',
+						format: format.combine(
+							format.timestamp(),
+							utilities.format.nestLike('@vircle/payment', {
+								prettyPrint: true,
+							})
+						),
+					}),
+				];
+				return {
+					transports: transportList,
+				};
+			},
+			inject: [ConfigService],
 		}),
 	],
 	controllers: [BillingController],

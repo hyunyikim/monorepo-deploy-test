@@ -1249,7 +1249,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@nestjs/schedule",\
-        "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:2.1.0"\
+        "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:2.1.0"\
       ],\
       [\
         "@nestjs/schematics",\
@@ -19034,6 +19034,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
+        ["virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:2.1.0", {\
+          "packageLocation": "./.yarn/__virtual__/@nestjs-schedule-virtual-5da507c82f/0/cache/@nestjs-schedule-npm-2.1.0-449b2dd194-43423eb049.zip/node_modules/@nestjs/schedule/",\
+          "packageDependencies": [\
+            ["@nestjs/schedule", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:2.1.0"],\
+            ["@nestjs/common", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.4.5"],\
+            ["@nestjs/core", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:8.4.5"],\
+            ["@types/nestjs__common", null],\
+            ["@types/nestjs__core", null],\
+            ["@types/reflect-metadata", null],\
+            ["cron", "npm:2.0.0"],\
+            ["reflect-metadata", "npm:0.1.13"],\
+            ["uuid", "npm:8.3.2"]\
+          ],\
+          "packagePeers": [\
+            "@nestjs/common",\
+            "@nestjs/core",\
+            "@types/nestjs__common",\
+            "@types/nestjs__core",\
+            "@types/reflect-metadata",\
+            "reflect-metadata"\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:2.1.0", {\
           "packageLocation": "./.yarn/__virtual__/@nestjs-schedule-virtual-27c364c1ce/0/cache/@nestjs-schedule-npm-2.1.0-449b2dd194-43423eb049.zip/node_modules/@nestjs/schedule/",\
           "packageDependencies": [\
@@ -24759,9 +24782,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@nestjs/cqrs", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:9.0.1"],\
             ["@nestjs/jwt", "virtual:72f187905f55f2f84ec0f0f3775fb0e8083d49166bd0f02042231fa452c141bf64301ade020dd60fdd07a0ea032d8fab14e0804763e2baa6e39291f8bc00142f#npm:9.0.0"],\
             ["@nestjs/platform-express", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:8.4.5"],\
+            ["@nestjs/schedule", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:2.1.0"],\
             ["@nestjs/schematics", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.0.11"],\
             ["@nestjs/testing", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:8.4.5"],\
             ["@nestjs/typeorm", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:9.0.1"],\
+            ["@types/cron", "npm:2.0.0"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.4.1"],\
             ["@types/luxon", "npm:3.0.0"],\
@@ -24793,7 +24818,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typeorm", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:0.3.10"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=a1c5e5"],\
             ["winston", "npm:3.8.2"],\
-            ["winston-cloudwatch", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:6.0.1"]\
+            ["winston-cloudwatch", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:6.1.1"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -49536,10 +49561,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:6.0.1", {\
-          "packageLocation": "./.yarn/__virtual__/winston-cloudwatch-virtual-d0b36cd1a0/0/cache/winston-cloudwatch-npm-6.0.1-c11db970bf-1ff0b1f842.zip/node_modules/winston-cloudwatch/",\
+        ["npm:6.1.1", {\
+          "packageLocation": "./.yarn/cache/winston-cloudwatch-npm-6.1.1-3d1f9dd334-57adc419a8.zip/node_modules/winston-cloudwatch/",\
           "packageDependencies": [\
-            ["winston-cloudwatch", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:6.0.1"],\
+            ["winston-cloudwatch", "npm:6.1.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:6.1.1", {\
+          "packageLocation": "./.yarn/__virtual__/winston-cloudwatch-virtual-1dcaa64ee1/0/cache/winston-cloudwatch-npm-6.1.1-3d1f9dd334-57adc419a8.zip/node_modules/winston-cloudwatch/",\
+          "packageDependencies": [\
+            ["winston-cloudwatch", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:6.1.1"],\
             ["@aws-sdk/client-cloudwatch-logs", null],\
             ["@types/aws-sdk__client-cloudwatch-logs", null],\
             ["@types/winston", null],\
