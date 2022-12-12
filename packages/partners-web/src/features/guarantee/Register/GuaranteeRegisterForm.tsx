@@ -15,7 +15,7 @@ import {
 	ImageState,
 } from '@/@types';
 import {guaranteeRegisterSchemaShape} from '@/utils/schema';
-import {goToParentUrl, handleChangeDataFormat} from '@/utils';
+import {goBack, handleChangeDataFormat} from '@/utils';
 import {
 	convertProductRegisterFormData,
 	getProductCustomFieldValue,
@@ -239,7 +239,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					return;
 				}
 				// 병행업체만 아래 필드 저장
-				if (partnershipInfo?.b2bType === 'cooperator') {
+				if (partnershipInfo?.b2bType !== 'brand') {
 					if (key === 'categoryCode') {
 						formData.append('cate_cd', String(value));
 						return;
@@ -405,7 +405,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 							: '개런티 발급 정보를 임시저장했습니다.',
 					showBottomCloseButton: true,
 					onCloseFunc: () => {
-						goToParentUrl('/b2b/guarantee');
+						goBack();
 					},
 				});
 
@@ -472,7 +472,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 									title: '개런티를 삭제했습니다',
 									showBottomCloseButton: true,
 									onCloseFunc: () => {
-										goToParentUrl('/b2b/guarantee');
+										goBack();
 									},
 								});
 							} catch (e: any) {

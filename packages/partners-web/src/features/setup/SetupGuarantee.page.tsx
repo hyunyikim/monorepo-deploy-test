@@ -616,7 +616,7 @@ export function InputFormSection({
 	justOpenBox,
 }: InputFormProps) {
 	const {data} = useGetPartnershipInfo();
-	const b2bType = data?.b2bType; // cooperator or brand
+	const b2bType = data?.b2bType; // cooperator or brand or platform
 	const email = data?.email as string;
 
 	const {
@@ -1582,7 +1582,7 @@ export function InputFormSection({
 										key={`example-required-list-${idx}`}
 									/>
 							  ))
-							: b2bType === 'cooperator'
+							: b2bType !== 'brand'
 							? categoryRequiredList.map((li, idx) => (
 									<CategoryContainer
 										required={true}

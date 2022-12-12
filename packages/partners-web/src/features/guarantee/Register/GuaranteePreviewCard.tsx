@@ -23,7 +23,7 @@ function GuaranteePreviewCard() {
 	const values = useMemo(() => {
 		const brandNameEn: string = previewData?.product?.brandNameEn;
 		let certificationBrandName = brandNameEn?.toLocaleUpperCase();
-		if (partnershipData?.b2bType === 'cooperator') {
+		if (partnershipData?.b2bType !== 'brand') {
 			certificationBrandName = partnershipData?.companyName || '';
 		}
 
