@@ -104,7 +104,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 							<HeadTableCell minWidth={180}>
 								개런티 번호
 							</HeadTableCell>
-							<HeadTableCell minWidth={880}>
+							<HeadTableCell minWidth={600}>
 								상품 정보
 							</HeadTableCell>
 							<HeadTableCell minWidth={180}>
@@ -119,7 +119,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 						data?.list?.length > 0 &&
 						data?.list.map((item, idx) => (
 							<TableRow key={`item_${idx}`}>
-								<TableCell width="180px">
+								<TableCell>
 									{item?.requestedAt
 										? format(
 												new Date(item?.requestedAt),
@@ -127,12 +127,18 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 										  )
 										: '-'}
 								</TableCell>
-								<TableCell width="180px">
+								<TableCell>
 									{item?.serialNo ? (
 										<Typography
 											fontSize={14}
 											className="underline"
 											onClick={() => {
+												if (item.status === 'READY') {
+													goToParentUrl(
+														`/b2b/guarantee/edit/${item.idx}`
+													);
+													return;
+												}
 												goToParentUrl(
 													`/b2b/guarantee/detail/${item.idx}?name=${name}&phone=${phone}`
 												);
@@ -151,12 +157,12 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 										{item?.product?.name ?? '-'}
 									</Typography>
 								</TableCell>
-								<TableCell width="180px">
+								<TableCell>
 									{item?.price
 										? `${(item?.price).toLocaleString()}원`
 										: '-'}
 								</TableCell>
-								<TableCell width="180px">
+								<TableCell>
 									{getGroupingGuaranteeStatusChip(
 										item.status
 									)}

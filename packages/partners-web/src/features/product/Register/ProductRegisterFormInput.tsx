@@ -69,6 +69,17 @@ function ProductRegisterFormInput({
 												/\,/g,
 												''
 											);
+											// TODO: 유틸화
+											// BigInt 넘어서는 큰 숫자 입력 방지
+											if (
+												!Number.isSafeInteger(
+													Number(pureNumber)
+												)
+											) {
+												value = value.slice(0, -1);
+												e.target.value = value;
+												return;
+											}
 											if (isNaN(Number(pureNumber))) {
 												value = value.slice(0, -1);
 												e.target.value = value;

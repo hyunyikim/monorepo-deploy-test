@@ -1,5 +1,6 @@
 type RequestType =
 	| 'link'
+	| 'go_back'
 	| 'tracking'
 	| 'guarantee_excel_download'
 	| 'guarantee_excel_upload'
@@ -19,6 +20,13 @@ export const goToParentUrl = (url: string) => {
 	sendMessageToParent({
 		type: 'link',
 		data: url,
+	});
+};
+
+export const goBack = () => {
+	sendMessageToParent({
+		type: 'go_back',
+		data: null,
 	});
 };
 
