@@ -146,6 +146,8 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			order_dt,
 			platform_nm: order_platform_nm,
 			ref_order_id,
+			categoryName: cate_cd_text,
+			modelNum: model_num,
 			productIdx,
 		});
 		setProducts([

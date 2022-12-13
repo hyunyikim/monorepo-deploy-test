@@ -14,12 +14,14 @@ const SetupGuarantee = lazy(
 const ResetupGuarantee = lazy(
 	() => import('@/features/setup/ResetupGuarantee.page')
 );
-const Dashboard = lazy(() => import('@/features/dashboard/Dashboard.page'));
 const Guarantee = lazy(
 	() => import('@/features/guarantee/List/GuaranteeList.page')
 );
 const GuaranteeRegister = lazy(
 	() => import('@/features/guarantee/Register/GuaranteeRegister.page')
+);
+const GuaranteeDetail = lazy(
+	() => import('@/features/guarantee/Detail/GuaranteeDetail.page')
 );
 const Product = lazy(() => import('@/features/product/List/ProductList.page'));
 const ProductRegister = lazy(
@@ -68,6 +70,10 @@ const privateRouter: RouteObject[] = [
 			{
 				path: '/b2b/guarantee/register/v2',
 				element: <GuaranteeRegister />,
+			},
+			{
+				path: '/b2b/guarantee/:idx/v2',
+				element: <GuaranteeDetail />,
 			},
 			{
 				path: '/b2b/guarantee/edit/:idx/v2',

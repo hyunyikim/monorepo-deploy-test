@@ -140,7 +140,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 													return;
 												}
 												goToParentUrl(
-													`/b2b/guarantee/detail/${item.idx}?name=${name}&phone=${phone}`
+													`/b2b/guarantee/${item.idx}?name=${name}&phone=${phone}`
 												);
 											}}>
 											{item?.serialNo}

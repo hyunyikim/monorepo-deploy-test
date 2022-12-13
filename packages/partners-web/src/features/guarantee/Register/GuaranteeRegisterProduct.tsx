@@ -1,13 +1,12 @@
 import {useCallback, Dispatch, SetStateAction} from 'react';
-
-import {Button} from '@/components';
-import {Box, Stack, Typography} from '@mui/material';
+import {Stack, Typography} from '@mui/material';
 
 import {ProductRegisterFormData, ImageState} from '@/@types';
-
-import {IcEmptyImage, IcPlus, IcPencil} from '@/assets/icon';
-
 import {useMessageDialog} from '@/stores';
+
+import {Button} from '@/components';
+import ProductImage from '@/features/product/common/ProductImage';
+import {IcPlus, IcPencil} from '@/assets/icon';
 
 interface Props {
 	product: Partial<ProductRegisterFormData> | null;
@@ -161,37 +160,6 @@ const SelectedProduct = ({
 				</Button>
 			</Stack>
 		</Stack>
-	);
-};
-
-const ProductImage = ({src}: {src?: string | null}) => {
-	return src ? (
-		<Box
-			sx={{
-				width: '60px',
-				height: '60px',
-				backgroundColor: 'grey.10',
-				border: (theme) => `1px solid ${theme.palette.grey[100]}`,
-			}}>
-			<img
-				src={src}
-				style={{
-					width: '100%',
-					height: '100%',
-				}}
-			/>
-		</Box>
-	) : (
-		<Box
-			className="flex-center"
-			sx={{
-				width: '60px',
-				height: '60px',
-				backgroundColor: 'grey.10',
-				border: (theme) => `1px solid ${theme.palette.grey[100]}`,
-			}}>
-			<IcEmptyImage />
-		</Box>
 	);
 };
 

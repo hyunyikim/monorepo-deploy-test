@@ -1,6 +1,7 @@
 export {default as IcConcierge} from './ic-concierge.svg';
 export {default as IcDashboard} from './ic-dashboard.svg';
 export {default as IcLink} from './ic-link.svg';
+export {default as IcLinkWhite20} from './ic-link-white-20.svg';
 export {default as IcList2} from './ic-list2.svg';
 export {default as IcRepairClothes} from './ic-repair-clothes.svg';
 export {default as IcShoppingBagCheck} from './ic-shopping-bag-check.svg';
@@ -9,6 +10,8 @@ export {default as IcUsers} from './ic-users.svg';
 export {default as IcWallet} from './ic-wallet.svg';
 export {default as IcChevronUp} from './ic-chevron-up.svg';
 export {default as IcChevronDown} from './ic-chevron-down.svg';
+// TODO: 중복된 icon 정리
+export {default as IcChevronDown20} from './ic-chevron-down-20.svg';
 export {default as IcChevronRight} from './ic-chevron-right.svg';
 export {default as IcGuaranteeIssuePending} from './ic-guarantee-issue-pending.svg';
 export {default as IcGuaranteeIssueSuccess} from './ic-guarantee-issue-success.svg';
@@ -24,6 +27,7 @@ export {default as IcRadioButtonChecked} from './ic-radio-button-checked.svg';
 export {default as IcRadioButtonUnchecked} from './ic-radio-button-unchecked.svg';
 export {default as IcEmptyImage} from './ic-empty-image.svg';
 export {default as IcShop} from './ic-shop.svg';
+export {default as IcShopPrimary} from './ic-shop-primary.svg';
 export {default as IcBag} from './ic-bag.svg';
 export {default as IcEnvelope} from './ic-envelope.svg';
 export {default as IcHotelBuilding} from './ic-hotel-building.svg';
@@ -33,6 +37,8 @@ export {default as IcGreyArrowDown} from './icon_grey_arrow_down_24.svg';
 export {default as IcCamera} from './ic-camera.svg';
 export {default as IcPlus} from './ic-plus.svg';
 export {default as IcPencil} from './ic-pencil.svg';
+export {default as IcPaperPlane} from './ic-paper-plane.svg';
+export {default as IcWarningTriangle} from './ic-warning-triangle.svg';
 
 export {default as exampleBrandIcon} from './icon_example_brands_icon.png';
 export {default as exampleBrandIcon2x} from './icon_example_brands_icon@2x.png';
