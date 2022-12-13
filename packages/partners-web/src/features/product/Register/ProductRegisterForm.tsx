@@ -16,7 +16,12 @@ import {
 	getProductRegisterInputList,
 } from '@/data';
 import {ImageState} from '@/@types';
-import {deleteProduct, editProduct, registerProduct} from '@/api/product.api';
+import {
+	deleteProduct,
+	editProduct,
+	registerProduct,
+	deleteProductImage,
+} from '@/api/product.api';
 
 import {
 	useGetPartnershipInfo,
@@ -100,7 +105,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 						<Button
 							color="black"
 							variant="contained"
-							onClick={() => handleEdit(idx, formData)}>
+							onClick={() => handleEdit(idx, formData, images)}>
 							수정
 						</Button>
 					</>
@@ -135,8 +140,14 @@ function ProductRegisterForm({mode, initialData}: Props) {
 	);
 
 	const handleEdit = useCallback(
-		async (idx: number, formData: FormData) => {
+		async (idx: number, formData: FormData, images: ImageState[]) => {
 			try {
+				try {
+					// 이미지 삭제 되었을 경우, 이미지 삭제 api 호출
+					if (images?.length < 1) {
+						await deleteProductImage(idx);
+					}
+				} catch (e) {}
 				await editProduct(idx, formData);
 				onOpenMessageDialog({
 					title: '상품이 수정되었습니다.',
