@@ -82,7 +82,7 @@ function GuaranteeRegisterPreviewCard() {
 	return (
 		<Stack
 			sx={{
-				width: '280px',
+				width: '296px',
 				marginX: {
 					xs: 'auto',
 					md: 0,

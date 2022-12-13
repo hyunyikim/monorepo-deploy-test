@@ -68,7 +68,7 @@ function GuaranteeDetail() {
 				<Stack
 					flexDirection="row"
 					justifyContent="space-between"
-					mb="25px">
+					mb="20px">
 					<Stack
 						flexDirection={{
 							xs: 'column',

@@ -79,7 +79,7 @@ function GuaranteeDetailProductInfo({data}: {data: Guarantee}) {
 						<IcChevronDown20
 							className="cursor-pointer"
 							style={{
-								transition: 'all 0.25s ease-in-out',
+								transition: 'transform 0.25s ease-in-out',
 								transform: openBox
 									? 'rotate(-180deg)'
 									: 'rotate(0)',
@@ -94,7 +94,11 @@ function GuaranteeDetailProductInfo({data}: {data: Guarantee}) {
 					flexDirection="column"
 					rowGap="20px"
 					sx={{
-						transition: 'all 0.25s ease-in-out',
+						transitionProperty: 'max-height, overflow, margin-top',
+						transitionDelay: '0.01s',
+						transitionDuration: '0.25s',
+						transitionTimingFunction: 'ease-in-out',
+						'-webkit-transform': 'translateZ(0)',
 						...(!openBox && {
 							maxHeight: 0,
 							overflow: 'hidden',

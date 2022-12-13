@@ -43,14 +43,17 @@ function GuaranteeDetailCustomerInfo({data}: {data: Guarantee}) {
 				<GuaranteeDetailInfoColumn
 					title="주문일자"
 					value={data?.order_dt || '-'}
+					fontSize={16}
 				/>
 				<GuaranteeDetailInfoColumn
 					title="판매처"
 					value={data?.order_platform_nm || '-'}
+					fontSize={16}
 				/>
 				<GuaranteeDetailInfoColumn
 					title="주문번호"
 					value={data?.order_num || '-'}
+					fontSize={16}
 				/>
 			</Stack>
 		</Stack>

@@ -20,7 +20,7 @@ function GuaranteeDetailSellerInfo({data}: {data: Guarantee}) {
 					xs: 'column',
 					sm: 'row',
 				}}
-				alignItems="center">
+				alignItems="flex-start">
 				<Box
 					className="flex-center"
 					sx={{

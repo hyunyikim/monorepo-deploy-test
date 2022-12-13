@@ -84,14 +84,14 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 	return (
 		<Stack
 			sx={{
-				width: '280px',
+				width: '296px',
 				marginX: {
 					xs: 'auto',
 					md: 0,
 				},
 				marginTop: {
 					xs: '0px',
-					md: '70px',
+					md: '124px',
 				},
 				marginBottom: '60px',
 			}}>
