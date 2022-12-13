@@ -93,9 +93,12 @@ const PlusInBlueStyle = styled('img')`
 	cursor: pointer;
 `;
 
-const AvatarStyle = styled('img')`
+const AvatarStyle = styled('div')`
 	border-radius: 50%;
 	background-color: white;
+	background: url(${(props) => props.imgSrc});
+	background-position: center;
+	background-size: cover;
 	cursor: pointer;
 	width: 78px;
 	height: 78px;
@@ -1004,7 +1007,11 @@ export function InputFormSection({
 					if (centreUrl && centreUrl.includes('http')) {
 						formData.append(key, values[key] as string);
 					} else {
-						formData.append(key, `https://${centreUrl}`);
+						if (!centreUrl) {
+							formData.append(key, ``);
+						} else {
+							formData.append(key, `https://${centreUrl}`);
+						}
 					}
 				} else {
 					formData.append(key, values[key] as string | Blob);
@@ -1299,6 +1306,8 @@ export function InputFormSection({
 
 			if (data && data?.nftCustomFields.length > 0) {
 				setProductInfoState(() => [...nftCustomFields]);
+			} else if (data && data?.nftCustomFields.length === 0) {
+				setProductInfoState(() => []);
 			}
 
 			setBrandLogoPreview({preview: data.profileImage});
@@ -1440,7 +1449,7 @@ export function InputFormSection({
 							/>
 							<AvatarStyle
 								onClick={() => logoInputFile?.current.click()}
-								src={
+								imgSrc={
 									brandLogoError
 										? defaultErrorLogoImg2x
 										: (brandLogoPreview?.preview as string)
