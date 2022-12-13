@@ -75,7 +75,7 @@ export class PlanBillingRepository
 		return billings
 			.filter((billing) => {
 				if (!registered) return true;
-				return billing.unregisteredAt !== undefined;
+				return billing.unregisteredAt === undefined;
 			})
 			.map((props) => this.entityToModel(props));
 	}

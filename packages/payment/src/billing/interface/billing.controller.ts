@@ -7,13 +7,15 @@ import {
 	Post,
 	Patch,
 	UseGuards,
+	UnauthorizedException,
 } from '@nestjs/common';
 import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {
 	FindBillingDTO,
-	RegisterBillingDTO,
+	RegisterBillingBodyDTO,
 	UnregisterBillingDTO,
 	ChangeBillingPlanBodyDTO,
+	ChangeBillingPlanParamDTO,
 } from './dto';
 import {
 	RegisterBillingCommand,
@@ -32,7 +34,7 @@ export class BillingController {
 	@Post('/')
 	@UseGuards(JwtAuthGuard)
 	async registerBilling(
-		@Body() {authKey, customerKey, planId}: RegisterBillingDTO
+		@Body() {authKey, customerKey, planId}: RegisterBillingBodyDTO
 	) {
 		const registerCommand = new RegisterBillingCommand(
 			authKey,
@@ -52,8 +54,14 @@ export class BillingController {
 
 	@Get('/:customerKey')
 	@UseGuards(JwtAuthGuard)
-	async getBilling(@Param() dto: FindBillingDTO) {
+	async getBilling(
+		@Param() dto: FindBillingDTO,
+		@GetToken() token: TokenInfo
+	) {
 		const {customerKey} = dto;
+		if (customerKey !== token.partnerIdx.toString()) {
+			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
+		}
 		const query = new FindBillingByCustomerKeyQuery(customerKey);
 
 		return await this.queryBus.execute<
@@ -66,14 +74,16 @@ export class BillingController {
 	@UseGuards(JwtAuthGuard)
 	async changeBillingPlan(
 		@GetToken() token: TokenInfo,
+		@Param() params: ChangeBillingPlanParamDTO,
 		@Body() body: ChangeBillingPlanBodyDTO
 	) {
-		const {planId} = body;
 		const {partnerIdx} = token;
-
+		if (params.customerKey !== partnerIdx.toString()) {
+			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
+		}
 		const command = new ChangeBillingPlanCommand(
 			partnerIdx.toString(),
-			planId
+			body.planId
 		);
 		await this.commandBus.execute(command);
 	}

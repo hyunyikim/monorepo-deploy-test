@@ -22,7 +22,7 @@ async function bootstrap() {
 	const logger = app.get<LoggerService>(WINSTON_MODULE_NEST_PROVIDER);
 	app.useLogger(logger);
 
-	logger.log(`NODE_ENV: ${process.env.NODE_ENV ?? 'UNDEFINED'}`);
+	logger.log(`NODE_ENV: ${process.env.NODE_ENV ?? 'UNDEFINED'}`, 'Bootstrap');
 
 	await app.listen(3000);
 }

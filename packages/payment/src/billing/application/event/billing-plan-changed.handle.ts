@@ -4,13 +4,13 @@ import {EventsHandler, IEventHandler} from '@nestjs/cqrs';
 import {PlanChangedEvent} from '../../domain/event';
 
 @EventsHandler(PlanChangedEvent)
-export class BillingPlanChangedHandleHandler
+export class BillingPlanChangedHandler
 	implements IEventHandler<PlanChangedEvent>
 {
 	constructor(private readonly logger: Logger) {}
 
 	async handle(event: PlanChangedEvent): Promise<void> {
-		this.logger.log('Billing Plan Changed', event);
+		this.logger.log(event, this.constructor.name);
 		return Promise.resolve(undefined);
 	}
 }

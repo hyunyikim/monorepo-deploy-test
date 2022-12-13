@@ -10,7 +10,7 @@ export class BillingApprovedHandler
 	constructor(private readonly logger: Logger) {}
 
 	async handle(event: BillingApprovedEvent): Promise<void> {
-		this.logger.log('Billing Approved', event);
+		this.logger.log(event, this.constructor.name);
 		return Promise.resolve(undefined);
 	}
 }

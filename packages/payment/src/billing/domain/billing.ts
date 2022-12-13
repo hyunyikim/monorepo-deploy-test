@@ -106,8 +106,9 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	}
 
 	changePlan(pricePlan: PricePlan): void {
-		this.props.pricePlan = pricePlan;
 		const offset = pricePlan.planLevel - this.props.pricePlan.planLevel;
+		this.props.pricePlan = pricePlan;
+
 		const event = new PlanChangedEvent(this.properties(), offset);
 		this.apply(event);
 	}

@@ -11,6 +11,7 @@ import {JwtModule} from '@nestjs/jwt';
 import {
 	CancelPaymentHandler,
 	RegisterBillingHandler,
+	UnregisterBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
 } from './application/command';
@@ -22,7 +23,7 @@ import {
 	BillingRegisteredHandler,
 	BillingUnregisteredHandler,
 	BillingApprovedHandler,
-	BillingPlanChangedHandleHandler,
+	BillingPlanChangedHandler,
 } from './application/event';
 import {
 	PlanBillingRepository,
@@ -40,6 +41,7 @@ import {BillingSaga} from './application/sagas';
 import {JwtService} from '@nestjs/jwt';
 import {ScheduleModule} from '@nestjs/schedule';
 import {FindPaymentsHandler} from './application/query/find-payments.query';
+import {RegularPaymentService} from './application/service/payment.service';
 
 const infra: Provider[] = [
 	{
@@ -61,13 +63,14 @@ const app: Provider[] = [
 	// Command Handler
 	CancelPaymentHandler,
 	RegisterBillingHandler,
+	UnregisterBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
 	// Event Handler
 	BillingRegisteredHandler,
 	BillingUnregisteredHandler,
 	BillingApprovedHandler,
-	BillingPlanChangedHandleHandler,
+	BillingPlanChangedHandler,
 
 	// Query Handler
 	FindBillingByCustomerKeyHandler,
@@ -76,10 +79,16 @@ const app: Provider[] = [
 	BillingSaga,
 
 	// Service
-	JwtService,
+	RegularPaymentService,
 ];
 
 const domain: Provider[] = [
+	{
+		provide: InjectionToken.CRON_TASK_ON,
+		useFactory: (configService: ConfigService) =>
+			configService.getOrThrow('CRON_TASK_ON') === 'ON',
+		inject: [ConfigService],
+	},
 	{
 		provide: InjectionToken.PLAN_TABLE_NAME,
 		useFactory: (configService: ConfigService) =>
@@ -154,6 +163,7 @@ const domain: Provider[] = [
 							format.timestamp(),
 							utilities.format.nestLike('@vircle/payment', {
 								prettyPrint: true,
+								colors: true,
 							})
 						),
 					}),

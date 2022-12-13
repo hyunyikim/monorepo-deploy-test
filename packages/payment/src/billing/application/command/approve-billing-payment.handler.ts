@@ -50,5 +50,6 @@ export class ApproveBillingPaymentHandler
 		await this.paymentRepo.savePayment(payment);
 		await this.billingRepo.saveBilling(billing);
 		payment.commit();
+		billing.commit();
 	}
 }
