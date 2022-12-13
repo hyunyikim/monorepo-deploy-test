@@ -70,3 +70,7 @@ export const bulkDeleteProduct = async (productIdxList: number[]) => {
 		},
 	});
 };
+
+export const deleteProductImage = async (productIdx: number) => {
+	await instance.delete(`/v1/admin/partners-product/${productIdx}/image`);
+};

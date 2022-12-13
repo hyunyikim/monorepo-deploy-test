@@ -220,7 +220,7 @@ export const getProductRegisterInputList = (
 
 export const convertProductRegisterFormData = (
 	data: ProductRegisterFormData,
-	images: ImageState[] | null,
+	images: ImageState[],
 	customFields?: string[]
 ) => {
 	const formData = new FormData();
@@ -230,29 +230,33 @@ export const convertProductRegisterFormData = (
 		let value = data[key as keyof ProductRegisterFormData];
 
 		// 입력 확인을 위한 필드
-		if (['brandName', 'customField'].includes(key)) {
+		if (['idx', 'brandName', 'brandNameEn', 'customField'].includes(key)) {
 			return;
 		}
 		if (customFields?.includes(key)) {
 			customFieldObj[key] = String(value) || '';
 			return;
 		}
-
-		if (!value) return;
 		if (key === 'price') {
-			value = String(value).split(',').join('') || '';
+			value = value ? String(value).split(',').join('') : '0';
 		}
 
-		formData.append(key, String(value));
+		formData.append(key, String(value) || '');
 	});
 	if (customFields) {
 		formData.append('customField', JSON.stringify(customFieldObj));
 	}
-	if (images && images.length > 0) {
-		images.forEach((image) => {
-			image?.file && formData.append('productImage', image.file);
-		});
+
+	// image가 없을 경우
+	if (images?.length < 1) {
+		formData.append('productImage', '');
+		return formData;
 	}
+
+	// 이미지가 하나 이상 있을 경우
+	images.forEach((image) => {
+		formData.append('productImage', image?.file || '');
+	});
 	return formData;
 };
 
