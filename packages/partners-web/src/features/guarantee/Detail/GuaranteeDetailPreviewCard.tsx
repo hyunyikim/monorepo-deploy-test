@@ -91,7 +91,7 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 				},
 				marginTop: {
 					xs: '0px',
-					md: '124px',
+					md: '119px',
 				},
 				marginBottom: '60px',
 			}}>

@@ -44,7 +44,6 @@ const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const EmailVerificationFail = lazy(
 	() => import('@/features/auth/verification/EmailVerificationFail.page')
 );
-const TestFullPage = lazy(() => import('@/features/common/TestFullPage.page'));
 const NotFound = lazy(() => import('@/features/common/NotFound.page'));
 
 const privateRouter: RouteObject[] = [
@@ -94,8 +93,6 @@ const privateRouter: RouteObject[] = [
 
 			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
 			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
-
-			{path: '/test/fullpage/v2', element: <TestFullPage />},
 			{path: '*', element: <NotFound />},
 		],
 	},

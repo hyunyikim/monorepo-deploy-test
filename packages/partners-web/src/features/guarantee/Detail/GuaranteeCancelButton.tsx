@@ -4,7 +4,7 @@ import {Stack} from '@mui/material';
 
 import {cancelGuarantee} from '@/api/guarantee.api';
 import {useMessageDialog} from '@/stores';
-import {goToParentUrl, goBack} from '@/utils';
+import {goToParentUrl} from '@/utils';
 
 import {Button} from '@/components';
 
@@ -51,7 +51,9 @@ function GuaranteeCancelButton({idx}: {idx: number}) {
 															);
 															return;
 														}
-														goBack();
+														goToParentUrl(
+															'/b2b/guarantee'
+														);
 													},
 												});
 											} catch (e: any) {

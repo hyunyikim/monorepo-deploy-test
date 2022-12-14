@@ -46,7 +46,7 @@ interface Props {
 	open: boolean;
 	onClose: () => void;
 	setProduct: (value: Partial<ProductRegisterFormData> | null) => void;
-	setImages: Dispatch<SetStateAction<ImageState[] | null>>;
+	setImages: Dispatch<SetStateAction<ImageState[]>>;
 	setRegisterNewProduct: (value: boolean) => void;
 }
 

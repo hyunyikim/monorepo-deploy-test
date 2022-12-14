@@ -35,6 +35,7 @@ function GuaranteeDetailCustomerInfo({data}: {data: Guarantee}) {
 					md: 'space-between',
 				}}
 				rowGap="20px"
+				columnGap="16px"
 				sx={{
 					'& > *': {
 						flex: 1,

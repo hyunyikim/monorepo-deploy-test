@@ -7,7 +7,7 @@ import style from '@/assets/styles/style.module.scss';
 type Height = 60 | 48 | 40 | 32;
 
 interface Props extends Omit<ButtonProps, 'color' | 'size'> {
-	width?: number | 'auto';
+	width?: number | string;
 	height?: Height;
 	startIcon?: React.ReactNode;
 	onClick?: () => void;
@@ -18,7 +18,7 @@ interface Props extends Omit<ButtonProps, 'color' | 'size'> {
  */
 function Button({
 	variant = 'contained',
-	width = 'auto',
+	width = 'max-content',
 	height = 32,
 	sx,
 	children,
@@ -63,10 +63,11 @@ function Button({
 			borderRadius: '62px',
 			lineHeight: `${height}px`,
 			fontSize: '14px',
-			...(width !== 'auto' && {
-				padding: '0',
-				minWidth: '0',
-			}),
+			...(width !== 'auto' &&
+				{
+					// padding: '0',
+					// minWidth: '0',
+				}),
 		};
 		return sx;
 	}, [variant, width, height]);

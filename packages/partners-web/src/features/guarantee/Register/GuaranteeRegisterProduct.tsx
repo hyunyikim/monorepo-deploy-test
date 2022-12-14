@@ -11,8 +11,8 @@ import {IcPlus, IcPencil} from '@/assets/icon';
 interface Props {
 	product: Partial<ProductRegisterFormData> | null;
 	setProduct: (value: Partial<ProductRegisterFormData> | null) => void;
-	productImages: ImageState[] | null;
-	setProductImages: Dispatch<SetStateAction<ImageState[] | null>>;
+	productImages: ImageState[];
+	setProductImages: Dispatch<SetStateAction<ImageState[]>>;
 	onNewProductModalOpen: () => void;
 	onSelectProductModalOpen: () => void;
 }

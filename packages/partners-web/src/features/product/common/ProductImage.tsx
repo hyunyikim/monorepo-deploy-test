@@ -13,6 +13,7 @@ function ProductImage({onImgClick, src, sx = {}}: Props) {
 		<Box
 			sx={{
 				width: '60px',
+				minWidth: '60px',
 				height: '60px',
 				backgroundColor: 'grey.10',
 				border: (theme) => `1px solid ${theme.palette.grey[100]}`,
@@ -35,6 +36,7 @@ function ProductImage({onImgClick, src, sx = {}}: Props) {
 			className="flex-center"
 			sx={{
 				width: '60px',
+				minWidth: '60px',
 				height: '60px',
 				backgroundColor: 'grey.10',
 				border: (theme) => `1px solid ${theme.palette.grey[100]}`,

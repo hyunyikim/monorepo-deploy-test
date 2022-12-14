@@ -43,8 +43,12 @@ function GuaranteeDetailProductInfo({data}: {data: Guarantee}) {
 				<Stack
 					flexDirection="row"
 					justifyContent="space-between"
-					alignItems="center">
-					<Stack flexDirection="row" columnGap="13px">
+					alignItems="center"
+					columnGap="4px">
+					<Stack
+						flexDirection="row"
+						alignItems="center"
+						columnGap="13px">
 						<ProductImage
 							src={data?.product_img || ''}
 							onImgClick={() => {

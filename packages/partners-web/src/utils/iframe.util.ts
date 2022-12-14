@@ -1,5 +1,6 @@
 type RequestType =
 	| 'link'
+	| 'link_replace'
 	| 'go_back'
 	| 'tracking'
 	| 'guarantee_excel_download'
@@ -19,6 +20,13 @@ export const sendMessageToParent = (data: {type: RequestType; data: any}) => {
 export const goToParentUrl = (url: string) => {
 	sendMessageToParent({
 		type: 'link',
+		data: url,
+	});
+};
+
+export const replaceToParentUrl = (url: string) => {
+	sendMessageToParent({
+		type: 'link_replace',
 		data: url,
 	});
 };
