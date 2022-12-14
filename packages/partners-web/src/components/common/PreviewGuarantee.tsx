@@ -378,6 +378,15 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 		return <></>;
 	}
 
+	const isPriceFilled = () => {
+		const price = values?.price;
+
+		if (!price || price === '0원' || price === '0') {
+			return false;
+		}
+		return true;
+	};
+
 	return (
 		<PreviewContainerStyle>
 			<PhoneFrameStyle
@@ -454,7 +463,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 						fontWeight={700}
 						lineHeight={'17px'}
 						mb="26px">
-						{values?.price || '0,000,000원'}
+						{isPriceFilled() ? values?.price : null}
 					</Typography>
 
 					<TabBoxStyle className="tabs">

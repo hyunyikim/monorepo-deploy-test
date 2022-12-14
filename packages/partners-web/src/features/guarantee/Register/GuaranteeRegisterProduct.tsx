@@ -144,7 +144,11 @@ const SelectedProduct = ({
 						fontSize={14}
 						lineHeight="14px"
 						color="grey.600">
-						{data?.price ? `${data?.price}원` : '-'}
+						{data?.price
+							? data?.price !== '0'
+								? `${data?.price}원`
+								: '-'
+							: '-'}
 					</Typography>
 				</Stack>
 			</Stack>
