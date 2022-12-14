@@ -23,6 +23,7 @@ function GuaranteeCancelButton({idx}: {idx: number}) {
 					onOpenMessageDialog({
 						title: '개런티를 발급 취소하시겠습니까?',
 						showBottomCloseButton: true,
+						closeButtonValue: '취소',
 						buttons: (
 							<>
 								<Button
@@ -67,7 +68,7 @@ function GuaranteeCancelButton({idx}: {idx: number}) {
 											}
 										})();
 									}}>
-									삭제
+									발급취소
 								</Button>
 							</>
 						),
