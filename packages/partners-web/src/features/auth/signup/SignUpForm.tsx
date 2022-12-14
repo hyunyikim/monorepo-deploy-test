@@ -360,7 +360,7 @@ function SignUpForm({
 				)}
 				<Button
 					type="submit"
-					fullWidth
+					width="auto"
 					sx={{
 						marginTop: '34px',
 						background:
