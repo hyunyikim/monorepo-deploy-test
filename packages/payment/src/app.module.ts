@@ -6,6 +6,6 @@ import {BillingModule} from './billing/billing.module';
 @Module({
 	imports: [BillingModule],
 	controllers: [AppController],
-	providers: [AppService],
+	// providers: [AppService],
 })
 export class AppModule {}
