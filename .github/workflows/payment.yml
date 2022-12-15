@@ -1,0 +1,39 @@
+name: '@vircle/payment'
+on:
+    push:
+        branches:
+            - dev
+            - main
+            - stage
+        paths:
+            - 'packages/payment/**'
+            - '.github/workflows/payment.yml'
+
+    pull_request:
+        branches:
+            - dev
+        paths:
+            - 'packages/payment/**'
+
+jobs:
+    build_type_test:
+        if: ${{ github.event_name == 'pull_request' }}
+        runs-on: ubuntu-20.04
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./packages/payment
+        steps:
+            - name: git checkout
+              uses: actions/checkout@v3
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: 의존성 체크
+              run: yarn
+
+            - name: build 하기
+              run: yarn build
