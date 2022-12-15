@@ -1,35 +1,18 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 
-import {
-	Box,
-	Typography,
-	Grid,
-	Divider,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Stack,
-} from '@mui/material';
-import {Link} from 'react-router-dom';
+import {Box, Typography, DialogActions, Stack} from '@mui/material';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {trackingToParent} from '@/utils';
 import {IcReload} from '@/assets/icon';
 import {Button} from '@/components';
-import {
-	FileData,
-	FileDataPreview,
-	CropPreviewData,
-	BlobProps,
-	CropConfigProps,
-	CroppedAreaProps,
-} from '@/@types';
+import {FileData, CropPreviewData, CropConfigProps} from '@/@types';
 
 import {useModalStore, useMessageDialog} from '@/stores';
 import getCroppedImgBlob from './cropImage';
 import BrandSettingSelectImage from './BrandSettingSelectImage';
 import BrandSettingConfirm from './BrandSettingConfirm';
 
-import Cropper, {CropperProps, Point, Area} from 'react-easy-crop';
+import {Area} from 'react-easy-crop';
 
 interface ImgProps extends FileData {
 	preview?: string | ArrayBuffer | null;
@@ -50,16 +33,6 @@ interface CustomiseCardProps {
 
 const MEGA_PER_BYTE = 1048576;
 const FILE_SIZE_LIMIT = MEGA_PER_BYTE * 5; // 5mb로 파일 업로드 제한
-
-type croppedAreaPixels =
-	| {
-			x: number;
-			y: number;
-			width: number;
-			height: number;
-	  }
-	| null
-	| undefined;
 
 function CustomiseBrandCard({
 	image,
@@ -85,10 +58,7 @@ function CustomiseBrandCard({
 	 *
 	 * 최종적으로 선택된 이미지를 크롭해 preview, file 객체로 넘겨준다.
 	 */
-
 	const handleUploadImage = async () => {
-		const reader: FileReader = new FileReader();
-
 		if (cropImage) {
 			const blob: {file: Blob; base64String: string} =
 				await getCroppedImgBlob(
@@ -96,19 +66,29 @@ function CustomiseBrandCard({
 					(cropConfig as CropConfigProps).croppedAreaPixels as Area
 				);
 
-			if (blob.size > FILE_SIZE_LIMIT) {
+			if (!blob?.file) {
+				return;
+			}
+			console.log(
+				'blob?.file?.size :>> ',
+				blob?.file?.size,
+				blob?.file?.size / MEGA_PER_BYTE
+			);
+
+			if (blob?.file?.size > FILE_SIZE_LIMIT) {
 				if (typeof setMoveToAfterModalClose === 'function') {
 					setMoveToAfterModalClose(false);
 				}
 				onMessageDialogOpen({
-					title: '제작된 파일의 크기가 너무 큽니다. 이미지 영역을 다시 조정해주세요.',
+					title: '제작된 파일의 크기가 너무 큽니다.',
+					message: ' 이미지 영역을 다시 조정해주세요.',
 					showBottomCloseButton: true,
 					closeButtonValue: '확인',
 				});
 				return;
 			}
 
-			const filename: string | null = cropImage.file.name as string;
+			const filename: string | null = cropImage?.file?.name as string;
 			if (typeof onSelectBrandImage === 'function') {
 				onSelectBrandImage({
 					preview: URL.createObjectURL(blob.file),
