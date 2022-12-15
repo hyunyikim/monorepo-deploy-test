@@ -14,5 +14,6 @@ dist
 bundle
 .DS_Store
 node_modules
-
+*.iml
+*.idea
 # coverage

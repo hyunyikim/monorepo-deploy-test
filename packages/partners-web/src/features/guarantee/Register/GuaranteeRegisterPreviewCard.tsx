@@ -8,7 +8,7 @@ import {useGetPartnershipInfo, useGuaranteePreviewStore} from '@/stores';
 import PreviewGuarantee from '@/components/common/PreviewGuarantee';
 import {DATE_FORMAT} from '@/data';
 
-function GuaranteePreviewCard() {
+function GuaranteeRegisterPreviewCard() {
 	const previewData = useGuaranteePreviewStore((state) => state.data);
 	const resetData = useGuaranteePreviewStore((state) => state.resetData);
 
@@ -21,12 +21,13 @@ function GuaranteePreviewCard() {
 	const {data: partnershipData} = useGetPartnershipInfo();
 
 	const values = useMemo(() => {
-		const brandNameEn: string = previewData?.product?.brandNameEn;
+		const brandNameEn: string =
+			previewData?.product?.brandNameEn ||
+			partnershipData?.brand?.englishName;
 		let certificationBrandName = brandNameEn?.toLocaleUpperCase();
 		if (partnershipData?.b2bType !== 'brand') {
 			certificationBrandName = partnershipData?.companyName || '';
 		}
-
 		// 커스텀 필드 값 세팅
 		const nftCustomFieldValue: Record<string, string> = {};
 		const customFields = partnershipData?.nftCustomFields;
@@ -47,12 +48,11 @@ function GuaranteePreviewCard() {
 			brandNameEN: brandNameEn,
 			certificationBrandName,
 			warrantyDate,
+
 			nftCustomField: partnershipData?.nftCustomFields || [],
 			afterServiceInfo: partnershipData?.afterServiceInfo,
 			authInfo: partnershipData?.authInfo,
-			customerCenterUrl: partnershipData?.customerCenterUrl,
-			'newCustomField-6': '',
-			'newCustomField-7': '',
+
 			nftBackgroundImage: partnershipData?.nftBackgroundImg,
 			profileImage: partnershipData?.profileImage,
 			returnInfo: partnershipData?.returnInfo,
@@ -69,9 +69,11 @@ function GuaranteePreviewCard() {
 				: '0원',
 			nftCustomFieldValue: nftCustomFieldValue || null,
 			previewImage: previewData?.productImage?.preview,
-			nftRequestId: previewData?.nft_req_idx || '000000000000',
+			nftRequestId: previewData?.nft_req_num || '000000000000',
 			nftIssueDt:
 				previewData?.nft_issue_dt || format(new Date(), DATE_FORMAT),
+			categoryName: previewData?.categoryName,
+			modelNum: previewData?.modelNum,
 		};
 	}, [previewData, partnershipData]);
 
@@ -80,7 +82,7 @@ function GuaranteePreviewCard() {
 	return (
 		<Stack
 			sx={{
-				width: '280px',
+				width: '296px',
 				marginX: {
 					xs: 'auto',
 					md: 0,
@@ -103,23 +105,10 @@ function GuaranteePreviewCard() {
 				<Typography color="grey.500" fontWeight="bold" mb="8px">
 					개런티 미리보기
 				</Typography>
-				<PreviewGuarantee
-					values={values}
-					serviceCenterHandler={() => {
-						const customerCenterUrl =
-							partnershipData.customerCenterUrl;
-						if (customerCenterUrl) {
-							if (customerCenterUrl.includes('http')) {
-								window.open(customerCenterUrl);
-								return;
-							}
-							window.open(`https://${customerCenterUrl}`);
-						}
-					}}
-				/>
+				<PreviewGuarantee values={values} />
 			</Stack>
 		</Stack>
 	);
 }
 
-export default GuaranteePreviewCard;
+export default GuaranteeRegisterPreviewCard;

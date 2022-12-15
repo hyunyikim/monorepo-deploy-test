@@ -124,7 +124,7 @@ export interface Guarantee {
 	user_idx: number;
 	waiting_user_idx: any;
 	waiting_wallet_address: any;
-	token_id: any;
+	token_id: string | null;
 	external_link: any;
 	transaction_hash: any;
 	nft_req_state: GuaranteeRequestState;

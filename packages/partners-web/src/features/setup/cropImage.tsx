@@ -1,4 +1,4 @@
-import Cropper, {CropperProps, Point, Area} from 'react-easy-crop';
+import {Area} from 'react-easy-crop';
 
 export const CARD_SIZE = {
 	width: 329,
@@ -69,7 +69,7 @@ function roundRect(
 export default async function getCroppedImgBlob(
 	imageSrc: string,
 	pixelCrop?: Area,
-	rotatio = 0,
+	rotation = 0,
 	flip = {horizontal: false, vertical: false}
 ) {
 	try {
@@ -127,6 +127,7 @@ export default async function getCroppedImgBlob(
 		return new Promise((resolve, reject) => {
 			croppedCanvas.toBlob(
 				(file) => {
+					if (!file) return;
 					const reader = new FileReader();
 					reader.readAsDataURL(file);
 					reader.onloadend = function () {

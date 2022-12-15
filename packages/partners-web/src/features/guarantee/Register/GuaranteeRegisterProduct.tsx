@@ -1,19 +1,18 @@
 import {useCallback, Dispatch, SetStateAction} from 'react';
-
-import {Button} from '@/components';
-import {Box, Stack, Typography} from '@mui/material';
+import {Stack, Typography} from '@mui/material';
 
 import {ProductRegisterFormData, ImageState} from '@/@types';
-
-import {IcEmptyImage, IcPlus, IcPencil} from '@/assets/icon';
-
 import {useMessageDialog} from '@/stores';
+
+import {Button} from '@/components';
+import ProductImage from '@/features/product/common/ProductImage';
+import {IcPlus, IcPencil} from '@/assets/icon';
 
 interface Props {
 	product: Partial<ProductRegisterFormData> | null;
 	setProduct: (value: Partial<ProductRegisterFormData> | null) => void;
-	productImages: ImageState[] | null;
-	setProductImages: Dispatch<SetStateAction<ImageState[] | null>>;
+	productImages: ImageState[];
+	setProductImages: Dispatch<SetStateAction<ImageState[]>>;
 	onNewProductModalOpen: () => void;
 	onSelectProductModalOpen: () => void;
 }
@@ -145,7 +144,11 @@ const SelectedProduct = ({
 						fontSize={14}
 						lineHeight="14px"
 						color="grey.600">
-						{data?.price ? `${data?.price}원` : '-'}
+						{data?.price
+							? data?.price !== '0'
+								? `${data?.price}원`
+								: '-'
+							: '-'}
 					</Typography>
 				</Stack>
 			</Stack>
@@ -161,37 +164,6 @@ const SelectedProduct = ({
 				</Button>
 			</Stack>
 		</Stack>
-	);
-};
-
-const ProductImage = ({src}: {src?: string | null}) => {
-	return src ? (
-		<Box
-			sx={{
-				width: '60px',
-				height: '60px',
-				backgroundColor: 'grey.10',
-				border: (theme) => `1px solid ${theme.palette.grey[100]}`,
-			}}>
-			<img
-				src={src}
-				style={{
-					width: '100%',
-					height: '100%',
-				}}
-			/>
-		</Box>
-	) : (
-		<Box
-			className="flex-center"
-			sx={{
-				width: '60px',
-				height: '60px',
-				backgroundColor: 'grey.10',
-				border: (theme) => `1px solid ${theme.palette.grey[100]}`,
-			}}>
-			<IcEmptyImage />
-		</Box>
 	);
 };
 

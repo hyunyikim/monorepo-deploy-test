@@ -40,5 +40,6 @@ export {default as ImageModal} from '@/components/common/ImageModal';
 export {default as ImagePopup} from '@/components/common/ImagePopup';
 export {default as MessageDialog} from '@/components/common/MessageDialog';
 export {default as Loading} from '@/components/common/Loading';
+export {default as CustomerInfoLabel} from '@/components/common/CustomerInfoLabel';
 
 export {default as BottomNavigation} from '@/components/common/layout/BottomNavigation';

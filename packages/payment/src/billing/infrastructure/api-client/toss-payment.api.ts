@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {AxiosInstance} from 'axios';
 import {BillingResource} from './resource/billing';
 import {PaymentResource} from './resource/payment';
 
@@ -15,21 +15,24 @@ export interface TossPaymentsConfig {
 export class TossPaymentsAPI {
 	readonly payments: PaymentResource;
 	readonly billing: BillingResource;
-
+	readonly httpClient: AxiosInstance;
 	constructor(config: TossPaymentsConfig) {
 		const {secretKey, baseURL} = config;
 		const base64key = Buffer.from(secretKey + ':', 'utf-8').toString(
 			'base64'
 		);
 
-		const httpClient = axios.create({
+		this.httpClient = axios.create({
 			baseURL,
 			headers: {
+				'Content-Type': `application/json`,
+				'Accept-Encoding': 'application/json',
 				Authorization: `${AUTH_TYPE} ${base64key}`,
 			},
+			responseType: 'json',
 		});
 
-		this.payments = new PaymentResource(httpClient);
-		this.billing = new BillingResource(httpClient);
+		this.payments = new PaymentResource(this.httpClient);
+		this.billing = new BillingResource(this.httpClient);
 	}
 }

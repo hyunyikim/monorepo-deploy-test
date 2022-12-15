@@ -280,7 +280,7 @@ export const getProductRegisterFormDataForReset = (
 		| ProductDetailResponse
 		| Partial<ProductRegisterFormData>
 		| null,
-	images?: ImageState[] | null
+	images?: ImageState[]
 ): {data: ProductRegisterFormData; images: ImageState[]} => {
 	const brand = partnershipInfo?.brand;
 	const customFields = partnershipInfo?.nftCustomFields;

@@ -45,10 +45,14 @@ export class BillingResource implements Resource {
 		customerKey: string
 	) {
 		const url = join(this.path, 'authorizations', 'issue');
-		const {data: billing} = await this.httpClient.post<Billing>(url, {
-			authKey,
-			customerKey,
-		});
+		const {data: billing, request} = await this.httpClient.post<Billing>(
+			url,
+			{
+				authKey,
+				customerKey,
+			}
+		);
+
 		return billing;
 	}
 
@@ -59,10 +63,11 @@ export class BillingResource implements Resource {
 	 * @param body Request Body 파라미터
 	 */
 	async requestApprove(billingKey: string, body: RequestBillingApproveBody) {
-		const {data: payment} = await this.httpClient.post<Payment>(
-			`/${this.path}/${billingKey}`,
-			body
-		);
-		return payment;
+		const url = join(this.path, billingKey);
+		const response = await this.httpClient.post<Payment>(url, {
+			...body,
+		});
+
+		return response.data;
 	}
 }

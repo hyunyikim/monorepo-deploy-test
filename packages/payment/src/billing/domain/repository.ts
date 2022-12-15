@@ -6,9 +6,14 @@ export interface PaymentRepository {
 	findByKey: (key: string) => Promise<Payment | null>;
 	findByKeys: (keys: string[]) => Promise<Payment[]>;
 	findByOrderId: (id: string) => Promise<Payment | null>;
+	search: (
+		key: string,
+		range: {startAt: Date; endAt: Date}
+	) => Promise<Payment[]>;
 }
 
 export interface BillingRepository {
+	getAll: (registered: boolean) => Promise<Billing[]>;
 	saveBilling: (billing: Billing) => Promise<void>;
 	findByKey: (billingKey: string) => Promise<Billing | null>;
 	findByCustomerKey: (customerKey: string) => Promise<Billing | null>;

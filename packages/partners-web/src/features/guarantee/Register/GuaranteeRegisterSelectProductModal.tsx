@@ -46,7 +46,7 @@ interface Props {
 	open: boolean;
 	onClose: () => void;
 	setProduct: (value: Partial<ProductRegisterFormData> | null) => void;
-	setImages: Dispatch<SetStateAction<ImageState[] | null>>;
+	setImages: Dispatch<SetStateAction<ImageState[]>>;
 	setRegisterNewProduct: (value: boolean) => void;
 }
 
@@ -109,8 +109,16 @@ function GuaranteeRegisterSelectProductModal({
 			return;
 		}
 
-		const {idx, name, brand, brandIdx, price, productImage, customField} =
-			data;
+		const {
+			idx,
+			name,
+			brand,
+			brandIdx,
+			price,
+			productImage,
+			customField,
+			warranty,
+		} = data;
 		setProduct({
 			idx,
 			name,
@@ -118,6 +126,7 @@ function GuaranteeRegisterSelectProductModal({
 			brandNameEn: brand.englishName,
 			brandIdx,
 			price: price ? price.toLocaleString() : '',
+			warranty,
 			customField: customField || {},
 		});
 		if (productImage) {

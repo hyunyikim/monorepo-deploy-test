@@ -57,9 +57,27 @@ export class PlanBillingRepository
 
 		if (!Items || Items.length === 0) return null;
 
-		const [first] = Items;
+		const entities = Items as BillingEntity[];
 
-		return this.entityToModel(first as BillingEntity);
+		const entity = entities.find(
+			(entity) => entity.unregisteredAt === undefined
+		);
+		if (!entity) return null;
+		return this.entityToModel(entity);
+	}
+
+	async getAll(registered: boolean) {
+		const {Items} = await this.scan({
+			TableName: this.tableName,
+		}).promise();
+		if (!Items || Items.length === 0) return [];
+		const billings = Items as BillingEntity[];
+		return billings
+			.filter((billing) => {
+				if (!registered) return true;
+				return billing.unregisteredAt === undefined;
+			})
+			.map((props) => this.entityToModel(props));
 	}
 
 	private entityToModel(entity: BillingEntity) {

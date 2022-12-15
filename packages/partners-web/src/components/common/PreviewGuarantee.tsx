@@ -1,20 +1,22 @@
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import styled from '@emotion/styled';
 import {Typography, Grid, Box} from '@mui/material';
 
 import smallPhoneFrame from '@/assets/images/img_small_phone_frame.png';
 import smallPhoneFrame2x from '@/assets/images/img_small_phone_frame@2x.png';
-import massadoptionBrandCard from '@/assets/images/img_massadoption_brand_card.png';
-import massadoptionBrandCard2x from '@/assets/images/img_massadoption_brand_card@2x.png';
 
 import greyArrowButton from '@/assets/icon/icon_grey_up_arrow_button_18@2x.png';
 import Tab from '../atoms/Tab';
 
 import {useGetPartnershipInfo} from '@/stores';
+import {IcWarningTriangle} from '@/assets/icon';
 
 type LogoProps = {
 	logo: string | undefined;
 };
+
+const CARD_WIDTH = '166px';
+const CARD_HEIGHT = '257px';
 
 const PreviewContainerStyle = styled.div`
 	position: relative;
@@ -65,10 +67,10 @@ const BrandCardBoxStyle = styled.div`
 `;
 
 const BrandCardStyle = styled.img`
-	max-width: 166px;
-	max-height: 257px;
-	min-width: 166px;
-	min-height: 257px;
+	max-width: ${CARD_WIDTH};
+	max-height: ${CARD_HEIGHT};
+	min-width: ${CARD_WIDTH};
+	min-height: ${CARD_HEIGHT};
 	border-radius: 10px;
 `;
 
@@ -204,14 +206,11 @@ type ValueTypes = {
 	nftCustomField?: string[] | [];
 	afterServiceInfo?: string | null;
 	authInfo?: string;
-	customerCenterUrl?: string | null;
-	'newCustomField-6'?: string;
-	'newCustomField-7'?: string;
 	nftBackgroundImage?: string | ArrayBuffer | null;
 	profileImage?: string | ArrayBuffer | null;
 	returnInfo?: string | null;
 
-	// 개런티 발급 페이지
+	// 상품 정보
 	productName?: string;
 	price?: string;
 	nftCustomFieldValue?: Record<string, any> | null;
@@ -221,6 +220,11 @@ type ValueTypes = {
 	orderId?: string;
 	nftRequestId?: string;
 	nftIssueDt?: string;
+	categoryName?: string;
+	modelNum?: string;
+
+	// 유효하지 않는 카드 여부 ex) 삭제된 개런티
+	isInvalidCard?: boolean;
 };
 
 interface GreyBoxProps {
@@ -230,7 +234,7 @@ interface GreyBoxProps {
 
 interface PreviewProps {
 	values: ValueTypes;
-	serviceCenterHandler: () => void;
+	serviceCenterHandler?: () => void;
 }
 
 function GreyBoxComponent({title, desc}: GreyBoxProps) {
@@ -260,6 +264,39 @@ function GreyBoxComponent({title, desc}: GreyBoxProps) {
 		</GreyInfoBoxStyle>
 	);
 }
+
+const InvalidCard = () => {
+	return (
+		<Box
+			className="invalid-card flex-center"
+			sx={{
+				backgroundColor: '#FFFFFF99',
+				position: 'absolute',
+				zIndex: 3,
+				width: CARD_WIDTH,
+				height: CARD_HEIGHT,
+				borderRadius: '10px',
+				userSelect: 'none',
+			}}>
+			<Box
+				className="flex-center"
+				sx={{
+					flexDirection: 'column',
+					textAlign: 'center',
+					width: '75px',
+					height: '75px',
+					borderRadius: '50%',
+					backgroundColor: 'rgba(0, 0, 0, 0.7)',
+					color: '#FFF',
+					fontSize: 12,
+					fontWeight: 700,
+				}}>
+				<IcWarningTriangle />
+				유효하지 <br /> 않음
+			</Box>
+		</Box>
+	);
+};
 
 const productImageRatio = 0.252;
 const productBoxRatio = 0.252;
@@ -323,9 +360,32 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 		};
 	}, [partnershipData]);
 
+	const handleClickCustomerCenter = useCallback(() => {
+		if (serviceCenterHandler) {
+			serviceCenterHandler();
+			return;
+		}
+		const customerCenterUrl =
+			partnershipData && partnershipData.customerCenterUrl;
+		if (customerCenterUrl) {
+			try {
+				window.open(customerCenterUrl);
+			} catch (e) {}
+		}
+	}, [partnershipData, serviceCenterHandler]);
+
 	if (!partnershipData) {
 		return <></>;
 	}
+
+	const isPriceFilled = () => {
+		const price = values?.price;
+
+		if (!price || price === '0원' || price === '0') {
+			return false;
+		}
+		return true;
+	};
 
 	return (
 		<PreviewContainerStyle>
@@ -376,6 +436,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									/>
 								</>
 							)}
+						{values?.isInvalidCard && <InvalidCard />}
 					</BrandCardBoxStyle>
 					<Typography
 						variant="h6"
@@ -402,7 +463,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 						fontWeight={700}
 						lineHeight={'17px'}
 						mb="26px">
-						{values?.price || '0,000,000원'}
+						{isPriceFilled() ? values?.price : null}
 					</Typography>
 
 					<TabBoxStyle className="tabs">
@@ -416,7 +477,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								<LogoImgStyle
 									logo={
 										values?.profileImage &&
-										(values?.profileImage as string)
+										values?.profileImage
 									}
 								/>
 								<Grid container flexDirection={'column'}>
@@ -478,7 +539,28 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							}
 							key={'afterServiceInfo'}
 						/>
-
+						{values?.categoryName && (
+							<Grid
+								container
+								justifyContent={'space-between'}
+								alignItems="flex-start">
+								<DescTextStyle>카테고리</DescTextStyle>
+								<TitleTextStyle>
+									{values?.categoryName}
+								</TitleTextStyle>
+							</Grid>
+						)}
+						{values?.modelNum && (
+							<Grid
+								container
+								justifyContent={'space-between'}
+								alignItems="flex-start">
+								<DescTextStyle>모델번호</DescTextStyle>
+								<TitleTextStyle>
+									{values?.modelNum}
+								</TitleTextStyle>
+							</Grid>
+						)}
 						{values?.nftCustomField &&
 							values?.nftCustomField.map((el: string) => (
 								<Grid
@@ -563,9 +645,8 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								{values?.authInfo || '-'}
 							</TitleTextStyle>
 						</Grid>
-
 						<ServiceCenterButtonStyle
-							onClick={serviceCenterHandler}>
+							onClick={handleClickCustomerCenter}>
 							고객센터
 						</ServiceCenterButtonStyle>
 					</Grid>

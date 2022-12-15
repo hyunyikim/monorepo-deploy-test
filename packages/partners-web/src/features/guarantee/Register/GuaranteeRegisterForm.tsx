@@ -15,7 +15,12 @@ import {
 	ImageState,
 } from '@/@types';
 import {guaranteeRegisterSchemaShape} from '@/utils/schema';
-import {goBack, handleChangeDataFormat} from '@/utils';
+import {
+	goToParentUrl,
+	replaceToParentUrl,
+	handleChangeDataFormat,
+	sendAmplitudeLog,
+} from '@/utils';
 import {
 	convertProductRegisterFormData,
 	getProductCustomFieldValue,
@@ -27,7 +32,6 @@ import {
 	deleteGuarantee,
 	deleteGuaranteeImage,
 } from '@/api/guarantee.api';
-import {sendAmplitudeLog} from '@/utils';
 import {
 	useGetPartnershipInfo,
 	useMessageDialog,
@@ -80,7 +84,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 	const [products, setProducts] = useState<
 		Partial<ProductRegisterFormData>[] | null
 	>(null);
-	const [productImages, setProductImages] = useState<ImageState[] | null>([]);
+	const [productImages, setProductImages] = useState<ImageState[]>([]);
 	const [registerNewProduct, setRegisterNewProduct] =
 		useState<boolean>(false);
 
@@ -146,6 +150,8 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			order_dt,
 			platform_nm: order_platform_nm,
 			ref_order_id,
+			categoryName: cate_cd_text,
+			modelNum: model_num,
 			productIdx,
 		});
 		setProducts([
@@ -318,7 +324,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			formData: FormData,
 			registerNewProduct: boolean,
 			product: ProductRegisterFormData,
-			productImages: ImageState[] | null,
+			productImages: ImageState[],
 			customFields?: string[]
 		) => {
 			formData.delete('productIdx'); // 기존에 있던 productIdx를 지우고 다시 set
@@ -356,7 +362,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 
 	const handleDeleteGuaranteeImage = useCallback(
 		async (
-			productImages: ImageState[] | null,
+			productImages: ImageState[],
 			images?: GuaranteeImageResponse[] | null
 		) => {
 			// 상품의 이미지가 있다가 없어진 경우, 해당 api 호출
@@ -380,7 +386,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			formData: FormData,
 			registerNewProduct: boolean,
 			product: ProductRegisterFormData | Partial<ProductRegisterFormData>,
-			productImages: ImageState[] | null,
+			productImages: ImageState[],
 			customFields?: string[],
 			initialData?: GauranteeDetailResponse | null
 		) => {
@@ -405,7 +411,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 							: '개런티 발급 정보를 임시저장했습니다.',
 					showBottomCloseButton: true,
 					onCloseFunc: () => {
-						goBack();
+						goToParentUrl('/b2b/guarantee');
 					},
 				});
 
@@ -472,7 +478,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 									title: '개런티를 삭제했습니다',
 									showBottomCloseButton: true,
 									onCloseFunc: () => {
-										goBack();
+										replaceToParentUrl('/b2b/guarantee');
 									},
 								});
 							} catch (e: any) {

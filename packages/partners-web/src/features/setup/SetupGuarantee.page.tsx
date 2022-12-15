@@ -268,7 +268,7 @@ interface productInfoValueProps {
 const tabList = ['쥬얼리', '패션의류', '가구', '전자기기'];
 
 const brandCategoryRequiredList = ['상품명', '보증기간'];
-const categoryRequiredList = ['상품금액', '브랜드', '카테고리'];
+const categoryRequiredList = ['브랜드', '카테고리'];
 
 const categoryExampleList = [
 	['소재', '사이즈', '중량(무게)', '색상'],
@@ -1563,7 +1563,7 @@ export function InputFormSection({
 							? true
 							: false
 					}
-					title="상품 정보를 추가해주세요"
+					title="개런티 카드에 노출할 상품 정보를 설정해주세요"
 					isFilled={false}
 					openHandler={() => boxOpenHandler(1)}>
 					{/* TODO: 디자인 변경 예정이라서 일단 주석 처리 */}

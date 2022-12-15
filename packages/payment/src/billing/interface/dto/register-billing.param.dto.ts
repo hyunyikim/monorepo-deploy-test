@@ -1,13 +1,13 @@
 import {IsString, IsNumber} from 'class-validator';
 
-export class RegisterBillingDTO {
+export class RegisterBillingBodyDTO {
 	@IsString()
 	readonly customerKey: string;
 
 	@IsString()
 	readonly authKey: string;
 
-	@IsNumber()
+	@IsString()
 	readonly planId: string;
 }
 
@@ -17,6 +17,21 @@ export class UnregisterBillingDTO {
 }
 
 export class FindBillingDTO {
+	@IsString()
+	readonly customerKey: string;
+}
+
+export class ChangeBillingPlanBodyDTO {
+	@IsString()
+	readonly planId: string;
+}
+
+export class ChangeBillingPlanParamDTO {
+	@IsString()
+	readonly customerKey: string;
+}
+
+export class PauseBillingParamDTO {
 	@IsString()
 	readonly customerKey: string;
 }

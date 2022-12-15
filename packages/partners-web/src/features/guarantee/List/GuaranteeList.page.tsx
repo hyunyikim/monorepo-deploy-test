@@ -247,7 +247,7 @@ function GuaranteeList() {
 													);
 												} else {
 													goToParentUrl(
-														`/b2b/guarantee/detail/${item.nft_req_idx}`
+														`/b2b/guarantee/${item.nft_req_idx}`
 													);
 												}
 											}}>

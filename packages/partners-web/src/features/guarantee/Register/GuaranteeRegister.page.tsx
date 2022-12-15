@@ -10,7 +10,7 @@ import {goToParentUrl, usePageView} from '@/utils';
 import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
 import GuaranteeRegisterForm from '@/features/guarantee/Register/GuaranteeRegisterForm';
-import GuaranteePreviewCard from '@/features/guarantee/Register/GuaranteePreviewCard';
+import GuaranteeRegisterPreviewCard from '@/features/guarantee/Register/GuaranteeRegisterPreviewCard';
 import {Button} from '@/components';
 
 function GuaranteeRegister() {
@@ -96,7 +96,7 @@ function GuaranteeRegister() {
 				</Typography>
 				<GuaranteeRegisterForm initialData={data} />
 			</Stack>
-			<GuaranteePreviewCard />
+			<GuaranteeRegisterPreviewCard />
 		</Stack>
 	);
 }

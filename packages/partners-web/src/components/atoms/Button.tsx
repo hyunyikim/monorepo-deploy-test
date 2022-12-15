@@ -26,7 +26,7 @@ interface Props extends Omit<ButtonProps, 'color' | 'size'> {
 function Button({
 	variant = 'contained',
 	color = 'primary',
-	width = 'auto',
+	width = 'max-content',
 	height = 40,
 	sx,
 	children,
@@ -100,7 +100,7 @@ function Button({
 			height: `${height}px`,
 			lineHeight: `${height}px`,
 			width: typeof width === 'number' ? `${width}px` : width,
-			...(width !== 'auto' && {
+			...(width !== 'max-content' && {
 				padding: '0',
 				minWidth: '0',
 			}),

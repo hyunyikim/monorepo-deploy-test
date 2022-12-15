@@ -1,13 +1,13 @@
 import {Grid, Stack, Box, Typography} from '@mui/material';
 
-import {Avatar, BreadCrumb} from '@/components';
+import {BreadCrumb, CustomerInfoLabel} from '@/components';
 import {IcWallet, IcWon, IcDoc} from '@/assets/icon';
 
 import style from '@/assets/styles/style.module.scss';
 import {useEffect, useState} from 'react';
 import {NftCustomerDetail} from '@/@types';
 import {getNftCustomerDetail} from '@/api/customer.api';
-import {formatPhoneNum, goToParentUrl} from '@/utils';
+import {goToParentUrl} from '@/utils';
 
 function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 	const [data, setData] = useState<NftCustomerDetail | null>(null);
@@ -35,26 +35,13 @@ function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 						gap={{xs: '12px'}}
 						justifyContent="space-between"
 						mt="20px">
-						<Box
-							display="flex"
-							flexDirection="row"
-							alignItems="center"
-							gap="12px">
-							<Avatar size={60}>
-								{data?.customerName &&
-									data?.customerName.slice(0, 1)}
-							</Avatar>
-							<Box>
-								<Typography fontWeight="700" fontSize={21}>
-									{data?.customerName}
-								</Typography>
-								<Typography width="max-content">
-									{data?.phone
-										? formatPhoneNum(data?.phone)
-										: '-'}
-								</Typography>
-							</Box>
-						</Box>
+						<CustomerInfoLabel
+							profileImgSize={60}
+							data={{
+								name: data?.customerName ?? '',
+								phoneNumber: data?.phone ?? '',
+							}}
+						/>
 						<Grid container width="fit-content" gap={'12px'}>
 							<CustomerInfoBox
 								title="지갑 연동 상태"
