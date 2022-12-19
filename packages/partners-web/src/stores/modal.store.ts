@@ -54,7 +54,7 @@ export const useModalStore = create<ModalState>((set) => ({
 	titleAlign: 'left',
 	customisedButton: null,
 	setIsOpen: (openState: boolean) => {
-		set((state) => ({isOpen: openState}));
+		set((state) => ({...state, isOpen: openState}));
 	},
 	setModalOption: (opt) => {
 		set((state) => ({

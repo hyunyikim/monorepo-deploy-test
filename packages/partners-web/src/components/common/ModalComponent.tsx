@@ -26,11 +26,14 @@ function ModalComponent() {
 	} = useModalStore((state) => state);
 
 	const closeHandler = () => {
+		// 먼저 모달 닫고 닫힌 이후에 모달 데이터 초기화
 		if (typeof setIsOpen === 'function') {
-			if (typeof setCloseAndReset === 'function') {
-				setCloseAndReset();
-			}
 			setIsOpen(false);
+			if (typeof setCloseAndReset === 'function') {
+				setTimeout(() => {
+					setCloseAndReset();
+				}, 300);
+			}
 		}
 	};
 
@@ -42,8 +45,8 @@ function ModalComponent() {
 		closeChildModal();
 
 		/* 모달이 닫히면 모달옵션 초기화 */
-		if (!isOpen && typeof setCloseAndReset === 'function') {
-			setCloseAndReset();
+		if (!isOpen && typeof setIsOpen === 'function') {
+			closeHandler();
 		}
 	}, [isOpen]);
 

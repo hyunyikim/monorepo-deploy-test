@@ -63,41 +63,69 @@ function roundRect(
 	ctx.closePath();
 }
 
+const getCanvasToBlob = async (canvas: HTMLCanvasElement) => {
+	return new Promise((resolve, reject) => {
+		canvas.toBlob(
+			(file) => {
+				if (!file) return;
+				const reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onloadend = function () {
+					const base64String = reader.result;
+					resolve({file, base64String});
+				};
+			},
+			'image/png',
+			0.95
+		);
+	});
+};
+
 /**
  * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
  */
 export default async function getCroppedImgBlob(
 	imageSrc: string,
-	pixelCrop?: Area,
+	pixelCropOrigin?: Area,
 	rotation = 0,
 	flip = {horizontal: false, vertical: false}
 ) {
 	try {
 		const image = (await createImage(imageSrc)) as HTMLImageElement;
-		const canvas: HTMLCanvasElement = document.createElement('canvas');
+		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 
-		if (!ctx) {
-			return null;
-		}
+		if (!ctx || !pixelCropOrigin) return;
+		let width = image.width;
+		let height = image.height;
+		const cardWidth = CARD_SIZE.width * 3;
 
-		// set canvas size to match the bounding box
-		const width = image.width;
-		const height = image.height;
+		// 크롭된 이미지 크기와 3배율 카드 사이즈 비교해 비율 계산
+		const ratio =
+			pixelCropOrigin.width < cardWidth
+				? 1
+				: cardWidth / pixelCropOrigin.width;
+
+		width *= ratio;
+		height *= ratio;
+		const pixelCrop = {
+			width: pixelCropOrigin?.width * ratio,
+			height: pixelCropOrigin?.height * ratio,
+			x: pixelCropOrigin?.x * ratio,
+			y: pixelCropOrigin?.y * ratio,
+		};
+
+		image.width = width;
+		image.height = height;
 		canvas.width = width;
 		canvas.height = height;
 
-		// translate canvas context to a central location to allow rotating and flipping around the center
-		ctx.translate(width / 2, height / 2);
-		ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
-		ctx.translate(-image.width / 2, -image.height / 2);
-
-		// draw rotated image
-		ctx.drawImage(image, 0, 0);
+		// draw image
+		ctx.drawImage(image, 0, 0, width, height);
 
 		// croppedAreaPixels values are bounding box relative
 		// extract the cropped image using these values
-		const data = ctx.getImageData(
+		const croppedImageData = ctx.getImageData(
 			pixelCrop.x,
 			pixelCrop.y,
 			pixelCrop.width,
@@ -109,7 +137,7 @@ export default async function getCroppedImgBlob(
 		canvas.height = pixelCrop.height;
 
 		// paste generated rotate image at the top left corner
-		ctx.putImageData(data, 0, 0);
+		ctx.putImageData(croppedImageData, 0, 0);
 
 		// 새로운 canvas를 crop 결과물의 크기로 생성하고,
 		// 기존 canvas를 그대로 새로운 canvas에 그린다.
@@ -119,26 +147,12 @@ export default async function getCroppedImgBlob(
 		croppedCanvas.width = pixelCrop.width;
 		croppedCanvas.height = pixelCrop.height;
 
-		roundRect(croppedCtx, 0, 0, pixelCrop.width, pixelCrop.height, 16);
+		if (!croppedCtx) return;
+		roundRect(croppedCtx, 0, 0, pixelCrop.width, pixelCrop.height);
 		croppedCtx.clip();
 		croppedCtx.drawImage(canvas, 0, 0);
 
-		// As a blob
-		return new Promise((resolve, reject) => {
-			croppedCanvas.toBlob(
-				(file) => {
-					if (!file) return;
-					const reader = new FileReader();
-					reader.readAsDataURL(file);
-					reader.onloadend = function () {
-						const base64String = reader.result;
-						resolve({file, base64String});
-					};
-				},
-				'image/png',
-				0.95
-			);
-		});
+		return getCanvasToBlob(croppedCanvas);
 	} catch (e) {
 		console.log('e :>> ', e);
 	}
