@@ -4,6 +4,7 @@ export const TOKEN_KEY = 'token';
 
 interface LoginState {
 	token: string | null;
+	isLogin: () => boolean;
 	setLogin: (token: string) => void;
 	setLogout: () => void;
 }
@@ -11,6 +12,11 @@ interface LoginState {
 export const useLoginStore = create<LoginState>((set, get) => ({
 	// TODO: iframe 전체 옮긴 후  localStorage에 저장하는 것으로 변경
 	// token: localStorage.getItem(TOKEN_KEY),
+
+	// 구독 여부 확인
+	isLogin: () => {
+		return get().token ? true : false;
+	},
 	token: null,
 	setLogin: (token: string) =>
 		set(() => {

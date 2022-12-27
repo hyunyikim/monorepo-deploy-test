@@ -1,57 +1,49 @@
-import {useEffect, useMemo} from 'react';
-import {format, parse} from 'date-fns';
+import {useMemo} from 'react';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
-import {useChildModalOpen, useList, useOpen} from '@/utils/hooks';
+import {useCheckboxList, useList} from '@/utils/hooks';
 import {
 	ListRequestParam,
-	RepairListResponse,
-	RepairListRequestSearchType,
+	ListResponseV2,
 	RepairListRequestParam,
+	RepairListRequestSearchType,
+	RepairSummary,
 } from '@/@types';
 import {
 	initialSearchFilter,
-	getRepairStatusChip,
+	repairStatusOption,
 	repairListSearchFilter,
+	getRepairStatusChip,
 } from '@/data';
 import {
 	formatPhoneNum,
 	goToParentUrl,
-	openParantModal,
 	trackingToParent,
+	usePageView,
 } from '@/utils';
-import {useMessageDialog} from '@/stores';
-import {acceptRepair, cancelRepair, getRepairList} from '@/api/repair.api';
-import {useGetPartnershipInfo} from '@/stores';
 
 import {
-	ListTitle,
+	TitleTypography,
 	SearchFilter,
 	TableInfo,
 	Table,
 	PageSelect,
 	Pagination,
-	ImagePopup,
-	ImageModal,
-	Button,
-	TableCell,
 	HeadTableCell,
+	TableCell,
+	SearchFilterTab,
+	Checkbox,
 } from '@/components';
-import RepairConfirmDialog from './RepairConfirmDialog';
+import {getRepairList} from '@/api/repair.api';
+
+import RepairBulkControl from './RepairBulkControl';
 
 const menu = 'repair';
 const menuKo = '수선';
 
 function RepairList() {
-	useEffect(() => {
-		trackingToParent('repair_pv', {pv_title: '수선신청목록 진입'});
-	}, []);
-
-	const {data: partnershipInfo} = useGetPartnershipInfo();
-	const email = useMemo(() => {
-		return partnershipInfo?.email || '';
-	}, [partnershipInfo]);
+	usePageView('repair_pv', '수선신청목록 진입');
 
 	const {
 		isLoading,
@@ -63,112 +55,119 @@ function RepairList() {
 		handleSearch,
 		handleReset,
 	} = useList<
-		{
-			data: RepairListResponse[];
-			total: number;
-		},
+		ListResponseV2<RepairSummary[]>,
 		ListRequestParam<RepairListRequestSearchType> & RepairListRequestParam
 	>({
 		apiFunc: getRepairList,
 		initialFilter: {
 			...initialSearchFilter,
-			inspct_state: '',
+			searchType: 'all',
+			status: '',
 		},
 	});
 
-	const {open, onOpen, onClose, modalData, onSetModalData} =
-		useChildModalOpen({});
 	const {
-		open: confirmOpen,
-		onOpen: onConfirmOpen,
-		onClose: onConfirmClose,
-		modalData: confirmModalData,
-		onSetModalData: onSetConfirmModalData,
-	} = useOpen({});
+		checkedIdxList,
+		checkedTotal,
+		onCheckItem,
+		onCheckTotalItem,
+		onResetCheckedItem,
+		onHandleChangeFilter,
+		isCheckedItemsExisted,
+	} = useCheckboxList({
+		idxList:
+			data && data?.data && data?.data?.length > 0
+				? data?.data?.map((item) => item.idx)
+				: [],
+		handleChangeFilter,
+	});
 
-	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
-	const handleCancelRepair = () => {
-		if (!confirmModalData.inspct_idx) return;
-		(async () => {
-			try {
-				const res = await cancelRepair(
-					Number(confirmModalData.inspct_idx)
-				);
-				onMessageDialogOpen(res?.message);
-				onConfirmClose();
-				handleSearch(filter);
-			} catch (e) {
-				console.log('e :>> ', e);
-			}
-		})();
-	};
-
-	const handleAcceptRepair = () => {
-		if (!confirmModalData.inspct_idx) return;
-		(async () => {
-			try {
-				const res = await acceptRepair(
-					Number(confirmModalData.inspct_idx)
-				);
-				onMessageDialogOpen(res?.message);
-				onConfirmClose();
-				handleSearch(filter);
-			} catch (e) {
-				console.log('e :>> ', e);
-			}
-		})();
-	};
+	const isNotValidCheck = useMemo(() => {
+		if (['request'].includes(filter?.status)) {
+			return false;
+		}
+		return true;
+	}, [filter?.status]);
 
 	return (
 		<>
 			<Box>
-				<ListTitle title="수선 신청 목록" />
+				<TitleTypography title="수선신청 관리" />
 				<SearchFilter
 					menu={menu}
 					menuKo={menuKo}
 					filter={filter}
 					filterComponent={repairListSearchFilter}
-					onSearch={handleSearch}
-					onReset={handleReset}
-					onChangeFilter={handleChangeFilter}
+					periodIdx={2}
+					onSearch={(param) => {
+						handleSearch(param);
+						onResetCheckedItem();
+					}}
+					onReset={() => {
+						handleReset();
+						onResetCheckedItem();
+					}}
+					onChangeFilter={onHandleChangeFilter}
+				/>
+				<SearchFilterTab
+					options={repairStatusOption.filter(
+						(item) => item.value !== 'ready' // 대기 상태는 추후 사용할 예정
+					)}
+					selectedTab={filter.status}
+					tabLabel={'repair status'}
+					onChangeTab={(value) =>
+						onHandleChangeFilter({
+							status: value,
+						})
+					}
 				/>
 				<TableInfo totalSize={totalSize} unit="건">
 					<PageSelect
 						value={filter.pageMaxNum}
-						onChange={(value: {[key: string]: any}) =>
-							handleChangeFilter(value)
-						}
+						onChange={(value: {
+							[key: string]: any;
+							pageMaxNum: number;
+						}) => {
+							trackingToParent(`${menu}_unit_view_click`, {
+								button_title: `노출수_${value.pageMaxNum}개씩`,
+							});
+							onHandleChangeFilter(value);
+						}}
 					/>
-					{email === 'copamilnew' && (
-						<Button
-							color="primary"
-							height={32}
-							onClick={() => {
-								goToParentUrl('/b2b/repair/register');
-							}}>
-							신규 등록
-						</Button>
-					)}
+					<RepairBulkControl
+						status={filter.status}
+						checkedItems={checkedIdxList}
+						onHandleChangeFilter={onHandleChangeFilter}
+						isCheckedItemsExisted={isCheckedItemsExisted}
+					/>
 				</TableInfo>
 				<Table
 					isLoading={isLoading}
 					totalSize={totalSize}
 					headcell={
 						<>
-							<HeadTableCell minWidth={180}>신청일</HeadTableCell>
+							<HeadTableCell width={52}>
+								<Checkbox
+									disabled={isNotValidCheck}
+									checked={checkedTotal}
+									onChange={(e) => {
+										onCheckTotalItem(
+											e?.target?.checked || false
+										);
+									}}
+								/>
+							</HeadTableCell>
+							<HeadTableCell minWidth={120}>신청일</HeadTableCell>
 							<HeadTableCell minWidth={180}>
 								신청번호
 							</HeadTableCell>
 							<HeadTableCell minWidth={180}>이름</HeadTableCell>
 							<HeadTableCell minWidth={180}>연락처</HeadTableCell>
-							<HeadTableCell minWidth={480}>
+							<HeadTableCell minWidth={500}>
 								상품정보
 							</HeadTableCell>
 							<HeadTableCell minWidth={180}>
 								신청현황
-							</HeadTableCell>
-							<HeadTableCell minWidth={180}>
-								수선견적
 							</HeadTableCell>
 						</>
 					}>
@@ -177,116 +176,73 @@ function RepairList() {
 						data?.data.map((item, idx) => (
 							<TableRow key={`item_${idx}`}>
 								<TableCell>
-									{item?.request_dt
-										? format(
-												parse(
-													item.request_dt,
-													'yy-MM-dd HH:mm',
-													new Date()
-												),
-												'yyyy-MM-dd'
-										  )
+									<Checkbox
+										disabled={isNotValidCheck}
+										checked={checkedIdxList.includes(
+											item.idx
+										)}
+										onChange={(e) => {
+											const checked =
+												e?.target?.checked || false;
+											onCheckItem(item.idx, checked);
+										}}
+									/>
+								</TableCell>
+								<TableCell>
+									{item.registeredAt
+										? item.registeredAt.slice(0, 10)
 										: '-'}
 								</TableCell>
 								<TableCell>
-									{item.inspct_num ? (
-										<Typography
-											fontSize={14}
-											className="underline"
-											onClick={() => {
-												goToParentUrl(
-													`/b2b/repair/detail/${item.inspct_idx}`
-												);
-											}}>
-											{item.inspct_num}
-										</Typography>
-									) : (
-										'-'
-									)}
+									<Typography
+										variant="body3"
+										className="underline"
+										onClick={() => {
+											goToParentUrl(
+												`/b2b/repair/${item.idx}`
+											);
+										}}>
+										{item.repairNum}
+									</Typography>
 								</TableCell>
-								<TableCell>{item?.return_nm ?? '-'}</TableCell>
 								<TableCell>
-									{item.return_phone
-										? formatPhoneNum(item.return_phone)
+									<Typography
+										variant="body3"
+										className="underline"
+										onClick={() => {
+											const name = item?.ordererName;
+											const phone = item?.ordererTel;
+											if (!name || !phone) return;
+											goToParentUrl(
+												`/b2b/customer/${name}/${phone}`
+											);
+										}}>
+										{item?.ordererName}
+									</Typography>
+								</TableCell>
+								<TableCell>
+									{item.ordererTel
+										? formatPhoneNum(item.ordererTel)
 										: '-'}
 								</TableCell>
 								<TableCell>
 									<Box>
-										<ImagePopup
-											image={item?.product_img}
-											alt={item?.pro_nm}
-											onClick={(value) => {
-												// 부모창 이미지 모달 오픈
-												// openParantModal({
-												// 	title: '이미지',
-												// 	content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-												// });
-												onSetModalData(value);
-												onOpen();
-											}}
-										/>
-										<Typography
-											fontSize={14}
-											lineHeight={'18px'}
-											ml="12px">
-											[{item.brand_nm_en ?? '-'}
+										<Typography variant="body3">
+											[{item.brandNameEn ?? '-'}
 											]
 											<br />
-											{item.pro_nm ? item.pro_nm : '-'}
+											{item.productName ?? '-'}
 										</Typography>
 									</Box>
 								</TableCell>
 								<TableCell>
-									{getRepairStatusChip(item.inspct_state)}
-								</TableCell>
-								<TableCell>
-									{item.inspct_state === '5' ? (
-										/* 견적 승인, 코빠밀뉴 계정에만 버튼 노출 */
-										email === 'copamilnew' ? (
-											<Button
-												height={32}
-												color="primary"
-												variant="outlined"
-												onClick={() => {
-													onSetConfirmModalData(item);
-													onConfirmOpen();
-												}}>
-												견적 확인
-											</Button>
-										) : (
-											'-'
-										)
-									) : Number(item.inspct_state) > 5 &&
-									  item.inspct_fee > 0 ? (
-										/* 견적 금액 */
-										<p>
-											{item.inspct_fee.toLocaleString()}원
-										</p>
-									) : item.inspct_result === 'X' ? (
-										/* 수선 불가 */
-										<p>수선 불가</p>
-									) : (
-										'-'
-									)}
+									{getRepairStatusChip(item.repairStatusCode)}
 								</TableCell>
 							</TableRow>
 						))}
 				</Table>
 				<Pagination {...paginationProps} />
 			</Box>
-			<ImageModal
-				open={open}
-				onClose={onClose}
-				imgSrc={modalData?.imgSrc}
-				imgAlt={modalData?.imgAlt}
-			/>
-			<RepairConfirmDialog
-				open={confirmOpen}
-				onClose={onConfirmClose}
-				modalData={confirmModalData}
-				onCancelRepair={handleCancelRepair}
-				onAcceptRepair={handleAcceptRepair}
-			/>
 		</>
 	);
 }

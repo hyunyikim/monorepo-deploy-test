@@ -3,23 +3,24 @@ import {useParams} from 'react-router-dom';
 
 import {Stack, Typography} from '@mui/material';
 
-import {GauranteeDetailResponse, Guarantee} from '@/@types';
-import {getGuaranteeDetail} from '@/api/guarantee.api';
+import {GuaranteeDetail} from '@/@types';
+import {getGuaranteeDetail} from '@/api/guarantee-v1.api';
 import {getGuaranteeStatusChip, PAGE_MAX_WIDTH} from '@/data';
 import {usePageView} from '@/utils';
 
-import GuaranteeDetailCustomerInfo from '@/features/guarantee/Detail/GuaranteeDetailCustomerInfo';
-import GuaranteeDetailProductInfo from '@/features/guarantee/Detail/GuaranteeDetailProductInfo';
-import GuaranteeDetailSellerInfo from '@/features/guarantee/Detail/GuaranteeDetailSellerInfo';
-import GuaranteeDetailInfo from '@/features/guarantee/Detail/GuaranteeDetailInfo';
+import GuaranteeDetailCustomerInfo from '@/features/guarantee/common/GuaranteeDetailCustomerInfo';
+import GuaranteeDetailProductInfo from '@/features/guarantee/common/GuaranteeDetailProductInfo';
+import GuaranteeDetailSellerInfo from '@/features/guarantee/common/GuaranteeDetailSellerInfo';
+import GuaranteeDetailInfo from '@/features/guarantee/common/GuaranteeDetailInfo';
 import GuaranteeDetailPreviewCard from '@/features/guarantee/Detail/GuaranteeDetailPreviewCard';
+import {TitleTypography} from '@/components';
 
 function GuaranteeDetail() {
 	usePageView('guarantee_detail_pv', '개런티 상세페이지 노출');
 	const params = useParams();
 	const idx = params?.idx;
 
-	const [data, setData] = useState<GauranteeDetailResponse | null>(null);
+	const [data, setData] = useState<GuaranteeDetail | null>(null);
 
 	useEffect(() => {
 		(async () => {
@@ -31,12 +32,7 @@ function GuaranteeDetail() {
 		})();
 	}, [idx]);
 
-	const guaranteeData = useMemo<Guarantee | null>(
-		() => data && data?.data,
-		[data]
-	);
-
-	if (!data || !guaranteeData) return null;
+	if (!data) return null;
 
 	return (
 		<Stack
@@ -58,13 +54,7 @@ function GuaranteeDetail() {
 					md: '0',
 				}}
 				mb="60px">
-				<Typography
-					variant="h1"
-					fontSize={28}
-					fontWeight={700}
-					mb="40px">
-					개런티 상세
-				</Typography>
+				<TitleTypography title="개런티 상세" />
 				<Stack
 					flexDirection="row"
 					justifyContent="space-between"
@@ -80,33 +70,30 @@ function GuaranteeDetail() {
 								xs: '0',
 								sm: '36px',
 							}}>
-							<Typography color="grey.300" fontSize={15}>
+							<Typography color="grey.300" variant="body2">
 								신청번호 :&nbsp;
 							</Typography>
-							<Typography fontSize={15}>
-								{guaranteeData.nft_req_num}
+							<Typography variant="body2">
+								{data.nftNumber}
 							</Typography>
 						</Stack>
 						<Stack flexDirection="row">
-							<Typography color="grey.300" fontSize={15}>
+							<Typography color="grey.300" variant="body2">
 								신청일 :&nbsp;
 							</Typography>
-							<Typography fontSize={15}>
-								{guaranteeData.nft_req_dt
-									? guaranteeData.nft_req_dt.substr(0, 10)
+							<Typography variant="body2">
+								{data.registeredAt
+									? data.registeredAt.substr(0, 10)
 									: '-'}
 							</Typography>
 						</Stack>
 					</Stack>
-					{getGuaranteeStatusChip(
-						guaranteeData.nft_req_state,
-						guaranteeData.nft_req_state_text
-					)}
+					{getGuaranteeStatusChip(data.nftStatusCode, data.nftStatus)}
 				</Stack>
-				<GuaranteeDetailCustomerInfo data={guaranteeData} />
-				<GuaranteeDetailProductInfo data={guaranteeData} />
-				<GuaranteeDetailSellerInfo data={guaranteeData} />
-				<GuaranteeDetailInfo data={guaranteeData} />
+				<GuaranteeDetailCustomerInfo data={data} />
+				<GuaranteeDetailProductInfo data={data} />
+				<GuaranteeDetailSellerInfo data={data} />
+				<GuaranteeDetailInfo data={data} />
 			</Stack>
 			<GuaranteeDetailPreviewCard data={data} />
 		</Stack>

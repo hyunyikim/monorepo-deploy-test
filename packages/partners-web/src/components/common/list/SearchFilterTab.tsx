@@ -45,6 +45,7 @@ function SearchFilterTab({
 						width: 'fit-content',
 						'& .MuiButtonBase-root.MuiTab-root': {
 							fontSize: 14,
+							lineHeight: 1.45,
 							minWidth: '0',
 							'&.Mui-selected': {
 								fontWeight: 700,

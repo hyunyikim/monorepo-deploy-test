@@ -16,7 +16,6 @@ export const useGetSearchBrandList = () => {
 	return useQuery({
 		queryKey: ['searchBrandList', token],
 		queryFn: () => (token ? getSearchBrandList({main_yn: true}) : null),
+		retryOnMount: false,
 	});
 };
-
-// TODO: react-query 정책 다시 확인

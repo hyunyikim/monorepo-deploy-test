@@ -96,12 +96,10 @@ const CustomerInfoBox = ({
 				height: '80px',
 			}}>
 			<Box>
-				<Typography color="grey.500" fontSize={13} pb={0.5}>
+				<Typography color="grey.500" variant="caption1" pb={0.5}>
 					{title}
 				</Typography>
-				<Typography fontSize={18} fontWeight={700}>
-					{value}
-				</Typography>
+				<Typography variant="subtitle2">{value}</Typography>
 			</Box>
 			<Box
 				sx={{

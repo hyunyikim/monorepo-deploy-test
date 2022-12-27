@@ -9,7 +9,7 @@ import {ProductDetailResponse, ProductRegisterFormData} from '@/@types';
 import {productRegisterSchemaShape} from '@/utils/schema';
 import {goToParentUrl} from '@/utils';
 
-import {Button, Loading} from '@/components';
+import {Button} from '@/components';
 import {
 	convertProductRegisterFormData,
 	getProductRegisterFormDataForReset,
@@ -26,6 +26,7 @@ import {
 import {
 	useGetPartnershipInfo,
 	useGetSearchBrandList,
+	useGlobalLoading,
 	useMessageDialog,
 } from '@/stores';
 
@@ -43,6 +44,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const {data: brandList} = useGetSearchBrandList();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const {
 		reset,
@@ -54,8 +56,6 @@ function ProductRegisterForm({mode, initialData}: Props) {
 		resolver: yupResolver(productRegisterSchemaShape),
 	});
 	const [images, setImages] = useState<ImageState[]>([]);
-
-	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		if (!partnershipInfo) {
@@ -117,7 +117,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 	const handleRegister = useCallback(
 		async (formData: FormData) => {
 			try {
-				setIsSubmitting(true);
+				setIsLoading(true);
 				await registerProduct(formData);
 				onOpenMessageDialog({
 					title: '상품이 등록되었습니다.',
@@ -133,10 +133,10 @@ function ProductRegisterForm({mode, initialData}: Props) {
 					showBottomCloseButton: true,
 				});
 			} finally {
-				setIsSubmitting(false);
+				setIsLoading(false);
 			}
 		},
-		[navigate]
+		[navigate, setIsLoading]
 	);
 
 	const handleEdit = useCallback(
@@ -265,7 +265,6 @@ function ProductRegisterForm({mode, initialData}: Props) {
 					</Stack>
 				</BottomNavigation>
 			</form>
-			<Loading loading={isSubmitting} />
 		</>
 	);
 }

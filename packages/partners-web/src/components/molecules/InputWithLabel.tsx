@@ -1,9 +1,9 @@
-import React, {ReactElement} from 'react';
-import {Grid, Button, InputLabel, SxProps, Theme} from '@mui/material';
+import React from 'react';
+import {Grid, InputProps, SxProps, Theme} from '@mui/material';
 import InputComponent from '../atoms/InputComponent';
 import InputLabelTag from '../atoms/InputLabelTag';
 
-import {FieldValues, FieldError, Merge, FieldErrorsImpl} from 'react-hook-form';
+import {FieldValues, FieldError, Control} from 'react-hook-form';
 import ControlledInputComponent from './ControlledInputComponent';
 
 interface Props {
@@ -15,14 +15,14 @@ interface Props {
 	sx?: SxProps<Theme>;
 	multiline?: boolean;
 	name: string;
-	control: FieldValues;
-	error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+	control?: Control<FieldValues, any> | undefined;
+	error?: FieldError;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	value?: string;
 	fullWidth?: boolean;
 	disabled?: boolean;
 	defaultValue?: string;
-	inputProps?: {maxLength: number} | null;
+	InputProps?: InputProps;
 }
 
 function InputWithLabel({
@@ -48,7 +48,9 @@ function InputWithLabel({
 			<InputLabelTag
 				required={required}
 				labelTitle={labelTitle}
-				sx={sx}
+				{...(sx && {
+					sx,
+				})}
 			/>
 			{control ? (
 				<ControlledInputComponent

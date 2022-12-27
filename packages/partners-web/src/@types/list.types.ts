@@ -37,3 +37,9 @@ export interface ListResponse<T> {
 	data: T;
 	total: number;
 }
+
+export interface ListResponseV2<T> {
+	data: T;
+	total: number;
+	page: number;
+}

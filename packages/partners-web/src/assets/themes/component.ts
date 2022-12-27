@@ -3,6 +3,29 @@ import {Components} from '@mui/material';
 
 export default function component(): Components {
 	return {
+		MuiTypography: {
+			defaultProps: {
+				variantMapping: {
+					header0: 'h1',
+					header1: 'h1',
+					header2: 'h2',
+					subtitle1: 'h3',
+					subtitle2: 'h4',
+					body1: 'p',
+					body2: 'p',
+					body3: 'p',
+					caption1: 'span',
+					caption2: 'span',
+					caption3: 'span',
+					caption4: 'span',
+				},
+			},
+			styleOverrides: {
+				root: {
+					lineHeight: 1.45,
+				},
+			},
+		},
 		MuiChip: {
 			styleOverrides: {
 				root: {

@@ -15,6 +15,8 @@ const imagePopupSx = {
 	margin: '6px auto',
 	width: '52px',
 	height: '52px',
+	minWidth: '52px',
+	minHeight: '52px',
 	borderWidth: '0.5px',
 	borderStyle: 'solid',
 	borderColor: 'grey.100',

@@ -26,7 +26,7 @@ export interface Props<T> extends Omit<SelectProps, 'error'> {
 /**
  *
  * 제어/비제어 컴포넌트 둘 다 가능
- * 넘겨지는 값으로 정의됨 (value/onChange vs defaultValue)
+ * 넘겨지는 값으로 정의됨 (value/onChange vs defaultValue)  TODO: 타입 A or B로 변경하기
  */
 function Select<T>(
 	{

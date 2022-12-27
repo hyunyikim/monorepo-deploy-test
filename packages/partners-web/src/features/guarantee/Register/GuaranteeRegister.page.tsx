@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 
-import {Stack, Typography} from '@mui/material';
+import {Stack} from '@mui/material';
 
 import {GauranteeDetailResponse} from '@/@types';
 import {getGuaranteeDetail} from '@/api/guarantee.api';
@@ -11,7 +11,7 @@ import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
 import GuaranteeRegisterForm from '@/features/guarantee/Register/GuaranteeRegisterForm';
 import GuaranteeRegisterPreviewCard from '@/features/guarantee/Register/GuaranteeRegisterPreviewCard';
-import {Button} from '@/components';
+import {Button, TitleTypography} from '@/components';
 
 function GuaranteeRegister() {
 	usePageView('guarantee_publish_pv', '개런티발급 노출');
@@ -87,13 +87,7 @@ function GuaranteeRegister() {
 					md: '0',
 				}}
 				mb="60px">
-				<Typography
-					variant="h1"
-					fontSize={28}
-					fontWeight={700}
-					mb="40px">
-					개런티 발급하기
-				</Typography>
+				<TitleTypography title="개런티 발급하기" />
 				<GuaranteeRegisterForm initialData={data} />
 			</Stack>
 			<GuaranteeRegisterPreviewCard />

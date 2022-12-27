@@ -1,16 +1,15 @@
 import Grid from '@mui/material/Grid';
 import {CircularProgress} from '@mui/material';
 
-interface Props {
-	loading: boolean;
-	showCircularProgress?: boolean;
-}
+import {useGlobalLoading} from '@/stores';
 
-export default function Loading({
-	loading = false,
-	showCircularProgress = true,
-}: Props) {
-	return loading ? (
+export default function Loading() {
+	const isLoading = useGlobalLoading((state) => state.isLoading);
+	const showCircularProgress = useGlobalLoading(
+		(state) => state.showCircularProgress
+	);
+
+	return isLoading ? (
 		<Grid
 			container
 			justifyContent="center"

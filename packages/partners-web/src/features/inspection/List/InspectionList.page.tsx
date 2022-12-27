@@ -24,7 +24,7 @@ import {
 } from '@/utils';
 
 import {
-	ListTitle,
+	TitleTypography,
 	SearchFilter,
 	TableInfo,
 	Table,
@@ -74,7 +74,7 @@ function InspectionList() {
 	return (
 		<>
 			<Box>
-				<ListTitle title="감정 신청 목록" />
+				<TitleTypography title="감정 신청 목록" />
 				<SearchFilter
 					menu={menu}
 					menuKo={menuKo}

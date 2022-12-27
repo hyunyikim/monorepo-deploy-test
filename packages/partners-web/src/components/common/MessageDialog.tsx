@@ -28,7 +28,7 @@ function MessageDialog() {
 	const showBottomCloseButton = useMessageDialog(
 		(state) => state.showBottomCloseButton
 	);
-	const closeButtonValue: '확인' | '취소' = useMessageDialog(
+	const closeButtonValue: '확인' | '취소' | '닫기' = useMessageDialog(
 		(state) => state.closeButtonValue
 	);
 	const buttons = useMessageDialog((state) => state.buttons);

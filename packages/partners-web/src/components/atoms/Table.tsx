@@ -30,7 +30,7 @@ function Table({isLoading, totalSize, headcell, children}: Props) {
 				'& .MuiTableCell-root': {
 					border: `1px solid ${theme.palette.grey[100]}`,
 					fontSize: '14px',
-					lineHeight: '14px',
+					lineHeight: 1.45,
 					// cell의 자식
 					'& div': {
 						display: 'flex',
@@ -40,6 +40,7 @@ function Table({isLoading, totalSize, headcell, children}: Props) {
 					'& > .MuiBox-root': {
 						paddingX: '16px',
 						paddingY: '4px',
+						lineHeight: 1.45,
 					},
 				},
 				'& .MuiTableRow-root > .MuiTableCell-root:nth-of-type(1)': {

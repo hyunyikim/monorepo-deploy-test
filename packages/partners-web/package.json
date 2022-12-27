@@ -1,6 +1,6 @@
 {
 	"name": "@vircle/partners-web",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"packageManager": "yarn@3.2.3",
 	"scripts": {
 		"prebuild": "rm -rf dist",
@@ -26,6 +26,7 @@
 		"amplitude-js": "^8.21.2",
 		"apexcharts": "^3.35.5",
 		"axios": "^0.27.2",
+		"classnames": "^2.3.2",
 		"date-fns": "^2.29.3",
 		"lodash": "^4.17.21",
 		"qs": "^6.11.0",
@@ -37,6 +38,7 @@
 		"react-lottie": "^1.2.3",
 		"react-router-dom": "^6.4.0",
 		"react-slick": "^0.29.0",
+		"react-use": "^17.4.0",
 		"slick-carousel": "^1.8.1",
 		"yup": "^0.32.11",
 		"zustand": "^4.1.1"

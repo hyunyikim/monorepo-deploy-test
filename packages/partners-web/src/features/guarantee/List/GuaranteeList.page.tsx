@@ -24,7 +24,7 @@ import {
 } from '@/utils';
 
 import {
-	ListTitle,
+	TitleTypography,
 	SearchFilter,
 	TableInfo,
 	Table,
@@ -74,6 +74,7 @@ function GuaranteeList() {
 		onCheckTotalItem,
 		onResetCheckedItem,
 		onHandleChangeFilter,
+		isCheckedItemsExisted,
 	} = useCheckboxList({
 		idxList:
 			data && data?.data && data?.data?.length > 0
@@ -93,7 +94,7 @@ function GuaranteeList() {
 	return (
 		<>
 			<Box>
-				<ListTitle title="개런티 목록" />
+				<TitleTypography title="개런티 목록" />
 				<SearchFilter
 					menu={menu}
 					menuKo={menuKo}
@@ -170,6 +171,7 @@ function GuaranteeList() {
 						onHandleChangeFilter={onHandleChangeFilter}
 						onResetCheckedItem={onResetCheckedItem}
 						onSearch={handleSearch}
+						isCheckedItemsExisted={isCheckedItemsExisted}
 					/>
 				</TableInfo>
 				<Table
@@ -229,7 +231,7 @@ function GuaranteeList() {
 								<TableCell>
 									{item.nft_req_num ? (
 										<Typography
-											fontSize={14}
+											variant="body3"
 											className="underline"
 											onClick={() => {
 												trackingToParent(
@@ -264,7 +266,7 @@ function GuaranteeList() {
 								</TableCell>
 								<TableCell>
 									<Typography
-										fontSize={14}
+										variant="body3"
 										className="underline"
 										onClick={() => {
 											const name = item?.orderer_nm;
@@ -285,9 +287,7 @@ function GuaranteeList() {
 										: '-'}
 								</TableCell>
 								<TableCell width="400px">
-									<Typography
-										fontSize={14}
-										lineHeight={'18px'}>
+									<Typography variant="body3">
 										[{item.brand_nm_en ?? '-'}
 										]
 										<br />

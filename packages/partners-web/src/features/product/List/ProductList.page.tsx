@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useMemo} from 'react';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
@@ -18,10 +18,14 @@ import {
 	sortSearchFilter,
 } from '@/data';
 import {goToParentUrl, trackingToParent} from '@/utils';
-import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
+import {
+	useGetPartnershipInfo,
+	useGlobalLoading,
+	useMessageDialog,
+} from '@/stores';
 
 import {
-	ListTitle,
+	TitleTypography,
 	SearchFilter,
 	TableInfo,
 	Table,
@@ -33,7 +37,6 @@ import {
 	TableCell,
 	SearchFilterTab,
 	Checkbox,
-	Loading,
 } from '@/components';
 
 const menu = 'itemadmin';
@@ -45,7 +48,7 @@ function ProductList() {
 	const useFieldModelNum = useMemo(() => {
 		return partnershipInfo?.useFieldModelNum === 'Y' ? true : false;
 	}, [partnershipInfo]);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
@@ -88,7 +91,7 @@ function ProductList() {
 
 	const handleDeleteProduct = async (checkedItems: number[]) => {
 		try {
-			setIsSubmitting(true);
+			setIsLoading(true);
 			await bulkDeleteProduct(checkedItems);
 			onOpenMessageDialog({
 				title: '상품이 삭제됐습니다.',
@@ -106,7 +109,7 @@ function ProductList() {
 				showBottomCloseButton: true,
 			});
 		} finally {
-			setIsSubmitting(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -120,7 +123,7 @@ function ProductList() {
 	return (
 		<>
 			<Box>
-				<ListTitle title="상품 목록" />
+				<TitleTypography title="상품 목록" />
 				<SearchFilter
 					menu={menu}
 					menuKo={menuKo}
@@ -304,7 +307,7 @@ function ProductList() {
 								<TableCell>
 									{item.num ? (
 										<Typography
-											fontSize={14}
+											variant="body3"
 											className="underline"
 											onClick={() => {
 												goToParentUrl(
@@ -322,8 +325,7 @@ function ProductList() {
 								</TableCell>
 								<TableCell>
 									<Typography
-										fontSize={14}
-										lineHeight={'18px'}
+										variant="body3"
 										className="underline"
 										onClick={() => {
 											goToParentUrl(
@@ -360,7 +362,6 @@ function ProductList() {
 					}}
 				/>
 			</Box>
-			<Loading loading={isSubmitting} showCircularProgress={false} />
 		</>
 	);
 }

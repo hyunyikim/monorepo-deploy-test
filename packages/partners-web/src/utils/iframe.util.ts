@@ -1,5 +1,6 @@
 type RequestType =
 	| 'link'
+	| 'link_state'
 	| 'link_replace'
 	| 'go_back'
 	| 'tracking'
@@ -21,6 +22,17 @@ export const goToParentUrl = (url: string) => {
 	sendMessageToParent({
 		type: 'link',
 		data: url,
+	});
+};
+
+// history state와 함께 이동할 경우
+export const goToParentUrlWithState = (url: string, state: any) => {
+	sendMessageToParent({
+		type: 'link_state',
+		data: {
+			url,
+			state,
+		},
 	});
 };
 

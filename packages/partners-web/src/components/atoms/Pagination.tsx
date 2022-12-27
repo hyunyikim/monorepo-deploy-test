@@ -34,6 +34,7 @@ function Pagination({
 				justifyContent: 'center',
 				'& .MuiPaginationItem-root': {
 					fontSize: '13px',
+					lineHeight: 1.45,
 					borderColor: 'grey.100',
 					borderWidth: '0.8px',
 					borderRadius: '6.4px',

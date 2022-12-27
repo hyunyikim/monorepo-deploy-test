@@ -1,8 +1,7 @@
-import React, {useEffect} from 'react';
-import PageTitle from '@/components/atoms/PageTitle';
+import {useEffect} from 'react';
 import {Stack} from '@mui/system';
 import {Typography, Grid} from '@mui/material';
-import {Button, InputWithLabel, MessageDialog} from '@/components';
+import {Button, InputWithLabel, TitleTypography} from '@/components';
 import {profileSettingSchemaShape} from '@/utils/schema';
 
 import {useForm} from 'react-hook-form';
@@ -347,23 +346,18 @@ function ProfileSetting() {
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
 				autoComplete="off">
-				<PageTitle>프로필 설정</PageTitle>
-
+				<TitleTypography title="프로필 설정" />
 				<Stack
 					sx={{
 						border: '1px solid #E2E2E9',
 						borderRadius: '16px',
 						padding: '32px',
 						gap: '60px',
-						mt: '40px',
 					}}>
 					<Stack>
 						<Typography
-							variant="h2"
+							variant="subtitle1"
 							sx={{
-								fontWeight: 700,
-								fontSize: '21px',
-								lineHeight: '21px',
 								color: 'grey.900',
 								marginBottom: '42px',
 							}}>
@@ -429,11 +423,8 @@ function ProfileSetting() {
 
 					<Stack>
 						<Typography
-							variant="h2"
+							variant="subtitle1"
 							sx={{
-								fontWeight: 700,
-								fontSize: '21px',
-								lineHeight: '21px',
 								color: 'grey.900',
 								marginBottom: '42px',
 							}}>

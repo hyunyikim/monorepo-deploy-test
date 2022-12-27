@@ -53,7 +53,7 @@ function GuaranteeRegisterProduct({
 				p="32px"
 				border={(theme) => `1px solid ${theme.palette.grey[100]}`}
 				borderRadius="8px">
-				<Typography fontSize={18} fontWeight="bold" mb="32px">
+				<Typography variant="subtitle2" mb="32px">
 					상품 정보를 입력하세요
 				</Typography>
 				<Stack
@@ -131,10 +131,7 @@ const SelectedProduct = ({
 			<Stack flexDirection="row" alignItems="center">
 				<ProductImage src={image?.preview || null} />
 				<Stack flexDirection="column" ml="13px">
-					<Typography
-						fontSize={13}
-						lineHeight="13px"
-						color="grey.400">
+					<Typography variant="caption1" color="grey.400">
 						{data.brandName}
 					</Typography>
 					<Typography fontSize={14} lineHeight="14px" my="6px">

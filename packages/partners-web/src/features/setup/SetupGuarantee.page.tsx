@@ -1,6 +1,5 @@
 import React, {
 	useState,
-	useRef,
 	ReactNode,
 	useMemo,
 	useEffect,
@@ -9,7 +8,7 @@ import React, {
 import styled from '@emotion/styled';
 import style from '@/assets/styles/style.module.scss';
 
-import {useForm, FormValue} from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {
 	brandGuaranteeSchemaShape,
@@ -41,8 +40,6 @@ import {
 } from '@/assets/icon';
 
 import {
-	LogoImage2x,
-	defaultLogoImg,
 	defaultLogoImg2x,
 	defaultErrorLogoImg2x,
 	dashedLine,
@@ -53,7 +50,7 @@ import {
 
 import {
 	createSearchParams,
-	useNavigate,
+	useLocation,
 	useSearchParams,
 } from 'react-router-dom';
 
@@ -62,13 +59,7 @@ import ControlledInputComponent from '../../components/molecules/ControlledInput
 import TooltipComponent from '../../components/atoms/Tooltip';
 import InputLabelTag from '../../components/atoms/InputLabelTag';
 import Tab from '../../components/atoms/Tab';
-import {
-	PartnershipInfoResponse,
-	FileData,
-	FileDataPreview,
-	CropPreviewData,
-	BlobProps,
-} from '@/@types';
+import {FileData, FileDataPreview, CropPreviewData} from '@/@types';
 import PreviewGuarantee, {
 	ExamplePreviewGuarantee,
 } from '@/components/common/PreviewGuarantee';
@@ -77,10 +68,13 @@ import {
 	setCustomizedBrandCard,
 } from '@/api/guarantee.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
-import {goToParentUrl, updateParentPartnershipData} from '@/utils';
+import {
+	goToParentUrl,
+	goToParentUrlWithState,
+	updateParentPartnershipData,
+} from '@/utils';
 import Header from '@/components/common/layout/Header';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
-import PageTitle from '@/components/atoms/PageTitle';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -318,9 +312,7 @@ function BoxContainer({
 					width="auto"
 					alignItems={'center'}
 					gap="12px">
-					<Typography component="h4" className="sub-head-1">
-						{title}
-					</Typography>
+					<Typography variant="subtitle1">{title}</Typography>
 					{useLabel &&
 						(isFilled ? (
 							<BoxContainerSuccessLabel>
@@ -618,9 +610,10 @@ export function InputFormSection({
 	boxOpenHandler,
 	justOpenBox,
 }: InputFormProps) {
-	const {data} = useGetPartnershipInfo();
+	const {data, isLoading} = useGetPartnershipInfo();
 	const b2bType = data?.b2bType; // cooperator or brand or platform
 	const email = data?.email as string;
+	const location = useLocation();
 
 	const {
 		handleSubmit,
@@ -631,6 +624,7 @@ export function InputFormSection({
 		reset,
 		getValues,
 		formState: {errors},
+		setFocus,
 	} = useForm({
 		resolver:
 			b2bType === 'brand'
@@ -638,8 +632,6 @@ export function InputFormSection({
 				: yupResolver(cooperatorGuaranteeSchemaShape),
 		mode: 'onChange',
 	});
-
-	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 	const queryData = Object.fromEntries([...searchParams]);
 
@@ -771,7 +763,7 @@ export function InputFormSection({
 		}
 	};
 
-	const enterHandler = (e: KeyboardEvent<HTMLImageElement>) => {
+	const enterHandler = (e: KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			e.preventDefault();
 			addNewProductInfoToList();
@@ -1242,11 +1234,6 @@ export function InputFormSection({
 		goToParentUrl('/dashboard');
 	};
 
-	// useEffect(() => {
-	// 	console.log('getValues@!##@!', getValues());
-	// 	console.log('errors', errors);
-	// }, [errors]);
-
 	/**
 	 * 초기 데이터 셋팅
 	 */
@@ -1315,6 +1302,43 @@ export function InputFormSection({
 		}
 	}, [data]);
 
+	// 개런티 설정완료 여부 판단해 초기설정/재설정 페이지로 리다이렉트 시킴
+	useEffect(() => {
+		if (isLoading) {
+			return;
+		}
+		const alreadySettingGuarantee = data?.profileImage ? true : false;
+		const {pathname, search, state} = location;
+		if (
+			!alreadySettingGuarantee &&
+			pathname.includes('/re-setup/guarantee')
+		) {
+			goToParentUrlWithState('/setup/guarantee', state);
+			return;
+		}
+		if (alreadySettingGuarantee && pathname.includes('/setup/guarantee')) {
+			goToParentUrlWithState('/re-setup/guarantee', state);
+			return;
+		}
+		// 수선신청 서비스 연동 완료 후 개런티 설정으로 넘어온 경우 추가정보 입력으로 포커스 옮김
+		const fromInterworkRepair =
+			location.state &&
+			typeof location.state === 'object' &&
+			(location.state as Record<string, any>).hasOwnProperty(
+				'interwork-repair'
+			) &&
+			location.state['interwork-repair'];
+		if (fromInterworkRepair && setFocus) {
+			setTimeout(() => {
+				setFocus('authInfo');
+			}, 500);
+		}
+	}, [data, isLoading, location, setFocus]);
+
+	if (isLoading) {
+		return <></>;
+	}
+
 	return (
 		<Grid
 			item
@@ -1322,7 +1346,7 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={'center'}
 			alignItems="center"
-			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px 40px'}>
+			p={hasProfileLogo ? '0 0px 32px 0px' : '89px 0px 32px 40px'}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
@@ -1335,9 +1359,9 @@ export function InputFormSection({
 							gap: '20px',
 							marginBottom: '12px',
 						}}>
-						<PageTitle>
+						<Typography variant="header1">
 							안녕하세요, {data?.companyName}님!
-						</PageTitle>
+						</Typography>
 					</Stack>
 				)}
 
@@ -1352,10 +1376,7 @@ export function InputFormSection({
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
 					{hasProfileLogo && (
-						<Typography
-							fontSize={16}
-							color={'grey.300'}
-							fontWeight={500}>
+						<Typography variant="body1" color={'grey.300'}>
 							개런티 설정을 완료하고 버클 개런티 카드를
 							발급해보세요
 						</Typography>
@@ -1379,10 +1400,8 @@ export function InputFormSection({
 								onClickCloseBtn={closeTooltip}
 								title={
 									<Typography
-										fontSize={12}
-										color={'#ffffff'}
-										lineHeight="18px"
-										fontWeight={500}>
+										variant="caption2"
+										color={'#ffffff'}>
 										어떤 정보를 노출 할지 고민 된다면
 										<br /> 타 브랜드의 개런티 화면을
 										참고하세요!
@@ -1532,7 +1551,7 @@ export function InputFormSection({
 								onClick={handleCheckOutLinkClick}
 								sx={{
 									fontSize: '14px',
-									lineHeight: '18px',
+									lineHeight: '14px',
 									color: 'primary.main',
 									fontWeight: 700,
 									textDecoration: 'underline',

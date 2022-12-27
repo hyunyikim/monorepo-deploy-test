@@ -1,3 +1,4 @@
+// 구버전 api에 맞춰진 타입
 import {ProductRegisterFormData} from './product.types';
 
 export type GuaranteeListRequestSearchType = 'all' | 'nft_req_num' | 'pro_nm';

@@ -49,7 +49,8 @@ function SearchFilter<F extends object>({
 				},
 				// 테이블 좌측 라벨
 				'& > .MuiBox-root > .MuiFormLabel-root': {
-					fontSize: '14px',
+					fontSize: 14,
+					lineHeight: 1.45,
 					fontWeight: 'bold',
 					color: 'grey.700',
 					// marginLeft: '16px',

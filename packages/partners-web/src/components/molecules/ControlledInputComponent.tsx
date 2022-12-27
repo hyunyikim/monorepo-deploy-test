@@ -1,25 +1,11 @@
-import React from 'react';
-import {
-	Input,
-	InputProps,
-	Typography,
-	Grid,
-	SxProps,
-	Theme,
-} from '@mui/material';
-import {
-	Controller,
-	FieldValues,
-	FieldError,
-	FieldErrorsImpl,
-	Merge,
-} from 'react-hook-form';
+import {InputProps, SxProps, Theme} from '@mui/material';
+import {Controller, FieldValues, FieldError, Control} from 'react-hook-form';
 import InputComponent from '../atoms/InputComponent';
 
 type Height = '60px' | '48px' | '40px' | '32px' | 'auto';
 interface Props extends Omit<InputProps, 'error'> {
 	name: string;
-	control: FieldValues | undefined;
+	control?: Control<FieldValues, any> | undefined;
 	type: string;
 	defaultValue?: string;
 	height?: Height;
@@ -31,13 +17,7 @@ interface Props extends Omit<InputProps, 'error'> {
 	sx?: SxProps<Theme>;
 	multiline?: boolean;
 	autoFocus?: boolean;
-	error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
-	onBlur?: (
-		event: React.FocusEventHandler<HTMLInputElement> | undefined
-	) => void;
-	onKeyDown?: (
-		event: React.KeyboardEventHandler<HTMLInputElement> | undefined
-	) => void;
+	error?: FieldError;
 }
 
 function ControlledInputComponent({
@@ -65,7 +45,7 @@ function ControlledInputComponent({
 			control={control}
 			name={name}
 			defaultValue={defaultValue}
-			render={({field: {onChange: hookFormOnChange, value}}) => (
+			render={({field: {onChange: hookFormOnChange, value, ref}}) => (
 				<InputComponent
 					type={type}
 					defaultValue={defaultValue}
@@ -86,6 +66,7 @@ function ControlledInputComponent({
 						hookFormOnChange(e);
 					}}
 					value={value}
+					inputRef={ref}
 					{...props}
 				/>
 			)}

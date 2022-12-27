@@ -24,7 +24,7 @@ import {
 } from '@/utils';
 
 import {
-	ListTitle,
+	TitleTypography,
 	SearchFilter,
 	TableInfo,
 	Table,
@@ -76,7 +76,7 @@ function CustomerList() {
 	return (
 		<>
 			<Box>
-				<ListTitle title="고객관리" />
+				<TitleTypography title="고객관리" />
 				<SearchFilter
 					menu={menu}
 					menuKo={menuKo}
@@ -187,7 +187,7 @@ function CustomerList() {
 												{item?.customerName.slice(0, 1)}
 											</Avatar>
 											<Typography
-												fontSize={14}
+												variant="body3"
 												className="underline"
 												ml={'12px'}
 												onClick={() => {

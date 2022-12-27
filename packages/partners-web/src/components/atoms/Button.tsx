@@ -98,7 +98,7 @@ function Button({
 			fontWeight: style.bold,
 			minHeight: `${height}px`,
 			height: `${height}px`,
-			lineHeight: `${height}px`,
+			lineHeight: 1,
 			width: typeof width === 'number' ? `${width}px` : width,
 			...(width !== 'max-content' && {
 				padding: '0',

@@ -36,11 +36,12 @@ import {
 	useGetPartnershipInfo,
 	useMessageDialog,
 	useGuaranteePreviewStore,
+	useGlobalLoading,
 } from '@/stores';
 import {registerProduct} from '@/api/product.api';
 import {useChildModalOpen} from '@/utils/hooks';
 
-import {Button, InputWithLabel, Loading, BottomNavigation} from '@/components';
+import {Button, InputWithLabel, BottomNavigation} from '@/components';
 import GuaranteeRegisterProduct from '@/features/guarantee/Register/GuaranteeRegisterProduct';
 import GuaranteeRegisterNewProductModal from '@/features/guarantee/Register/GuaranteeRegisterNewProductModal';
 import GuaranteeRegisterSelectProductModal from '@/features/guarantee/Register/GuaranteeRegisterSelectProductModal';
@@ -67,6 +68,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 		onOpen: onSelectProductModalOpen,
 		onClose: onSelectProductModalClose,
 	} = useChildModalOpen({});
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const {
 		watch,
@@ -92,8 +94,6 @@ function GuaranteeRegisterForm({initialData}: Props) {
 		() => (initialData ? false : true),
 		[initialData]
 	);
-
-	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		if (!partnershipInfo) {
@@ -391,7 +391,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			initialData?: GauranteeDetailResponse | null
 		) => {
 			try {
-				setIsSubmitting(true);
+				setIsLoading(true);
 				await handleProductRegister(
 					formData,
 					registerNewProduct,
@@ -441,10 +441,10 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					showBottomCloseButton: true,
 				});
 			} finally {
-				setIsSubmitting(false);
+				setIsLoading(false);
 			}
 		},
-		[navigate, isSubmitting]
+		[navigate, setIsLoading]
 	);
 
 	const handleAddSingleProduct = useCallback(
@@ -626,7 +626,6 @@ function GuaranteeRegisterForm({initialData}: Props) {
 				registerNewProduct={registerNewProduct}
 				setRegisterNewProduct={setRegisterNewProduct}
 			/>
-			<Loading loading={isSubmitting} />
 		</>
 	);
 }
