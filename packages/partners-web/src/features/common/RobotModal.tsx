@@ -42,7 +42,7 @@ function RobotModal({
 			open={open}
 			showCloseButton={true}
 			width={780}
-			height={450}
+			height={490}
 			padding={32}
 			onClose={onClose}
 			ActionComponent={ActionComponent}>

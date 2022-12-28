@@ -162,10 +162,10 @@ const UlStyle = styled('ul')`
 `;
 
 const BulletListStyle = styled('li')`
-	color: '#aeaeba';
-	font-size: '16px';
+	color: #aeaeba;
+	font-size: 16px;
 	font-weight: 500;
-	line-height: '24px';
+	line-height: 1.45;
 `;
 
 const ProgressCircleStyle = styled('div')`
@@ -1744,7 +1744,10 @@ export function InputFormSection({
 					openHandler={() => boxOpenHandler(2)}>
 					<Grid
 						container
-						flexWrap="nowrap"
+						flexWrap={{
+							xs: 'wrap',
+							md: 'nowrap',
+						}}
 						alignItems="flex-end"
 						gap="20px">
 						<Grid item maxHeight={395}>
@@ -1785,15 +1788,33 @@ export function InputFormSection({
 							)}
 						</Grid>
 
-						<Grid item>
+						<Grid
+							item
+							sx={{
+								width: '100%',
+							}}>
 							<Grid container flexDirection="column" gap="16px">
 								<Grid container gap="8px">
 									{brandCard.file ? (
 										<CategoryContainer
 											required={false}
-											category={brandCard.filename}
+											category={
+												// 파일명 40자 넘어가면 말줄임 표기
+												brandCard.filename
+													? brandCard.filename
+															?.length > 40
+														? `${brandCard.filename?.slice(
+																0,
+																40
+														  )}...`
+														: brandCard.filename
+													: ''
+											}
 											clickHandler={deleteCardPreview}
 											exampleIdx={177}
+											sx={{
+												width: 'calc(100% - 100px - 8px)',
+											}}
 										/>
 									) : (
 										<Box
@@ -1809,6 +1830,7 @@ export function InputFormSection({
 												fontWeight: 500,
 												fontSize: '14px',
 												lineHeight: '14px',
+												width: 'calc(100% - 100px - 8px)',
 											}}>
 											이미지 파일을 업로드 해주세요
 										</Box>
@@ -1830,12 +1852,12 @@ export function InputFormSection({
 
 								<UlStyle>
 									<BulletListStyle>
-										2MB 이하의 이미지 파일을 업로드
+										<b>2MB</b> 이하의 이미지 파일을 업로드
 										해주세요.
 									</BulletListStyle>
 									<BulletListStyle>
-										PNG, JPG, JPEG 형식의 이미지 파일을
-										업로드 해주세요.
+										<b>PNG, JPG, JPEG</b> 형식의 이미지
+										파일을 업로드 해주세요.
 									</BulletListStyle>
 									<BulletListStyle>
 										가이드를 참고해 개런티 카드를

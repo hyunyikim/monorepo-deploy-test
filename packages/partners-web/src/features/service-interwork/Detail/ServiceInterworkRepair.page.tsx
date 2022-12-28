@@ -233,7 +233,7 @@ function ServiceInterworkRepair() {
 						수 있어요.
 					</Typography>
 					<Typography>
-						브랜드(기업)에서는 <b>[수선 신청 관리]</b> 신규 메뉴
+						브랜드(기업)에서는 <b>[수선신청 관리]</b> 신규 메뉴
 						탭에서 접수된 수선신청 내역을 확인할 수 있습니다.
 						<br />
 						화면에서 바로 &nbsp;

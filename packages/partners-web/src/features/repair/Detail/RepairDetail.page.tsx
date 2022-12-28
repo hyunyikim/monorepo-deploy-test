@@ -38,7 +38,7 @@ function RepairDetail() {
 
 	return (
 		<Stack flexDirection="column" m="auto" maxWidth={PAGE_MAX_WIDTH}>
-			<TitleTypography title="수선 신청 상세" />
+			<TitleTypography title="수선신청 상세" />
 			<Stack flexDirection="row" justifyContent="space-between" mb="20px">
 				<Stack
 					flexDirection={{
