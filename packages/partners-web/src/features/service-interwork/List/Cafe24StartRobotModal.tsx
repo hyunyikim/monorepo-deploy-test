@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {AsyncState} from 'react-use/lib/useAsyncFn';
 
 import {sendAmplitudeLog, goToParentUrl} from '@/utils';
@@ -15,6 +15,7 @@ interface Props {
 
 function Cafe24StartRobotModal({cafe24State}: Props) {
 	const location = useLocation();
+	const navigate = useNavigate();
 
 	const {open, onOpen, onClose} = useChildModalOpen({
 		handleOpen: () => {
@@ -28,9 +29,13 @@ function Cafe24StartRobotModal({cafe24State}: Props) {
 		// cafe24 연동 완료 팝업 띄움
 		// 연동 페이지에서 넘어오고, 2차로 cafe24에 연동된 내역 있는지 확인
 		if (location?.state?.connectCafe24 && cafe24State?.value) {
+			navigate(`${location.pathname}${location.search}`, {
+				replace: true,
+				state: null,
+			});
 			onOpen();
 		}
-	}, [onOpen, location?.state, cafe24State?.value]);
+	}, [onOpen, location, cafe24State?.value]);
 
 	return (
 		<RobotModal

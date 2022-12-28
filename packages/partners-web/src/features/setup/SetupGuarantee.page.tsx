@@ -1325,6 +1325,7 @@ export function InputFormSection({
 			return;
 		}
 		// 수선신청 서비스 연동 완료 후 개런티 설정으로 넘어온 경우 추가정보 입력으로 포커스 옮김
+		// 개런티 재설정에서만 url 이동
 		const fromInterworkRepair =
 			location.state &&
 			typeof location.state === 'object' &&
@@ -1332,7 +1333,11 @@ export function InputFormSection({
 				'interwork-repair'
 			) &&
 			location.state['interwork-repair'];
-		if (fromInterworkRepair && setFocus) {
+		if (
+			fromInterworkRepair &&
+			setFocus &&
+			pathname.includes('/re-setup/guarantee')
+		) {
 			setTimeout(() => {
 				setFocus('authInfo');
 				window.scrollTo(0, document.body.scrollHeight);
