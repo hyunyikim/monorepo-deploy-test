@@ -12,7 +12,7 @@ function GuaranteeDetailSellerInfo({data}: {data: GuaranteeDetail}) {
 			borderRadius="8px"
 			border={(theme) => `1px solid ${theme.palette.grey[100]}`}
 			mb="24px">
-			<Typography variant="subtitle2" mb="24px">
+			<Typography variant="subtitle2" mb="12px">
 				판매자 정보
 			</Typography>
 			<Stack
@@ -37,7 +37,12 @@ function GuaranteeDetailSellerInfo({data}: {data: GuaranteeDetail}) {
 					}}>
 					<IcShopPrimary />
 				</Box>
-				<Stack flexDirection="column">
+				<Stack
+					flexDirection="column"
+					justifyContent="center"
+					sx={{
+						height: '100%',
+					}}>
 					<Typography fontSize={16} fontWeight={700}>
 						{data?.issuerName || '-'}
 					</Typography>

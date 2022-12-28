@@ -17,7 +17,7 @@ function ServiceInterworkDetailContent({imgSrcList, children}: Props) {
 					sm: 'row',
 				}}
 				pb="32px"
-				mb="26px"
+				mb="24px"
 				sx={{
 					'& > *': {
 						flex: 1,

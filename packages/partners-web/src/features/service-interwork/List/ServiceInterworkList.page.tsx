@@ -5,6 +5,8 @@ import {usePageView, goToParentUrl} from '@/utils';
 import {Box, Stack, Typography} from '@mui/material';
 
 import {getInterworkByToken} from '@/api/cafe24.api';
+import {useGetPartnershipInfo} from '@/stores';
+
 import Cafe24StartRobotModal from '@/features/service-interwork/List/Cafe24StartRobotModal';
 import ServiceInterworkCard from '@/features/service-interwork/List/ServiceInterworkCard';
 
@@ -12,8 +14,8 @@ import {
 	ImgServiceInterworkRepair,
 	ImgServiceInterworkRepair2x,
 } from '@/assets/images';
-import Cafe24Logo from '@/assets/images/cafe24/cafe24_logo.png';
-import Cafe24Logo2x from '@/assets/images/cafe24/cafe24_logo@2x.png';
+import Cafe24Logo from '@/assets/images/cafe24/cafe24_logo2.png';
+import Cafe24Logo2x from '@/assets/images/cafe24/cafe24_logo2@2x.png';
 
 interface InterworkItem {
 	name: 'cafe24' | 'repair';
@@ -77,6 +79,7 @@ const interworkList: InterworkItem[] = [
 function ServiceInterworkList() {
 	usePageView('serviceadmin_pv', '서비스연동 관리 진입');
 
+	const {data: partnershipData} = useGetPartnershipInfo();
 	const cafe24State = useAsync(async () => {
 		return await getInterworkByToken();
 	}, []);
@@ -85,10 +88,18 @@ function ServiceInterworkList() {
 		return cafe24State.loading;
 	}, [cafe24State]);
 
+	const isCafe24Linked = useMemo(
+		() => (cafe24State?.value ? true : false),
+		[cafe24State]
+	);
+	const isPartnershipLinked = useMemo(
+		() => (partnershipData?.useRepair === 'Y' ? true : false),
+		[partnershipData]
+	);
+
 	const filteredInterworkList = useMemo(() => {
 		return interworkList.map((item) => {
 			if (item?.name === 'cafe24') {
-				const isCafe24Linked = cafe24State?.value ? true : false;
 				return {
 					...item,
 					onClick: () => goToParentUrl('/b2b/interwork/cafe24'),
@@ -99,11 +110,12 @@ function ServiceInterworkList() {
 				return {
 					...item,
 					onClick: () => goToParentUrl('/b2b/interwork/repair'),
+					isLinked: isPartnershipLinked,
 				};
 			}
 			return item;
 		});
-	}, [cafe24State]);
+	}, [isCafe24Linked, isPartnershipLinked]);
 
 	return (
 		<>
@@ -115,7 +127,7 @@ function ServiceInterworkList() {
 				<Typography variant="header1" mb="8px">
 					서비스 연동 관리
 				</Typography>
-				<Typography variant="body1" mb="36px">
+				<Typography variant="body1" mb="24px">
 					내 비즈니스에 맞는 서비스를 활용해보세요!
 				</Typography>
 				<Stack

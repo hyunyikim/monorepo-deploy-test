@@ -14,7 +14,6 @@ import {Checkbox, Dialog} from '@/components';
 import {useList} from '@/utils/hooks';
 import {getProductList} from '@/api/product.api';
 import {
-	ProductListRequestParam,
 	ProductListResponse,
 	ProductListRequestSearchType,
 	ListRequestParam,
@@ -68,7 +67,7 @@ function GuaranteeRegisterSelectProductModal({
 		handleReset,
 	} = useList<
 		ListResponse<ProductListResponse[]>,
-		ListRequestParam<ProductListRequestSearchType> & ProductListRequestParam
+		ListRequestParam<ProductListRequestSearchType>
 	>({
 		apiFunc: getProductList,
 		initialFilter: {
@@ -76,7 +75,6 @@ function GuaranteeRegisterSelectProductModal({
 			// default 날짜가 14일이 아님
 			startDate: calculatePeriod('all')[0],
 			endDate: calculatePeriod('all')[1],
-			categoryCode: '',
 		},
 		isQueryChange: false,
 	});
@@ -161,9 +159,7 @@ function GuaranteeRegisterSelectProductModal({
 			width={900}
 			height={600}
 			TitleComponent={
-				<Typography fontSize={18} fontWeight="bold">
-					상품 추가
-				</Typography>
+				<Typography variant="subtitle2">상품 추가</Typography>
 			}
 			ActionComponent={
 				<>
@@ -197,14 +193,7 @@ function GuaranteeRegisterSelectProductModal({
 					menu={menu}
 					menuKo={menuKo}
 					filter={filter}
-					filterComponent={
-						isCooperator
-							? guaranteeRegisterProductListSearchFilter
-							: guaranteeRegisterProductListSearchFilter.slice(
-									0,
-									1
-							  )
-					}
+					filterComponent={guaranteeRegisterProductListSearchFilter}
 					periodIdx={6}
 					onSearch={handleSearch}
 					onReset={handleReset}

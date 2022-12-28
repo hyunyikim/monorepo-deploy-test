@@ -1,9 +1,5 @@
 export type ProductListRequestSearchType = 'all' | 'name' | 'code' | 'num';
 
-export interface ProductListRequestParam {
-	categoryCode: string;
-}
-
 export interface Product {
 	idx: number;
 	name: string;

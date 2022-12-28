@@ -157,6 +157,8 @@ const AvatarCardStyle = styled('img')`
 
 const UlStyle = styled('ul')`
 	padding-left: 20px;
+	margin-top: 0;
+	margin-bottom: 0;
 `;
 
 const BulletListStyle = styled('li')`
@@ -240,6 +242,7 @@ interface BoxContainerProps {
 	isFilled?: boolean | '' | null;
 	useLabel?: boolean;
 	openHandler: () => void;
+	isLast?: boolean;
 }
 interface CategoryContainerProps {
 	required: boolean;
@@ -286,6 +289,7 @@ function BoxContainer({
 	useLabel,
 	isFilled,
 	openHandler,
+	isLast = false,
 }: BoxContainerProps) {
 	return (
 		<Box
@@ -294,7 +298,7 @@ function BoxContainer({
 				borderRadius: '16px',
 				padding: '30px 26px 30px 30px',
 				width: '100%',
-				marginBottom: '24px',
+				marginBottom: isLast ? '60px' : '24px',
 				maxWidth: '800px',
 			}}>
 			<Grid
@@ -302,7 +306,7 @@ function BoxContainer({
 				justifyContent="space-between"
 				alignItems="center"
 				sx={{
-					paddingBottom: isOpen ? '40px' : 0,
+					paddingBottom: isOpen ? '32px' : 0,
 					cursor: hasProfileLogo ? 'auto' : 'pointer',
 				}}
 				onClick={openHandler}>
@@ -1331,6 +1335,7 @@ export function InputFormSection({
 		if (fromInterworkRepair && setFocus) {
 			setTimeout(() => {
 				setFocus('authInfo');
+				window.scrollTo(0, document.body.scrollHeight);
 			}, 500);
 		}
 	}, [data, isLoading, location, setFocus]);
@@ -1737,7 +1742,7 @@ export function InputFormSection({
 						flexWrap="nowrap"
 						alignItems="flex-end"
 						gap="20px">
-						<Grid item>
+						<Grid item maxHeight={395}>
 							<FileInputStyle
 								type="file"
 								accept="image/*"
@@ -1863,7 +1868,8 @@ export function InputFormSection({
 					}
 					title="추가정보를 입력해주세요"
 					isFilled={false}
-					openHandler={() => boxOpenHandler(3)}>
+					openHandler={() => boxOpenHandler(3)}
+					isLast={true}>
 					{additionalInfomationList.map((li, idx) => (
 						<InputWithLabel
 							name={li.name}
@@ -1875,6 +1881,7 @@ export function InputFormSection({
 							inputType="textarea"
 							defaultValue=""
 							key={`additional-information-${idx}`}
+							isLast={idx === additionalInfomationList.length - 1}
 						/>
 					))}
 				</BoxContainer>

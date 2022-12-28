@@ -22,7 +22,7 @@ function GuaranteeDetailInfoColumn({
 				variant="body3"
 				color="grey.300"
 				fontWeight="bold"
-				mb="10px">
+				mb="4px">
 				{title}
 			</Typography>
 			<Typography

@@ -34,7 +34,7 @@ function GuaranteeDetailProductInfo({data}: {data: GuaranteeDetail}) {
 				borderRadius="8px"
 				border={(theme) => `1px solid ${theme.palette.grey[100]}`}
 				mb="24px">
-				<Typography variant="subtitle2" mb="24px">
+				<Typography variant="subtitle2" mb="12px">
 					상품정보
 				</Typography>
 				<Stack
@@ -47,19 +47,24 @@ function GuaranteeDetailProductInfo({data}: {data: GuaranteeDetail}) {
 						alignItems="center"
 						columnGap="13px">
 						<ProductImage
-							src={data?.product_img || ''}
+							src={
+								data?.productImages?.length > 0
+									? data?.productImages[0]
+									: ''
+							}
 							onImgClick={() => {
 								sendAmplitudeLog(
 									'guarantee_detail_itemimage_click',
 									{button_title: '상품이미지 클릭'}
 								);
-
-								if (!data?.product_img) return;
-								onSetModalData({
-									imgSrc: data?.product_img,
-									imgAlt: 'product image',
-								});
-								onOpen();
+								const productImages = data?.productImages;
+								if (productImages?.length > 0) {
+									onSetModalData({
+										imgSrc: productImages[0],
+										imgAlt: 'product image',
+									});
+									onOpen();
+								}
 							}}
 						/>
 						<Stack flexDirection="column">

@@ -73,7 +73,7 @@ function ServiceInterworkRepair() {
 						try {
 							await installServiceInterworkMutation.mutateAsync();
 							onOpenMessageDialog({
-								title: '수선센터가 설치됐습니다',
+								title: '수선신청 관리가 연동됐습니다.',
 								message: (
 									<>
 										고객 수선신청 화면에 표시되는 A/S
@@ -176,6 +176,10 @@ function ServiceInterworkRepair() {
 		);
 	}, [onOpenMessageDialog, uninstallServiceInterworkMutation]);
 
+	if (isLoading) {
+		return <></>;
+	}
+
 	return (
 		<Stack
 			flexDirection="column"
@@ -184,7 +188,7 @@ function ServiceInterworkRepair() {
 			margin="auto">
 			<ServiceInterworkDetailTitle
 				title="수선신청 관리"
-				subTitle="고객이 간편하게 수선신청하고, 신청 내역을 한곳에서 관리하세요. "
+				subTitle="고객이 간편하게 수선신청하고, 신청 내역을 한곳에서 관리하세요."
 				titleImgBackgroundColor="#EDF9F7"
 				TitleImg={
 					<img
@@ -213,27 +217,28 @@ function ServiceInterworkRepair() {
 				]}>
 				<>
 					<Typography variant="h3">
-						수선신청으로 사후관리 서비스를 고객에게 제공
+						수선신청 관리로 고객에게 편안한 사후 관리를 제공해보세요
 					</Typography>
 					<Typography>
-						기존에 수선신청은 어떻게 관리하셨나요?
-						<br />
-						고객센터로 전화문의, 문의 게시판에 게시글, 1:1 채팅 등
-						다양하게 접수됐던 수선 요청을 한 곳에서 신청하고 관리할
-						수 있습니다.
+						기존에 수선신청은 어떻게 관리하셨나요? 고객센터로
+						전화문의, 문의 게시판에 게시글, 1:1 채팅 등 많은 경로로
+						접수되고 있던 수선 요청을 한 곳에서 신청하고 관리할 수
+						있습니다.
 					</Typography>
 					<Typography>
-						발급된 개런티 상세 화면에서 고객이 바로 수선 신청이
+						고객은 발급된 개런티 상세 화면에서 바로 수선 신청이
 						가능합니다.
 						<br />
-						고객은 별도 사이트에 접속해서 상품정보를 입력할 필요
-						없이 간편하게 신청할 수 있어요.
+						개런티에 상품정보가 모두 저장되어 있어 간편하게 신청할
+						수 있어요.
 					</Typography>
 					<Typography>
-						접수된 수선신청 내역은 <b>[수선 신청 관리]</b> 신규 메뉴
-						탭에서 확인할 수 있습니다.
+						브랜드(기업)에서는 <b>[수선 신청 관리]</b> 신규 메뉴
+						탭에서 접수된 수선신청 내역을 확인할 수 있습니다.
 						<br />
-						<b>‘수선취소', ‘수선완료'</b> 처리도 가능합니다.
+						화면에서 바로 &nbsp;
+						<b>‘수선취소', ‘수선완료'</b>로 진행 상황을 변경할 수도
+						있어요!
 					</Typography>
 					<Typography variant="h4">서비스 사용방법</Typography>
 					<Typography>

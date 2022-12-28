@@ -59,19 +59,15 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 
 			// 상품
 			productName: data?.productName,
+
 			price: data?.price ? `${data?.price.toLocaleString()}원` : '0원',
 			nftCustomFieldValue: nftCustomFieldValue || null,
-			// TODO:
-			// previewImage: data?.product_img,
-			previewImage: '',
+			previewImage:
+				data?.productImages?.length > 0 ? data?.productImages[0] : '',
 			nftRequestId: data?.nftNumber,
 			nftIssueDt: data?.issuedAt ? data?.issuedAt.slice(0, 10) : '-',
-
-			// TODO:
-			// categoryName: data?.cate_cd_text,
 			modelNum: data?.modelNumber,
-			// TODO:
-			// isInvalidCard: data.nft_req_state === '9' ? true : false,
+			isInvalidCard: data.nftStatusCode === '9' ? true : false,
 		};
 	}, [data, partnershipData]);
 
@@ -87,7 +83,7 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 				},
 				marginTop: {
 					xs: '0px',
-					md: '119px',
+					md: '111px',
 				},
 				marginBottom: '60px',
 			}}>
@@ -101,11 +97,9 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 					md: '10px',
 				}}>
 				<PreviewGuarantee values={values} />
-				{data?.idx &&
-					// TODO: check
-					['3', '4'].includes(data?.nftStatus) && (
-						<GuaranteeCancelButton idx={data?.idx} />
-					)}
+				{data?.idx && ['3', '4'].includes(data?.nftStatusCode) && (
+					<GuaranteeCancelButton idx={data?.idx} />
+				)}
 			</Stack>
 		</Stack>
 	);

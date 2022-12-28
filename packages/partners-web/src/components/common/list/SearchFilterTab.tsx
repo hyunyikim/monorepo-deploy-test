@@ -29,7 +29,7 @@ function SearchFilterTab({
 			<Stack
 				mt={{
 					xs: '16px',
-					md: '50px',
+					md: '40px',
 				}}
 				flexDirection="row"
 				justifyContent={buttons ? 'space-between' : 'flex-start'}

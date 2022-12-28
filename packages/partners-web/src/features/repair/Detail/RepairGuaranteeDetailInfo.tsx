@@ -14,7 +14,7 @@ function RepairGuaranteeDetailInfo({data}: {data: GuaranteeDetail}) {
 			borderRadius="8px"
 			border={(theme) => `1px solid ${theme.palette.grey[100]}`}
 			mb="24px">
-			<Typography variant="subtitle2" mb="24px">
+			<Typography variant="subtitle2" mb="12px">
 				디지털 개런티 정보
 			</Typography>
 			<Stack

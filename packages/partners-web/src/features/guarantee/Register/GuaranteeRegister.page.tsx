@@ -86,7 +86,10 @@ function GuaranteeRegister() {
 					xs: 'auto',
 					md: '0',
 				}}
-				mb="60px">
+				mb={{
+					xs: '60px',
+					md: '100px',
+				}}>
 				<TitleTypography title="개런티 발급하기" />
 				<GuaranteeRegisterForm initialData={data} />
 			</Stack>

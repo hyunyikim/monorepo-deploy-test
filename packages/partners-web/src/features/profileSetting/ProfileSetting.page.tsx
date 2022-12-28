@@ -340,7 +340,7 @@ function ProfileSetting() {
 				gap: '40px',
 				maxWidth: '800px',
 				margin: 'auto',
-				pb: '85px',
+				pb: '100px',
 			}}>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
@@ -359,7 +359,7 @@ function ProfileSetting() {
 							variant="subtitle1"
 							sx={{
 								color: 'grey.900',
-								marginBottom: '42px',
+								marginBottom: '32px',
 							}}>
 							기본 정보
 						</Typography>
@@ -426,7 +426,7 @@ function ProfileSetting() {
 							variant="subtitle1"
 							sx={{
 								color: 'grey.900',
-								marginBottom: '42px',
+								marginBottom: '16px',
 							}}>
 							비밀번호 변경
 						</Typography>

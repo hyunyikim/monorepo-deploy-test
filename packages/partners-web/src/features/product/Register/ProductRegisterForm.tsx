@@ -216,7 +216,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 			<form noValidate onSubmit={handleSubmit(onSubmit)}>
 				<Stack
 					p="32px"
-					mb="80px"
+					mb="100px"
 					border={(theme) => `1px solid ${theme.palette.grey[100]}`}
 					borderRadius="8px">
 					<ProductRegisterFormInput

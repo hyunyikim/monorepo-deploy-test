@@ -4,14 +4,12 @@ import {
 	ListRequestParam,
 	ListResponse,
 	ProductListRequestSearchType,
-	ProductListRequestParam,
 	ProductListResponse,
 	ProductDetailResponse,
 } from '@/@types';
 
 export const getProductList = async (
-	params: ListRequestParam<ProductListRequestSearchType> &
-		ProductListRequestParam
+	params: ListRequestParam<ProductListRequestSearchType>
 ) => {
 	const {
 		currentPage,
@@ -20,7 +18,6 @@ export const getProductList = async (
 		endDate,
 		searchType,
 		searchText,
-		categoryCode,
 		...otherPararms
 	} = params;
 	return await instance.get<ListResponse<ProductListResponse[]>>(
@@ -34,9 +31,6 @@ export const getProductList = async (
 				to: endDate,
 				search: searchType,
 				keyword: searchText,
-				...(categoryCode && {
-					categoryCode,
-				}),
 			},
 		}
 	);

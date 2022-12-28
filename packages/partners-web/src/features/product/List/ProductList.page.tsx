@@ -5,7 +5,6 @@ import {Box, TableRow, Typography} from '@mui/material';
 import {useList, useCheckboxList} from '@/utils/hooks';
 import {bulkDeleteProduct, getProductList} from '@/api/product.api';
 import {
-	ProductListRequestParam,
 	ProductListResponse,
 	ProductListRequestSearchType,
 	ListRequestParam,
@@ -63,7 +62,7 @@ function ProductList() {
 		handleReset,
 	} = useList<
 		ListResponse<ProductListResponse[]>,
-		ListRequestParam<ProductListRequestSearchType> & ProductListRequestParam
+		ListRequestParam<ProductListRequestSearchType>
 	>({
 		apiFunc: getProductList,
 		initialFilter: {
@@ -71,7 +70,6 @@ function ProductList() {
 			// default 날짜가 14일이 아님
 			startDate: calculatePeriod('all')[0],
 			endDate: calculatePeriod('all')[1],
-			categoryCode: '',
 		},
 	});
 	const {
@@ -128,11 +126,7 @@ function ProductList() {
 					menu={menu}
 					menuKo={menuKo}
 					filter={filter}
-					filterComponent={
-						b2bType === 'brand'
-							? productListSearchFilter.slice(0, 2)
-							: productListSearchFilter
-					}
+					filterComponent={productListSearchFilter}
 					periodIdx={6}
 					onSearch={(param) => {
 						handleSearch(param);
