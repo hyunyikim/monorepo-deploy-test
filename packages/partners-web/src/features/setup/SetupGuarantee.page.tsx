@@ -1781,7 +1781,7 @@ export function InputFormSection({
 						</Grid>
 
 						<Grid item>
-							<Grid container flexDirection="column" gap="20px">
+							<Grid container flexDirection="column" gap="16px">
 								<Grid container gap="8px">
 									{brandCard.file ? (
 										<CategoryContainer

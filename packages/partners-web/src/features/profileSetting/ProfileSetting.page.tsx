@@ -426,7 +426,7 @@ function ProfileSetting() {
 							variant="subtitle1"
 							sx={{
 								color: 'grey.900',
-								marginBottom: '16px',
+								marginBottom: '32px',
 							}}>
 							비밀번호 변경
 						</Typography>

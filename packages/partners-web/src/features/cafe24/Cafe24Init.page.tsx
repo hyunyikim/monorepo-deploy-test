@@ -49,7 +49,7 @@ import iconDoc2x from '@/assets/images/cafe24/icon_cafe24_doc@2x.png';
 import iconBell from '@/assets/images/cafe24/icon_cafe24_noticheck.png';
 import iconBell2x from '@/assets/images/cafe24/icon_cafe24_noticheck@2x.png';
 
-const cafe24Scope = CAFE24_SCOPE.split(',');
+const cafe24Scope = CAFE24_SCOPE;
 
 // TODO: makeStyles -> tss-react로 변경하기
 const useStyles = makeStyles((theme: Theme) => ({
