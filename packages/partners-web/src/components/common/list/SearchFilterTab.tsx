@@ -29,7 +29,7 @@ function SearchFilterTab({
 			<Stack
 				mt={{
 					xs: '16px',
-					md: '50px',
+					md: '40px',
 				}}
 				flexDirection="row"
 				justifyContent={buttons ? 'space-between' : 'flex-start'}
@@ -45,6 +45,7 @@ function SearchFilterTab({
 						width: 'fit-content',
 						'& .MuiButtonBase-root.MuiTab-root': {
 							fontSize: 14,
+							lineHeight: 1.45,
 							minWidth: '0',
 							'&.Mui-selected': {
 								fontWeight: 700,

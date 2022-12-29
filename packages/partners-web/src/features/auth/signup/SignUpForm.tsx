@@ -131,15 +131,16 @@ function SignUpForm({
 		getFieldState,
 		control,
 		handleSubmit,
-		formState: {errors, isDirty, isValidating, isValid},
+		formState: {isValidating},
+		trigger,
 	} = useForm<FormProps>({
 		resolver: yupResolver(
 			showAllField
 				? emailSchemaShape.concat(restFieldSchemaShape)
 				: emailSchemaShape
 		),
-		mode: showAllField ? 'onSubmit' : 'onChange',
-		reValidateMode: showAllField ? 'onSubmit' : 'onBlur',
+		mode: 'onSubmit',
+		reValidateMode: 'onBlur',
 	});
 
 	// form 초기화
@@ -255,6 +256,11 @@ function SignUpForm({
 												);
 										}
 										onChange(e);
+
+										// 이메일 필드만 노출되어 입력시, 입력 될 때마다 유효성 확인함
+										if (name === 'email' && !showAllField) {
+											trigger('email');
+										}
 									}}
 									onBlur={onBlur}
 									value={value}

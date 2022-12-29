@@ -1,6 +1,5 @@
 import React, {
 	useState,
-	useRef,
 	ReactNode,
 	useMemo,
 	useEffect,
@@ -9,7 +8,7 @@ import React, {
 import styled from '@emotion/styled';
 import style from '@/assets/styles/style.module.scss';
 
-import {useForm, FormValue} from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {
 	brandGuaranteeSchemaShape,
@@ -41,8 +40,6 @@ import {
 } from '@/assets/icon';
 
 import {
-	LogoImage2x,
-	defaultLogoImg,
 	defaultLogoImg2x,
 	defaultErrorLogoImg2x,
 	dashedLine,
@@ -53,7 +50,7 @@ import {
 
 import {
 	createSearchParams,
-	useNavigate,
+	useLocation,
 	useSearchParams,
 } from 'react-router-dom';
 
@@ -62,13 +59,7 @@ import ControlledInputComponent from '../../components/molecules/ControlledInput
 import TooltipComponent from '../../components/atoms/Tooltip';
 import InputLabelTag from '../../components/atoms/InputLabelTag';
 import Tab from '../../components/atoms/Tab';
-import {
-	PartnershipInfoResponse,
-	FileData,
-	FileDataPreview,
-	CropPreviewData,
-	BlobProps,
-} from '@/@types';
+import {FileData, FileDataPreview, CropPreviewData} from '@/@types';
 import PreviewGuarantee, {
 	ExamplePreviewGuarantee,
 } from '@/components/common/PreviewGuarantee';
@@ -77,10 +68,13 @@ import {
 	setCustomizedBrandCard,
 } from '@/api/guarantee.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
-import {goToParentUrl, updateParentPartnershipData} from '@/utils';
+import {
+	goToParentUrl,
+	goToParentUrlWithState,
+	updateParentPartnershipData,
+} from '@/utils';
 import Header from '@/components/common/layout/Header';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
-import PageTitle from '@/components/atoms/PageTitle';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -163,13 +157,15 @@ const AvatarCardStyle = styled('img')`
 
 const UlStyle = styled('ul')`
 	padding-left: 20px;
+	margin-top: 0;
+	margin-bottom: 0;
 `;
 
 const BulletListStyle = styled('li')`
-	color: '#aeaeba';
-	font-size: '16px';
+	color: #aeaeba;
+	font-size: 16px;
 	font-weight: 500;
-	line-height: '24px';
+	line-height: 1.45;
 `;
 
 const ProgressCircleStyle = styled('div')`
@@ -246,6 +242,7 @@ interface BoxContainerProps {
 	isFilled?: boolean | '' | null;
 	useLabel?: boolean;
 	openHandler: () => void;
+	isLast?: boolean;
 }
 interface CategoryContainerProps {
 	required: boolean;
@@ -292,6 +289,7 @@ function BoxContainer({
 	useLabel,
 	isFilled,
 	openHandler,
+	isLast = false,
 }: BoxContainerProps) {
 	return (
 		<Box
@@ -300,7 +298,7 @@ function BoxContainer({
 				borderRadius: '16px',
 				padding: '30px 26px 30px 30px',
 				width: '100%',
-				marginBottom: '24px',
+				marginBottom: isLast ? '60px' : '24px',
 				maxWidth: '800px',
 			}}>
 			<Grid
@@ -308,7 +306,7 @@ function BoxContainer({
 				justifyContent="space-between"
 				alignItems="center"
 				sx={{
-					paddingBottom: isOpen ? '40px' : 0,
+					paddingBottom: isOpen ? '32px' : 0,
 					cursor: hasProfileLogo ? 'auto' : 'pointer',
 				}}
 				onClick={openHandler}>
@@ -318,9 +316,7 @@ function BoxContainer({
 					width="auto"
 					alignItems={'center'}
 					gap="12px">
-					<Typography component="h4" className="sub-head-1">
-						{title}
-					</Typography>
+					<Typography variant="subtitle1">{title}</Typography>
 					{useLabel &&
 						(isFilled ? (
 							<BoxContainerSuccessLabel>
@@ -618,9 +614,10 @@ export function InputFormSection({
 	boxOpenHandler,
 	justOpenBox,
 }: InputFormProps) {
-	const {data} = useGetPartnershipInfo();
+	const {data, isLoading} = useGetPartnershipInfo();
 	const b2bType = data?.b2bType; // cooperator or brand or platform
 	const email = data?.email as string;
+	const location = useLocation();
 
 	const {
 		handleSubmit,
@@ -631,6 +628,7 @@ export function InputFormSection({
 		reset,
 		getValues,
 		formState: {errors},
+		setFocus,
 	} = useForm({
 		resolver:
 			b2bType === 'brand'
@@ -638,8 +636,6 @@ export function InputFormSection({
 				: yupResolver(cooperatorGuaranteeSchemaShape),
 		mode: 'onChange',
 	});
-
-	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 	const queryData = Object.fromEntries([...searchParams]);
 
@@ -771,7 +767,7 @@ export function InputFormSection({
 		}
 	};
 
-	const enterHandler = (e: KeyboardEvent<HTMLImageElement>) => {
+	const enterHandler = (e: KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			e.preventDefault();
 			addNewProductInfoToList();
@@ -1242,11 +1238,6 @@ export function InputFormSection({
 		goToParentUrl('/dashboard');
 	};
 
-	// useEffect(() => {
-	// 	console.log('getValues@!##@!', getValues());
-	// 	console.log('errors', errors);
-	// }, [errors]);
-
 	/**
 	 * 초기 데이터 셋팅
 	 */
@@ -1315,6 +1306,49 @@ export function InputFormSection({
 		}
 	}, [data]);
 
+	// 개런티 설정완료 여부 판단해 초기설정/재설정 페이지로 리다이렉트 시킴
+	useEffect(() => {
+		if (isLoading) {
+			return;
+		}
+		const alreadySettingGuarantee = data?.profileImage ? true : false;
+		const {pathname, search, state} = location;
+		if (
+			!alreadySettingGuarantee &&
+			pathname.includes('/re-setup/guarantee')
+		) {
+			goToParentUrlWithState('/setup/guarantee', state);
+			return;
+		}
+		if (alreadySettingGuarantee && pathname.includes('/setup/guarantee')) {
+			goToParentUrlWithState('/re-setup/guarantee', state);
+			return;
+		}
+		// 수선신청 서비스 연동 완료 후 개런티 설정으로 넘어온 경우 추가정보 입력으로 포커스 옮김
+		// 개런티 재설정에서만 url 이동
+		const fromInterworkRepair =
+			location.state &&
+			typeof location.state === 'object' &&
+			(location.state as Record<string, any>).hasOwnProperty(
+				'interwork-repair'
+			) &&
+			location.state['interwork-repair'];
+		if (
+			fromInterworkRepair &&
+			setFocus &&
+			pathname.includes('/re-setup/guarantee')
+		) {
+			setTimeout(() => {
+				setFocus('authInfo');
+				window.scrollTo(0, document.body.scrollHeight);
+			}, 500);
+		}
+	}, [data, isLoading, location, setFocus]);
+
+	if (isLoading) {
+		return <></>;
+	}
+
 	return (
 		<Grid
 			item
@@ -1322,7 +1356,7 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={'center'}
 			alignItems="center"
-			p={hasProfileLogo ? '20px 0px 32px 0px' : '89px 0px 32px 40px'}>
+			p={hasProfileLogo ? '0 0px 32px 0px' : '89px 0px 32px 40px'}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
@@ -1335,9 +1369,9 @@ export function InputFormSection({
 							gap: '20px',
 							marginBottom: '12px',
 						}}>
-						<PageTitle>
+						<Typography variant="header1">
 							안녕하세요, {data?.companyName}님!
-						</PageTitle>
+						</Typography>
 					</Stack>
 				)}
 
@@ -1352,10 +1386,7 @@ export function InputFormSection({
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
 					{hasProfileLogo && (
-						<Typography
-							fontSize={16}
-							color={'grey.300'}
-							fontWeight={500}>
+						<Typography variant="body1" color={'grey.300'}>
 							개런티 설정을 완료하고 버클 개런티 카드를
 							발급해보세요
 						</Typography>
@@ -1379,10 +1410,8 @@ export function InputFormSection({
 								onClickCloseBtn={closeTooltip}
 								title={
 									<Typography
-										fontSize={12}
-										color={'#ffffff'}
-										lineHeight="18px"
-										fontWeight={500}>
+										variant="caption2"
+										color={'#ffffff'}>
 										어떤 정보를 노출 할지 고민 된다면
 										<br /> 타 브랜드의 개런티 화면을
 										참고하세요!
@@ -1532,7 +1561,7 @@ export function InputFormSection({
 								onClick={handleCheckOutLinkClick}
 								sx={{
 									fontSize: '14px',
-									lineHeight: '18px',
+									lineHeight: '14px',
 									color: 'primary.main',
 									fontWeight: 700,
 									textDecoration: 'underline',
@@ -1715,10 +1744,13 @@ export function InputFormSection({
 					openHandler={() => boxOpenHandler(2)}>
 					<Grid
 						container
-						flexWrap="nowrap"
+						flexWrap={{
+							xs: 'wrap',
+							md: 'nowrap',
+						}}
 						alignItems="flex-end"
 						gap="20px">
-						<Grid item>
+						<Grid item maxHeight={395}>
 							<FileInputStyle
 								type="file"
 								accept="image/*"
@@ -1756,15 +1788,33 @@ export function InputFormSection({
 							)}
 						</Grid>
 
-						<Grid item>
-							<Grid container flexDirection="column" gap="20px">
+						<Grid
+							item
+							sx={{
+								width: '100%',
+							}}>
+							<Grid container flexDirection="column" gap="16px">
 								<Grid container gap="8px">
 									{brandCard.file ? (
 										<CategoryContainer
 											required={false}
-											category={brandCard.filename}
+											category={
+												// 파일명 40자 넘어가면 말줄임 표기
+												brandCard.filename
+													? brandCard.filename
+															?.length > 40
+														? `${brandCard.filename?.slice(
+																0,
+																40
+														  )}...`
+														: brandCard.filename
+													: ''
+											}
 											clickHandler={deleteCardPreview}
 											exampleIdx={177}
+											sx={{
+												width: 'calc(100% - 100px - 8px)',
+											}}
 										/>
 									) : (
 										<Box
@@ -1780,6 +1830,7 @@ export function InputFormSection({
 												fontWeight: 500,
 												fontSize: '14px',
 												lineHeight: '14px',
+												width: 'calc(100% - 100px - 8px)',
 											}}>
 											이미지 파일을 업로드 해주세요
 										</Box>
@@ -1801,12 +1852,12 @@ export function InputFormSection({
 
 								<UlStyle>
 									<BulletListStyle>
-										2MB 이하의 이미지 파일을 업로드
+										<b>2MB</b> 이하의 이미지 파일을 업로드
 										해주세요.
 									</BulletListStyle>
 									<BulletListStyle>
-										PNG, JPG, JPEG 형식의 이미지 파일을
-										업로드 해주세요.
+										<b>PNG, JPG, JPEG</b> 형식의 이미지
+										파일을 업로드 해주세요.
 									</BulletListStyle>
 									<BulletListStyle>
 										가이드를 참고해 개런티 카드를
@@ -1844,7 +1895,8 @@ export function InputFormSection({
 					}
 					title="추가정보를 입력해주세요"
 					isFilled={false}
-					openHandler={() => boxOpenHandler(3)}>
+					openHandler={() => boxOpenHandler(3)}
+					isLast={true}>
 					{additionalInfomationList.map((li, idx) => (
 						<InputWithLabel
 							name={li.name}
@@ -1856,6 +1908,7 @@ export function InputFormSection({
 							inputType="textarea"
 							defaultValue=""
 							key={`additional-information-${idx}`}
+							isLast={idx === additionalInfomationList.length - 1}
 						/>
 					))}
 				</BoxContainer>

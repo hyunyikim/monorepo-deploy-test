@@ -26,12 +26,6 @@ interface Props extends Omit<InputProps, 'control' | 'name' | 'error'> {
 	multiline?: boolean;
 	autoFocus?: boolean;
 	error?: FieldError;
-	onBlur?: (
-		event: React.FocusEventHandler<HTMLInputElement> | undefined
-	) => void;
-	onKeyDown?: (
-		event: React.KeyboardEventHandler<HTMLInputElement> | undefined
-	) => void;
 }
 
 function InputComponent({
@@ -66,7 +60,7 @@ function InputComponent({
 				minRows={multiline ? '3' : '0'}
 				value={value}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-					onChange(e);
+					onChange && onChange(e);
 				}}
 				onBlur={onBlur}
 				autoFocus={autoFocus}

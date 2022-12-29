@@ -28,7 +28,7 @@ function MessageDialog() {
 	const showBottomCloseButton = useMessageDialog(
 		(state) => state.showBottomCloseButton
 	);
-	const closeButtonValue: '확인' | '취소' = useMessageDialog(
+	const closeButtonValue: '확인' | '취소' | '닫기' = useMessageDialog(
 		(state) => state.closeButtonValue
 	);
 	const buttons = useMessageDialog((state) => state.buttons);
@@ -84,10 +84,11 @@ function MessageDialog() {
 							xs: 16,
 							md: 21,
 						}}
+						lineHeight={1.45}
 						fontWeight={700}
 						sx={{
 							padding: 0,
-							marginBottom: '16px',
+							marginBottom: '8px',
 						}}>
 						{title}
 					</DialogTitle>
@@ -110,8 +111,9 @@ function MessageDialog() {
 						xs: 12,
 						md: 16,
 					}}
+					lineHeight={1.45}
 					sx={{
-						wordBreak: 'break-word',
+						wordBreak: 'keep-all',
 					}}>
 					{message}
 				</Box>

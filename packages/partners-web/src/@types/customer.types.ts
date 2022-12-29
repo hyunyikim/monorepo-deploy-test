@@ -55,13 +55,13 @@ export interface NftCustomerGuarantee {
 	idx: number;
 	serialNo: string;
 	price: number;
-	product: Product;
+	product: CustomerGuaranteeProduct;
 	brand: CustomerBrand;
 	status: GuaranteeStatus;
 	requestedAt: string;
 }
 
-export interface Product {
+export interface CustomerGuaranteeProduct {
 	idx: number;
 	name: string;
 	imagePath: string;

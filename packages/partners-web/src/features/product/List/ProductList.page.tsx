@@ -1,11 +1,10 @@
-import {useMemo, useState} from 'react';
+import {useMemo} from 'react';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {useList, useCheckboxList} from '@/utils/hooks';
 import {bulkDeleteProduct, getProductList} from '@/api/product.api';
 import {
-	ProductListRequestParam,
 	ProductListResponse,
 	ProductListRequestSearchType,
 	ListRequestParam,
@@ -18,10 +17,14 @@ import {
 	sortSearchFilter,
 } from '@/data';
 import {goToParentUrl, trackingToParent} from '@/utils';
-import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
+import {
+	useGetPartnershipInfo,
+	useGlobalLoading,
+	useMessageDialog,
+} from '@/stores';
 
 import {
-	ListTitle,
+	TitleTypography,
 	SearchFilter,
 	TableInfo,
 	Table,
@@ -33,7 +36,6 @@ import {
 	TableCell,
 	SearchFilterTab,
 	Checkbox,
-	Loading,
 } from '@/components';
 
 const menu = 'itemadmin';
@@ -45,7 +47,7 @@ function ProductList() {
 	const useFieldModelNum = useMemo(() => {
 		return partnershipInfo?.useFieldModelNum === 'Y' ? true : false;
 	}, [partnershipInfo]);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
@@ -60,7 +62,7 @@ function ProductList() {
 		handleReset,
 	} = useList<
 		ListResponse<ProductListResponse[]>,
-		ListRequestParam<ProductListRequestSearchType> & ProductListRequestParam
+		ListRequestParam<ProductListRequestSearchType>
 	>({
 		apiFunc: getProductList,
 		initialFilter: {
@@ -68,7 +70,6 @@ function ProductList() {
 			// default 날짜가 14일이 아님
 			startDate: calculatePeriod('all')[0],
 			endDate: calculatePeriod('all')[1],
-			categoryCode: '',
 		},
 	});
 	const {
@@ -88,7 +89,7 @@ function ProductList() {
 
 	const handleDeleteProduct = async (checkedItems: number[]) => {
 		try {
-			setIsSubmitting(true);
+			setIsLoading(true);
 			await bulkDeleteProduct(checkedItems);
 			onOpenMessageDialog({
 				title: '상품이 삭제됐습니다.',
@@ -106,7 +107,7 @@ function ProductList() {
 				showBottomCloseButton: true,
 			});
 		} finally {
-			setIsSubmitting(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -120,16 +121,12 @@ function ProductList() {
 	return (
 		<>
 			<Box>
-				<ListTitle title="상품 목록" />
+				<TitleTypography title="상품 목록" />
 				<SearchFilter
 					menu={menu}
 					menuKo={menuKo}
 					filter={filter}
-					filterComponent={
-						b2bType === 'brand'
-							? productListSearchFilter.slice(0, 2)
-							: productListSearchFilter
-					}
+					filterComponent={productListSearchFilter}
 					periodIdx={6}
 					onSearch={(param) => {
 						handleSearch(param);
@@ -304,7 +301,7 @@ function ProductList() {
 								<TableCell>
 									{item.num ? (
 										<Typography
-											fontSize={14}
+											variant="body3"
 											className="underline"
 											onClick={() => {
 												goToParentUrl(
@@ -322,8 +319,7 @@ function ProductList() {
 								</TableCell>
 								<TableCell>
 									<Typography
-										fontSize={14}
-										lineHeight={'18px'}
+										variant="body3"
 										className="underline"
 										onClick={() => {
 											goToParentUrl(
@@ -360,7 +356,6 @@ function ProductList() {
 					}}
 				/>
 			</Box>
-			<Loading loading={isSubmitting} showCircularProgress={false} />
 		</>
 	);
 }

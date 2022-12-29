@@ -8,7 +8,7 @@ import getTheme from '@/assets/themes';
 import RootRouter from '@/routes/RootRouter';
 
 import '@/assets/styles/common.scss';
-import {MessageDialog} from './components';
+import {Loading, MessageDialog} from '@/components';
 import ModalComponent from '@/components/common/ModalComponent';
 import AmplitudeTrackingInterceptor from '@/components/common/layout/AmplitudeTrackingInterceptor';
 
@@ -30,6 +30,7 @@ function App() {
 							<RootRouter />
 							<MessageDialog />
 							<ModalComponent />
+							<Loading />
 						</AmplitudeTrackingInterceptor>
 					</StylesThemeProvider>
 				</ThemeProvider>

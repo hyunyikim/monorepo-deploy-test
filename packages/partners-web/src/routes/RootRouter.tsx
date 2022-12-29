@@ -40,9 +40,31 @@ const Inspection = lazy(
 	() => import('@/features/inspection/List/InspectionList.page')
 );
 const Repair = lazy(() => import('@/features/repair/List/RepairList.page'));
+const RepairDetail = lazy(
+	() => import('@/features/repair/Detail/RepairDetail.page')
+);
 const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const EmailVerificationFail = lazy(
 	() => import('@/features/auth/verification/EmailVerificationFail.page')
+);
+const ServiceInterwork = lazy(
+	() => import('@/features/service-interwork/List/ServiceInterworkList.page')
+);
+const ServiceInterworkCafe24 = lazy(
+	() =>
+		import(
+			'@/features/service-interwork/Detail/ServiceInterworkCafe24.page'
+		)
+);
+const ServiceInterworkRepair = lazy(
+	() =>
+		import(
+			'@/features/service-interwork/Detail/ServiceInterworkRepair.page'
+		)
+);
+const Cafe24Init = lazy(() => import('@/features/cafe24/Cafe24Init.page'));
+const Cafe24Interwork = lazy(
+	() => import('@/features/cafe24/Cafe24Interwork.page')
 );
 const NotFound = lazy(() => import('@/features/common/NotFound.page'));
 
@@ -88,12 +110,20 @@ const privateRouter: RouteObject[] = [
 			},
 			{path: '/b2b/inspection/v2', element: <Inspection />},
 			{path: '/b2b/repair/v2', element: <Repair />},
-
+			{path: '/b2b/repair/:idx/v2', element: <RepairDetail />},
+			{path: '/b2b/interwork/v2', element: <ServiceInterwork />},
+			{
+				path: '/b2b/interwork/cafe24/v2',
+				element: <ServiceInterworkCafe24 />,
+			},
+			{
+				path: '/b2b/interwork/repair/v2',
+				element: <ServiceInterworkRepair />,
+			},
 			{path: '/setting/profile/v2', element: <ProfileSetting />},
-
 			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
 			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
-			{path: '*', element: <NotFound />},
+			{path: '/cafe24/interwork/v2', element: <Cafe24Interwork />},
 		],
 	},
 ];
@@ -114,6 +144,16 @@ const publicRouter: RouteObject[] = [
 				path: '/auth/verification/fail',
 				element: <EmailVerificationFail />,
 			},
+		],
+	},
+];
+
+// 로그인 여부 상관 없이 접근 가능한 페이지
+const commonRouter: RouteObject[] = [
+	{
+		element: <IframeChild />,
+		children: [
+			{path: '/cafe24/init/v2', element: <Cafe24Init />},
 			{path: '*', element: <NotFound />},
 		],
 	},
@@ -125,10 +165,12 @@ function RootRouter() {
 		<RouterProvider
 			router={createBrowserRouter(
 				// (isLogin ? privateRouter : publicRouter).map((route) => ({
-				[...publicRouter, ...privateRouter].map((route) => ({
-					...route,
-					element: <Suspense>{route.element}</Suspense>,
-				}))
+				[...publicRouter, ...privateRouter, ...commonRouter].map(
+					(route) => ({
+						...route,
+						element: <Suspense>{route.element}</Suspense>,
+					})
+				)
 			)}
 		/>
 	);

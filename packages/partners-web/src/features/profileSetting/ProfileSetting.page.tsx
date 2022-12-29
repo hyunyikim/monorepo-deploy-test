@@ -1,8 +1,7 @@
-import React, {useEffect} from 'react';
-import PageTitle from '@/components/atoms/PageTitle';
+import {useEffect} from 'react';
 import {Stack} from '@mui/system';
 import {Typography, Grid} from '@mui/material';
-import {Button, InputWithLabel, MessageDialog} from '@/components';
+import {Button, InputWithLabel, TitleTypography} from '@/components';
 import {profileSettingSchemaShape} from '@/utils/schema';
 
 import {useForm} from 'react-hook-form';
@@ -341,31 +340,26 @@ function ProfileSetting() {
 				gap: '40px',
 				maxWidth: '800px',
 				margin: 'auto',
-				pb: '85px',
+				pb: '100px',
 			}}>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
 				autoComplete="off">
-				<PageTitle>프로필 설정</PageTitle>
-
+				<TitleTypography title="프로필 설정" />
 				<Stack
 					sx={{
 						border: '1px solid #E2E2E9',
 						borderRadius: '16px',
 						padding: '32px',
 						gap: '60px',
-						mt: '40px',
 					}}>
 					<Stack>
 						<Typography
-							variant="h2"
+							variant="subtitle1"
 							sx={{
-								fontWeight: 700,
-								fontSize: '21px',
-								lineHeight: '21px',
 								color: 'grey.900',
-								marginBottom: '42px',
+								marginBottom: '32px',
 							}}>
 							기본 정보
 						</Typography>
@@ -429,13 +423,10 @@ function ProfileSetting() {
 
 					<Stack>
 						<Typography
-							variant="h2"
+							variant="subtitle1"
 							sx={{
-								fontWeight: 700,
-								fontSize: '21px',
-								lineHeight: '21px',
 								color: 'grey.900',
-								marginBottom: '42px',
+								marginBottom: '32px',
 							}}>
 							비밀번호 변경
 						</Typography>

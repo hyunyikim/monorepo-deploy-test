@@ -1,5 +1,7 @@
 import {useCallback, useMemo, useState} from 'react';
 
+import {useMessageDialog} from '@/stores';
+
 const useCheckboxList = ({
 	idxList,
 	handleChangeFilter,
@@ -8,6 +10,7 @@ const useCheckboxList = ({
 	handleChangeFilter: (newParam: {[key: string]: any}) => void;
 }) => {
 	const [checkedIdxList, setCheckedIdxList] = useState<number[]>([]);
+	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
 	const checkedTotal = useMemo(() => {
 		if (idxList?.length < 1 || checkedIdxList?.length < 1) {
@@ -53,6 +56,21 @@ const useCheckboxList = ({
 		[onResetCheckedItem, handleChangeFilter]
 	);
 
+	const isCheckedItemsExisted = useCallback(
+		(message: string) => {
+			if (checkedIdxList?.length < 1) {
+				onOpenMessageDialog({
+					title: message,
+					showBottomCloseButton: true,
+					closeButtonValue: '확인',
+				});
+				return false;
+			}
+			return true;
+		},
+		[checkedIdxList, onOpenMessageDialog]
+	);
+
 	return {
 		checkedIdxList,
 		checkedTotal,
@@ -60,6 +78,7 @@ const useCheckboxList = ({
 		onCheckTotalItem,
 		onResetCheckedItem,
 		onHandleChangeFilter,
+		isCheckedItemsExisted,
 	};
 };
 

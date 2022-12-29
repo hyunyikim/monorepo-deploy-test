@@ -1,27 +1,24 @@
 import {useMemo} from 'react';
-import {format} from 'date-fns';
 
 import {Stack} from '@mui/material';
 
 import {useGetPartnershipInfo} from '@/stores';
-import {GauranteeDetailResponse, Guarantee} from '@/@types';
-import {DATE_FORMAT} from '@/data';
 
 import PreviewGuarantee from '@/components/common/PreviewGuarantee';
 import GuaranteeCancelButton from '@/features/guarantee/Detail/GuaranteeCancelButton';
+import {GuaranteeDetail} from '@/@types';
 
 interface Props {
-	data: GauranteeDetailResponse;
+	data: GuaranteeDetail;
 }
 
 function GuaranteeDetailPreviewCard({data}: Props) {
 	const {data: partnershipData} = useGetPartnershipInfo();
-	const guaranteeData = useMemo<Guarantee>(() => data.data, [data]);
 
 	const values = useMemo(() => {
-		if (!guaranteeData || !partnershipData) return;
+		if (!data || !partnershipData) return;
 
-		const brandNameEn: string = guaranteeData?.brand_nm_en;
+		const brandNameEn: string = data?.brandNameEn;
 		let certificationBrandName = brandNameEn?.toLocaleUpperCase();
 		if (partnershipData?.b2bType !== 'brand') {
 			certificationBrandName = partnershipData?.companyName || '';
@@ -31,7 +28,7 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 		const nftCustomFieldValue: Record<string, string> = {};
 		const customFields = partnershipData?.nftCustomFields;
 		if (customFields && customFields?.length) {
-			const productCustomField = guaranteeData?.custom_field;
+			const productCustomField = data?.customField;
 			customFields.forEach((field: string) => {
 				nftCustomFieldValue[field] =
 					productCustomField && productCustomField[field]
@@ -41,7 +38,7 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 		}
 
 		// 상품의 보증기간이 설정되기 전에는 사용자의 보증기간 정보 보여줌
-		const warrantyDate = guaranteeData?.warranty_dt;
+		const warrantyDate = data?.warrantyDate;
 		return {
 			brandNameEN: brandNameEn,
 			certificationBrandName,
@@ -56,28 +53,23 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 			returnInfo: partnershipData?.returnInfo,
 
 			// 개런티
-			orderDate: guaranteeData?.order_dt,
-			platformName: guaranteeData?.order_platform_nm,
-			orderId: guaranteeData?.ref_order_id,
+			orderDate: data?.orderedAt ? data?.orderedAt.slice(0, 10) : '-',
+			platformName: data?.platformName,
+			orderId: data?.orderNumber,
 
 			// 상품
-			productName: guaranteeData?.pro_nm,
-			price: guaranteeData?.price
-				? `${guaranteeData?.price.toLocaleString()}원`
-				: '0원',
+			productName: data?.productName,
+
+			price: data?.price ? `${data?.price.toLocaleString()}원` : '0원',
 			nftCustomFieldValue: nftCustomFieldValue || null,
-			previewImage: guaranteeData?.product_img,
-			nftRequestId: guaranteeData?.nft_req_num,
-
-			// TODO: 확인
-			nftIssueDt:
-				guaranteeData?.nft_issue_dt || format(new Date(), DATE_FORMAT),
-
-			categoryName: guaranteeData?.cate_cd_text,
-			modelNum: guaranteeData?.model_num,
-			isInvalidCard: guaranteeData.nft_req_state === '9' ? true : false,
+			previewImage:
+				data?.productImages?.length > 0 ? data?.productImages[0] : '',
+			nftRequestId: data?.nftNumber,
+			nftIssueDt: data?.issuedAt ? data?.issuedAt.slice(0, 10) : '-',
+			modelNum: data?.modelNumber,
+			isInvalidCard: data.nftStatusCode === '9' ? true : false,
 		};
-	}, [guaranteeData, partnershipData]);
+	}, [data, partnershipData]);
 
 	if (!values) return null;
 
@@ -91,7 +83,7 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 				},
 				marginTop: {
 					xs: '0px',
-					md: '119px',
+					md: '111px',
 				},
 				marginBottom: '60px',
 			}}>
@@ -105,10 +97,9 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 					md: '10px',
 				}}>
 				<PreviewGuarantee values={values} />
-				{data?.data?.nft_req_idx &&
-					['3', '4'].includes(data?.data?.nft_req_state) && (
-						<GuaranteeCancelButton idx={data?.data?.nft_req_idx} />
-					)}
+				{data?.idx && ['3', '4'].includes(data?.nftStatusCode) && (
+					<GuaranteeCancelButton idx={data?.idx} />
+				)}
 			</Stack>
 		</Stack>
 	);

@@ -51,3 +51,4 @@ export {default as blue100Plus2x} from './icon_plus_blue100_56@2x.png';
 export {default as tickInWhiteCircle} from './icon_tick_in_white_circle_40.png';
 export {default as tickInWhiteCircle2x} from './icon_tick_in_white_circle_40@2x.png';
 export {default as IcReload} from './ic_reload.svg';
+export {default as IcTick} from './ic-tick.svg';

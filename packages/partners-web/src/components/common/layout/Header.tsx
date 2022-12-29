@@ -123,7 +123,7 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 								: logoImage.srcSet
 						}
 						alt="logo"
-						width={172}
+						width={100}
 					/>
 				</ButtonBase>
 				{data && <HeaderProfile data={data} />}

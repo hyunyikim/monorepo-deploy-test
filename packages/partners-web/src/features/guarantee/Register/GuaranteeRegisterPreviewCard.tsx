@@ -89,7 +89,7 @@ function GuaranteeRegisterPreviewCard() {
 				},
 				marginTop: {
 					xs: '0px',
-					md: '70px',
+					md: '34px',
 				},
 				marginBottom: '60px',
 			}}>

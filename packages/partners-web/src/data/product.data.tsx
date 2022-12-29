@@ -41,12 +41,6 @@ export const productListSearchFilter: ListSearchFilters = [
 		label: '기간',
 		component: 'searchDate',
 	},
-	{
-		name: 'categoryCode',
-		label: '카테고리',
-		component: 'select',
-		options: productCategoryOptions,
-	},
 ];
 
 // 개런티 발급 페이지의 상품 목록 조회
@@ -56,12 +50,6 @@ export const guaranteeRegisterProductListSearchFilter: ListSearchFilters = [
 		label: '검색어',
 		component: 'searchField',
 		options: productListSearchTypes,
-	},
-	{
-		name: 'categoryCode',
-		label: '카테고리',
-		component: 'select',
-		options: productCategoryOptions,
 	},
 ];
 

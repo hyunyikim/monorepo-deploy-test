@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {InputFormSection} from '@/features/setup/SetupGuarantee.page';
 
-function SetupGuarantee() {
+function ResetupGuarantee() {
 	const [boxIndexState, setBoxIndexState] = useState<number>(0);
 	/**
 	 * 폼 인풋 박스 오픈 핸들러
@@ -29,4 +29,4 @@ function SetupGuarantee() {
 	);
 }
 
-export default SetupGuarantee;
+export default ResetupGuarantee;

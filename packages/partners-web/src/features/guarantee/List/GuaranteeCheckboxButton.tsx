@@ -1,8 +1,8 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
-import {Button, Loading} from '@/components';
+import {Button} from '@/components';
 
-import {useMessageDialog} from '@/stores';
+import {useGlobalLoading, useMessageDialog} from '@/stores';
 import {useChildModalOpen} from '@/utils/hooks';
 import {
 	bulkRegisterGuarantee,
@@ -18,6 +18,7 @@ interface Props {
 	onHandleChangeFilter: (newParam: {[key: string]: any}) => void;
 	onResetCheckedItem: () => void;
 	onSearch: () => void;
+	isCheckedItemsExisted: (message: string) => boolean;
 }
 
 function GuaranteeCheckboxButton({
@@ -26,10 +27,11 @@ function GuaranteeCheckboxButton({
 	onHandleChangeFilter,
 	onResetCheckedItem,
 	onSearch,
+	isCheckedItemsExisted,
 }: Props) {
 	const totalCount = useMemo(() => checkedItems.length, [checkedItems]);
 	const [requestCount, setRequestCount] = useState(0);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const {
 		open: openRegisterGuaranteeListModal,
@@ -39,23 +41,8 @@ function GuaranteeCheckboxButton({
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 
-	const isCheckedItemsExisted = useCallback(
-		(checkedItems: number[], message: string) => {
-			if (checkedItems?.length < 1) {
-				onOpenMessageDialog({
-					title: message,
-					showBottomCloseButton: true,
-					closeButtonValue: '확인',
-				});
-				return false;
-			}
-			return true;
-		},
-		[onOpenMessageDialog]
-	);
-
 	const handleRegisterGuaranteeList = async (checkedItems: number[]) => {
-		setIsSubmitting(true);
+		setIsLoading(true, false);
 		let failCount = 0;
 		try {
 			if (checkedItems?.length < 1) {
@@ -125,13 +112,13 @@ function GuaranteeCheckboxButton({
 				showBottomCloseButton: true,
 			});
 		} finally {
-			setIsSubmitting(false);
+			setIsLoading(false);
 		}
 	};
 
 	const handleDeleteGuaranteeList = async (checkedItems: number[]) => {
 		try {
-			setIsSubmitting(true);
+			setIsLoading(true, false);
 			await bulkDeleteGuarantee(checkedItems);
 			onOpenMessageDialog({
 				title: '개런티가 삭제됐습니다.',
@@ -149,13 +136,13 @@ function GuaranteeCheckboxButton({
 				showBottomCloseButton: true,
 			});
 		} finally {
-			setIsSubmitting(false);
+			setIsLoading(false);
 		}
 	};
 
 	const handleCancelGuaranteeList = async (checkedItems: number[]) => {
 		try {
-			setIsSubmitting(true);
+			setIsLoading(true, false);
 			await bulkCancelGuarantee(checkedItems);
 			onOpenMessageDialog({
 				title: '개런티가 발급취소됐습니다.',
@@ -174,7 +161,7 @@ function GuaranteeCheckboxButton({
 				showBottomCloseButton: true,
 			});
 		} finally {
-			setIsSubmitting(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -185,7 +172,6 @@ function GuaranteeCheckboxButton({
 
 	return (
 		<>
-			<Loading loading={isSubmitting} showCircularProgress={false} />
 			<RegisterGuaranteeListProgressModal
 				open={openRegisterGuaranteeListModal}
 				requestCount={requestCount}
@@ -202,7 +188,6 @@ function GuaranteeCheckboxButton({
 							onClick={() => {
 								if (
 									!isCheckedItemsExisted(
-										checkedItems,
 										'삭제할 개런티를 선택해주세요.'
 									)
 								) {
@@ -238,7 +223,6 @@ function GuaranteeCheckboxButton({
 							onClick={() => {
 								if (
 									!isCheckedItemsExisted(
-										checkedItems,
 										'발급할 개런티를 선택해주세요.'
 									)
 								) {
@@ -281,7 +265,6 @@ function GuaranteeCheckboxButton({
 					onClick={() => {
 						if (
 							!isCheckedItemsExisted(
-								checkedItems,
 								'발급 취소할 개런티를 선택해주세요.'
 							)
 						) {

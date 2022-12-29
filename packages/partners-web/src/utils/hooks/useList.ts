@@ -34,9 +34,6 @@ const useList = <
 			ignoreQueryPrefix: true,
 		}) as unknown as F & {
 			token: string;
-			b2btype: string;
-			email: string;
-			useFieldModelNum?: string;
 		};
 		const {token, ...otherSearch} = res;
 		return otherSearch as F;

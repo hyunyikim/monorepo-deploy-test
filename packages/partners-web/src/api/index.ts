@@ -1,38 +1,19 @@
-import axios, {Axios, AxiosRequestConfig, AxiosResponse} from 'axios';
+import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 
+import {CustomAxios} from '@/@types';
 import {useLoginStore} from '@/stores';
-
-interface CustomAxios extends Axios {
-	get<T = any, R = T, D = any>(
-		url: string,
-		config?: AxiosRequestConfig<D>
-	): Promise<R>;
-	post<T = any, R = T, D = any>(
-		url: string,
-		data?: D,
-		config?: AxiosRequestConfig<D>
-	): Promise<R>;
-	put<T = any, R = T, D = any>(
-		url: string,
-		data?: D,
-		config?: AxiosRequestConfig<D>
-	): Promise<R>;
-	delete<T = any, R = T, D = any>(
-		url: string,
-		config?: AxiosRequestConfig<D>
-	): Promise<R>;
-	patch<T = any, R = T, D = any>(
-		url: string,
-		data?: D,
-		config?: AxiosRequestConfig<D>
-	): Promise<R>;
-}
 
 const nonAuthInstance = axios.create({
 	baseURL: API_URL,
 });
 
+// Header token: 토큰
 const authInstance: CustomAxios = axios.create({
+	baseURL: API_URL,
+});
+
+// Header Authorization: Bearer 토큰
+const bearerTokenInstance: CustomAxios = axios.create({
 	baseURL: API_URL,
 });
 
@@ -63,4 +44,24 @@ authInstance.interceptors.response.use(
 	}
 );
 
-export {nonAuthInstance, authInstance as instance};
+bearerTokenInstance.interceptors.request.use(
+	(config: AxiosRequestConfig) => {
+		if (!config.headers || !token) {
+			throw new Error('');
+		}
+		config.headers.Authorization = `Bearer ${token}`;
+		return config;
+	},
+	(error) => Promise.reject(error)
+);
+
+bearerTokenInstance.interceptors.response.use(
+	(response: AxiosResponse) => {
+		return response?.data as unknown;
+	},
+	(error) => {
+		return Promise.reject(error);
+	}
+);
+
+export {nonAuthInstance, authInstance as instance, bearerTokenInstance};

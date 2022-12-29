@@ -1,13 +1,15 @@
 import React from 'react';
 import create from 'zustand';
 
+type CloseButtonValueType = '확인' | '취소' | '닫기';
+
 interface OnOpenParamType {
 	title: string;
 	message?: string | React.ReactElement;
 	showBottomCloseButton?: boolean;
 	disableClickBackground?: boolean;
 	useCloseIcon?: boolean;
-	closeButtonValue?: '확인' | '취소';
+	closeButtonValue?: CloseButtonValueType;
 	buttons?: React.ReactElement;
 	sendCloseModalControlToParent?: boolean;
 	onCloseFunc?: () => void;
@@ -20,7 +22,7 @@ interface MessageDialogState {
 	title: string | null;
 	message: string | React.ReactElement | null;
 	showBottomCloseButton: boolean;
-	closeButtonValue: '확인' | '취소';
+	closeButtonValue: CloseButtonValueType;
 	buttons: React.ReactElement | null;
 	sendCloseModalControlToParent: boolean;
 	onCloseFunc: (() => void) | null;
@@ -30,6 +32,24 @@ interface MessageDialogState {
 	setMessage: (value: string) => void;
 	initMessageDialog: () => void;
 }
+
+interface GlobalLoadingState {
+	isLoading: boolean;
+	showCircularProgress: boolean;
+	setIsLoading: (value: boolean, showCircularProgress?: boolean) => void;
+}
+
+export const useGlobalLoading = create<GlobalLoadingState>((set, get) => ({
+	isLoading: false,
+	showCircularProgress: true,
+	setIsLoading: (value: boolean, showCircularProgress?: boolean) => {
+		set(() => ({
+			isLoading: value,
+			showCircularProgress:
+				typeof showCircularProgress === 'undefined' ? true : false,
+		}));
+	},
+}));
 
 export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 	open: false,

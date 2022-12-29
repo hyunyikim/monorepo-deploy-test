@@ -13,7 +13,12 @@ function CustomerDetailTab({name, phone}: {name: string; phone: string}) {
 	);
 	return (
 		<Box sx={{width: '100%'}}>
-			<Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+			<Box
+				sx={{
+					borderBottom: 1,
+					borderColor: 'divider',
+					marginTop: '40px',
+				}}>
 				<Tabs
 					value={value}
 					onChange={handleChange}
