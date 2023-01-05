@@ -14,7 +14,14 @@ import AmplitudeTrackingInterceptor from '@/components/common/layout/AmplitudeTr
 
 import {initAmplitudeTracking} from '@/utils';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: false,
+			refetchOnWindowFocus: false,
+		},
+	},
+});
 
 initAmplitudeTracking();
 

@@ -1,6 +1,7 @@
 import create from 'zustand';
 
 export const TOKEN_KEY = 'token';
+export const LAST_TIME_LOGIN_KEY = 'lastTime';
 
 interface LoginState {
 	token: string | null;
@@ -10,9 +11,8 @@ interface LoginState {
 }
 
 export const useLoginStore = create<LoginState>((set, get) => ({
-	// TODO: iframe 전체 옮긴 후  localStorage에 저장하는 것으로 변경
+	// TODO: 현재 모노레포로 전체 이관 후 토큰 local storage에 저장하도록 수정
 	// token: localStorage.getItem(TOKEN_KEY),
-
 	// 구독 여부 확인
 	isLogin: () => {
 		return get().token ? true : false;
@@ -21,12 +21,18 @@ export const useLoginStore = create<LoginState>((set, get) => ({
 	setLogin: (token: string) =>
 		set(() => {
 			// localStorage.setItem(TOKEN_KEY, token);
+			// localStorage.setItem(
+			// 	LAST_TIME_LOGIN_KEY,
+			// 	String(new Date().getTime())
+			// );
 			return {token};
 		}),
 	setLogout: () => {
-		// localStorage.removeItem(TOKEN_KEY);
-		set(() => ({
-			token: null,
-		}));
+		set(() => {
+			// localStorage.removeItem(TOKEN_KEY);
+			return {
+				token: null,
+			};
+		});
 	},
 }));

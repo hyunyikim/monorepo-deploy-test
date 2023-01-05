@@ -18,6 +18,7 @@ export {default as IcGuaranteeIssueSuccess} from './ic-guarantee-issue-success.s
 export {default as IcGuaranteeIssueCancel} from './ic-guarantee-issue-cancel.svg';
 export {default as IcMegaphone} from './ic-megaphone.svg';
 export {default as IcClose} from './ic-close.svg';
+export {default as IcCloseGrey} from './ic-close-grey.svg';
 export {default as IcSort} from './ic-sort.svg';
 export {default as IcWon} from './ic-won.svg';
 export {default as IcDoc} from './ic-doc.svg';

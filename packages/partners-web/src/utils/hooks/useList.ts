@@ -49,7 +49,7 @@ const useList = <
 	// TODO: 선언적으로 로딩/에러 다룰 수 있도록 변경하기
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<any | null>(null);
-	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
 	const handleLoadData = useCallback((params: F) => {
 		(async () => {
@@ -61,11 +61,7 @@ const useList = <
 			} catch (e: any) {
 				console.log('e :>> ', e);
 				setError(e);
-				onOpenMessageDialog({
-					title: '알림',
-					message: '네트워크 에러',
-					showBottomCloseButton: false,
-				});
+				onOpenError();
 			} finally {
 				setIsLoading(false);
 			}

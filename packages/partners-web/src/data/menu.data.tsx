@@ -53,7 +53,7 @@ export const menuData: MenuList = [
 					},
 					{
 						num: 23,
-						title: '개런티 대량등록',
+						title: '개런티 대량발급',
 						path: '/guarantee/excel-upload',
 					},
 				],

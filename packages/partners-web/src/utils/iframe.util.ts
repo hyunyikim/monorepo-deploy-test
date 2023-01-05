@@ -11,6 +11,7 @@ type RequestType =
 	| 'open_modal'
 	| 'open_child_modal'
 	| 'update_partnership_data'
+	| 'login'
 	| 'close_child_modal';
 
 export const sendMessageToParent = (data: {type: RequestType; data: any}) => {
@@ -118,5 +119,25 @@ export const updateParentPartnershipData = () => {
 	sendMessageToParent({
 		type: 'update_partnership_data',
 		data: null,
+	});
+};
+
+export const loginToParent = (
+	token: string,
+	{
+		isDuringInstallCafe24,
+		isTempPasswordLogin,
+	}: {
+		isDuringInstallCafe24?: boolean;
+		isTempPasswordLogin?: boolean;
+	}
+) => {
+	sendMessageToParent({
+		type: 'login',
+		data: {
+			token,
+			isDuringInstallCafe24,
+			isTempPasswordLogin,
+		},
 	});
 };

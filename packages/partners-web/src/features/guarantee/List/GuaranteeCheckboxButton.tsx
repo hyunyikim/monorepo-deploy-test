@@ -40,10 +40,12 @@ function GuaranteeCheckboxButton({
 	} = useChildModalOpen({});
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
 	const handleRegisterGuaranteeList = async (checkedItems: number[]) => {
 		setIsLoading(true, false);
 		let failCount = 0;
+		let productDeletedCount = 0;
 		try {
 			if (checkedItems?.length < 1) {
 				onOpenMessageDialog({
@@ -65,6 +67,15 @@ function GuaranteeCheckboxButton({
 					if (res?.failure > 0) {
 						failCount += 1;
 					}
+					if (res?.error?.length > 0) {
+						const errorMessage = res?.error[0]?.message;
+						if (
+							errorMessage?.includes('상품') &&
+							errorMessage?.includes('삭제')
+						) {
+							productDeletedCount += 1;
+						}
+					}
 					setRequestCount((prev) => prev + 1);
 				} catch (e) {
 					failCount += 1;
@@ -78,9 +89,6 @@ function GuaranteeCheckboxButton({
 				}, 1000);
 			});
 			onCloseRegisterGuaranteeListModal();
-
-			// TODO: 기타 예외 처리
-			// 개런티 발급 완료 안내 모달
 			onOpenMessageDialog({
 				title: '개런티가 발급됐습니다',
 				message: (
@@ -90,9 +98,13 @@ function GuaranteeCheckboxButton({
 						{failCount > 0 && (
 							<>
 								<br />
-								{failCount}건은 상품 정보가 삭제되어 발급되지
-								않았습니다. <br />
-								상품정보를 다시 입력해주세요.
+								{productDeletedCount && (
+									<>
+										{productDeletedCount}건은 상품 정보가
+										삭제되어 발급되지 않았습니다. <br />
+										상품정보를 다시 입력해주세요.
+									</>
+								)}
 							</>
 						)}
 					</>
@@ -106,11 +118,7 @@ function GuaranteeCheckboxButton({
 				},
 			});
 		} catch (e: any) {
-			onOpenMessageDialog({
-				title: '네트워크 에러',
-				message: e?.response?.data?.message || '',
-				showBottomCloseButton: true,
-			});
+			onOpenError();
 		} finally {
 			setIsLoading(false);
 		}
@@ -119,9 +127,15 @@ function GuaranteeCheckboxButton({
 	const handleDeleteGuaranteeList = async (checkedItems: number[]) => {
 		try {
 			setIsLoading(true, false);
-			await bulkDeleteGuarantee(checkedItems);
+			const bulkResponse = await bulkDeleteGuarantee(checkedItems);
 			onOpenMessageDialog({
 				title: '개런티가 삭제됐습니다.',
+				message: (
+					<>
+						총 <b>{bulkResponse?.success || 0}건</b>의 개런티가
+						정상적으로 삭제됐습니다.
+					</>
+				),
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
 				onCloseFunc: () => {
@@ -130,11 +144,7 @@ function GuaranteeCheckboxButton({
 				},
 			});
 		} catch (e) {
-			onOpenMessageDialog({
-				title: '네트워크 에러',
-				message: e?.response?.data?.message || '',
-				showBottomCloseButton: true,
-			});
+			onOpenError();
 		} finally {
 			setIsLoading(false);
 		}
@@ -143,9 +153,15 @@ function GuaranteeCheckboxButton({
 	const handleCancelGuaranteeList = async (checkedItems: number[]) => {
 		try {
 			setIsLoading(true, false);
-			await bulkCancelGuarantee(checkedItems);
+			const bulkResponse = await bulkCancelGuarantee(checkedItems);
 			onOpenMessageDialog({
 				title: '개런티가 발급취소됐습니다.',
+				message: (
+					<>
+						총 <b>{bulkResponse?.success || 0}건</b>의 개런티가
+						정상적으로 발급취소됐습니다.
+					</>
+				),
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
 				onCloseFunc: () => {
@@ -155,11 +171,7 @@ function GuaranteeCheckboxButton({
 				},
 			});
 		} catch (e) {
-			onOpenMessageDialog({
-				title: '네트워크 에러',
-				message: e?.response?.data?.message || '',
-				showBottomCloseButton: true,
-			});
+			onOpenError();
 		} finally {
 			setIsLoading(false);
 		}

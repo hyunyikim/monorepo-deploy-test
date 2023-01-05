@@ -24,7 +24,7 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	afterServiceInfo: string | null;
 	customerCenterUrl: string | null;
 	klipWalletAddress: string;
-	leaved: string | null;
+	leavedAt: string | null;
 	authKey: string;
 	mainYN: YNType;
 	category: number[];
@@ -62,7 +62,7 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	warrantyDate: string;
 	blockchainPlatform: string;
 	lastLoggedIn: string;
-	passwordChanged: string;
+	passwordChangedAt: string;
 	brand: BrandType | null;
 	nftCustomFields: string[] | [];
 }

@@ -17,7 +17,7 @@ import {IcChevronDown} from '@/assets/icon';
 type Height = 48 | 32;
 
 export interface Props<T> extends Omit<SelectProps, 'error'> {
-	width?: number | 'auto';
+	width?: number | 'auto' | '100%';
 	height?: Height;
 	options: Options<T>;
 	error?: FieldError;
@@ -61,6 +61,9 @@ function Select<T>(
 				'& .MuiInputBase-root.Mui-error': {
 					backgroundColor: 'red.50',
 				},
+				...(width === '100%' && {
+					width: '100%',
+				}),
 			}}>
 			<MuiSelect
 				// 제어

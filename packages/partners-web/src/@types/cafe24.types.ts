@@ -1,7 +1,30 @@
 export interface Cafe24Interwork {
 	mallId: string;
-	joinedAt: string;
+	issueSetting: IssueSetting;
 	store: Store;
+	partnerIdx: number;
+	partnerInfo: any;
+	joinedAt: string;
+	confirmedAt: string;
+	updatedAt: string;
+}
+
+export interface IssueSetting {
+	manually: boolean;
+	issueTiming: IssueTiming;
+	issueAll: boolean;
+	issueCategories: IssueCategory[];
+	issueIntro?: boolean;
+}
+
+export type IssueTiming = 'AFTER_SHIPPING' | 'AFTER_DELIVERED';
+
+export interface IssueCategory {
+	idx: number;
+	depth: number;
+	name: string;
+	fullName: string[];
+	fullNo: number[];
 }
 
 export interface Store {
@@ -43,4 +66,28 @@ export interface Store {
 	contact_us_contents: string;
 	about_us_contents: string;
 	privacy_officer_department: string;
+}
+
+export interface Cafe24Category {
+	shop_no: number;
+	category_no: number;
+	category_depth: number;
+	parent_category_no: number;
+	category_name: string;
+	full_category_name: {
+		'1': string;
+		'2': string | null;
+		'3': string | null;
+		'4': string | null;
+	};
+	full_category_no: {
+		'1': number;
+		'2': number | null;
+		'3': number | null;
+		'4': number | null;
+	};
+	root_category_no: number;
+	use_display: string;
+	display_order: number;
+	hash_tags: any[];
 }

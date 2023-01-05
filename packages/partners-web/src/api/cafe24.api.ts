@@ -1,9 +1,9 @@
 import {bearerTokenInstance, nonAuthInstance} from '@/api';
-import {Cafe24Interwork} from '@/@types';
+import {Cafe24Category, Cafe24Interwork, IssueSetting} from '@/@types';
 
-export const getCategories = async (mallId: string, name = '') => {
+export const getCategoryList = async (mallId: string, name = '') => {
 	const url = `/cafe24/v1/interwork/${mallId}/categories`;
-	const resp = await nonAuthInstance.get(url, {
+	const resp = await nonAuthInstance.get<Cafe24Category[]>(url, {
 		params: {
 			name: name || undefined,
 		},
@@ -18,8 +18,9 @@ export const getInterwork = async (mallId: string) => {
 };
 
 export const getInterworkByToken = async () => {
-	const url = `/cafe24/v1/interwork`;
-	return await bearerTokenInstance.get(url);
+	return await bearerTokenInstance.get<Cafe24Interwork>(
+		`/cafe24/v1/interwork`
+	);
 };
 
 export const getInterworkMaster = async (idx: number) => {
@@ -60,25 +61,19 @@ export const isConfirmedInterwork = async (mallId: string) => {
 	return resp.data;
 };
 
-export const changeInterworkSetting = async (mallId: string, setting: any) => {
-	const url = `/cafe24/v1/interwork/${mallId}/setting`;
-	const resp = await bearerTokenInstance.patch(url, setting);
-	return resp;
-};
-
 export const updateLeaveReason = async (mallId: string, reasons: any) => {
 	const url = `/cafe24/v1/interwork/${mallId}/leave-reason`;
 	const resp = await bearerTokenInstance.patch(url, {reasons});
 	return resp;
 };
 
-/**
- *
- * @param {string} mallId
- * @param {IssueSetting} issueSetting
- * @returns
- */
-export const updateSetting = async (mallId: string, issueSetting: any) => {
+export const updateSetting = async (
+	mallId: string | undefined,
+	issueSetting: IssueSetting
+) => {
+	if (!mallId) {
+		throw new Error('mallId is not existed');
+	}
 	const url = `/cafe24/v1/interwork/${mallId}/setting`;
 	const resp = await bearerTokenInstance.patch(url, issueSetting);
 	return resp;

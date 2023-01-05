@@ -126,7 +126,7 @@ function GuaranteeList() {
 								variant="outlined"
 								height={32}
 								onClick={goToGuaranteeExcelUploadPage}>
-								대량등록
+								대량발급
 							</Button>
 							<Button
 								color="primary"
