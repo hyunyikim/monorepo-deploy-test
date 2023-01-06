@@ -37,6 +37,10 @@ export default function component(): Components {
 			styleOverrides: {
 				root: {
 					boxShadow: 'none',
+					'&.Mui-disabled': {
+						backgroundColor: style.vircleGrey50,
+						color: style.vircleGrey300,
+					},
 				},
 			},
 		},

@@ -152,7 +152,7 @@ const SignUpStoreType = ({
 				fontWeight={700}
 				mt={{
 					xs: '16px',
-					md: '32px',
+					md: '20px',
 				}}
 				mb="8px">
 				{title}
