@@ -133,7 +133,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 				setIsLoading(false);
 			}
 		},
-		[navigate, setIsLoading]
+		[navigate, setIsLoading, setIsLoading]
 	);
 
 	const handleEdit = useCallback(

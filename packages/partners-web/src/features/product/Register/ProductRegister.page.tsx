@@ -10,7 +10,7 @@ import {PAGE_MAX_WIDTH} from '@/data';
 import {goToParentUrl, usePageView} from '@/utils';
 import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
-import {Button, TitleTypography} from '@/components';
+import {Button, TitleTypography, TitleTypography} from '@/components';
 
 function ProductRegister() {
 	usePageView('itemadmin_regist_pv', '상품등록 화면 진입');
