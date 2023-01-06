@@ -9,7 +9,8 @@ function ServiceInterworkCafe24Introduce() {
 			flexDirection="column"
 			width="100%"
 			maxWidth="800px"
-			margin="auto">
+			margin="auto"
+			my={5}>
 			<ServiceInterworkCafe24Title />
 			<ServiceInterworkCafe24IntroduceContent />
 		</Stack>

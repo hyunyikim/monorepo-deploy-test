@@ -2,6 +2,7 @@ import {lazy} from 'react';
 import {RouteObject} from 'react-router-dom';
 
 import IframeChild from '@/components/common/layout/IframeChild';
+import Layout from '@/components/common/layout/Layout';
 
 const SetupGuarantee = lazy(
 	() => import('@/features/setup/SetupGuarantee.page')
@@ -105,7 +106,11 @@ const privateRoutes: RouteObject[] = [
 		],
 	},
 	{
-		element: <IframeChild />,
+		element: (
+			<IframeChild>
+				<Layout hasSidebar={false} />
+			</IframeChild>
+		),
 		children: [{path: '/reset/password/v2', element: <PasswordReset />}],
 	},
 ];

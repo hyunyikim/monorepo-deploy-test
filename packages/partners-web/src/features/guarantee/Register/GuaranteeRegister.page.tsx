@@ -73,7 +73,8 @@ function GuaranteeRegister() {
 			flexDirection={{
 				xs: 'column',
 				md: 'row',
-			}}>
+			}}
+			p={5}>
 			<Stack
 				flexDirection="column"
 				width="100%"

@@ -339,8 +339,7 @@ function ProfileSetting() {
 			sx={{
 				gap: '40px',
 				maxWidth: '800px',
-				margin: 'auto',
-				pb: '100px',
+				margin: '40px auto 130px auto',
 			}}>
 			<form
 				onSubmit={handleSubmit(onSubmit)}

@@ -158,7 +158,11 @@ function SignInForm() {
 						);
 					})}
 				</Stack>
-				<Button height={60} width="100%" type="submit">
+				<Button
+					height={48}
+					width="100%"
+					type="submit"
+					data-tracking={`partners_login,{'login_click': '로그인'}`}>
 					로그인
 				</Button>
 			</Stack>

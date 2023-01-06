@@ -69,7 +69,11 @@ function ProductRegister() {
 	const formControlMode = useMemo(() => (idx ? 'edit' : 'register'), [idx]);
 
 	return (
-		<Stack flexDirection="column" maxWidth={PAGE_MAX_WIDTH} margin="auto">
+		<Stack
+			flexDirection="column"
+			maxWidth={PAGE_MAX_WIDTH}
+			margin="auto"
+			my={5}>
 			<TitleTypography
 				title={`상품 ${
 					formControlMode === 'register' ? '등록' : '수정'

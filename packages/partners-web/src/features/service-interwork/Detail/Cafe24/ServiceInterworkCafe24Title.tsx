@@ -139,12 +139,13 @@ const UninstallModal = ({
 				'& .MuiPaper-root': {
 					width: '520px',
 					minHeight: '197px',
+					borderRadius: '16px',
 				},
 			}}>
 			<>
 				<Typography variant="body1" color="grey.600" mb="10px">
-					연동해제는 카페24 관리자 페이지, 마이 앱에서
-					“버클파트너스"를 삭제하면 완료됩니다.
+					연동해제는 카페24 관리자 페이지, 마이 앱에서 “버클"을
+					삭제하면 완료됩니다.
 				</Typography>
 				<Select
 					width="100%"

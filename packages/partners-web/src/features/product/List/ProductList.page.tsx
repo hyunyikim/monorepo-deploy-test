@@ -117,7 +117,7 @@ function ProductList() {
 
 	return (
 		<>
-			<Box>
+			<Box p={5}>
 				<TitleTypography title="상품 목록" />
 				<SearchFilter
 					menu={menu}

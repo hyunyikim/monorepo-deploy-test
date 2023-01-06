@@ -16,7 +16,7 @@ function SignIn() {
 			flexDirection="column"
 			justifyContent="center"
 			width="100%"
-			maxWidth="486px"
+			maxWidth="495px"
 			margin="auto">
 			<Stack
 				flexDirection="column"
@@ -55,9 +55,8 @@ function SignIn() {
 						variant="body1"
 						color="grey.700"
 						className="cursor-pointer"
-						onClick={() =>
-							goToParentUrl('/reset/request/password')
-						}>
+						onClick={() => goToParentUrl('/reset/request/password')}
+						data-tracking={`partners_login,{'login_password_click': '비밀번호 찾기 화면 노출'}`}>
 						비밀번호 찾기
 					</Typography>
 					<Stack
@@ -69,7 +68,8 @@ function SignIn() {
 						<Typography
 							color="primary.main"
 							className="cursor-pointer"
-							onClick={() => goToParentUrl('/auth/signup')}>
+							onClick={() => goToParentUrl('/auth/signup')}
+							data-tracking={`partners_login,{'login_signup_click': '회원가입 화면 노출'}`}>
 							회원가입
 						</Typography>
 					</Stack>

@@ -5,7 +5,7 @@ import {useOpen} from '@/utils/hooks';
 
 import {Button} from '@/components';
 import IntroductionInquiryDialog from '@/features/auth/signup/IntroductionInquiryDialog';
-import {IcBag, IcShop} from '@/assets/icon';
+import {ImgShop, ImgShop2x, ImgHandbag, ImgHandbag2x} from '@/assets/images';
 import {trackingToParent} from '@/utils';
 
 function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
@@ -50,7 +50,13 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 					rowGap="10px"
 					columnGap="10px">
 					<SignUpStoreType
-						icon={<IcShop />}
+						icon={
+							<img
+								src={ImgShop}
+								srcSet={`${ImgShop2x} 2x`}
+								alt="signup type"
+							/>
+						}
 						title="브랜드"
 						desc={
 							<>
@@ -74,7 +80,13 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 						}
 					/>
 					<SignUpStoreType
-						icon={<IcBag />}
+						icon={
+							<img
+								src={ImgHandbag}
+								srcSet={`${ImgHandbag2x} 2x`}
+								alt="signup type"
+							/>
+						}
 						title="병행수입"
 						desc={
 							<>

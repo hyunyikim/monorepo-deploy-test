@@ -91,7 +91,7 @@ function RepairList() {
 
 	return (
 		<>
-			<Box>
+			<Box p={5}>
 				<TitleTypography title="수선신청 관리" />
 				<SearchFilter
 					menu={menu}

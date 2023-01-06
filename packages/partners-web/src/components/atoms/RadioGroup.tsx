@@ -22,6 +22,7 @@ function RadioGroup<T>({
 	name,
 	value,
 	onChange,
+	sx,
 	...props
 }: Props<T>) {
 	return (
@@ -32,6 +33,12 @@ function RadioGroup<T>({
 				name={name}
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
+				sx={{
+					'& label': {
+						marginRight: '32px',
+					},
+					...sx,
+				}}
 				{...props}>
 				{options.map((option, idx) => (
 					<FormControlLabel

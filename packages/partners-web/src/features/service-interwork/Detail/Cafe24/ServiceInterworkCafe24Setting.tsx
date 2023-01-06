@@ -15,7 +15,8 @@ function ServiceInterworkCafe24Setting({data}: Props) {
 			flexDirection="column"
 			width="100%"
 			maxWidth="800px"
-			margin="auto">
+			margin="auto"
+			my={5}>
 			<ServiceInterworkCafe24Title data={data} />
 			<ServiceInterworkCafe24SettingForm data={data} />
 			<Cafe24InterworkSettingGuide />
@@ -51,8 +52,10 @@ const Cafe24InterworkSettingGuide = () => {
 				})}>
 				<ListItem>
 					개런티 발행에 필요한 필수항목이 부족할경우, 개런티는
-					“신청대기" 상태로 분류됩니다. 수동으로 정보를 입력하고
-					개런티를 발급할 수 있습니다.
+					“신청대기" 상태로 분류됩니다.
+				</ListItem>
+				<ListItem>
+					수동으로 정보를 입력하고 개런티를 발급할 수 있습니다.
 				</ListItem>
 				<ListItem>
 					교환: 기존 발행된 개런티는 폐기되고, 교환상품에 대해 새

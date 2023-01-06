@@ -175,7 +175,8 @@ function ServiceInterworkRepair() {
 			flexDirection="column"
 			width="100%"
 			maxWidth="800px"
-			margin="auto">
+			margin="auto"
+			my={5}>
 			<ServiceInterworkDetailTitle
 				title="수선신청 관리"
 				subTitle="고객이 간편하게 수선신청하고, 신청 내역을 한곳에서 관리하세요."

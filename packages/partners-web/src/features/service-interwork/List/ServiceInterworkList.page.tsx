@@ -123,7 +123,8 @@ function ServiceInterworkList() {
 				flexDirection="column"
 				width="100%"
 				maxWidth="800px"
-				margin="auto">
+				margin="auto"
+				my={5}>
 				<Typography variant="header1" mb="8px">
 					서비스 연동 관리
 				</Typography>

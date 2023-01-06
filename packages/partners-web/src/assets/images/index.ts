@@ -18,6 +18,10 @@ export {default as ImgTelegram} from './img-telegram.png';
 export {default as ImgTelegram2x} from './img-telegram@2x.png';
 export {default as ImgRobotConnectCafe24} from './img_robot_connect_cafe24.png';
 export {default as ImgRobotConnectCafe242x} from './img_robot_connect_cafe24@2x.png';
+export {default as ImgHandbag} from './img-handbag.png';
+export {default as ImgHandbag2x} from './img-handbag@2x.png';
+export {default as ImgShop} from './img-shop.png';
+export {default as ImgShop2x} from './img-shop@2x.png';
 
 export {default as defaultLogoImg} from './img_default_logo_78.png';
 export {default as defaultLogoImg2x} from './img_default_logo_78@2x.png';

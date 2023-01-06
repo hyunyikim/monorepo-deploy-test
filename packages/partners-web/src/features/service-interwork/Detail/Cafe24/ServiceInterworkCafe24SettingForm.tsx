@@ -62,7 +62,12 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 
 	const updateSettingMutation = useMutation({
 		mutationFn: () => {
-			return updateSetting(cafe24Interwork?.mallId, formData);
+			return updateSetting(cafe24Interwork?.mallId, {
+				...formData,
+				issueCategories: formData.issueAll
+					? []
+					: formData.issueCategories,
+			});
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -112,22 +117,24 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 							xs: 1,
 							sm: 4,
 						}}
+						rowGap="12px"
 						sx={{
 							'& .MuiGrid-item': {
 								display: 'flex',
 								alignItems: 'center',
-								'&:nth-of-type(5)': {
-									alignItems: 'flex-start',
-									paddingTop: {
-										sm: '8px',
+								minHeight: '38px',
+								...(!formData.issueAll && {
+									'&:nth-of-type(5)': {
+										alignItems: 'flex-start',
+										paddingTop: {
+											sm: '9px',
+										},
+										...(formData.issueCategories?.length >
+											0 && {
+											paddingBottom: '20px',
+										}),
 									},
-								},
-							},
-							'& .MuiGrid-item:nth-of-type(n+3)': {
-								paddingTop: {
-									xs: '10px',
-									sm: '20px',
-								},
+								}),
 							},
 							paddingBottom: '26px',
 						}}>
@@ -178,10 +185,7 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 							/>
 						</Grid>
 						<Grid item xs={1} sm={1}>
-							<Typography
-								variant="body3"
-								fontWeight="bold"
-								mt="6px">
+							<Typography variant="body3" fontWeight="bold">
 								개런티 발급상품
 							</Typography>
 						</Grid>
@@ -189,11 +193,13 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 							item
 							xs={1}
 							sm={3}
-							borderBottom={(theme) =>
-								`1px solid ${theme.palette.grey[100]}`
-							}
-							pb="20px">
-							<Stack rowGap={{xs: 0, sm: '20px'}}>
+							{...(!formData.issueAll &&
+								formData.issueCategories?.length > 0 && {
+									borderBottom: (theme) =>
+										`1px solid ${theme.palette.grey[100]}`,
+									marginBottom: '4px',
+								})}>
+							<Stack>
 								<RadioGroup
 									ariaLabel="issue category label"
 									value={formData.issueAll}

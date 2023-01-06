@@ -72,7 +72,10 @@ function IframeChild({children}: Props) {
 			ref={iframeChildWrapperRef}
 			sx={{
 				height: '100%',
-				padding: '40px',
+				padding: {
+					xs: '16px',
+					md: '0',
+				},
 			}}>
 			{children ? children : <Outlet />}
 		</Box>

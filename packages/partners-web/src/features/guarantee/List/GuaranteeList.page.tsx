@@ -93,7 +93,7 @@ function GuaranteeList() {
 
 	return (
 		<>
-			<Box>
+			<Box p={5}>
 				<TitleTypography title="개런티 목록" />
 				<SearchFilter
 					menu={menu}

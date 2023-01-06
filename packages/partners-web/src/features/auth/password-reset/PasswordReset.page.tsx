@@ -108,16 +108,18 @@ function PasswordReset() {
 	const watchData = watch();
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			style={{
+				width: '100%',
+			}}>
 			<Stack
-				sx={{
-					height: `calc(100vh - 80px)`,
-				}}
 				flexDirection="column"
 				justifyContent="center"
 				alignItems="center"
 				width="100%"
 				maxWidth="400px"
+				height="100%"
 				margin="auto">
 				<Typography
 					variant="header2"

@@ -11,7 +11,7 @@ import {
 import {Box, TableRow, Typography, Stack} from '@mui/material';
 import {IssueCategory} from '@/@types';
 import {useCafe24CategoryList} from '@/stores';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 import {IcCloseGrey} from '@/assets/icon';
 import {sendAmplitudeLog} from '@/utils';
@@ -36,7 +36,19 @@ function ServiceInterworkCafe24SettingCategory({
 	} = useChildModalOpen({});
 	return (
 		<>
-			<Stack flexDirection="row" alignItems="center">
+			<Stack
+				flexDirection="row"
+				alignItems="center"
+				sx={{
+					marginTop: {
+						xs: 0,
+						sm: selectedCategoryList?.length > 0 ? '16px' : '20px',
+					},
+					marginBottom: {
+						xs: 0,
+						sm: selectedCategoryList?.length > 0 ? '20px' : '8px',
+					},
+				}}>
 				<Button
 					color="blue-50"
 					height={32}
@@ -54,7 +66,11 @@ function ServiceInterworkCafe24SettingCategory({
 					</Typography>
 				</Box>
 			</Stack>
-			<Stack gap="8px">
+			<Stack
+				gap="8px"
+				{...(selectedCategoryList?.length > 0 && {
+					mb: '20px',
+				})}>
 				{selectedCategoryList.map((item) => (
 					<CategoryItem
 						key={item.idx}
@@ -161,6 +177,14 @@ const SettingCategoryModal = ({
 		onClose();
 	};
 
+	const checkAll = useMemo(() => {
+		const totalLength = categoryList?.length ?? 0;
+		if (totalLength === selected.length) {
+			return true;
+		}
+		return false;
+	}, [categoryList, selected]);
+
 	return (
 		<Dialog
 			open={open}
@@ -220,7 +244,24 @@ const SettingCategoryModal = ({
 					headcell={
 						<>
 							<HeadTableCell width={52}>
-								<Checkbox />
+								<Checkbox
+									onChange={(e, checked) => {
+										if (
+											checked &&
+											categoryList &&
+											categoryList?.length > 0
+										) {
+											setSelected(
+												categoryList.map(
+													(item) => item.category_no
+												)
+											);
+											return;
+										}
+										setSelected([]);
+									}}
+									checked={checkAll}
+								/>
 							</HeadTableCell>
 							<HeadTableCell>카테고리</HeadTableCell>
 						</>
