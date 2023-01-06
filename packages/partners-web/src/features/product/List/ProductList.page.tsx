@@ -50,6 +50,7 @@ function ProductList() {
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
 	const {
 		isLoading,
@@ -101,11 +102,7 @@ function ProductList() {
 				},
 			});
 		} catch (e) {
-			onOpenMessageDialog({
-				title: '네트워크 에러',
-				message: e?.response?.data?.message || '',
-				showBottomCloseButton: true,
-			});
+			onOpenError();
 		} finally {
 			setIsLoading(false);
 		}
@@ -120,7 +117,7 @@ function ProductList() {
 
 	return (
 		<>
-			<Box>
+			<Box p={5}>
 				<TitleTypography title="상품 목록" />
 				<SearchFilter
 					menu={menu}

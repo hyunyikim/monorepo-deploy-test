@@ -5,7 +5,7 @@ import {useOpen} from '@/utils/hooks';
 
 import {Button} from '@/components';
 import IntroductionInquiryDialog from '@/features/auth/signup/IntroductionInquiryDialog';
-import {IcBag, IcShop} from '@/assets/icon';
+import {ImgShop, ImgShop2x, ImgHandbag, ImgHandbag2x} from '@/assets/images';
 import {trackingToParent} from '@/utils';
 
 function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
@@ -22,7 +22,7 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 					<Typography
 						fontSize={{
 							xs: 24,
-							md: 40,
+							md: 36,
 						}}
 						fontWeight={700}
 						textAlign="center"
@@ -34,10 +34,10 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 							xs: 13,
 							md: 18,
 						}}
-						fontWeight={400}
+						fontWeight={700}
 						color="grey.400"
 						textAlign="center"
-						mb="60px">
+						mb="40px">
 						디지털 개런티 발급 서비스를 도입할 스토어의 유형을
 						선택해주세요.
 					</Typography>
@@ -47,10 +47,16 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 						xs: 'column',
 						md: 'row',
 					}}
-					rowGap="10px"
-					columnGap="10px">
+					rowGap="20px"
+					columnGap="20px">
 					<SignUpStoreType
-						icon={<IcShop />}
+						icon={
+							<img
+								src={ImgShop}
+								srcSet={`${ImgShop2x} 2x`}
+								alt="signup type"
+							/>
+						}
 						title="브랜드"
 						desc={
 							<>
@@ -61,7 +67,7 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 						}
 						button={
 							<Button
-								width={124}
+								width={92}
 								onClick={() => {
 									trackingToParent(
 										'storetype_brandstart_click',
@@ -74,7 +80,13 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 						}
 					/>
 					<SignUpStoreType
-						icon={<IcBag />}
+						icon={
+							<img
+								src={ImgHandbag}
+								srcSet={`${ImgHandbag2x} 2x`}
+								alt="signup type"
+							/>
+						}
 						title="병행수입"
 						desc={
 							<>
@@ -127,7 +139,7 @@ const SignUpStoreType = ({
 				md: '324px',
 			}}
 			sx={(theme) => ({
-				padding: '10px',
+				padding: '40px',
 				borderRadius: '16px',
 				border: `1px solid ${theme.palette.grey[100]}`,
 			})}>
@@ -140,20 +152,20 @@ const SignUpStoreType = ({
 				fontWeight={700}
 				mt={{
 					xs: '16px',
-					md: '32px',
+					md: '20px',
 				}}
-				mb="10px">
+				mb="8px">
 				{title}
 			</Typography>
 			<Typography
 				fontSize={{
 					xs: 13,
-					md: 16,
+					md: 15,
 				}}
-				fontWeight={400}
+				fontWeight={500}
 				color="grey.400"
 				textAlign="center"
-				mb="32px">
+				mb="25px">
 				{desc}
 			</Typography>
 			{button}

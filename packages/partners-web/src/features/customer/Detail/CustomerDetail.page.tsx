@@ -12,7 +12,7 @@ function CustomerDetail() {
 	if (!name || !phone) return null;
 
 	return (
-		<Box>
+		<Box p={5}>
 			<CustomerDetailInfo name={name} phone={phone} />
 			<CustomerDetailTab name={name} phone={phone} />
 		</Box>

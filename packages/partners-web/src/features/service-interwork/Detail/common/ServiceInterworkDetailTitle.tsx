@@ -1,8 +1,12 @@
 import {Stack, Box, Typography} from '@mui/material';
 
+import {IcTick} from '@/assets/icon';
+
 interface Props {
 	title: string;
 	subTitle: string;
+	isLinked: boolean;
+	mb?: string;
 	titleImgBackgroundColor: string;
 	TitleImg: React.ReactElement;
 	Button: React.ReactElement;
@@ -11,6 +15,8 @@ interface Props {
 function ServiceInterworkDetailTitle({
 	title,
 	subTitle,
+	isLinked,
+	mb = '60px',
 	titleImgBackgroundColor,
 	TitleImg,
 	Button,
@@ -24,7 +30,7 @@ function ServiceInterworkDetailTitle({
 			justifyContent="space-between"
 			alignItems="center"
 			pb="40px"
-			mb="60px"
+			mb={mb}
 			gap={{
 				xs: '12px',
 				sm: 0,
@@ -56,6 +62,13 @@ function ServiceInterworkDetailTitle({
 				<Stack flexDirection="column" justifyContent="center">
 					<Typography variant="header1" mb="8px">
 						{title}
+						{isLinked && (
+							<IcTick
+								style={{
+									marginLeft: '8px',
+								}}
+							/>
+						)}
 					</Typography>
 					<Typography variant="body3" color="grey.500">
 						{subTitle}

@@ -11,6 +11,8 @@ import {Button} from '@/components';
 function GuaranteeCancelButton({idx}: {idx: number}) {
 	const location = useLocation();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
+
 	return (
 		<Stack alignItems="center" mt="24px">
 			<Button
@@ -58,13 +60,7 @@ function GuaranteeCancelButton({idx}: {idx: number}) {
 													},
 												});
 											} catch (e: any) {
-												onOpenMessageDialog({
-													title: '네트워크 에러',
-													message:
-														e?.response?.data
-															?.message || '',
-													showBottomCloseButton: true,
-												});
+												onOpenError();
 											}
 										})();
 									}}>

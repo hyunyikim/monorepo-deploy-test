@@ -18,6 +18,7 @@ export {default as IcGuaranteeIssueSuccess} from './ic-guarantee-issue-success.s
 export {default as IcGuaranteeIssueCancel} from './ic-guarantee-issue-cancel.svg';
 export {default as IcMegaphone} from './ic-megaphone.svg';
 export {default as IcClose} from './ic-close.svg';
+export {default as IcCloseGrey} from './ic-close-grey.svg';
 export {default as IcSort} from './ic-sort.svg';
 export {default as IcWon} from './ic-won.svg';
 export {default as IcDoc} from './ic-doc.svg';
@@ -26,9 +27,7 @@ export {default as IcBin} from './ic_bin.svg';
 export {default as IcRadioButtonChecked} from './ic-radio-button-checked.svg';
 export {default as IcRadioButtonUnchecked} from './ic-radio-button-unchecked.svg';
 export {default as IcEmptyImage} from './ic-empty-image.svg';
-export {default as IcShop} from './ic-shop.svg';
 export {default as IcShopPrimary} from './ic-shop-primary.svg';
-export {default as IcBag} from './ic-bag.svg';
 export {default as IcEnvelope} from './ic-envelope.svg';
 export {default as IcHotelBuilding} from './ic-hotel-building.svg';
 export {default as IcPhone} from './ic-phone.svg';

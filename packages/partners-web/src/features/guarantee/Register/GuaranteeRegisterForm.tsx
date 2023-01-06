@@ -58,6 +58,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 	const {
 		open: newProductModalOpen,
 		onOpen: onNewProductModalOpen,
@@ -428,18 +429,14 @@ function GuaranteeRegisterForm({initialData}: Props) {
 					message.includes('상품정보') &&
 					result.includes('NOT FOUND')
 				) {
-					onOpenMessageDialog({
+					onOpenError({
+						e,
 						title: '삭제된 상품입니다.',
 						message: '상품을 다시 선택하고 발급해주세요.',
-						showBottomCloseButton: true,
 					});
 					return;
 				}
-				onOpenMessageDialog({
-					title: '네트워크 에러',
-					message: message,
-					showBottomCloseButton: true,
-				});
+				onOpenError();
 			} finally {
 				setIsLoading(false);
 			}
@@ -482,11 +479,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 									},
 								});
 							} catch (e: any) {
-								onOpenMessageDialog({
-									title: '네트워크 에러',
-									message: e?.response?.data?.message || '',
-									showBottomCloseButton: true,
-								});
+								onOpenError();
 							} finally {
 								sendAmplitudeLog('guarantee_publish_delete');
 							}

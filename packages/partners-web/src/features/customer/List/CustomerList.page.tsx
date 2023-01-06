@@ -75,7 +75,7 @@ function CustomerList() {
 
 	return (
 		<>
-			<Box>
+			<Box p={5}>
 				<TitleTypography title="고객관리" />
 				<SearchFilter
 					menu={menu}

@@ -10,7 +10,7 @@ import {PAGE_MAX_WIDTH} from '@/data';
 import {goToParentUrl, usePageView} from '@/utils';
 import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
-import {Button, TitleTypography} from '@/components';
+import {Button, TitleTypography, TitleTypography} from '@/components';
 
 function ProductRegister() {
 	usePageView('itemadmin_regist_pv', '상품등록 화면 진입');
@@ -69,7 +69,11 @@ function ProductRegister() {
 	const formControlMode = useMemo(() => (idx ? 'edit' : 'register'), [idx]);
 
 	return (
-		<Stack flexDirection="column" maxWidth={PAGE_MAX_WIDTH} margin="auto">
+		<Stack
+			flexDirection="column"
+			maxWidth={PAGE_MAX_WIDTH}
+			margin="auto"
+			my={5}>
 			<TitleTypography
 				title={`상품 ${
 					formControlMode === 'register' ? '등록' : '수정'

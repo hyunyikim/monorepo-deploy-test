@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
-
 import amplitude from 'amplitude-js';
+
+import {B2BType} from '@/@types';
 
 export const initAmplitudeTracking = () => {
 	try {
@@ -35,4 +36,25 @@ export const usePageView = (event: string, desc: string) => {
 			pv_title: desc,
 		});
 	}, []);
+};
+
+/**
+ * 트래킹 회원정보 설정
+ */
+export const setTrackingUser = (
+	email: string,
+	b2bType: B2BType,
+	companyName: string
+) => {
+	if (email && b2bType && companyName) {
+		try {
+			amplitude.getInstance().setUserId(email);
+			const identify = new amplitude.Identify()
+				.set('type', b2bType)
+				.set('name', companyName);
+			amplitude.getInstance().identify(identify);
+		} catch (e) {
+			console.log(e);
+		}
+	}
 };

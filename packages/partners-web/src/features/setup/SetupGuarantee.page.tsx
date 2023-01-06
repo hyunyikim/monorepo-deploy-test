@@ -6,6 +6,7 @@ import React, {
 	KeyboardEvent,
 } from 'react';
 import styled from '@emotion/styled';
+import {css, keyframes} from '@emotion/react';
 import style from '@/assets/styles/style.module.scss';
 
 import {useForm} from 'react-hook-form';
@@ -168,26 +169,53 @@ const BulletListStyle = styled('li')`
 	line-height: 1.45;
 `;
 
+const spreadingAnimation = keyframes`
+	from{
+		width: 20px;
+		height: 20px;
+		opacity: 0;
+	}
+	
+	50% {
+		width: 32px;
+		height: 32px;
+		opacity: 1;
+	}
+	
+	100%{
+		width: 40px;
+		height: 40px;
+		opacity: 0;
+	}
+`;
+
 const ProgressCircleStyle = styled('div')`
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
 	position: relative;
 	background: rgba(255, 255, 255, 0.4);
+	animation: ${spreadingAnimation} 2s ease infinite;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+`;
 
-	&:before {
-		content: '';
-		background: white;
-		display: 'block';
-		width: 18px;
-		height: 18px;
-		border-radius: 50%;
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 11px;
-		margin: auto;
-	}
+const ProgressWhiteCircleStyle = styled('div')`
+	background: white;
+	display: 'block';
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
 `;
 
 const EmphtyProgressCircleStyle = styled('div')`
@@ -518,7 +546,11 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 						.map((el, idx) =>
 							idx > boxIndexState ? (
 								<Box
-									sx={{position: 'relative'}}
+									sx={{
+										position: 'relative',
+										width: '40px',
+										height: '40px',
+									}}
 									key={`progress-circle-${idx}`}>
 									<EmphtyProgressCircleStyle />
 									{idx !== 3 && (
@@ -530,9 +562,14 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 								</Box>
 							) : idx === boxIndexState ? (
 								<Box
-									sx={{position: 'relative'}}
+									sx={{
+										position: 'relative',
+										width: '40px',
+										height: '40px',
+									}}
 									key={`progress-circle-${idx}`}>
 									<ProgressCircleStyle />
+									<ProgressWhiteCircleStyle />
 									{idx !== 3 && (
 										<DashedLineStyle
 											src={dashedLine}
@@ -542,7 +579,11 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 								</Box>
 							) : (
 								<Box
-									sx={{position: 'relative'}}
+									sx={{
+										position: 'relative',
+										width: '40px',
+										height: '40px',
+									}}
 									key={`progress-circle-${idx}`}>
 									<img
 										src={tickInWhiteCircle}
@@ -1284,7 +1325,7 @@ export function InputFormSection({
 				setBrandCard64String(savedBrandCard);
 				setBrandCardPreview({preview: savedBrandCard});
 			}
-		} else if (hasProfileLogo && data) {
+		} else if (/* hasProfileLogo && */ data) {
 			reset({
 				brandName: data.brand?.name,
 				brandNameEN: data.brand?.englishName,
@@ -1356,7 +1397,7 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={'center'}
 			alignItems="center"
-			p={hasProfileLogo ? '0 0px 32px 0px' : '89px 0px 32px 40px'}>
+			p={hasProfileLogo ? '40px 0px 60px 0px' : '89px 0px 60px 40px'}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate

@@ -33,6 +33,7 @@ import {
 } from '@/assets/icon';
 import {SignUpRequestFormData} from '@/@types';
 import {useNavigate} from 'react-router-dom';
+import {useMessageDialog} from '@/stores';
 
 const inputList = [
 	{
@@ -117,6 +118,7 @@ function SignUpForm({
 }: Props) {
 	const navigate = useNavigate();
 	const [showAllField, setShowAllField] = useState(false);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
 	const showInputList = useMemo(() => {
 		if (showAllField) {
@@ -200,12 +202,8 @@ function SignUpForm({
 				});
 				setStep(3);
 			} catch (e: any) {
-				const message = (e?.response?.data?.message ||
-					'네트워크 에러') as string;
-				// onOpen(message);
-				openParantModal({
-					title: '알림',
-					content: `<div style="min-width: 300px;font-size: 14px;font-weight: 500;">${message}</div>`,
+				onOpenError({
+					e,
 				});
 			}
 		},

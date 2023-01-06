@@ -25,6 +25,7 @@ function MessageDialog() {
 	const disableClickBackground = useMessageDialog(
 		(state) => state.disableClickBackground
 	);
+	const disableScroll = useMessageDialog((state) => state.disableScroll);
 	const showBottomCloseButton = useMessageDialog(
 		(state) => state.showBottomCloseButton
 	);
@@ -71,6 +72,11 @@ function MessageDialog() {
 					minHeight: '197px',
 					borderRadius: '16px',
 				},
+				...(disableScroll && {
+					'& .MuiDialogContent-root': {
+						overflowY: 'visible',
+					},
+				}),
 			}}>
 			{
 				<Box

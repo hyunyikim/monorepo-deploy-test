@@ -12,6 +12,16 @@ export const signIn = async (params: SignInRequestRequestParam) => {
 	);
 };
 
+// 비밀번호 초기화
+export const resetPassword = async (email: string) => {
+	return await nonAuthInstance.patch(
+		'/v1/admin/partnerships/password/reset',
+		{
+			email,
+		}
+	);
+};
+
 export const checkEmailDuplicated = async (email: string) => {
 	try {
 		const res = await nonAuthInstance.get<boolean>(

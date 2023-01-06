@@ -44,6 +44,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const {data: brandList} = useGetSearchBrandList();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const {
@@ -127,16 +128,12 @@ function ProductRegisterForm({mode, initialData}: Props) {
 					},
 				});
 			} catch (e: any) {
-				onOpenMessageDialog({
-					title: '네트워크 에러',
-					message: e?.response?.data?.message || '',
-					showBottomCloseButton: true,
-				});
+				onOpenError();
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[navigate, setIsLoading]
+		[navigate, setIsLoading, setIsLoading]
 	);
 
 	const handleEdit = useCallback(
@@ -157,11 +154,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 					},
 				});
 			} catch (e: any) {
-				onOpenMessageDialog({
-					title: '네트워크 에러',
-					message: e?.response?.data?.message || '',
-					showBottomCloseButton: true,
-				});
+				onOpenError();
 			}
 		},
 		[navigate]
@@ -187,12 +180,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 										},
 									});
 								} catch (e: any) {
-									onOpenMessageDialog({
-										title: '네트워크 에러',
-										message:
-											e?.response?.data?.message || '',
-										showBottomCloseButton: true,
-									});
+									onOpenError();
 								}
 							})();
 						}}>

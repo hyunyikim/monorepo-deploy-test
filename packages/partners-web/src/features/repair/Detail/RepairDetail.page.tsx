@@ -37,7 +37,7 @@ function RepairDetail() {
 	if (!data) return null;
 
 	return (
-		<Stack flexDirection="column" m="auto" maxWidth={PAGE_MAX_WIDTH}>
+		<Stack flexDirection="column" m="auto" my={5} maxWidth={PAGE_MAX_WIDTH}>
 			<TitleTypography title="수선신청 상세" />
 			<Stack flexDirection="row" justifyContent="space-between" mb="20px">
 				<Stack

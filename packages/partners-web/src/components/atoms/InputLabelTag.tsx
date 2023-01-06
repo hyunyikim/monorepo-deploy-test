@@ -33,7 +33,7 @@ function InputLabelTag({required = false, sx, labelTitle}: Props) {
 				fontWeight: 700,
 				fontSize: '14px',
 				lineHeight: 1.45,
-				marginBottom: '12px',
+				marginBottom: '8px',
 
 				'& .MuiFormLabel-asterisk': {
 					fontSize: 0,

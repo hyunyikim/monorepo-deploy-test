@@ -60,7 +60,7 @@ export const deleteGuarantee = async (idx: number) => {
 };
 
 export const bulkDeleteGuarantee = async (nftIdxList: number[]) => {
-	await instance.delete(`/v1/admin/nft/bulk`, {
+	return await instance.delete<BulkResponse>(`/v1/admin/nft/bulk`, {
 		data: {
 			nftIdxList,
 		},
@@ -79,7 +79,7 @@ export const cancelGuarantee = async (idx: number) => {
 };
 
 export const bulkCancelGuarantee = async (nftIdxList: number[]) => {
-	await instance.patch(`/v1/admin/nft/cancel/bulk`, {
+	return await instance.patch<BulkResponse>(`/v1/admin/nft/cancel/bulk`, {
 		nftIdxList,
 	});
 };

@@ -19,6 +19,7 @@ function RepairBulkControl({
 }: Props) {
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
 	const onRepairCancel = async () => {
 		onOpenMessageDialog({
@@ -43,11 +44,7 @@ function RepairBulkControl({
 									},
 								});
 							} catch (e) {
-								onOpenMessageDialog({
-									title: '네트워크 에러',
-									message: e?.response?.data?.message || '',
-									showBottomCloseButton: true,
-								});
+								onOpenError();
 							} finally {
 								setIsLoading(false);
 							}
@@ -82,11 +79,7 @@ function RepairBulkControl({
 									},
 								});
 							} catch (e) {
-								onOpenMessageDialog({
-									title: '네트워크 에러',
-									message: e?.response?.data?.message || '',
-									showBottomCloseButton: true,
-								});
+								onOpenError();
 							} finally {
 								setIsLoading(false);
 							}

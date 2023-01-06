@@ -11,11 +11,11 @@ export default function themeTypography(): TypographyOptions {
 		fontWeightBold: 700,
 		fontWeightMedium: 500,
 		fontFamily: [
+			'-apple-system',
+			'BlinkMacSystemFont',
 			'Metropolis',
 			'SUIT',
 			'sans-serif',
-			'-apple-system',
-			'BlinkMacSystemFont',
 			'Segoe UI',
 			'Roboto',
 			'Oxygen',

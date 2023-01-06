@@ -19,13 +19,14 @@ export const phoneNumberSchemaValidation = yup
 	.required('휴대전화번호 11자리를 모두 입력해주세요.')
 	.matches(phoneNumberFormat, '휴대전화번호 형식을 확인해주세요.');
 
-export const passwordSchemaValidation = yup
-	.string()
-	.required('비밀번호를 입력해주세요')
-	.matches(
-		passwordFormat,
-		'비밀번호는 8자리 이상 영문, 숫자, 특수문자 조합으로 설정되어야 합니다.'
-	);
+export const passwordSchemaValidation = (errorMessage: string) =>
+	yup
+		.string()
+		.required(errorMessage)
+		.matches(
+			passwordFormat,
+			'비밀번호는 8자리 이상 영문, 숫자, 특수문자 조합으로 설정되어야 합니다.'
+		);
 
 export const profileSettingPasswordSchemaValidation = yup
 	.string()

@@ -1,5 +1,8 @@
+import {AxiosError} from 'axios';
 import React from 'react';
 import create from 'zustand';
+
+import {ERROR_MESSAGE, ERROR_TITLE} from '@/data';
 
 type CloseButtonValueType = '확인' | '취소' | '닫기';
 
@@ -8,6 +11,7 @@ interface OnOpenParamType {
 	message?: string | React.ReactElement;
 	showBottomCloseButton?: boolean;
 	disableClickBackground?: boolean;
+	disableScroll?: boolean;
 	useCloseIcon?: boolean;
 	closeButtonValue?: CloseButtonValueType;
 	buttons?: React.ReactElement;
@@ -18,6 +22,7 @@ interface OnOpenParamType {
 interface MessageDialogState {
 	open: boolean;
 	disableClickBackground: boolean;
+	disableScroll: boolean;
 	useCloseIcon: boolean;
 	title: string | null;
 	message: string | React.ReactElement | null;
@@ -27,6 +32,11 @@ interface MessageDialogState {
 	sendCloseModalControlToParent: boolean;
 	onCloseFunc: (() => void) | null;
 	onOpen: (value: string | OnOpenParamType) => void;
+	onOpenError: (error?: {
+		e: unknown;
+		title?: string;
+		message?: string;
+	}) => void;
 	onClose: () => void;
 	setOnCloseFunc: (func: () => void) => void;
 	setMessage: (value: string) => void;
@@ -60,6 +70,7 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 	buttons: null,
 	onCloseFunc: null,
 	disableClickBackground: false,
+	disableScroll: false,
 	useCloseIcon: true,
 	sendCloseModalControlToParent: true,
 	onOpen: (value: string | OnOpenParamType) => {
@@ -80,12 +91,42 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			closeButtonValue: value?.closeButtonValue ?? '확인',
 			buttons: value?.buttons ?? null,
 			disableClickBackground: value?.disableClickBackground,
+			disableScroll: value?.disableScroll,
 			useCloseIcon: value?.useCloseIcon,
 			open: true,
 			onCloseFunc: value?.onCloseFunc ?? null,
 			sendCloseModalControlToParent:
 				value?.sendCloseModalControlToParent ?? true,
 		}));
+	},
+	onOpenError: (error?: {e: unknown; title?: string; message?: string}) => {
+		let errorTitle = ERROR_TITLE;
+		let errorMessage = ERROR_MESSAGE;
+
+		if (!error) {
+			get().onOpen({
+				title: errorTitle,
+				message: errorMessage,
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+			});
+			return;
+		}
+
+		const {e, title, message} = error;
+		if (e instanceof Error && e?.message) {
+			errorTitle = e?.message;
+		}
+		if (e instanceof AxiosError && e.response?.data?.message) {
+			errorTitle = title || e.response?.data?.message;
+			errorMessage = message || errorMessage;
+		}
+		get().onOpen({
+			title: errorTitle,
+			message: errorMessage,
+			showBottomCloseButton: true,
+			closeButtonValue: '확인',
+		});
 	},
 	onClose: () => {
 		set(() => ({open: false}));
@@ -100,6 +141,7 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			closeButtonValue: '확인',
 			buttons: null,
 			disableClickBackground: false,
+			disableScroll: false,
 			useCloseIcon: true,
 			sendCloseModalControlToParent: true,
 		})),

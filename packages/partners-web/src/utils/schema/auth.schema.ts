@@ -21,7 +21,6 @@ export const partnershipSignInSchemaShape = {
 export const partnershipSignupEmailSchemaShape = yup.object().shape({
 	email: emailSchemaValidation.test({
 		test: async (val) => {
-			// TODO: debounce 처리
 			const isDuplicated = await checkEmailDuplicated(val as string);
 			return !isDuplicated;
 		},
@@ -42,7 +41,7 @@ export const partnershipSignUpRestSchemaShape = yup.object().shape({
 		message: '이미 가입된 사업자등록번호입니다.',
 	}),
 	phoneNum: phoneNumberSchemaValidation,
-	password: passwordSchemaValidation,
+	password: passwordSchemaValidation('비밀번호를 입력해주세요'),
 	passwordConfirm: yup
 		.string()
 		.required('비밀번호가 다릅니다.')

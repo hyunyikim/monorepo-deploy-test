@@ -7,7 +7,7 @@ export const useGetPartnershipInfo = () => {
 	const token = useLoginStore().token;
 	return useQuery({
 		queryKey: ['partnershipInfo', token],
-		queryFn: () => (token ? getPartnershipInfo() : null),
+		queryFn: async () => (token ? await getPartnershipInfo() : null),
 	});
 };
 

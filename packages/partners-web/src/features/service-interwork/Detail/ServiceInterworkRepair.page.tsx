@@ -29,6 +29,8 @@ function ServiceInterworkRepair() {
 	const queryClient = useQueryClient();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
+
 	const {data: partnershipData, isLoading} = useGetPartnershipInfo();
 
 	const installServiceInterworkMutation = useMutation({
@@ -103,13 +105,7 @@ function ServiceInterworkRepair() {
 								},
 							});
 						} catch (e) {
-							onOpenMessageDialog({
-								title: '네트워크 에러',
-								message:
-									e?.response?.data?.message ||
-									'잠시 후 다시 시도해주세요.',
-								showBottomCloseButton: true,
-							});
+							onOpenError();
 						}
 					})();
 				}}>
@@ -118,6 +114,7 @@ function ServiceInterworkRepair() {
 		);
 	}, [
 		onOpenMessageDialog,
+		onOpenError,
 		installServiceInterworkMutation,
 		isAlreadySetupGuarantee,
 	]);
@@ -155,14 +152,7 @@ function ServiceInterworkRepair() {
 												},
 											});
 										} catch (e) {
-											onOpenMessageDialog({
-												title: '네트워크 에러',
-												message:
-													e?.response?.data
-														?.message ||
-													'잠시 후 다시 시도해주세요.',
-												showBottomCloseButton: true,
-											});
+											onOpenError();
 										}
 									})();
 								}}>
@@ -174,7 +164,7 @@ function ServiceInterworkRepair() {
 				연동해제
 			</Button>
 		);
-	}, [onOpenMessageDialog, uninstallServiceInterworkMutation]);
+	}, [onOpenMessageDialog, onOpenError, uninstallServiceInterworkMutation]);
 
 	if (isLoading) {
 		return <></>;
@@ -185,10 +175,12 @@ function ServiceInterworkRepair() {
 			flexDirection="column"
 			width="100%"
 			maxWidth="800px"
-			margin="auto">
+			margin="auto"
+			my={5}>
 			<ServiceInterworkDetailTitle
 				title="수선신청 관리"
 				subTitle="고객이 간편하게 수선신청하고, 신청 내역을 한곳에서 관리하세요."
+				isLinked={installedRepair}
 				titleImgBackgroundColor="#EDF9F7"
 				TitleImg={
 					<img

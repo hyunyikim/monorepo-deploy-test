@@ -93,7 +93,7 @@ function GuaranteeList() {
 
 	return (
 		<>
-			<Box>
+			<Box p={5}>
 				<TitleTypography title="개런티 목록" />
 				<SearchFilter
 					menu={menu}
@@ -126,7 +126,7 @@ function GuaranteeList() {
 								variant="outlined"
 								height={32}
 								onClick={goToGuaranteeExcelUploadPage}>
-								대량등록
+								대량발급
 							</Button>
 							<Button
 								color="primary"

@@ -9,6 +9,7 @@ import {goToParentUrl} from '@/utils';
 function RepairDetailControl({idx}: {idx: number}) {
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
 	const onRepairCancel = async () => {
 		onOpenMessageDialog({
@@ -31,11 +32,7 @@ function RepairDetailControl({idx}: {idx: number}) {
 									},
 								});
 							} catch (e) {
-								onOpenMessageDialog({
-									title: '네트워크 에러',
-									message: e?.response?.data?.message || '',
-									showBottomCloseButton: true,
-								});
+								onOpenError();
 							} finally {
 								setIsLoading(false);
 							}
@@ -68,11 +65,7 @@ function RepairDetailControl({idx}: {idx: number}) {
 									},
 								});
 							} catch (e) {
-								onOpenMessageDialog({
-									title: '네트워크 에러',
-									message: e?.response?.data?.message || '',
-									showBottomCloseButton: true,
-								});
+								onOpenError();
 							} finally {
 								setIsLoading(false);
 							}
