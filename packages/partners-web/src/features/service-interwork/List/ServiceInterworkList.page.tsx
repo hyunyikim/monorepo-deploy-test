@@ -13,12 +13,14 @@ import ServiceInterworkCard from '@/features/service-interwork/List/ServiceInter
 import {
 	ImgServiceInterworkRepair,
 	ImgServiceInterworkRepair2x,
+	ImgServiceInterworkKakao,
+	ImgServiceInterworkKakao2x,
 } from '@/assets/images';
 import Cafe24Logo from '@/assets/images/cafe24/cafe24_logo2.png';
 import Cafe24Logo2x from '@/assets/images/cafe24/cafe24_logo2@2x.png';
 
 interface InterworkItem {
-	name: 'cafe24' | 'repair';
+	name: 'cafe24' | 'repair' | 'kakao';
 	title: string;
 	subTitle: string | React.ReactElement;
 	InfoComponent: React.ReactElement;
@@ -74,6 +76,31 @@ const interworkList: InterworkItem[] = [
 		isLinked: false,
 		onClick: null,
 	},
+	{
+		name: 'kakao',
+		title: '카카오 알림톡',
+		subTitle: (
+			<>
+				브랜드 플러스친구 계정으로 개런티 관련 알림톡을 전송할 수
+				있습니다.
+			</>
+		),
+		InfoComponent: (
+			<Box
+				className="flex-center"
+				sx={{
+					backgroundColor: '#FFFBD9',
+				}}>
+				<img
+					src={ImgServiceInterworkKakao}
+					srcSet={`${ImgServiceInterworkKakao2x} 2x`}
+					alt="kakao-logo"
+				/>
+			</Box>
+		),
+		isLinked: false,
+		onClick: null,
+	},
 ];
 
 function ServiceInterworkList() {
@@ -96,6 +123,11 @@ function ServiceInterworkList() {
 		() => (partnershipData?.useRepair === 'Y' ? true : false),
 		[partnershipData]
 	);
+	const isKakaoAlramLinked = useMemo(
+		/* TODO: 카카오 알람으로 변경 필요 */
+		() => (partnershipData?.useRepair === 'Y' ? true : false),
+		[partnershipData]
+	);
 
 	const filteredInterworkList = useMemo(() => {
 		return interworkList.map((item) => {
@@ -113,9 +145,16 @@ function ServiceInterworkList() {
 					isLinked: isPartnershipLinked,
 				};
 			}
+			if (item?.name === 'kakao') {
+				return {
+					...item,
+					onClick: () => goToParentUrl('/b2b/interwork/kakao'),
+					isLinked: isKakaoAlramLinked,
+				};
+			}
 			return item;
 		});
-	}, [isCafe24Linked, isPartnershipLinked]);
+	}, [isCafe24Linked, isPartnershipLinked, isKakaoAlramLinked]);
 
 	return (
 		<>
@@ -136,9 +175,10 @@ function ServiceInterworkList() {
 						xs: 'column',
 						md: 'row',
 					}}
+					flexWrap="wrap"
 					gap="20px">
 					{isLoading
-						? new Array(2)
+						? new Array(3)
 								.fill(null)
 								.map((_, idx) => (
 									<ServiceInterworkCard

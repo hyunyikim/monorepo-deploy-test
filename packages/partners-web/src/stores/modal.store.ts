@@ -1,5 +1,6 @@
 import {ReactNode} from 'react';
 import create from 'zustand';
+import {SxProps} from '@mui/material';
 
 type alignType = 'left' | 'center';
 
@@ -8,6 +9,7 @@ type ModalOpt = {
 	isOpen: boolean;
 	title?: string;
 	subtitle?: string;
+	subtitleFontSize?: string;
 	children?: ReactNode;
 	buttonTitle?: string;
 	width?: string;
@@ -15,6 +17,8 @@ type ModalOpt = {
 	titleAlign?: alignType;
 	customisedButton?: React.ReactElement | null;
 	maxWidth?: string;
+	sx?: SxProps;
+	useBackgroundClickClose?: boolean;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void | null;
@@ -26,6 +30,7 @@ interface ModalState {
 	isOpen: boolean;
 	title?: string;
 	subtitle?: string;
+	subtitleFontSize?: string;
 	children?: ReactNode;
 	buttonTitle?: string;
 	width?: string;
@@ -33,6 +38,8 @@ interface ModalState {
 	titleAlign?: alignType;
 	customisedButton?: React.ReactElement | null;
 	maxWidth?: string;
+	sx?: SxProps;
+	useBackgroundClickClose?: boolean;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void;
@@ -46,12 +53,15 @@ export const useModalStore = create<ModalState>((set) => ({
 	isOpen: false,
 	title: '',
 	subtitle: '',
+	subtitleFontSize: '16px',
 	children: null,
 	buttonTitle: '',
 	maxWidth: '',
 	onClickButton: undefined,
 	align: 'center',
 	titleAlign: 'left',
+	sx: {},
+	useBackgroundClickClose: true,
 	customisedButton: null,
 	setIsOpen: (openState: boolean) => {
 		set((state) => ({...state, isOpen: openState}));

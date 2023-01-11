@@ -23,6 +23,7 @@ interface Props extends Omit<DialogProps, 'open' | 'onClose'> {
 		event: object,
 		reason: 'backdropClick' | 'escapeKeyDown'
 	) => void;
+	useBackgroundClickClose?: boolean;
 }
 
 const DIALOG_PADDING = '32px';
@@ -39,6 +40,7 @@ function Dialog({
 	children,
 	onClose,
 	titleAlign,
+	useBackgroundClickClose,
 	...props
 }: Props) {
 	const dialogPadding = useMemo(() => {
@@ -49,7 +51,7 @@ function Dialog({
 		<MuiDialog
 			open={open}
 			maxWidth="md"
-			onClose={onClose}
+			onClose={useBackgroundClickClose && onClose}
 			sx={{
 				'& .MuiPaper-root': {
 					borderRadius: '16px',

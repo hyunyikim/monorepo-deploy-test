@@ -38,3 +38,8 @@ export {default as ImgServiceInterworkRepairSample1} from './img-service-interwo
 export {default as ImgServiceInterworkRepairSample2} from './img-service-interwork-repair-sample2.png';
 export {default as ImgServiceInterworkRepair} from './img-service-interwork-repair.png';
 export {default as ImgServiceInterworkRepair2x} from './img-service-interwork-repair@2x.png';
+export {default as ImgServiceInterworkKakao} from './img-service-interwork-kakao.png';
+export {default as ImgServiceInterworkKakao2x} from './img-service-interwork-kakao@2x.png';
+export {default as ImgServiceInterworkKakaoSample1} from './img-service-interwork-kakao-sample1.png';
+export {default as ImgServiceInterworkKakaoSample2} from './img-service-interwork-kakao-sample2.png';
+export {default as ImgServiceKakaoConnectExample} from './img-kakao-connect-example.png';

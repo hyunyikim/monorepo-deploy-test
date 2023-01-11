@@ -55,6 +55,10 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	nftProductBoxH: number;
 	useDirectMint: YNType;
 	confirmed: YNType;
+	useAlimtalkProfile: YNType;
+	alimtalkPlusFriendId: string;
+	alimtalkAdminTel: string;
+	alimtalkSenderKey: string;
 	confirmedAt: string;
 	useAutoIncrementOrderNumber: YNType;
 	excInspectorIdx: number;
