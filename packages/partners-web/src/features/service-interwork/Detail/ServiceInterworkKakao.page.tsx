@@ -34,7 +34,10 @@ import ServiceInterworkDetailContent from '@/features/service-interwork/Detail/c
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {handleChangeDataFormat} from '../../../utils/format.util';
+import {
+	handleChangeDataFormat,
+	formatPhoneNum,
+} from '../../../utils/format.util';
 import AtagComponent from '@/components/atoms/AtagComponent';
 
 import {
@@ -143,31 +146,27 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 
 				if (resp?.result === 'SUCCESS') {
 					onClose();
-					onOpenMessageDialog({
-						title: '카카오 알림톡 연동이 완료됐습니다.',
-						message: '',
-						showBottomCloseButton: true,
-						onCloseFunc: () => {
-							updateParentPartnershipData();
-						},
-					});
+
+					setTimeout(() => {
+						onOpenMessageDialog({
+							title: '카카오 알림톡 연동이 완료됐습니다.',
+							message: '',
+							showBottomCloseButton: true,
+							onCloseFunc: () => {
+								updateParentPartnershipData();
+							},
+						});
+					}, 300);
 				} else {
-					onOpenMessageDialog({
-						title: '네트워크 에러',
-						message:
-							e?.response?.data?.message ||
-							'잠시 후 다시 시도해주세요.',
-						showBottomCloseButton: true,
+					return setError('token', {
+						message: e?.response?.data?.message,
 					});
 				}
 			}
 		} catch (e) {
 			// console.log('e', e);
-			onOpenMessageDialog({
-				title: '네트워크 에러',
-				message:
-					e?.response?.data?.message || '잠시 후 다시 시도해주세요.',
-				showBottomCloseButton: true,
+			return setError('token', {
+				message: e?.response?.data?.message,
 			});
 		}
 	};
@@ -272,7 +271,7 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 									position: 'absolute',
 									right: '8px',
 									top: '8px',
-									bottom: '8px',
+									bottom: 'auto',
 									height: '32px',
 									minHeight: '32px',
 								}}>
@@ -355,9 +354,9 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 							fontWeight: 500,
 							color: 'grey.500',
 						}}>
-						카카오 알림톡을 연동하면 기존 버클 카카오 계정으로
-						발송되던 알림톡이 고객에게 익숙한 브랜드 플러스친구
-						계정으로 발송됩니다.
+						알림톡을 연동하면 기존 버클 카카오 계정으로 발송되던
+						알림톡이 고객에게 익숙한 브랜드 플러스친구 계정으로
+						발송됩니다.
 					</Typography>
 				</Stack>
 			</Stack>
@@ -419,6 +418,9 @@ function ServiceInterworkKakao() {
 										'& .MuiTypography-h6': {
 											paddingBottom: '0px',
 											marginBottom: '7px',
+											'&  .MuiTypography-root': {
+												fontSize: '21px',
+											},
 										},
 										'& .MuiPaper-root': {
 											'& .MuiDialogContent-root': {
@@ -513,9 +515,9 @@ function ServiceInterworkKakao() {
 			flexDirection="column"
 			width="100%"
 			maxWidth="800px"
-			margin="40px auto 73px">
+			margin="10px auto 73px">
 			<ServiceInterworkDetailTitle
-				title="카카오톡 알림"
+				title="카카오 알림톡"
 				subTitle="브랜드 플러스친구 계정으로 개런티 관련 알림톡을 전송하세요."
 				titleImgBackgroundColor="#FFFBD9"
 				isLinked={installedKakaoAlram}
@@ -532,12 +534,13 @@ function ServiceInterworkKakao() {
 						? UninstallKakaoButton
 						: InstallKakaoButton
 				}
+				mb={installedKakaoAlram ? '40px' : '0px'}
 			/>
 
 			{partnershipData?.useAlimtalkProfile === 'Y' && (
 				<Stack>
 					<Stack mb="31px">
-						<Typography variant="subtitle1" mb="12px">
+						<Typography variant="subtitle1" /* mb="12px" */>
 							연동 설정
 						</Typography>
 					</Stack>
@@ -572,7 +575,9 @@ function ServiceInterworkKakao() {
 								variant="subtitle2"
 								fontSize="14px"
 								fontWeight={500}>
-								{partnershipData?.alimtalkAdminTel}
+								{formatPhoneNum(
+									partnershipData?.alimtalkAdminTel
+								)}
 							</Typography>
 						</Stack>
 					</Stack>
@@ -580,6 +585,7 @@ function ServiceInterworkKakao() {
 			)}
 
 			<ServiceInterworkDetailContent
+				mt={'60px'}
 				imgSrcList={[
 					[
 						ImgServiceInterworkKakaoSample2,

@@ -3,11 +3,16 @@ import {Stack, Box, Typography} from '@mui/material';
 interface Props {
 	imgSrcList: [string[], string[]];
 	children: React.ReactElement;
+	mt?: string;
 }
 
-function ServiceInterworkDetailContent({imgSrcList, children}: Props) {
+function ServiceInterworkDetailContent({
+	imgSrcList,
+	children,
+	mt = '0px',
+}: Props) {
 	return (
-		<Stack>
+		<Stack mt={mt}>
 			<Typography variant="subtitle1" mb="12px">
 				서비스 소개
 			</Typography>

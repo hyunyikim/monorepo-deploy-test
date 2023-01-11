@@ -124,8 +124,7 @@ function ServiceInterworkList() {
 		[partnershipData]
 	);
 	const isKakaoAlramLinked = useMemo(
-		/* TODO: 카카오 알람으로 변경 필요 */
-		() => (partnershipData?.useRepair === 'Y' ? true : false),
+		() => (partnershipData?.useAlimtalkProfile === 'Y' ? true : false),
 		[partnershipData]
 	);
 
