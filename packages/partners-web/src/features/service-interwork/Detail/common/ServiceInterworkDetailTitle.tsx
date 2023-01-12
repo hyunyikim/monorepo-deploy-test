@@ -16,6 +16,7 @@ function ServiceInterworkDetailTitle({
 	title,
 	subTitle,
 	isLinked,
+	// mb,
 	mb = '60px',
 	titleImgBackgroundColor,
 	TitleImg,

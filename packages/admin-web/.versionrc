@@ -1,0 +1,5 @@
+{
+	"path": ".",
+	"tag-prefix": "admin-web-v",
+	"releaseCommitMessageFormat": "chore(admin-web): updated apps changelog"
+}

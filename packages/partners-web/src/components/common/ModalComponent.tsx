@@ -13,6 +13,7 @@ function ModalComponent() {
 		isOpen,
 		title,
 		subtitle,
+		subtitleFontSize,
 		children,
 		buttonTitle,
 		setIsOpen,
@@ -23,6 +24,8 @@ function ModalComponent() {
 		maxWidth,
 		setCloseAndReset,
 		customisedButton,
+		sx,
+		useBackgroundClickClose,
 	} = useModalStore((state) => state);
 
 	const closeHandler = () => {
@@ -53,6 +56,7 @@ function ModalComponent() {
 	return (
 		<Dialog
 			open={isOpen}
+			useBackgroundClickClose={useBackgroundClickClose}
 			onClose={closeHandler}
 			showCloseButton={true}
 			titleAlign={titleAlign}
@@ -74,14 +78,16 @@ function ModalComponent() {
 						paddingBottom: '32px',
 					},
 				},
-			}}
-			onClose={closeHandler}>
+				...sx,
+			}}>
 			<>
 				{subtitle && (
 					<Typography
 						variant="h6"
 						sx={{
-							fontSize: '16px',
+							fontSize: subtitleFontSize
+								? subtitleFontSize
+								: '16px',
 							fontWeight: 500,
 							lineHeight: '16px',
 							color: 'grey.300',

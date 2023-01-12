@@ -3,6 +3,7 @@ import {RouteObject} from 'react-router-dom';
 
 import IframeChild from '@/components/common/layout/IframeChild';
 import Layout from '@/components/common/layout/Layout';
+import ServiceInterworkKakao from '@/features/service-interwork/Detail/ServiceInterworkKakao.page';
 
 const SetupGuarantee = lazy(
 	() => import('@/features/setup/SetupGuarantee.page')
@@ -98,6 +99,10 @@ const privateRoutes: RouteObject[] = [
 			{
 				path: '/b2b/interwork/repair/v2',
 				element: <ServiceInterworkRepair />,
+			},
+			{
+				path: '/b2b/interwork/kakao/v2',
+				element: <ServiceInterworkKakao />,
 			},
 			{path: '/setting/profile/v2', element: <ProfileSetting />},
 			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},

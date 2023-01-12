@@ -195,6 +195,7 @@ function ServiceInterworkRepair() {
 						? UninstallRepairButton
 						: InstallRepairButton
 				}
+				mb={'60px'}
 			/>
 			<ServiceInterworkDetailContent
 				imgSrcList={[

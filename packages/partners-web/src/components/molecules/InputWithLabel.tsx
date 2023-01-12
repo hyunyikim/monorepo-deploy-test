@@ -23,6 +23,7 @@ interface Props {
 	disabled?: boolean;
 	defaultValue?: string;
 	InputProps?: InputProps;
+	inputProps?: object;
 }
 
 function InputWithLabel({
@@ -41,6 +42,7 @@ function InputWithLabel({
 	fullWidth,
 	disabled,
 	defaultValue,
+	inputProps,
 	...props
 }: Props) {
 	return (
@@ -65,6 +67,7 @@ function InputWithLabel({
 					error={error}
 					onChange={onChange}
 					defaultValue={defaultValue}
+					inputProps={inputProps}
 					{...props}
 				/>
 			) : (
@@ -79,6 +82,7 @@ function InputWithLabel({
 					error={error}
 					onChange={onChange}
 					value={value}
+					inputProps={inputProps}
 					{...props}
 				/>
 			)}
