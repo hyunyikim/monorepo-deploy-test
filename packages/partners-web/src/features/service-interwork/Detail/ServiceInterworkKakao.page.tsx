@@ -515,7 +515,7 @@ function ServiceInterworkKakao() {
 			flexDirection="column"
 			width="100%"
 			maxWidth="800px"
-			margin="10px auto 73px">
+			margin="40px auto 73px">
 			<ServiceInterworkDetailTitle
 				title="카카오 알림톡"
 				subTitle="브랜드 플러스친구 계정으로 개런티 관련 알림톡을 전송하세요."
@@ -545,7 +545,7 @@ function ServiceInterworkKakao() {
 						</Typography>
 					</Stack>
 
-					<Stack mb="60px">
+					<Stack>
 						<Stack flexDirection={'row'} gap="77px" mb="18px">
 							<Typography
 								variant="subtitle2"
