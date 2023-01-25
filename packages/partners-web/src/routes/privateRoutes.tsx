@@ -33,6 +33,7 @@ const CustomerDetail = lazy(
 const ProfileSetting = lazy(
 	() => import('@/features/profileSetting/ProfileSetting.page')
 );
+const Signout = lazy(() => import('@/features/profileSetting/Signout.page'));
 const PasswordReset = lazy(
 	() => import('@/features/auth/password-reset/PasswordReset.page')
 );
@@ -105,6 +106,7 @@ const privateRoutes: RouteObject[] = [
 				element: <ServiceInterworkKakao />,
 			},
 			{path: '/setting/profile/v2', element: <ProfileSetting />},
+			{path: '/setting/signout/v2', element: <Signout />},
 			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
 			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
 			{path: '/cafe24/interwork/v2', element: <Cafe24Interwork />},

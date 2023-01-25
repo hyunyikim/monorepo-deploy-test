@@ -1,7 +1,12 @@
 import {useEffect} from 'react';
 import {Stack} from '@mui/system';
 import {Typography, Grid} from '@mui/material';
-import {Button, InputWithLabel, TitleTypography} from '@/components';
+import {
+	Button,
+	CapsuleButton,
+	InputWithLabel,
+	TitleTypography,
+} from '@/components';
 import {profileSettingSchemaShape} from '@/utils/schema';
 
 import {useForm} from 'react-hook-form';
@@ -16,6 +21,7 @@ import {
 	formatPhoneNum,
 	formatBusinessNum,
 	updateParentPartnershipData,
+	goToParentUrl,
 } from '@/utils';
 
 function ProfileSetting() {
@@ -75,6 +81,10 @@ function ProfileSetting() {
 			name: 'name',
 		},
 	];
+
+	const goToSignoutPage = () => {
+		goToParentUrl('/setting/signout');
+	};
 
 	/**
 	 * Form Data 생성하기
@@ -387,6 +397,7 @@ function ProfileSetting() {
 
 								return (
 									<InputWithLabel
+										key={`profile_input_${name}`}
 										labelTitle={title}
 										placeholder={placeholder}
 										inputType={type}
@@ -478,6 +489,12 @@ function ProfileSetting() {
 						</Stack>
 					</Stack>
 				</Stack>
+
+				<CapsuleButton
+					sx={{marginTop: '24px'}}
+					onClick={goToSignoutPage}>
+					회원탈퇴
+				</CapsuleButton>
 
 				<FixedBottomNavBar
 					sx={{
