@@ -1,31 +1,71 @@
 import {AggregateRoot} from '@nestjs/cqrs';
-import {PaymentCanceledEvent} from './event/payment-canceled.event';
-import {PaymentConfirmedEvent} from './event/payment-confirmed.event';
+import {PaymentCanceledEvent, PaymentConfirmedEvent} from './event';
 import {Payment as TossPayment} from '../infrastructure/api-client';
+import {DateTime} from 'luxon';
+import {PricePlanProps} from './pricePlan';
 
-export type PaymentProps = Omit<TossPayment, 'version'>;
+/**
+ * 결제 속성
+ */
+export type PaymentProps = Omit<TossPayment, 'version'> & {
+	partnerIdx: number;
+	pricePlan: PricePlanProps;
+	expiredAt?: string;
+};
 
+/**
+ * 결제 인터페이스
+ */
 export interface Payment {
 	properties: () => PaymentProps;
 	confirm: (props: PaymentProps) => void;
+	expire: () => void;
 	cancel: (props: PaymentProps) => void;
 	commit: () => void;
 }
 
+/**
+ * 결제내역
+ * 실제 PG사로 결제가 발생한 내역을 담고 있는 객체
+ */
 export class PlanPayment extends AggregateRoot implements Payment {
+	private readonly partnerIdx: number;
+	private readonly pricePlan: PricePlanProps;
+	private expiredAt?: string;
+
 	constructor(private props: PaymentProps) {
 		super();
 		Object.assign(this, props);
 	}
 
 	properties(): PaymentProps {
-		return {...this.props};
+		return {
+			...this.props,
+			partnerIdx: this.partnerIdx,
+			pricePlan: this.pricePlan,
+			expiredAt: this.expiredAt,
+		};
 	}
 
+	/**
+	 * 결제 확인
+	 * @param paymentProps
+	 */
 	confirm(paymentProps: PaymentProps): void {
 		this.apply(Object.assign(new PaymentConfirmedEvent(), this));
 	}
 
+	/**
+	 * 결제 종료
+	 */
+	expire(): void {
+		this.expiredAt = DateTime.now().toISO();
+	}
+
+	/**
+	 * 결제 취소
+	 * @param paymentProps
+	 */
 	cancel(paymentProps: PaymentProps): void {
 		this.apply(Object.assign(new PaymentCanceledEvent(), this));
 	}

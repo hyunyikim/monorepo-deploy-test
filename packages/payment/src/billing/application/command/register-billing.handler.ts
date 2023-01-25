@@ -1,15 +1,18 @@
 import {Inject, NotFoundException, BadRequestException} from '@nestjs/common';
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
-import {BillingRepository, PlanRepository} from 'src/billing/domain/repository';
-import {PlanBillingRepository} from 'src/billing/infrastructure/respository/billing.repository';
-import {TossPaymentsAPI} from 'src/billing/infrastructure/api-client';
+import {BillingRepository, PlanRepository} from '../../domain/repository';
+import {PlanBillingRepository} from '../../infrastructure/respository';
+import {TossPaymentsAPI} from '../../infrastructure/api-client';
 import {
 	RegisterBillingCommand,
 	UnregisterBillingCommand,
 } from './register-billing.command';
 import {PlanBillingFactory} from '../../domain';
-import {PricePlanRepository} from '../../infrastructure/respository/plan.repository';
+import {PricePlanRepository} from '../../infrastructure/respository';
 
+/**
+ * 빌링 등록 및 구독신청 커맨드 핸들러
+ */
 @CommandHandler(RegisterBillingCommand)
 export class RegisterBillingHandler
 	implements ICommandHandler<RegisterBillingCommand, void>
@@ -25,40 +28,49 @@ export class RegisterBillingHandler
 	) {}
 
 	async execute(command: RegisterBillingCommand): Promise<void> {
-		const {authKey, customerKey, planId} = command;
+		const {partnerIdx, planId, customerKey, cardInfo} = command;
 
+		// customerKey 중복검사
 		const saved = await this.billingRepository.findByCustomerKey(
 			customerKey
 		);
-
 		if (saved && saved.isRegistered) {
 			throw new BadRequestException('ALREADY_REGISTERED_BILLING');
 		}
 
+		// 구독플랜 조회
 		const pricePlan = await this.planRepository.findByPlanId(planId);
-
 		if (!pricePlan || !pricePlan.activated) {
 			throw new NotFoundException('NOT_FOUND_PLAN');
 		}
 
+		// 빌링키 발급
 		const tossBilling =
-			await this.paymentsApi.billing.authorizations.authKey(
-				authKey,
-				customerKey
-			);
+			await this.paymentsApi.billing.authorizations.customerKey({
+				customerKey,
+				...cardInfo,
+			});
 
+		// 빌링 생성
 		const registered = this.factory.create({
 			...tossBilling,
-			authKey,
+			partnerIdx,
 			pricePlan,
 		});
+
+		// 구독 신청
 		registered.register();
+
+		// DB 저장
 		await this.billingRepository.saveBilling(registered);
 
 		registered.commit();
 	}
 }
 
+/**
+ * 구독 취소 커맨드 핸들러
+ */
 @CommandHandler(UnregisterBillingCommand)
 export class UnregisterBillingHandler
 	implements ICommandHandler<UnregisterBillingCommand, void>
@@ -71,16 +83,18 @@ export class UnregisterBillingHandler
 	async execute(command: UnregisterBillingCommand): Promise<void> {
 		const {customerKey} = command;
 
+		// 빌링 조회
 		const billing = await this.billingRepository.findByCustomerKey(
 			customerKey
 		);
-
 		if (!billing) {
 			throw new NotFoundException('NOT_FOUND_BILLING_RESOURCE');
 		}
 
+		// 구독 취소
 		billing.unregister();
 
+		// DB 저장
 		await this.billingRepository.saveBilling(billing);
 
 		billing.commit();

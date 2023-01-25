@@ -1,5 +1,5 @@
 import {ICommand} from '@nestjs/cqrs';
 
 export class CancelPaymentCommand implements ICommand {
-	constructor(readonly key: string) {}
+	constructor(readonly partnerIdx: number, readonly key: string) {}
 }

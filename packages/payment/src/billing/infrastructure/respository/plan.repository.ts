@@ -1,9 +1,12 @@
 import {PlanRepository} from '../../domain/repository';
-import {PricePlan} from '../../domain';
 import {InjectionToken} from '../../../injection.token';
 import {Injectable, Inject} from '@nestjs/common';
 import {DynamoDB} from 'aws-sdk';
+import {PricePlan, PricePlanProps} from '../../domain/pricePlan';
 
+/**
+ * 요금제 플랜 데이터 저장소
+ */
 @Injectable()
 export class PricePlanRepository
 	extends DynamoDB.DocumentClient
@@ -18,16 +21,35 @@ export class PricePlanRepository
 		super({region});
 	}
 
-	async getAll(activated: boolean) {
+	/**
+	 * 플랜 목록 조회
+	 * @param activated
+	 * @param planType
+	 */
+	async getAll(activated: boolean, planType?: 'YEAR' | 'MONTH') {
 		const {Items} = await this.scan({
 			TableName: this.tableName,
+			IndexName: 'planType-planLevel-index',
 		}).promise();
+
 		if (!Items || Items.length === 0) return [];
-		const plans = Items as PricePlan[];
-		if (activated) return plans.filter((plan) => plan.activated);
-		return plans;
+		let plans = Items as PricePlanProps[];
+
+		if (activated) {
+			plans = plans.filter((plan) => plan.activated);
+		}
+
+		if (planType) {
+			plans = plans.filter((plan) => plan.planType === planType);
+		}
+
+		return plans.map((plan) => new PricePlan(plan));
 	}
 
+	/**
+	 * ID로 플랜 찾기
+	 * @param planId
+	 */
 	async findByPlanId(planId: string) {
 		const {Item} = await this.get({
 			TableName: this.tableName,
@@ -36,6 +58,6 @@ export class PricePlanRepository
 			},
 		}).promise();
 		if (!Item) return null;
-		return Item as PricePlan;
+		return new PricePlan(Item as PricePlanProps);
 	}
 }

@@ -1,73 +1,51 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Vircle Payment
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+본 프로젝트는 버클에서 사용되는 기업회원용 결제와 관련된 마이크로 서비스입니다. 현재는 토스페이먼츠라는 PG사의 결제시스템을 이용하고 있으며, 추후 타 PG사를 추가, 교체할 수 있는 확장성을 고려해서 설계되어 있습니다. 각 결제수단 단위로 최상위 폴더가 구분되어 있습니다.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+-   **Billing(빌링)** : 카드를 등록해두고 빌링키를 기준으로 정기적으로 자동 결제할 수 있는 결제수단
+-   **Card(카드)** : 결제창에서 카드사를 선택하고 카드사 인증을 거쳐 결제할 수 있는 결제수단 (미구현)
+-   **EasyPay(간편결제)** : 외부 간편결제 서비스 - 토스페이, 네이버페이, 삼성페이, 엘페이, 카카오페이, 페이코, LG페이, SSG페이 (미구현)
+-   **Transfer(계좌이체)** : 결제창에서 고객이 입력한 계좌 정보로 결제 금액을 이체할 수 있는 결제수단 (미구현)
+-   **VirtualAccount(가상계좌)** : 결제창에서 고객이 원하는 은행 정보를 입력받아 가상계좌 발급 후 해당 계좌에 주문금액이 입금되면 결제가 완료되는 결제수단 (미구현)
 
-## Description
+## 1. 개발환경
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+-   OS: Ubuntu 20.04, Node.js 16
+-   Database: AWS DynamoDB, TypeORM
+-   Language: TypeScript
+-   Framework: Nest.js (Express)
 
-## Installation
+## 2. 설치 및 실행
 
 ```bash
-$ npm install
+yarn workspace @vircle/payment install
+yarn workspace @vircle/payment start
 ```
 
-## Running the app
+## 3. 폴더 구조
 
-```bash
-# development
-$ npm run start
+결제 패키지는 이벤트 중심의 설계 기법인 CQRS 패턴을 채용하였습니다. Nest.js 에서 제공하는 CQRS를 이용하여 개발되었습니다. https://docs.nestjs.com/recipes/cqrs#cqrs
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+src
+└─ billing
+    ├─ application
+    │    ├─ command         : 커맨드 로직
+    │    ├─ event           : 이벤트 정의
+    │    ├─ query           : 데이터 조회 로직
+    │    ├─ sagas           : 특수 이벤트 핸들러
+    │    └─ services        : 서비스 로직
+    ├─ domain           : 도메인 단위의 클래스 정의
+    │  └─ event             : 각 클래스의 이벤트 핸들러 정의
+    ├─ infrastructure
+    │  ├─ api-client        : PG사 API 통신 로직
+    │  ├─ cache             : 캐시
+    │  └─ repository        : 데이터 엑세스 로직
+    └─ interface        : REST 라우팅 컨트롤러
+      ├─ dto                : DTO 모음
+      └─ guards             : JWT 미들웨어
 ```
 
-## Test
+## 4. 배포
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
--   Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
--   Website - [https://nestjs.com](https://nestjs.com/)
--   Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Payment 패키지는 로컬에서 Pull Request 시 Github Action 을 통해 자동으로 배포를 시작합니다. (작업중)

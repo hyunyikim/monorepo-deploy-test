@@ -1156,6 +1156,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.0.4"\
       ],\
       [\
+        "@mapbox/node-pre-gyp",\
+        "npm:1.0.10"\
+      ],\
+      [\
         "@mdx-js/loader",\
         "npm:1.6.22"\
       ],\
@@ -1598,6 +1602,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "@types/babel__traverse",\
         "npm:7.17.1"\
+      ],\
+      [\
+        "@types/bcrypt",\
+        "npm:5.0.0"\
       ],\
       [\
         "@types/bluebird",\
@@ -2488,6 +2496,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.0.0"\
       ],\
       [\
+        "bcrypt",\
+        "npm:5.1.0"\
+      ],\
+      [\
         "better-opn",\
         "npm:2.1.1"\
       ],\
@@ -3124,6 +3136,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:7.0.3"\
       ],\
       [\
+        "crypto",\
+        "npm:1.0.1"\
+      ],\
+      [\
         "crypto-browserify",\
         "npm:3.12.0"\
       ],\
@@ -3302,6 +3318,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "detect-indent",\
         "npm:6.1.0"\
+      ],\
+      [\
+        "detect-libc",\
+        "npm:2.0.1"\
       ],\
       [\
         "detect-newline",\
@@ -5568,6 +5588,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:3.0.4"\
       ],\
       [\
+        "node-addon-api",\
+        "npm:5.1.0"\
+      ],\
+      [\
         "node-cleanup",\
         "npm:2.1.2"\
       ],\
@@ -7613,7 +7637,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "whatwg-url",\
-        "npm:8.7.0"\
+        "npm:5.0.0"\
       ],\
       [\
         "which",\
@@ -17452,6 +17476,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@mapbox/node-pre-gyp", [\
+        ["npm:1.0.10", {\
+          "packageLocation": "./.yarn/cache/@mapbox-node-pre-gyp-npm-1.0.10-1811160047-1a98db05d9.zip/node_modules/@mapbox/node-pre-gyp/",\
+          "packageDependencies": [\
+            ["@mapbox/node-pre-gyp", "npm:1.0.10"],\
+            ["detect-libc", "npm:2.0.1"],\
+            ["https-proxy-agent", "npm:5.0.1"],\
+            ["make-dir", "npm:3.1.0"],\
+            ["node-fetch", "virtual:1811160047d7e0f7e43f371e07920c11204416dd6ae0b8461e04538b2f68e9167aca28b60b34dbd287674a5cdd52bd05be5797bbe2f7de916231958cb58055fb#npm:2.6.8"],\
+            ["nopt", "npm:5.0.0"],\
+            ["npmlog", "npm:5.0.1"],\
+            ["rimraf", "npm:3.0.2"],\
+            ["semver", "npm:7.3.7"],\
+            ["tar", "npm:6.1.11"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@mdx-js/loader", [\
         ["npm:1.6.22", {\
           "packageLocation": "./.yarn/cache/@mdx-js-loader-npm-1.6.22-de9620c32e-5ce4b92824.zip/node_modules/@mdx-js/loader/",\
@@ -22688,6 +22730,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/bcrypt", [\
+        ["npm:5.0.0", {\
+          "packageLocation": "./.yarn/cache/@types-bcrypt-npm-5.0.0-c074c165c2-063c32c7a5.zip/node_modules/@types/bcrypt/",\
+          "packageDependencies": [\
+            ["@types/bcrypt", "npm:5.0.0"],\
+            ["@types/node", "npm:17.0.31"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/bluebird", [\
         ["npm:3.5.36", {\
           "packageLocation": "./.yarn/cache/@types-bluebird-npm-3.5.36-c27785104b-efe7484e1f.zip/node_modules/@types/bluebird/",\
@@ -24467,6 +24519,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@nestjs/schematics", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:8.0.11"],\
             ["@nestjs/testing", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:8.4.5"],\
             ["@nestjs/typeorm", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:9.0.1"],\
+            ["@types/bcrypt", "npm:5.0.0"],\
             ["@types/cron", "npm:2.0.0"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.4.1"],\
@@ -24477,8 +24530,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/parser", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:5.40.0"],\
             ["aws-sdk", "npm:2.1262.0"],\
             ["axios", "npm:1.2.0"],\
+            ["bcrypt", "npm:5.1.0"],\
             ["class-transformer", "npm:0.5.1"],\
             ["class-validator", "npm:0.13.2"],\
+            ["crypto", "npm:1.0.1"],\
             ["eslint", "npm:8.25.0"],\
             ["eslint-config-prettier", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:8.5.0"],\
             ["eslint-plugin-prettier", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:4.0.0"],\
@@ -26970,6 +27025,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["bcrypt", [\
+        ["npm:5.1.0", {\
+          "packageLocation": "./.yarn/unplugged/bcrypt-npm-5.1.0-2a4230b3eb/node_modules/bcrypt/",\
+          "packageDependencies": [\
+            ["bcrypt", "npm:5.1.0"],\
+            ["@mapbox/node-pre-gyp", "npm:1.0.10"],\
+            ["node-addon-api", "npm:5.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["better-opn", [\
         ["npm:2.1.1", {\
           "packageLocation": "./.yarn/cache/better-opn-npm-2.1.1-7f070a64bf-3d1a945d12.zip/node_modules/better-opn/",\
@@ -29111,6 +29177,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["crypto", [\
+        ["npm:1.0.1", {\
+          "packageLocation": "./.yarn/cache/crypto-npm-1.0.1-7cb8e3dca6-087fe3165b.zip/node_modules/crypto/",\
+          "packageDependencies": [\
+            ["crypto", "npm:1.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["crypto-browserify", [\
         ["npm:3.12.0", {\
           "packageLocation": "./.yarn/cache/crypto-browserify-npm-3.12.0-bed454fef0-c1609af826.zip/node_modules/crypto-browserify/",\
@@ -29772,6 +29847,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/detect-indent-npm-6.1.0-d8c441ff7a-ab953a73c7.zip/node_modules/detect-indent/",\
           "packageDependencies": [\
             ["detect-indent", "npm:6.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["detect-libc", [\
+        ["npm:2.0.1", {\
+          "packageLocation": "./.yarn/cache/detect-libc-npm-2.0.1-2699cb2ac4-ccb05fcabb.zip/node_modules/detect-libc/",\
+          "packageDependencies": [\
+            ["detect-libc", "npm:2.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -39140,6 +39224,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["node-addon-api", [\
+        ["npm:5.1.0", {\
+          "packageLocation": "./.yarn/unplugged/node-addon-api-npm-5.1.0-b50d00f739/node_modules/node-addon-api/",\
+          "packageDependencies": [\
+            ["node-addon-api", "npm:5.1.0"],\
+            ["node-gyp", "npm:9.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["node-cleanup", [\
         ["npm:2.1.2", {\
           "packageLocation": "./.yarn/cache/node-cleanup-npm-2.1.2-adfbc95778-584cdc3e42.zip/node_modules/node-cleanup/",\
@@ -39176,6 +39270,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["node-fetch", "npm:2.6.7"]\
           ],\
           "linkType": "SOFT"\
+        }],\
+        ["npm:2.6.8", {\
+          "packageLocation": "./.yarn/cache/node-fetch-npm-2.6.8-ddb8bfc274-91f57be68e.zip/node_modules/node-fetch/",\
+          "packageDependencies": [\
+            ["node-fetch", "npm:2.6.8"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:1811160047d7e0f7e43f371e07920c11204416dd6ae0b8461e04538b2f68e9167aca28b60b34dbd287674a5cdd52bd05be5797bbe2f7de916231958cb58055fb#npm:2.6.8", {\
+          "packageLocation": "./.yarn/__virtual__/node-fetch-virtual-4c40075230/0/cache/node-fetch-npm-2.6.8-ddb8bfc274-91f57be68e.zip/node_modules/node-fetch/",\
+          "packageDependencies": [\
+            ["node-fetch", "virtual:1811160047d7e0f7e43f371e07920c11204416dd6ae0b8461e04538b2f68e9167aca28b60b34dbd287674a5cdd52bd05be5797bbe2f7de916231958cb58055fb#npm:2.6.8"],\
+            ["@types/encoding", null],\
+            ["encoding", null],\
+            ["whatwg-url", "npm:5.0.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/encoding",\
+            "encoding"\
+          ],\
+          "linkType": "HARD"\
         }],\
         ["virtual:72db6b3551c1b46986e711aee96d1643b26ff6991672401c35442adfbef36d10ccd9289b58e518aac04afe4e688ca4b130da9fae9c1c040113a2585b8cfeea9a#npm:2.6.7", {\
           "packageLocation": "./.yarn/__virtual__/node-fetch-virtual-5779e0c4c3/0/cache/node-fetch-npm-2.6.7-777aa2a6df-8d816ffd1e.zip/node_modules/node-fetch/",\

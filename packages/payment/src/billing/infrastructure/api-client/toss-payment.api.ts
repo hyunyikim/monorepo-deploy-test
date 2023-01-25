@@ -1,6 +1,5 @@
 import axios, {AxiosInstance} from 'axios';
-import {BillingResource} from './resource/billing';
-import {PaymentResource} from './resource/payment';
+import {BillingResource, PaymentResource} from './resource';
 
 export const TOSS_PAYMENTS_API_BASE_URL = 'https://api.tosspayments.com/v1';
 export const TOSS_PAYMENTS_TEST_KEY = 'test_sk_Kma60RZblrq66aPokGb8wzYWBn14';

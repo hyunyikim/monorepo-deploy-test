@@ -10,75 +10,101 @@ import {
 import {PaymentProps} from './payment';
 import {Billing as TossBilling} from '../infrastructure/api-client';
 import {DateTime} from 'luxon';
+import {PricePlan, PricePlanProps} from './pricePlan';
 
+/**
+ * 빌링 인터페이스
+ */
 export interface Billing {
 	properties: () => BillingProps;
 	register: () => void;
 	unregister: () => void;
 	isRegistered: boolean;
 	approve: (payment: PaymentProps) => void;
-	changePlan: (plan: PricePlan) => void;
+	changePlan: (plan: PricePlanProps) => void;
 	pause: () => void;
 	resume: () => void;
 	commit: () => void;
 }
 
-export interface PricePlan {
-	planId: string;
-	planName: string;
-	planPrice: number;
-	planLimit: number;
-	planType: 'MONTH' | 'YEAR';
-	activated: boolean;
-	planLevel: number;
-}
-
+/**
+ * 정기구독 속성
+ */
 export type BillingProps = TossBilling & {
-	authKey: string;
-	pricePlan: PricePlan;
+	partnerIdx: number;
+	orderId?: string;
+	pricePlan: PricePlanProps;
 	pausedAt?: string;
 	unregisteredAt?: string;
 	nextPaymentAt?: string;
 	lastPaymentAt?: string;
+	lastPaymentKey?: string;
 };
 
+/**
+ * 정기구독
+ */
 export class PlanBilling extends AggregateRoot implements Billing {
+	private orderId?: string;
+	private pausedAt?: string;
 	private unregisteredAt?: string;
 	private nextPaymentAt?: string;
 	private lastPaymentAt?: string;
-	private pausedAt?: string;
+	private lastPaymentKey?: string;
 
 	constructor(private props: BillingProps) {
 		super();
+
+		this.orderId = props?.orderId;
+		this.pausedAt = props?.pausedAt;
+		this.unregisteredAt = props?.unregisteredAt;
+		this.nextPaymentAt = props?.nextPaymentAt;
+		this.lastPaymentAt = props?.lastPaymentAt;
+		this.lastPaymentKey = props?.lastPaymentKey;
 	}
 
 	properties(): BillingProps {
 		return {
 			...this.props,
+			orderId: this.orderId,
+			pricePlan: new PricePlan(this.props.pricePlan),
+			pausedAt: this.pausedAt,
 			unregisteredAt: this.unregisteredAt,
 			nextPaymentAt: this.nextPaymentAt,
 			lastPaymentAt: this.lastPaymentAt,
-			pausedAt: this.pausedAt,
+			lastPaymentKey: this.lastPaymentKey,
 		};
 	}
 
+	/**
+	 * 구독 중지
+	 */
 	pause(): void {
 		this.pausedAt = DateTime.now().toISO();
 		const event = new BillingPausedEvent(this.properties());
 		this.apply(event);
 	}
 
+	/**
+	 * 구독 재개
+	 */
 	resume(): void {
 		this.pausedAt = undefined;
 		const event = new BillingResumedEvent(this.properties());
 		this.apply(event);
 	}
 
+	/**
+	 * 구독 신청
+	 */
 	register(): void {
 		const event = new BillingRegisteredEvent(this.properties());
 		this.apply(event);
 	}
 
+	/**
+	 * 구독 취소
+	 */
 	unregister(): void {
 		const now = DateTime.now();
 		this.unregisteredAt = now.toISO();
@@ -86,35 +112,34 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.apply(event);
 	}
 
+	/**
+	 * 결제 승인
+	 * @param payment
+	 */
 	approve(payment: PaymentProps): void {
 		const now = DateTime.now();
+		this.orderId = payment.orderId;
+		this.lastPaymentKey = payment.paymentKey;
 		this.lastPaymentAt = now.toISO();
 		this.nextPaymentAt = now
 			.plus({
-				year: this.isMonthly ? 0 : 1,
-				month: this.isMonthly ? 1 : 0,
-			})
-			.set({
-				hour: 0,
-				minute: 0,
-				second: 0,
-				millisecond: 0,
+				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
+				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
 			})
 			.toISO();
 		const event = new BillingApprovedEvent(this.properties(), payment);
 		this.apply(event);
 	}
 
-	changePlan(pricePlan: PricePlan): void {
+	/**
+	 * 플랜 변경
+	 * @param pricePlan
+	 */
+	changePlan(pricePlan: PricePlanProps): void {
 		const offset = pricePlan.planLevel - this.props.pricePlan.planLevel;
 		this.props.pricePlan = pricePlan;
-
-		const event = new PlanChangedEvent(this.properties(), offset);
+		const event = new PlanChangedEvent(this.props, offset);
 		this.apply(event);
-	}
-
-	private get isMonthly() {
-		return this.props.pricePlan.planType === 'MONTH';
 	}
 
 	get isRegistered() {

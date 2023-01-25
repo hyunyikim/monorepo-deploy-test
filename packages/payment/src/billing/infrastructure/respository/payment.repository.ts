@@ -1,14 +1,15 @@
 import {Inject, Injectable} from '@nestjs/common';
-import {PlanPaymentFactory} from 'src/billing/domain/factory';
-import {PaymentRepository} from 'src/billing/domain/repository';
-import {Payment} from 'src/billing/domain/payment';
+import {PlanPaymentFactory, Payment, PaymentProps} from '../../domain';
+import {PaymentRepository} from '../../domain/repository';
 import {DynamoDB} from 'aws-sdk';
-import {PaymentProps} from 'src/billing/domain/payment';
-import {InjectionToken} from 'src/injection.token';
+import {InjectionToken} from '../../../injection.token';
 import {DateTime} from 'luxon';
 
 type PaymentEntity = PaymentProps;
 
+/**
+ * 결제내역 데이터 저장소
+ */
 @Injectable()
 export class PlanPaymentRepository
 	extends DynamoDB.DocumentClient
@@ -25,6 +26,10 @@ export class PlanPaymentRepository
 		super({region});
 	}
 
+	/**
+	 * 결제내역 저장
+	 * @param payment
+	 */
 	async savePayment(payment: Payment): Promise<void> {
 		const entity = this.modelToEntity(payment);
 		try {
@@ -39,6 +44,10 @@ export class PlanPaymentRepository
 		}
 	}
 
+	/**
+	 * 결제내역 조회
+	 * @param paymentKey
+	 */
 	async findByKey(paymentKey: string): Promise<Payment | null> {
 		const {Item} = await this.get({
 			TableName: this.tableName,
@@ -53,6 +62,10 @@ export class PlanPaymentRepository
 		return this.entityToModel(entity);
 	}
 
+	/**
+	 * 결제내역 목록 조회
+	 * @param keys
+	 */
 	async findByKeys(keys: string[]): Promise<Payment[]> {
 		const dbkeys = keys.map((key) => ({paymentKey: {N: key}}));
 
@@ -70,26 +83,87 @@ export class PlanPaymentRepository
 			return this.factory.create(entity);
 		});
 	}
-	async findByOrderId(id: string): Promise<Payment | null> {
-		return await Promise.resolve<null>(null);
-	}
 
-	async search(key: string, range: {startAt: Date; endAt: Date}) {
-		const {startAt, endAt} = range;
+	/**
+	 * 주문번호로 결제내역 조회
+	 * @param orderId
+	 */
+	async findByOrderId(orderId: string): Promise<Payment | null> {
 		const {Items} = await this.query({
 			TableName: this.tableName,
-			IndexName: 'customerKey-approvedAt-index',
-			KeyConditionExpression: 'customerKey = :key',
-			FilterExpression: 'approvedAt between :startAt and :endAt',
+			IndexName: 'orderId-index',
+			KeyConditionExpression: 'orderId = :orderId',
 			ExpressionAttributeValues: {
-				':key': key,
-				':startAt': DateTime.fromJSDate(startAt).toISO(),
-				':endAt': DateTime.fromJSDate(endAt).toISO(),
+				':orderId': orderId,
 			},
 		}).promise();
 
-		if (!Items || Items.length === 0) return [];
+		if (!Items || Items.length === 0) return null;
 		const entities = Items as PaymentEntity[];
+
+		return this.factory.create(entities[0]);
+	}
+
+	/**
+	 * 결제내역 검색
+	 * @param partnerIdx
+	 * @param sort
+	 * @param page
+	 * @param pageSize
+	 * @param range
+	 */
+	async search(
+		partnerIdx: number,
+		sort: 'ASC' | 'DESC',
+		page: number,
+		pageSize: number,
+		range?: {startAt: Date; endAt: Date}
+	) {
+		let items: DynamoDB.DocumentClient.ItemList = [];
+		let exclusiveStartKey: DynamoDB.Key | undefined;
+
+		for (let i = 0; i < page; i++) {
+			const params: DynamoDB.DocumentClient.QueryInput = {
+				TableName: this.tableName,
+				IndexName: 'partnerIdx-approvedAt-index',
+				KeyConditionExpression: 'partnerIdx = :key',
+				Limit: pageSize,
+				ExpressionAttributeValues: {
+					':key': partnerIdx,
+				},
+				ScanIndexForward: sort === 'ASC',
+			};
+
+			if (range) {
+				const {startAt, endAt} = range;
+				params.KeyConditionExpression +=
+					' and approvedAt between :startAt and :endAt';
+				params.ExpressionAttributeValues = {
+					...params.ExpressionAttributeValues,
+					':startAt': DateTime.fromJSDate(startAt).toISO(),
+					':endAt': DateTime.fromJSDate(endAt).toISO(),
+				};
+			}
+
+			if (exclusiveStartKey) {
+				params.ExclusiveStartKey = exclusiveStartKey;
+			}
+
+			const {Items, LastEvaluatedKey, ScannedCount} = await this.query(
+				params
+			).promise();
+
+			exclusiveStartKey = LastEvaluatedKey;
+
+			if (!LastEvaluatedKey || !ScannedCount) break;
+
+			if (i === page - 1 && Items) {
+				items = Items;
+			}
+		}
+
+		if (!items || items.length === 0) return [];
+		const entities = items as PaymentEntity[];
 
 		return entities.map((entity) => this.factory.create(entity));
 	}

@@ -51,10 +51,10 @@ export interface RequestBillingAuthByCustomerKey {
 	customerIdentityNumber: string;
 
 	/** 고객 이름입니다. */
-	customerName: string;
+	customerName?: string;
 
 	/** 고객의 이메일 주소입니다. 결제 결과를 알려줄 때 사용합니다. */
-	customerEmail: string;
+	customerEmail?: string;
 
 	/** 해외 카드로 결제하는 경우 3DS 인증 적용을 위해 사용합니다. */
 	vbv?: {

@@ -17,7 +17,8 @@ import {
 } from './application/command';
 import {
 	FindBillingByCustomerKeyHandler,
-	FindPaymentsQuery,
+	FindPaymentByOrderIdHandler,
+	FindPlanHandler,
 } from './application/query';
 import {
 	BillingRegisteredHandler,
@@ -38,9 +39,8 @@ import {
 } from './domain';
 import {InjectionToken} from '../injection.token';
 import {BillingSaga} from './application/sagas';
-import {JwtService} from '@nestjs/jwt';
 import {ScheduleModule} from '@nestjs/schedule';
-import {FindPaymentsHandler} from './application/query/find-payments.query';
+import {FindPaymentsHandler} from './application/query';
 import {RegularPaymentService} from './application/service/payment.service';
 
 const infra: Provider[] = [
@@ -66,6 +66,7 @@ const app: Provider[] = [
 	UnregisterBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
+
 	// Event Handler
 	BillingRegisteredHandler,
 	BillingUnregisteredHandler,
@@ -75,6 +76,9 @@ const app: Provider[] = [
 	// Query Handler
 	FindBillingByCustomerKeyHandler,
 	FindPaymentsHandler,
+	FindPaymentByOrderIdHandler,
+	FindPlanHandler,
+
 	// Saga
 	BillingSaga,
 
