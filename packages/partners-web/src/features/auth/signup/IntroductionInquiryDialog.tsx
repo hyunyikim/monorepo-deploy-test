@@ -74,6 +74,7 @@ const inputList = [
 interface Props {
 	open: boolean;
 	onClose: () => void;
+	target?: 'new' | 'cooperator';
 }
 
 const defaultValues = inputList
@@ -97,8 +98,9 @@ interface FormProps {
  * 도입 문의 모달
  * 루트 경로에서 도입문의, 회원가입에서 병행업체 가입문의와 함께 사용됨
  */
-function IntroductionInquiryDialog({open, onClose}: Props) {
+function IntroductionInquiryDialog({open, onClose, target}: Props) {
 	const setOnCloseFunc = useMessageDialog((state) => state.setOnCloseFunc);
+	const {onOpen} = useMessageDialog((state) => state);
 	const {setIsOpen, setModalOption} = useModalStore((state) => state);
 
 	useEffect(() => {
@@ -117,7 +119,7 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 	const handleDataSubmit = useCallback(async (data: FormProps) => {
 		try {
 			await sendSlack({
-				type: 'cooperator',
+				type: target === 'new' ? 'operation' : 'cooperator',
 				title: '파트너스 도입문의',
 				data: {
 					담당자: data.name,
@@ -129,66 +131,79 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 				},
 			});
 
-			setModalOption({
-				id: 'cooperatorInfo',
-				isOpen: true,
-				title: '병행수입 계정 생성 문의가 접수되었습니다.',
-				children: (
-					<Box
-						sx={{
-							width: '100%',
-							display: 'flex',
-							justifyContent: 'center',
-							alignItems: 'center',
-							marginTop: '35px',
-						}}>
+			if (target === 'new') {
+				// 홈페이지 도입문의
+				onOpen({
+					title: '문의하신 내용이 접수되었습니다.',
+					message:
+						'문의 내용을 확인한 후 빠른 시일 내에 답변 드리겠습니다.',
+					showBottomCloseButton: true,
+					closeButtonValue: '확인',
+					setOnCloseFunc: onClose(),
+				});
+			} else {
+				// 병행수입 도입문의
+				setModalOption({
+					id: 'cooperatorInfo',
+					isOpen: true,
+					title: '병행수입 계정 생성 문의가 접수되었습니다.',
+					children: (
 						<Box
 							sx={{
-								background: `url(${infoCooperation2x}) center no-repeat`,
-								backgroundSize: 'cover',
-								height: '320px',
-								width: '728px',
-								margin: 'auto',
-							}}
-						/>
-					</Box>
-				),
-				align: 'left',
-				titleAlign: 'center',
-				width: '100%',
-				maxWidth: '900px',
-				buttonTitle: '확인',
-				customisedButton: (
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'center',
-							marginTop: '38px',
-						}}>
-						<Button
-							variant="contained"
-							color="primary"
-							width="220px"
-							sx={{
-								margin: 'auto',
-							}}
-							onClick={() => {
-								setIsOpen(false);
-								reset({
-									담당자: '',
-									이메일: '',
-									회사명: '',
-									핸드폰: '',
-									'담당부서 및 직책': '',
-									문의내용: '',
-								});
-								onClose();
+								width: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								marginTop: '35px',
 							}}>
-							확인
-						</Button>
-					</Box>
-				),
-			});
+							<Box
+								sx={{
+									background: `url(${infoCooperation2x}) center no-repeat`,
+									backgroundSize: 'cover',
+									height: '320px',
+									width: '728px',
+									margin: 'auto',
+								}}
+							/>
+						</Box>
+					),
+					align: 'left',
+					titleAlign: 'center',
+					width: '100%',
+					maxWidth: '900px',
+					buttonTitle: '확인',
+					customisedButton: (
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								marginTop: '38px',
+							}}>
+							<Button
+								variant="contained"
+								color="primary"
+								width="220px"
+								sx={{
+									margin: 'auto',
+								}}
+								onClick={() => {
+									setIsOpen(false);
+									reset({
+										담당자: '',
+										이메일: '',
+										회사명: '',
+										핸드폰: '',
+										'담당부서 및 직책': '',
+										문의내용: '',
+									});
+									onClose();
+								}}>
+								확인
+							</Button>
+						</Box>
+					),
+				});
+			}
 		} catch (e) {
 			console.log(e);
 		}
@@ -201,7 +216,9 @@ function IntroductionInquiryDialog({open, onClose}: Props) {
 			showCloseButton
 			TitleComponent={
 				<Typography fontSize={24} fontWeight={700}>
-					병행수입 서비스 도입 문의
+					{target === 'new'
+						? '서비스 도입문의'
+						: '병행수입 서비스 도입 문의'}
 				</Typography>
 			}
 			ActionComponent={

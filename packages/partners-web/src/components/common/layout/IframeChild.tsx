@@ -73,7 +73,7 @@ function IframeChild({children}: Props) {
 			sx={{
 				height: '100%',
 				padding: {
-					xs: '16px',
+					xs: '0',
 					md: '0',
 				},
 			}}>

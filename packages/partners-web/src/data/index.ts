@@ -7,3 +7,4 @@ export * from './product.data';
 export * from './customer.data';
 export * from './inspection.data';
 export * from './repair.data';
+export * from './payment.data';

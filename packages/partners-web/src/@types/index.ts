@@ -1,3 +1,4 @@
+export * from './payment.types';
 export * from './service-interwork.types';
 export * from './cafe24.types';
 export * from './inspection.types';

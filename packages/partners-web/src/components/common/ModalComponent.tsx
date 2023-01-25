@@ -61,7 +61,11 @@ function ModalComponent() {
 			showCloseButton={true}
 			titleAlign={titleAlign}
 			TitleComponent={
-				<Typography fontSize={20} fontWeight="bold">
+				<Typography
+					sx={{
+						fontSize: {xs: '16px', sm: '20px'},
+					}}
+					fontWeight="bold">
 					{title}
 				</Typography>
 			}
@@ -85,9 +89,7 @@ function ModalComponent() {
 					<Typography
 						variant="h6"
 						sx={{
-							fontSize: subtitleFontSize
-								? subtitleFontSize
-								: '16px',
+							fontSize: {xs: '13px', sm: '16px'},
 							fontWeight: 500,
 							lineHeight: '16px',
 							color: 'grey.300',

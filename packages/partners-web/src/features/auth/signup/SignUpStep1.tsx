@@ -111,7 +111,11 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 					/>
 				</Stack>
 			</Stack>
-			<IntroductionInquiryDialog open={open} onClose={onClose} />
+			<IntroductionInquiryDialog
+				open={open}
+				onClose={onClose}
+				target="cooperator"
+			/>
 		</>
 	);
 }

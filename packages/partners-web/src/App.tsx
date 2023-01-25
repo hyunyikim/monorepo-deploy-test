@@ -7,7 +7,9 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import getTheme from '@/assets/themes';
 import RootRouter from '@/routes/RootRouter';
 
+import '@/assets/scss/partnersHomepage.scss';
 import '@/assets/styles/common.scss';
+
 import {Loading, MessageDialog} from '@/components';
 import ModalComponent from '@/components/common/ModalComponent';
 import AmplitudeTrackingInterceptor from '@/components/common/layout/AmplitudeTrackingInterceptor';

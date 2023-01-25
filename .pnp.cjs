@@ -1912,6 +1912,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.0.12"\
       ],\
       [\
+        "@types/swiper",\
+        "npm:6.0.0"\
+      ],\
+      [\
         "@types/tapable",\
         "npm:1.0.8"\
       ],\
@@ -3376,6 +3380,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:0.1.2"\
       ],\
       [\
+        "dom7",\
+        "npm:4.0.4"\
+      ],\
+      [\
         "domain-browser",\
         "npm:1.2.0"\
       ],\
@@ -4186,6 +4194,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "grapheme-splitter",\
         "npm:1.0.4"\
+      ],\
+      [\
+        "gsap",\
+        "npm:3.11.4"\
       ],\
       [\
         "gzip-size",\
@@ -6280,6 +6292,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:3.0.2"\
       ],\
       [\
+        "react-slick",\
+        "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:0.29.0"\
+      ],\
+      [\
         "react-syntax-highlighter",\
         "virtual:a6f101db5c734d43d7c42189602953e6bd7cb195ff7c231116e86bc05597e8d5ee489677c1078b09ef02ac36d21b4ce917644a55743eaef32ca2ed11f318bda9#npm:13.5.3"\
       ],\
@@ -6800,6 +6816,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.3.3"\
       ],\
       [\
+        "ssr-window",\
+        "npm:4.0.2"\
+      ],\
+      [\
         "ssri",\
         "npm:9.0.0"\
       ],\
@@ -7018,6 +7038,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "svgo",\
         "npm:2.8.0"\
+      ],\
+      [\
+        "swiper",\
+        "npm:8.4.5"\
       ],\
       [\
         "symbol-observable",\
@@ -7762,6 +7786,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/eslint", "npm:8.4.2"],\
             ["@types/node", "npm:17.0.31"],\
             ["@types/prettier", "npm:2.6.0"],\
+            ["@types/react-slick", "npm:0.23.10"],\
             ["@typescript-eslint/eslint-plugin", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:5.22.0"],\
             ["@typescript-eslint/parser", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:5.22.0"],\
             ["eslint", "npm:8.14.0"],\
@@ -7777,6 +7802,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lint-staged", "npm:12.4.1"],\
             ["prettier", "npm:2.6.2"],\
             ["process", "npm:0.11.10"],\
+            ["react-slick", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:0.29.0"],\
             ["ts-node", "virtual:bbe5bf3641371eedd9d68d33d8a3d307af69214b7ca2ee6a0bea014a3a03cf79525d964718531a4657321275bba4a874ab4d49dbaece79253bd717ffb31d3e27#npm:10.7.0"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=a1c5e5"]\
           ],\
@@ -23508,6 +23534,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/swiper", [\
+        ["npm:6.0.0", {\
+          "packageLocation": "./.yarn/cache/@types-swiper-npm-6.0.0-f998517f2b-53688c7fd9.zip/node_modules/@types/swiper/",\
+          "packageDependencies": [\
+            ["@types/swiper", "npm:6.0.0"],\
+            ["swiper", "npm:8.4.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/tapable", [\
         ["npm:1.0.8", {\
           "packageLocation": "./.yarn/cache/@types-tapable-npm-1.0.8-4986892b9f-b4b754dd08.zip/node_modules/@types/tapable/",\
@@ -24352,6 +24388,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-lottie", "npm:1.2.6"],\
             ["@types/react-slick", "npm:0.23.10"],\
             ["@types/slick-carousel", "npm:1.6.37"],\
+            ["@types/swiper", "npm:6.0.0"],\
             ["@types/yup", "npm:0.29.14"],\
             ["amplitude-js", "npm:8.21.2"],\
             ["apexcharts", "npm:3.36.0"],\
@@ -24363,23 +24400,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dotenv-webpack", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:8.0.1"],\
             ["env-cmd", "npm:10.1.0"],\
             ["esbuild-loader", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.20.0"],\
+            ["gsap", "npm:3.11.4"],\
             ["html-webpack-plugin", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:5.5.0"],\
             ["lodash", "npm:4.17.21"],\
             ["mini-css-extract-plugin", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.6.1"],\
+            ["nuka-carousel", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:5.4.1"],\
             ["qs", "npm:6.11.0"],\
             ["react", "npm:18.2.0"],\
             ["react-apexcharts", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:1.4.0"],\
             ["react-dom", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:18.2.0"],\
             ["react-easy-crop", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:4.6.2"],\
+            ["react-gsap", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:3.2.1"],\
             ["react-hook-form", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:7.38.0"],\
             ["react-lottie", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:1.2.3"],\
             ["react-router-dom", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:6.4.0"],\
+            ["react-scrollmagic", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.3.0"],\
             ["react-slick", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:0.29.0"],\
             ["react-use", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:17.4.0"],\
             ["sass", "npm:1.54.8"],\
             ["sass-loader", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:13.0.2"],\
             ["slick-carousel", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:1.8.1"],\
             ["style-loader", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:3.3.1"],\
+            ["swiper", "npm:8.4.5"],\
             ["typescript", "patch:typescript@npm%3A4.8.2#~builtin<compat/typescript>::version=4.8.2&hash=a1c5e5"],\
             ["typescript-styled-plugin", "npm:0.18.2"],\
             ["webpack", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:5.74.0"],\
@@ -29913,6 +29955,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["dom7", [\
+        ["npm:4.0.4", {\
+          "packageLocation": "./.yarn/cache/dom7-npm-4.0.4-637bc4420a-b38604f74e.zip/node_modules/dom7/",\
+          "packageDependencies": [\
+            ["dom7", "npm:4.0.4"],\
+            ["ssr-window", "npm:4.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["domain-browser", [\
         ["npm:1.2.0", {\
           "packageLocation": "./.yarn/cache/domain-browser-npm-1.2.0-d99f0de5ec-8f1235c7f4.zip/node_modules/domain-browser/",\
@@ -33329,6 +33381,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/grapheme-splitter-npm-1.0.4-648f2bf509-0c22ec54de.zip/node_modules/grapheme-splitter/",\
           "packageDependencies": [\
             ["grapheme-splitter", "npm:1.0.4"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["gsap", [\
+        ["npm:3.11.4", {\
+          "packageLocation": "./.yarn/cache/gsap-npm-3.11.4-fa2096cb21-1f8ef165c5.zip/node_modules/gsap/",\
+          "packageDependencies": [\
+            ["gsap", "npm:3.11.4"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -39340,6 +39401,32 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["nuka-carousel", [\
+        ["npm:5.4.1", {\
+          "packageLocation": "./.yarn/cache/nuka-carousel-npm-5.4.1-0b814cc34d-1607fec713.zip/node_modules/nuka-carousel/",\
+          "packageDependencies": [\
+            ["nuka-carousel", "npm:5.4.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:5.4.1", {\
+          "packageLocation": "./.yarn/__virtual__/nuka-carousel-virtual-e4f4fad68d/0/cache/nuka-carousel-npm-5.4.1-0b814cc34d-1607fec713.zip/node_modules/nuka-carousel/",\
+          "packageDependencies": [\
+            ["nuka-carousel", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:5.4.1"],\
+            ["@types/react", "npm:18.0.18"],\
+            ["@types/react-dom", "npm:18.0.6"],\
+            ["react", "npm:18.2.0"],\
+            ["react-dom", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:18.2.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react-dom",\
+            "@types/react",\
+            "react-dom",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["num2fraction", [\
         ["npm:1.2.2", {\
           "packageLocation": "./.yarn/cache/num2fraction-npm-1.2.2-dc0a0a80ad-1da9c6797b.zip/node_modules/num2fraction/",\
@@ -41706,6 +41793,37 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["react-gsap", [\
+        ["npm:3.2.1", {\
+          "packageLocation": "./.yarn/cache/react-gsap-npm-3.2.1-facdb148f9-ac5872ea1c.zip/node_modules/react-gsap/",\
+          "packageDependencies": [\
+            ["react-gsap", "npm:3.2.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:3.2.1", {\
+          "packageLocation": "./.yarn/__virtual__/react-gsap-virtual-fcb758eaf5/0/cache/react-gsap-npm-3.2.1-facdb148f9-ac5872ea1c.zip/node_modules/react-gsap/",\
+          "packageDependencies": [\
+            ["react-gsap", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:3.2.1"],\
+            ["@types/gsap", null],\
+            ["@types/react", "npm:18.0.18"],\
+            ["@types/react-dom", "npm:18.0.6"],\
+            ["gsap", "npm:3.11.4"],\
+            ["react", "npm:18.2.0"],\
+            ["react-dom", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:18.2.0"],\
+            ["react-is", "npm:16.13.1"]\
+          ],\
+          "packagePeers": [\
+            "@types/gsap",\
+            "@types/react-dom",\
+            "@types/react",\
+            "gsap",\
+            "react-dom",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["react-helmet-async", [\
         ["npm:1.3.0", {\
           "packageLocation": "./.yarn/cache/react-helmet-async-npm-1.3.0-240f565ac8-7ca7e47f8a.zip/node_modules/react-helmet-async/",\
@@ -42005,6 +42123,32 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["react-scrollmagic", [\
+        ["npm:2.3.0", {\
+          "packageLocation": "./.yarn/cache/react-scrollmagic-npm-2.3.0-94bc82d945-00db29907d.zip/node_modules/react-scrollmagic/",\
+          "packageDependencies": [\
+            ["react-scrollmagic", "npm:2.3.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.3.0", {\
+          "packageLocation": "./.yarn/__virtual__/react-scrollmagic-virtual-4fcdada33a/0/cache/react-scrollmagic-npm-2.3.0-94bc82d945-00db29907d.zip/node_modules/react-scrollmagic/",\
+          "packageDependencies": [\
+            ["react-scrollmagic", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:2.3.0"],\
+            ["@types/react", "npm:18.0.18"],\
+            ["@types/react-dom", "npm:18.0.6"],\
+            ["react", "npm:18.2.0"],\
+            ["react-dom", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:18.2.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react-dom",\
+            "@types/react",\
+            "react-dom",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["react-sizeme", [\
         ["npm:3.0.2", {\
           "packageLocation": "./.yarn/cache/react-sizeme-npm-3.0.2-bacf8e9bfc-97cb852c24.zip/node_modules/react-sizeme/",\
@@ -42038,6 +42182,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash.debounce", "npm:4.0.8"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:93c11b0a33861847e0e61f3ce2c1154b81098da2b10f1656f825000a4d0b642653fc288a24bb500d415db0a95127fa53c83ed5ced1f7d1514f055e8df6a56c93#npm:18.2.0"],\
+            ["resize-observer-polyfill", "npm:1.5.1"]\
+          ],\
+          "packagePeers": [\
+            "@types/react-dom",\
+            "@types/react",\
+            "react-dom",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:0.29.0", {\
+          "packageLocation": "./.yarn/__virtual__/react-slick-virtual-2947df1b03/0/cache/react-slick-npm-0.29.0-28db290b04-67ce498191.zip/node_modules/react-slick/",\
+          "packageDependencies": [\
+            ["react-slick", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:0.29.0"],\
+            ["@types/react", null],\
+            ["@types/react-dom", null],\
+            ["classnames", "npm:2.3.2"],\
+            ["enquire.js", "npm:2.1.6"],\
+            ["json2mq", "npm:0.2.0"],\
+            ["lodash.debounce", "npm:4.0.8"],\
+            ["react", null],\
+            ["react-dom", null],\
             ["resize-observer-polyfill", "npm:1.5.1"]\
           ],\
           "packagePeers": [\
@@ -44090,6 +44256,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["ssr-window", [\
+        ["npm:4.0.2", {\
+          "packageLocation": "./.yarn/cache/ssr-window-npm-4.0.2-01f9c0151e-df18260092.zip/node_modules/ssr-window/",\
+          "packageDependencies": [\
+            ["ssr-window", "npm:4.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["ssri", [\
         ["npm:6.0.2", {\
           "packageLocation": "./.yarn/cache/ssri-npm-6.0.2-4b770f07fd-7c2e5d442f.zip/node_modules/ssri/",\
@@ -44862,6 +45037,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["csso", "npm:4.2.0"],\
             ["picocolors", "npm:1.0.0"],\
             ["stable", "npm:0.1.8"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["swiper", [\
+        ["npm:8.4.5", {\
+          "packageLocation": "./.yarn/unplugged/swiper-npm-8.4.5-c5c16f4b35/node_modules/swiper/",\
+          "packageDependencies": [\
+            ["swiper", "npm:8.4.5"],\
+            ["dom7", "npm:4.0.4"],\
+            ["ssr-window", "npm:4.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -47266,6 +47452,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/eslint", "npm:8.4.2"],\
             ["@types/node", "npm:17.0.31"],\
             ["@types/prettier", "npm:2.6.0"],\
+            ["@types/react-slick", "npm:0.23.10"],\
             ["@typescript-eslint/eslint-plugin", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:5.22.0"],\
             ["@typescript-eslint/parser", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:5.22.0"],\
             ["eslint", "npm:8.14.0"],\
@@ -47281,6 +47468,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lint-staged", "npm:12.4.1"],\
             ["prettier", "npm:2.6.2"],\
             ["process", "npm:0.11.10"],\
+            ["react-slick", "virtual:fa58e8ca92d12d19300f82562e66da4a988f3bb97f98fc86906d398d91213622a5128ec6e4356fc497c3aa1304ff51720ac875963e05b0223e49e8f260728bd0#npm:0.29.0"],\
             ["ts-node", "virtual:bbe5bf3641371eedd9d68d33d8a3d307af69214b7ca2ee6a0bea014a3a03cf79525d964718531a4657321275bba4a874ab4d49dbaece79253bd717ffb31d3e27#npm:10.7.0"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=a1c5e5"]\
           ],\

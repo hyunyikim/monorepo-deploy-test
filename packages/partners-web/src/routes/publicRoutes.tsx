@@ -4,6 +4,10 @@ import {RouteObject} from 'react-router-dom';
 import Layout from '@/components/common/layout/Layout';
 import IframeChild from '@/components/common/layout/IframeChild';
 
+const PartnersHomepage = lazy(
+	() => import('@/features/homepage/PartnersHomepage.page')
+);
+const AboutPrice = lazy(() => import('@/features/homepage/AboutPrice.page'));
 const SignIn = lazy(() => import('@/features/auth/signin/SignIn.page'));
 const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const EmailVerificationFail = lazy(
@@ -41,6 +45,22 @@ const publicRoutes: RouteObject[] = [
 			{
 				path: '/auth/login/v2',
 				element: <SignIn />,
+			},
+			{
+				path: '/v2',
+				element: <PartnersHomepage />,
+			},
+			{
+				path: '/',
+				element: <PartnersHomepage />,
+			},
+			{
+				path: '/home/v2',
+				element: <PartnersHomepage />,
+			},
+			{
+				path: '/price/v2',
+				element: <AboutPrice />,
 			},
 		],
 	},
