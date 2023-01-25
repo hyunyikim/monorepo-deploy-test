@@ -61,7 +61,7 @@ function GuaranteeRegisterProduct({
 					mb={product ? '32px' : 0}
 					columnGap="8px">
 					<Button
-						color="blue-50"
+						color="primary-50"
 						sx={{
 							width: '100%',
 							'& .MuiButton-startIcon': {
@@ -78,7 +78,7 @@ function GuaranteeRegisterProduct({
 						상품추가
 					</Button>
 					<Button
-						color="blue-50"
+						color="primary-50"
 						sx={{
 							width: '100%',
 							'& .MuiButton-startIcon': {

@@ -1,13 +1,9 @@
-@import '~slick-carousel/slick/slick.css';
-@import '~slick-carousel/slick/slick-theme.css';
-
 @import '_fonts.scss';
 @import 'animation.scss';
 
 @import 'typograpy.scss';
 @import 'style.module.scss';
-@import '../scss/partnersHomepage.scss';
-// @import 'partnershomepage.scss';
+@import 'partnersHomepage.scss';
 
 .flex {
 	display: flex;
@@ -57,4 +53,22 @@
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	word-break: break-all;
+}
+
+.list-dot {
+	&::before {
+		content: '·';
+		font-weight: 700;
+		margin-right: 4px;
+	}
+}
+
+.password-mark {
+	& input {
+		font-family: 'Password Mark';
+		font-size: 1rem;
+	}
+	& input::placeholder {
+		color: #aeaeba;
+	}
 }

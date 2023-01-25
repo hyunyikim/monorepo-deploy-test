@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 
 import {Grid, Box, Typography, Stack, GridTypeMap} from '@mui/material';
 
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 import imgDragAndDrop1 from '@/assets/images/img_drag_and_drop1.png';
 import imgDragAndDrop2 from '@/assets/images/img_drag_and_drop2.png';
@@ -46,7 +46,7 @@ function BrandSettingDragDropBox({
 				onDragLeave={onDragLeave}
 				onDrop={onDrop}
 				onClick={() =>
-					trackingToParent(
+					sendAmplitudeLog(
 						'guaranteesetting_cardcustom_popup_filesearch_click',
 						{button_title: '기기에서 검색'}
 					)

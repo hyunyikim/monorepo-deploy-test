@@ -137,7 +137,7 @@ function PasswordReset() {
 							control={control}
 							labelTitle={input.label}
 							placeholder={input.placeholder}
-							inputType={input.type}
+							type={input.type}
 							error={
 								errors[name as keyof PasswordResetRequestForm]
 							}

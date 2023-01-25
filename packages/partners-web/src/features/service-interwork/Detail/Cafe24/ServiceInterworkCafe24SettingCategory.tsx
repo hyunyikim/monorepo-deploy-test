@@ -50,7 +50,7 @@ function ServiceInterworkCafe24SettingCategory({
 					},
 				}}>
 				<Button
-					color="blue-50"
+					color="primary-50"
 					height={32}
 					onClick={onCategoryModalOpen}
 					data-tracking={`cafe24_linkservicedetail_categorybutton_click,{'button_title': '카테고리 선택 버튼 클릭'}`}>
@@ -211,17 +211,7 @@ const SettingCategoryModal = ({
 					</Button>
 				</>
 			}
-			sx={{
-				'& .MuiDialogContent-root': {
-					marginBottom: '65px',
-				},
-				'& .MuiDialogActions-root': {
-					backgroundColor: 'grey.10',
-					paddingY: '16px',
-					borderTop: (theme) =>
-						`1px solid ${theme.palette.grey[100]}`,
-				},
-			}}>
+			showBottomLine={true}>
 			<>
 				<Typography variant="body3" fontWeight="bold" mb={2}>
 					카테고리 목록

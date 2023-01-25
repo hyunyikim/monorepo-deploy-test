@@ -20,7 +20,7 @@ import {
 	formatPhoneNum,
 	getDateByUnitHour,
 	goToParentUrl,
-	trackingToParent,
+	sendAmplitudeLog,
 } from '@/utils';
 
 import {
@@ -44,7 +44,7 @@ const {sort, ...customerInitialSearchFilter} = initialSearchFilter;
 
 function CustomerList() {
 	useEffect(() => {
-		trackingToParent(`${menu}_pv`, {pv_title: '고객관리 목록 진입'});
+		sendAmplitudeLog(`${menu}_pv`, {pv_title: '고객관리 목록 진입'});
 	}, []);
 
 	const {
@@ -104,7 +104,7 @@ function CustomerList() {
 							[key: string]: any;
 							pageMaxNum: number;
 						}) => {
-							trackingToParent(`${menu}_unit_view_click`, {
+							sendAmplitudeLog(`${menu}_unit_view_click`, {
 								button_title: `노출수_${value.pageMaxNum}개씩`,
 							});
 							handleChangeFilter(value);

@@ -12,6 +12,7 @@ import {useMemo} from 'react';
 interface Props extends Omit<DialogProps, 'open' | 'onClose'> {
 	open: boolean;
 	showCloseButton?: boolean;
+	showBottomLine?: boolean;
 	width?: number | string;
 	height?: number | string;
 	padding?: number | string;
@@ -31,6 +32,7 @@ const DIALOG_PADDING = '32px';
 function Dialog({
 	open,
 	showCloseButton = false,
+	showBottomLine = false,
 	width,
 	height,
 	padding = DIALOG_PADDING,
@@ -52,19 +54,36 @@ function Dialog({
 			open={open}
 			maxWidth="md"
 			onClose={useBackgroundClickClose && onClose}
-			sx={{
-				'& .MuiPaper-root': {
-					borderRadius: '16px',
-					isolation: 'isolate',
-					...(width && {
-						width: typeof width === 'number' ? `${width}px` : width,
-					}),
+			sx={[
+				{
+					'& .MuiPaper-root': {
+						borderRadius: '16px',
+						isolation: 'isolate',
+						...(width && {
+							width:
+								typeof width === 'number'
+									? `${width}px`
+									: width,
+						}),
+					},
+					'& .MuiDialogTitle-root': {
+						marginBottom: '8px',
+					},
 				},
-				'& .MuiDialogTitle-root': {
-					marginBottom: '8px',
+				showBottomLine && {
+					'& .MuiDialogContent-root': {
+						marginBottom: '65px',
+					},
+					'& .MuiDialogActions-root': {
+						backgroundColor: 'grey.10',
+						paddingY: '16px',
+						paddingX: '24px',
+						borderTop: (theme) =>
+							`1px solid ${theme.palette.grey[100]}`,
+					},
 				},
-				...sx,
-			}}
+				...(Array.isArray(sx) ? sx : [sx]),
+			]}
 			{...props}>
 			{(TitleComponent || showCloseButton) && (
 				<DialogTitle

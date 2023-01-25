@@ -1,7 +1,7 @@
 import {useCallback, useRef} from 'react';
 import {Box, Grid, InputLabel} from '@mui/material';
 
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import {Options} from '@/@types';
 
 import {Select, TextField, Button} from '@/components';
@@ -36,7 +36,7 @@ function SearchField({
 			[name[1]]: textRef.current?.value ?? '',
 		};
 		onSearch(param);
-		trackingToParent(`${menu}_search_click`, {
+		sendAmplitudeLog(`${menu}_search_click`, {
 			button_title: `검색버튼 클릭`,
 		});
 	}, [menu, name, onSearch]);
@@ -58,7 +58,7 @@ function SearchField({
 		textEle.value = '';
 		onReset();
 
-		trackingToParent(`${menu}_reset_click`, {
+		sendAmplitudeLog(`${menu}_reset_click`, {
 			button_title: `초기화버튼 클릭`,
 		});
 	}, [onReset]);

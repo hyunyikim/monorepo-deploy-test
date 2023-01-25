@@ -276,7 +276,7 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 						저장
 					</Button>
 					<Button
-						color="blue-50"
+						color="primary-50"
 						height={32}
 						data-tracking={`cafe24_linkservicedetail_goingcafe24_click,{'button_title': 'cafe24로 이동'}`}
 						onClick={() => {

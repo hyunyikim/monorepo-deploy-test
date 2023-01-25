@@ -59,7 +59,6 @@ import InputWithLabel from '../../components/molecules/InputWithLabel';
 import ControlledInputComponent from '../../components/molecules/ControlledInputComponent';
 import TooltipComponent from '../../components/atoms/Tooltip';
 import InputLabelTag from '../../components/atoms/InputLabelTag';
-import Tab from '../../components/atoms/Tab';
 import {FileData, FileDataPreview, CropPreviewData} from '@/@types';
 import PreviewGuarantee, {
 	ExamplePreviewGuarantee,
@@ -1434,6 +1433,7 @@ export function InputFormSection({
 					)}
 					<Grid
 						container
+						item
 						xs={hasProfileLogo ? 6 : 12}
 						sx={{
 							'& .MuiBox-root': {
@@ -1554,7 +1554,7 @@ export function InputFormSection({
 											: '수입사는 브랜드명 입력을 받지 않습니다.'
 									}
 									required
-									readonly={
+									readOnly={
 										b2bType === 'brand' ? false : true
 									}
 									maxHeight={'48px'}
@@ -1571,7 +1571,7 @@ export function InputFormSection({
 											: '수입사는 브랜드명 입력을 받지 않습니다.'
 									}
 									required
-									readonly={
+									readOnly={
 										b2bType === 'brand' ? false : true
 									}
 									maxHeight={'48px'}
@@ -1588,7 +1588,7 @@ export function InputFormSection({
 						required={true}
 						placeholder="예시) 제품 구매 후 3년간 보증됩니다."
 						multiline
-						inputType="textarea"
+						type="textarea"
 						error={errors && errors.warrantyDate}
 					/>
 
@@ -1661,7 +1661,7 @@ export function InputFormSection({
 										key={`example-required-list-${idx}`}
 									/>
 							  ))
-							: b2bType !== 'brand'
+							: !!b2bType
 							? categoryRequiredList.map((li, idx) => (
 									<CategoryContainer
 										required={true}
@@ -1673,7 +1673,9 @@ export function InputFormSection({
 							: null}
 
 						{productInfoState.map((li, idx) => (
-							<Box sx={{position: 'relative', width: '100%'}}>
+							<Box
+								key={`example-required-product-info-state-${idx}`}
+								sx={{position: 'relative', width: '100%'}}>
 								<InputComponent
 									type={'text'}
 									placeholder=""
@@ -1879,7 +1881,7 @@ export function InputFormSection({
 
 									<Button
 										variant="contained"
-										color="blue-50"
+										color="primary-50"
 										width={100}
 										height={48}
 										sx={{
@@ -1946,7 +1948,7 @@ export function InputFormSection({
 							placeholder={li.placeholder}
 							multiline
 							fullWidth={true}
-							inputType="textarea"
+							type="textarea"
 							defaultValue=""
 							key={`additional-information-${idx}`}
 							isLast={idx === additionalInfomationList.length - 1}

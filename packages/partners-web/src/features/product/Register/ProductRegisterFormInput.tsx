@@ -51,7 +51,7 @@ function ProductRegisterFormInput({
 								control={control}
 								labelTitle={input.label}
 								placeholder={input.placeholder}
-								inputType={input.type}
+								type={input.type}
 								required={input?.required || false}
 								error={
 									errors[

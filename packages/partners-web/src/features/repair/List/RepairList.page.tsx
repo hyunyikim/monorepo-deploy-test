@@ -15,13 +15,11 @@ import {
 	repairStatusOption,
 	repairListSearchFilter,
 	getRepairStatusChip,
-	getRepairStatusChip,
 } from '@/data';
 import {
 	formatPhoneNum,
 	goToParentUrl,
-	trackingToParent,
-	usePageView,
+	sendAmplitudeLog,
 	usePageView,
 } from '@/utils';
 
@@ -33,9 +31,6 @@ import {
 	PageSelect,
 	Pagination,
 	HeadTableCell,
-	TableCell,
-	SearchFilterTab,
-	Checkbox,
 	TableCell,
 	SearchFilterTab,
 	Checkbox,
@@ -133,7 +128,7 @@ function RepairList() {
 							[key: string]: any;
 							pageMaxNum: number;
 						}) => {
-							trackingToParent(`${menu}_unit_view_click`, {
+							sendAmplitudeLog(`${menu}_unit_view_click`, {
 								button_title: `노출수_${value.pageMaxNum}개씩`,
 							});
 							onHandleChangeFilter(value);

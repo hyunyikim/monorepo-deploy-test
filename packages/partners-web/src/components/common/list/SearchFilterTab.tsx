@@ -1,7 +1,6 @@
-import {useCallback} from 'react';
-
 import {Options} from '@/@types';
-import {Stack, Tabs, Tab, SxProps} from '@mui/material';
+import {Stack, SxProps} from '@mui/material';
+import {Tab} from '@/components';
 
 interface Props {
 	options: Options<any>;
@@ -18,49 +17,13 @@ function SearchFilterTab({
 	onChangeTab,
 	buttons,
 }: Props) {
-	const handleChange = useCallback(
-		(event: React.SyntheticEvent, newValue: any) => {
-			onChangeTab(newValue);
-		},
-		[onChangeTab]
-	);
 	return (
 		<>
-			<Stack
-				mt={{
-					xs: '16px',
-					md: '40px',
-				}}
-				flexDirection="row"
-				justifyContent={buttons ? 'space-between' : 'flex-start'}
-				sx={{
-					borderBottom: 1,
-					borderColor: 'divider',
-				}}>
-				<Tabs
-					value={selectedTab || options[0].value}
-					onChange={handleChange}
-					aria-label={tabLabel}
-					sx={{
-						width: 'fit-content',
-						'& .MuiButtonBase-root.MuiTab-root': {
-							fontSize: 14,
-							lineHeight: 1.45,
-							minWidth: '0',
-							'&.Mui-selected': {
-								fontWeight: 700,
-							},
-						},
-					}}>
-					{options?.map((option) => (
-						<Tab
-							key={option.value}
-							label={option.label}
-							value={option.value}
-							{...a11yProps(option.value)}
-						/>
-					))}
-				</Tabs>
+			<Tab
+				tabLabel={tabLabel}
+				selected={selectedTab || options[0].value}
+				options={options}
+				handleChange={(e, value) => onChangeTab(value)}>
 				<ButtonGroups
 					buttons={buttons}
 					sx={{
@@ -70,7 +33,7 @@ function SearchFilterTab({
 						},
 					}}
 				/>
-			</Stack>
+			</Tab>
 			{/* 반응형 버튼 그룹 */}
 			<ButtonGroups
 				buttons={buttons}
@@ -84,14 +47,6 @@ function SearchFilterTab({
 			/>
 		</>
 	);
-}
-
-function a11yProps(value: any) {
-	const tabValue = String(value);
-	return {
-		id: `tab-${tabValue}`,
-		'aria-controls': `tabpanel-${tabValue}`,
-	};
 }
 
 const ButtonGroups = ({

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {debounce, throttle} from 'lodash';
 import {useLoginStore} from '@/stores';
-import {trackingToParent, goToParentUrl} from '@/utils';
+import {goToParentUrl, sendAmplitudeLog} from '@/utils';
 // import Dialog from '@/components/common/Dialog';
 import {Dialog} from '@mui/material';
 
@@ -41,7 +41,7 @@ function HomepageHeader({
 	const token = useLoginStore((state) => state.token);
 
 	const clickLogo = () => {
-		trackingToParent('homepage_logo_click', {
+		sendAmplitudeLog('homepage_logo_click', {
 			button_title: '버클 로고 클릭',
 		});
 		goToParentUrl('/home');
@@ -53,22 +53,22 @@ function HomepageHeader({
 
 		switch (path) {
 			case 'auth/login':
-				trackingToParent('homepage_login_click', {
+				sendAmplitudeLog('homepage_login_click', {
 					button_title: '로그인 클릭',
 				});
 				break;
 			case 'auth/signup':
-				trackingToParent('homepage_signup_click', {
+				sendAmplitudeLog('homepage_signup_click', {
 					button_title: '무료로 가입하기 클릭',
 				});
 				break;
 			case 'price':
-				trackingToParent('homepage_pricing_click', {
+				sendAmplitudeLog('homepage_pricing_click', {
 					button_title: '가격안내 클릭',
 				});
 				break;
 			case 'dashboard':
-				trackingToParent('homepage_dashboard_click', {
+				sendAmplitudeLog('homepage_dashboard_click', {
 					button_title: '대시보드로 이동하기 클릭',
 				});
 				break;
@@ -142,7 +142,7 @@ function HomepageHeader({
 							<li
 								className="header_list"
 								onClick={() => {
-									trackingToParent('homepage_blog_click', {
+									sendAmplitudeLog('homepage_blog_click', {
 										button_title: '블로그 클릭',
 									});
 								}}>
@@ -157,7 +157,7 @@ function HomepageHeader({
 							<li
 								className="header_list"
 								onClick={() => {
-									trackingToParent('homepage_team_click', {
+									sendAmplitudeLog('homepage_team_click', {
 										button_title: '버클팀 클릭',
 									});
 								}}>
@@ -180,7 +180,7 @@ function HomepageHeader({
 							<li
 								className="header_list"
 								onClick={() => {
-									trackingToParent(
+									sendAmplitudeLog(
 										'homepage_introduction_click',
 										{
 											button_title: '도입문의 클릭',

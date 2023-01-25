@@ -15,7 +15,7 @@ import {
 	headphone,
 } from '@/assets/images/index';
 
-import {trackingToParent, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 
 interface openEmailModalProps {
 	openEmailModal(): void;
@@ -25,7 +25,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 	const screenWidth = window.innerWidth;
 
 	const goToSignup = () => {
-		trackingToParent('homepage_signuptop_click', {
+		sendAmplitudeLog('homepage_signuptop_click', {
 			button_title: '지금 무료로 시작하기',
 		});
 
@@ -248,7 +248,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 														<button
 															className="btn_intro white"
 															onClick={() => {
-																trackingToParent(
+																sendAmplitudeLog(
 																	'homepage_introductiontop_click',
 																	{
 																		button_title:

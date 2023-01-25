@@ -12,9 +12,9 @@ import CategoryBrandSection from './main/CategoryBrandSection';
 import FAQSection from './main/FAQSection';
 import EndingSection from './main/EndingSection';
 
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import {useOpen} from '@/utils/hooks';
-import IntroductionInquiryDialog from '../auth/signup/IntroductionInquiryDialog';
+import {IntroductionInquiryDialog} from '@/components';
 
 function PartnersHomepage() {
 	const {open, onOpen, onClose} = useOpen({});
@@ -34,7 +34,7 @@ function PartnersHomepage() {
 	};
 
 	useEffect(() => {
-		trackingToParent('homepage_pv', {pv_title: '홈페이지 진입'});
+		sendAmplitudeLog('homepage_pv', {pv_title: '홈페이지 진입'});
 		setTimeout(() => {
 			if (!isDoNotOpenPromotionPopup) {
 				setPromotionModal(true);

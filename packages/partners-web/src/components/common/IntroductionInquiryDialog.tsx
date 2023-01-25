@@ -20,8 +20,7 @@ import {introductionInquirySchemaShape} from '@/utils/schema';
 import {handleChangeDataFormat} from '@/utils';
 
 import {sendSlack} from '@/api/common.api';
-import {useMessageDialog} from '@/stores';
-import {useModalStore} from '../../../stores/modal.store';
+import {useMessageDialog, useModalStore} from '@/stores';
 import {infoCooperation2x} from '@/assets/images';
 
 const inputList = [
@@ -74,7 +73,7 @@ const inputList = [
 interface Props {
 	open: boolean;
 	onClose: () => void;
-	target?: 'new' | 'cooperator';
+	target: 'new' | 'cooperator';
 }
 
 const defaultValues = inputList
@@ -139,7 +138,7 @@ function IntroductionInquiryDialog({open, onClose, target}: Props) {
 						'문의 내용을 확인한 후 빠른 시일 내에 답변 드리겠습니다.',
 					showBottomCloseButton: true,
 					closeButtonValue: '확인',
-					setOnCloseFunc: onClose(),
+					onCloseFunc: onClose,
 				});
 			} else {
 				// 병행수입 도입문의
@@ -187,7 +186,7 @@ function IntroductionInquiryDialog({open, onClose, target}: Props) {
 									margin: 'auto',
 								}}
 								onClick={() => {
-									setIsOpen(false);
+									setIsOpen && setIsOpen(false);
 									reset({
 										담당자: '',
 										이메일: '',

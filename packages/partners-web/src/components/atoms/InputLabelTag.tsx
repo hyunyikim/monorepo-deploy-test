@@ -1,14 +1,27 @@
-import React, {useMemo} from 'react';
+import {useMemo} from 'react';
 import {InputLabel} from '@mui/material';
 
 interface Props {
 	required?: boolean;
+	showRequiredChip?: boolean;
 	sx?: object;
 	labelTitle: string;
 }
 
-function InputLabelTag({required = false, sx, labelTitle}: Props) {
+function InputLabelTag({
+	required = false,
+	showRequiredChip,
+	sx,
+	labelTitle,
+}: Props) {
 	const requireSx = useMemo(() => {
+		if (!showRequiredChip) {
+			return {
+				content: "''",
+				padding: 0,
+				display: 'none',
+			};
+		}
 		switch (required) {
 			case true:
 				return {
@@ -21,7 +34,7 @@ function InputLabelTag({required = false, sx, labelTitle}: Props) {
 					display: 'none',
 				};
 		}
-	}, [required]);
+	}, [required, showRequiredChip]);
 
 	return (
 		<InputLabel

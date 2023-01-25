@@ -9,7 +9,7 @@ import {
 	imgEndingTitle,
 	imgEndingTitle2x,
 } from '@/assets/images/index';
-import {trackingToParent, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 
 type IsOpenProps = {
 	isOpen: boolean;
@@ -330,7 +330,7 @@ function PriceFAQSection() {
 
 	const screenWidth = window.innerWidth;
 	const goToSignup = () => {
-		trackingToParent(`homepage_price_signupbottom_click`, {
+		sendAmplitudeLog(`homepage_price_signupbottom_click`, {
 			button_title: `무료로 시작하기`,
 		});
 

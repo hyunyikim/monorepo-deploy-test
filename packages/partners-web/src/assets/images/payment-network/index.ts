@@ -1,0 +1,10 @@
+export {default as LogoAmax} from './logo_amax.png';
+export {default as LogoAmax2x} from './logo_amax@2x.png';
+export {default as LogoJcb} from './logo_jcb.png';
+export {default as LogoJcb2x} from './logo_jcb@2x.png';
+export {default as LogoMaster} from './logo_master.png';
+export {default as LogoMaster2x} from './logo_master@2x.png';
+export {default as LogoUnion} from './logo_union.png';
+export {default as LogoUnion2x} from './logo_union@2x.png';
+export {default as LogoVisa} from './logo_visa.png';
+export {default as LogoVisa2x} from './logo_visa@2x.png';

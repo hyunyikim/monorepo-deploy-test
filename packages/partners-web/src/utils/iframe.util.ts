@@ -3,7 +3,6 @@ type RequestType =
 	| 'link_state'
 	| 'link_replace'
 	| 'go_back'
-	| 'tracking'
 	| 'guarantee_excel_download'
 	| 'guarantee_excel_upload'
 	| 'document_height'
@@ -48,18 +47,6 @@ export const goBack = () => {
 	sendMessageToParent({
 		type: 'go_back',
 		data: null,
-	});
-};
-
-// 부모창에서 트래킹
-export const trackingToParent = (event: string, props: any, callback?: any) => {
-	sendMessageToParent({
-		type: 'tracking',
-		data: {
-			event,
-			props,
-			callback,
-		},
 	});
 };
 

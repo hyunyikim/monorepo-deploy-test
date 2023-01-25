@@ -1,7 +1,7 @@
 import React from 'react';
 import {greyArrow2x, greyArrow} from '@/assets/images/index';
 
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 function FAQSection() {
 	const screenWidth = window.innerWidth;
 
@@ -71,7 +71,7 @@ function FAQSection() {
 	const openContent = (e) => {
 		const targetIdx: string | number = e.target.dataset.idx;
 
-		trackingToParent(`homepage_questions${targetIdx}_click`, {
+		sendAmplitudeLog(`homepage_questions${targetIdx}_click`, {
 			button_title: `자주 묻는 질문${targetIdx}`,
 		});
 

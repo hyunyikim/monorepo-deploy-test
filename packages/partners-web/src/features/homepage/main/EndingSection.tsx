@@ -7,14 +7,14 @@ import {
 	endingTitleMobile,
 	endingTitleMobile2x,
 } from '@/assets/images/index';
-import {trackingToParent, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 
 // import '../../assets/scss/partnersHomepage.scss';
 
 function EndingSection() {
 	const screenWidth = window.innerWidth;
 	const goToSignup = () => {
-		trackingToParent(`homepage_signupbottom_click`, {
+		sendAmplitudeLog(`homepage_signupbottom_click`, {
 			button_title: `무료로 시작하기`,
 		});
 

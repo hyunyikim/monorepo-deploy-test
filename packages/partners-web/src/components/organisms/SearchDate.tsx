@@ -7,7 +7,7 @@ import {periods, calculatePeriod, defaultPeriodIdx, DATE_FORMAT} from '@/data';
 
 import {Button, DatePicker} from '@/components';
 import {PeriodType} from '@/@types';
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 interface Props {
 	menu: string;
@@ -43,7 +43,7 @@ function SearchDate({
 
 			const periodLabel =
 				periods.find((item) => item.type === type)?.label ?? '';
-			trackingToParent(`${menu}_period_click`, {
+			sendAmplitudeLog(`${menu}_period_click`, {
 				button_title: `기간선택_${periodLabel}`,
 			});
 		},
@@ -56,7 +56,7 @@ function SearchDate({
 			onChange({
 				[type]: format(value, DATE_FORMAT),
 			});
-			trackingToParent(`${menu}_period_directinput_click`, {
+			sendAmplitudeLog(`${menu}_period_directinput_click`, {
 				button_title: '기간선택_직접입력',
 			});
 		},
@@ -76,7 +76,7 @@ function SearchDate({
 				{periods.map((item, idx) => (
 					<Grid item minWidth="fit-content" key={`date-term-${idx}`}>
 						<Button
-							color={selected === idx ? 'blue-50' : 'grey-100'}
+							color={selected === idx ? 'primary-50' : 'grey-100'}
 							variant="outlined"
 							width={54}
 							height={32}

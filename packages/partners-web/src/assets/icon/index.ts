@@ -51,3 +51,12 @@ export {default as tickInWhiteCircle} from './icon_tick_in_white_circle_40.png';
 export {default as tickInWhiteCircle2x} from './icon_tick_in_white_circle_40@2x.png';
 export {default as IcReload} from './ic_reload.svg';
 export {default as IcTick} from './ic-tick.svg';
+export {default as IcLoudSpeaker} from './ic-louad-speaker.svg';
+export {default as IcLogin} from './ic-login.svg';
+export {default as IcPrinter} from './ic-printer.svg';
+export {default as IcAtm} from './ic-atm.svg';
+export {default as IcCalendar} from './ic-calendar.svg';
+export {default as IcReceipt} from './ic-receipt.svg';
+
+// Logo
+export {default as IcVircleLogo} from './ic-vircle-logo.svg';

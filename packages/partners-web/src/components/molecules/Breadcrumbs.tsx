@@ -1,4 +1,5 @@
-import {Breadcrumbs, Link, Typography} from '@mui/material';
+import {goToParentUrl} from '@/utils';
+import {Breadcrumbs as MuiBreadcrumbs, Link, Typography} from '@mui/material';
 
 interface Props {
 	before: {
@@ -6,12 +7,11 @@ interface Props {
 		href: string;
 	}[];
 	current: string;
-	onClick: () => void;
 }
 
-function BreadCrumb({before, current, onClick}: Props) {
+function Breadcrumbs({before, current}: Props) {
 	return (
-		<Breadcrumbs
+		<MuiBreadcrumbs
 			aria-label="breadcrumb"
 			sx={{
 				'.MuiBreadcrumbs-li': {
@@ -21,6 +21,11 @@ function BreadCrumb({before, current, onClick}: Props) {
 					'& .MuiTypography-root': {
 						fontSize: '14px',
 					},
+					'&:nth-last-of-type(1)': {
+						width: {
+							md: '90%',
+						},
+					},
 				},
 			}}>
 			{before.map((item) => (
@@ -29,13 +34,15 @@ function BreadCrumb({before, current, onClick}: Props) {
 					underline="hover"
 					// href={item.href}
 					className="cursor-pointer"
-					onClick={onClick}>
+					onClick={() => {
+						goToParentUrl(item.href);
+					}}>
 					{item.title}
 				</Link>
 			))}
-			<Typography className="bold">{current}</Typography>
-		</Breadcrumbs>
+			<Typography className="bold text-ellipsis">{current}</Typography>
+		</MuiBreadcrumbs>
 	);
 }
 
-export default BreadCrumb;
+export default Breadcrumbs;

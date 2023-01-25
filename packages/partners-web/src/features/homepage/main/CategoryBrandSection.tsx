@@ -7,7 +7,6 @@ import {css, keyframes} from '@emotion/react';
 // import 'swiper/swiper.min.css';
 
 import Carousel from 'nuka-carousel';
-import Slider from 'react-slick';
 
 import {
 	newsThumnail9,
@@ -46,13 +45,13 @@ import {
 	plusIcon2x,
 } from '@/assets/images/index';
 
-import {trackingToParent, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 
 function CategoryBrandSection() {
 	const screenWidth = window.innerWidth;
 
 	const goToSignup = () => {
-		trackingToParent('homepage_partnerssignup_click', {
+		sendAmplitudeLog('homepage_partnerssignup_click', {
 			button_title: '버클의 새로운 파트너가 되어 보세요!',
 		});
 
@@ -287,7 +286,7 @@ function CategoryBrandSection() {
 									<div
 										className="new_card_box"
 										onClick={() => {
-											trackingToParent(
+											sendAmplitudeLog(
 												`homepage_news${idx + 1}_click`,
 												{
 													button_title: `언론이 주목하는 버클 소식${
@@ -373,7 +372,7 @@ function CategoryBrandSection() {
 									<div
 										className="new_card_box"
 										onClick={() => {
-											trackingToParent(
+											sendAmplitudeLog(
 												`homepage_news${idx + 1}_click`,
 												{
 													button_title: `언론이 주목하는 버클 소식${

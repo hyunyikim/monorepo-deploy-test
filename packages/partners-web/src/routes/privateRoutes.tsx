@@ -21,6 +21,9 @@ const GuaranteeDetail = lazy(
 	() => import('@/features/guarantee/Detail/GuaranteeDetail.page')
 );
 const Product = lazy(() => import('@/features/product/List/ProductList.page'));
+const ProductDetail = lazy(
+	() => import('@/features/product/Detail/ProductDetail.page')
+);
 const ProductRegister = lazy(
 	() => import('@/features/product/Register/ProductRegister.page')
 );
@@ -59,6 +62,13 @@ const ServiceInterworkRepair = lazy(
 			'@/features/service-interwork/Detail/ServiceInterworkRepair.page'
 		)
 );
+const SubscribeManagement = lazy(
+	() => import('@/features/payment/Subscribe/SubscribeManagement.page')
+);
+const PaymentInformation = lazy(
+	() =>
+		import('@/features/payment/PaymentInformation/PaymentInformation.page')
+);
 const Cafe24Interwork = lazy(
 	() => import('@/features/cafe24/Cafe24Interwork.page')
 );
@@ -82,6 +92,7 @@ const privateRoutes: RouteObject[] = [
 				element: <GuaranteeRegister />,
 			},
 			{path: '/b2b/product/v2', element: <Product />},
+			{path: '/b2b/product/:idx/v2', element: <ProductDetail />},
 			{path: '/b2b/product/register/v2', element: <ProductRegister />},
 			{path: '/b2b/product/edit/:idx/v2', element: <ProductRegister />},
 			{path: '/b2b/customer/v2', element: <Customer />},
@@ -104,6 +115,14 @@ const privateRoutes: RouteObject[] = [
 			{
 				path: '/b2b/interwork/kakao/v2',
 				element: <ServiceInterworkKakao />,
+			},
+			{
+				path: '/b2b/payment/subscribe/v2',
+				element: <SubscribeManagement />,
+			},
+			{
+				path: '/b2b/payment/information/v2',
+				element: <PaymentInformation />,
 			},
 			{path: '/setting/profile/v2', element: <ProfileSetting />},
 			{path: '/setting/signout/v2', element: <Signout />},

@@ -1,3 +1,5 @@
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
 module.exports = {
 	mode: 'development',
 	devServer: {
@@ -5,4 +7,5 @@ module.exports = {
 		historyApiFallback: true,
 	},
 	devtool: 'inline-source-map',
+	plugins: [new ReactRefreshWebpackPlugin()],
 };

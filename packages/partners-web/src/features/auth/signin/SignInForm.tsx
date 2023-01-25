@@ -15,7 +15,7 @@ import {partnershipSignInSchemaShape} from '@/utils/schema';
 import {SignInRequestRequestParam} from '@/@types';
 import {signIn} from '@/api/auth.api';
 import {getPartnershipInfo} from '@/api/partnership.api';
-import {loginToParent, replaceToParentUrl, setTrackingUser} from '@/utils';
+import {loginToParent, setTrackingUser} from '@/utils';
 import {useLoginStore} from '@/stores';
 
 const inputList = [
@@ -148,7 +148,7 @@ function SignInForm() {
 								control={control}
 								labelTitle={input.label}
 								placeholder={input.placeholder}
-								inputType={input.type}
+								type={input.type}
 								error={
 									errors[
 										name as keyof SignInRequestRequestParam

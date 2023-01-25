@@ -14,7 +14,7 @@ import {
 	imgHeadPhone2x,
 } from '@/assets/images/index';
 import {useModalStore} from '@/stores';
-import {getPaymentPriceList} from '../../../api/payment.api';
+import {getPricePlanList as getPricePlanListData} from '@/api/payment.api';
 import {PricePlan} from '@/@types';
 
 type PricePlanCard = {
@@ -658,7 +658,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 
 	const getPricePlanList = async () => {
 		try {
-			const pricePlanList = await getPaymentPriceList();
+			const pricePlanList = await getPricePlanListData();
 			// console.log('pricePlanList', pricePlanList);
 			setPriceList([...tempPriceList]);
 		} catch (error) {

@@ -1,71 +1,46 @@
-import {InputProps, SxProps, Theme} from '@mui/material';
+import {InputProps} from '@mui/material';
 import {Controller, FieldValues, FieldError, Control} from 'react-hook-form';
+
 import InputComponent from '../atoms/InputComponent';
 
 type Height = '60px' | '48px' | '40px' | '32px' | 'auto';
 interface Props extends Omit<InputProps, 'error'> {
 	name: string;
-	control?: Control<FieldValues, any> | undefined;
-	type: string;
-	defaultValue?: string;
+	control: Control<FieldValues, any>;
 	height?: Height;
 	maxHeight?: Height;
-	placeholder: string;
-	fullWidth?: boolean;
-	readonly?: boolean;
-	required?: boolean;
-	sx?: SxProps<Theme>;
-	multiline?: boolean;
-	autoFocus?: boolean;
+	desc?: string;
 	error?: FieldError;
 }
 
 function ControlledInputComponent({
-	type = 'text',
 	name,
 	control,
 	defaultValue = '',
-	placeholder,
 	height = '48px',
 	maxHeight = 'auto',
-	fullWidth = true,
-	readonly = false,
-	required = false,
-	sx,
-	multiline = false,
-	autoFocus = false,
-	onBlur,
-	onKeyDown,
 	onChange,
 	error,
 	...props
 }: Props) {
 	return (
 		<Controller
-			control={control}
 			name={name}
+			control={control}
 			defaultValue={defaultValue}
-			render={({field: {onChange: hookFormOnChange, value, ref}}) => (
+			render={({
+				field: {onChange: hookFormOnChange, onBlur, value, ref},
+			}) => (
 				<InputComponent
-					type={type}
-					defaultValue={defaultValue}
-					placeholder={placeholder}
 					height={height}
 					maxHeight={maxHeight}
-					fullWidth={fullWidth}
-					readonly={readonly}
-					required={required}
-					sx={sx}
-					multiline={multiline}
-					autoFocus={autoFocus}
-					onBlur={onBlur}
-					onKeyDown={onKeyDown}
+					value={value}
 					error={error}
 					onChange={(e) => {
-						onChange && onChange(e);
+						onChange && onChange(e); // 직접 넘겨받은 onChange 함수
 						hookFormOnChange(e);
 					}}
-					value={value}
+					onBlur={onBlur}
 					inputRef={ref}
 					{...props}
 				/>

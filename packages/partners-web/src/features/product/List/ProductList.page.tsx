@@ -16,7 +16,7 @@ import {
 	productListSearchFilter,
 	sortSearchFilter,
 } from '@/data';
-import {goToParentUrl, trackingToParent} from '@/utils';
+import {goToParentUrl, sendAmplitudeLog} from '@/utils';
 import {
 	useGetPartnershipInfo,
 	useGlobalLoading,
@@ -162,7 +162,7 @@ function ProductList() {
 								color="primary"
 								height={32}
 								onClick={() => {
-									trackingToParent(
+									sendAmplitudeLog(
 										`${menu}_list_regist_click`,
 										{
 											button_title: `신규등록 클릭`,
@@ -185,7 +185,7 @@ function ProductList() {
 								sortSearchFilter.find(
 									(item) => item.value === e.target.value
 								)?.label || '';
-							trackingToParent(`${menu}_unit_view_click`, {
+							sendAmplitudeLog(`${menu}_unit_view_click`, {
 								button_title: `정렬_${sortLabel}`,
 							});
 							onHandleChangeFilter({

@@ -4,15 +4,15 @@ import {Box, Stack, Typography} from '@mui/material';
 import {useOpen} from '@/utils/hooks';
 
 import {Button} from '@/components';
-import IntroductionInquiryDialog from '@/features/auth/signup/IntroductionInquiryDialog';
+import {IntroductionInquiryDialog} from '@/components';
 import {ImgShop, ImgShop2x, ImgHandbag, ImgHandbag2x} from '@/assets/images';
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 	const {open, onOpen, onClose} = useOpen({});
 
 	useEffect(() => {
-		trackingToParent('storetype_pv', {pv_title: '스토어 유형 선택'});
+		sendAmplitudeLog('storetype_pv', {pv_title: '스토어 유형 선택'});
 	}, []);
 
 	return (
@@ -69,7 +69,7 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 							<Button
 								width={92}
 								onClick={() => {
-									trackingToParent(
+									sendAmplitudeLog(
 										'storetype_brandstart_click',
 										{button_title: '브랜드 시작하기'}
 									);
@@ -99,7 +99,7 @@ function SignUpStep1({setStep}: {setStep: (value: number) => void}) {
 							<Button
 								width={124}
 								onClick={() => {
-									trackingToParent(
+									sendAmplitudeLog(
 										'storetype_imported_click',
 										{button_title: '도입문의 팝업 노출'}
 									);

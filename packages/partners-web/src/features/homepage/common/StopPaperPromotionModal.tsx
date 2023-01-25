@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Dialog, Grid, Link, Stack} from '@mui/material';
 
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 // import {IconX} from '@tabler/icons';
 import {IcClose} from '@/assets/icon';
@@ -27,7 +27,7 @@ function StopPaperPromotionModal({
 	const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
 	const handleTodayCloseClick = () => {
-		trackingToParent('homepage_promotion_popup_today_close_click', {
+		sendAmplitudeLog('homepage_promotion_popup_today_close_click', {
 			pv_title: '오늘 하루 보지 않기',
 		});
 		let expires: Date | number = new Date();
@@ -37,7 +37,7 @@ function StopPaperPromotionModal({
 	};
 
 	const handleGoToPromotionClick = () => {
-		trackingToParent('homepage_promotion_popup_cta_click', {
+		sendAmplitudeLog('homepage_promotion_popup_cta_click', {
 			button_title: '개런티 발급체험 신청하기',
 		});
 		window.open(`${EVENT_URL}/stop-paper`, '_blank');
@@ -49,7 +49,7 @@ function StopPaperPromotionModal({
 	};
 
 	useEffect(() => {
-		trackingToParent('homepage_promotion_popupview', {
+		sendAmplitudeLog('homepage_promotion_popupview', {
 			pv_title: '프로모션 이동 팝업 노출',
 		});
 

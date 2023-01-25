@@ -9,7 +9,7 @@ import MainServiceSection from './price/MainServiceSection';
 import PartnersHomepageFooter from './common/PartnersHomepageFooter';
 import AdditionalServiceSection from './price/AdditionalServiceSection';
 import PriceFAQSection from './price/PriceFAQSection';
-import IntroductionInquiryDialog from '../auth/signup/IntroductionInquiryDialog';
+import {IntroductionInquiryDialog} from '@/components';
 
 function AboutPrice() {
 	const {open, onOpen, onClose} = useOpen({});

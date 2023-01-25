@@ -57,9 +57,22 @@ module.exports = (env, argv) => {
 					],
 				},
 				{
-					test: /\.svg$/,
+					test: /\.svg$/i,
 					issuer: /\.[t]sx?$/,
-					use: ['@svgr/webpack'],
+					use: [
+						{
+							loader: require.resolve('@svgr/webpack'),
+							options: {
+								prettier: false,
+								svgo: false,
+								svgoConfig: {
+									plugins: [{removeViewBox: false}],
+								},
+								titleProp: true,
+								ref: true,
+							},
+						},
+					],
 				},
 				{
 					test: /\.(jpe?g|gif|png|ico)$/i,
