@@ -6813,7 +6813,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "sprintf-js",\
-        "npm:1.0.3"\
+        "npm:1.1.2"\
       ],\
       [\
         "sqlstring",\
@@ -24540,6 +24540,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest", "virtual:5ff3279b77740ea87729877e4c6373cbdab7bdaf2be786d6d9a770595d544d5a86e0024c5b5e00bbeda8cc495056913fe34a11e6cecd5ef6e2d320cdd045534d#npm:27.5.1"],\
             ["luxon", "npm:3.1.0"],\
             ["nest-winston", "virtual:6c4fe14698fec3b9311889bba4db3dc8479614d65ca874626da01a1acba6ad7d4c711fa58ffa0b8601c2f79afbe48d5fc89383e3543789ba3728c2ff561e61e3#npm:1.8.0"],\
+            ["pm2", "npm:5.2.2"],\
             ["prettier", "npm:2.7.1"],\
             ["reflect-metadata", "npm:0.1.13"],\
             ["rimraf", "npm:3.0.2"],\
@@ -29563,6 +29564,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["dayjs", [\
+        ["npm:1.11.7", {\
+          "packageLocation": "./.yarn/cache/dayjs-npm-1.11.7-d5cd5b2919-5003a7c1dd.zip/node_modules/dayjs/",\
+          "packageDependencies": [\
+            ["dayjs", "npm:1.11.7"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:1.8.36", {\
           "packageLocation": "./.yarn/cache/dayjs-npm-1.8.36-ece779f760-27079e08fd.zip/node_modules/dayjs/",\
           "packageDependencies": [\
@@ -40654,6 +40662,43 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promptly", "npm:2.2.0"],\
             ["semver", "npm:7.3.7"],\
             ["source-map-support", "npm:0.5.19"],\
+            ["sprintf-js", "npm:1.1.2"],\
+            ["vizion", "npm:2.2.1"],\
+            ["yamljs", "npm:0.3.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:5.2.2", {\
+          "packageLocation": "./.yarn/cache/pm2-npm-5.2.2-629660353f-091213dc7f.zip/node_modules/pm2/",\
+          "packageDependencies": [\
+            ["pm2", "npm:5.2.2"],\
+            ["@pm2/agent", "npm:2.0.1"],\
+            ["@pm2/io", "npm:5.0.0"],\
+            ["@pm2/js-api", "npm:0.6.7"],\
+            ["@pm2/pm2-version-check", "npm:1.0.4"],\
+            ["async", "npm:3.2.4"],\
+            ["blessed", "npm:0.1.81"],\
+            ["chalk", "npm:3.0.0"],\
+            ["chokidar", "npm:3.5.3"],\
+            ["cli-tableau", "npm:2.0.1"],\
+            ["commander", "npm:2.15.1"],\
+            ["croner", "npm:4.1.97"],\
+            ["dayjs", "npm:1.11.7"],\
+            ["debug", "virtual:d379f4b8bd5b10788d613996438ba1503c2ba18b925a21790a5a40942cd657dcf572a88a0a980313130bf3c5fa6d6ff2704cf7a8b4862f4830e1837c28f320c9#npm:4.3.4"],\
+            ["enquirer", "npm:2.3.6"],\
+            ["eventemitter2", "npm:5.0.1"],\
+            ["fclone", "npm:1.0.11"],\
+            ["mkdirp", "npm:1.0.4"],\
+            ["needle", "npm:2.4.0"],\
+            ["pidusage", "npm:3.0.0"],\
+            ["pm2-axon", "npm:4.0.1"],\
+            ["pm2-axon-rpc", "npm:0.7.1"],\
+            ["pm2-deploy", "npm:1.0.2"],\
+            ["pm2-multimeter", "npm:0.1.2"],\
+            ["pm2-sysmonit", "npm:1.2.8"],\
+            ["promptly", "npm:2.2.0"],\
+            ["semver", "npm:7.3.7"],\
+            ["source-map-support", "npm:0.5.21"],\
             ["sprintf-js", "npm:1.1.2"],\
             ["vizion", "npm:2.2.1"],\
             ["yamljs", "npm:0.3.0"]\
