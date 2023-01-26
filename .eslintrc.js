@@ -97,7 +97,7 @@ module.exports = {
 		{
 			files: [
 				'packages/payment/**/*.ts?(x)',
-				'packages/payment/**/*.js?(x)',
+				//'packages/payment/**/*.js?(x)',
 			],
 			rules: {
 				'@typescript-eslint/no-unsafe-member-access': 'warn',
