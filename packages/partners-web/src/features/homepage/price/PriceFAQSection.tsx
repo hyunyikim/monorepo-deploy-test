@@ -70,7 +70,7 @@ const TitleSectionStyle = styled('div')`
 		}
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-bottom: 20px;
 
 		h1 {
@@ -91,7 +91,7 @@ const FAQListContainerStyle = styled('div')`
 	@media (max-width: 820px) {
 		margin-bottom: 22px;
 	}
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		border-top: 0;
 	}
 `;
@@ -118,6 +118,7 @@ const FAQListTitleBoxStyle = styled('div')`
 		line-height: 41px;
 		color: #222227;
 		margin: 0;
+		pointer-events: none;
 	}
 
 	@media (max-width: 820px) {
@@ -131,7 +132,7 @@ const FAQListTitleBoxStyle = styled('div')`
 		}
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		h2 {
 			max-width: 260px;
 		}
@@ -240,7 +241,7 @@ const EndingBgImg = styled('div')`
 	height: 100%;
 	border-radius: 30px;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		border-radius: 16px;
 		background: url(${imgMobileEndingBg2x}) no-repeat center;
 		background-size: contain;

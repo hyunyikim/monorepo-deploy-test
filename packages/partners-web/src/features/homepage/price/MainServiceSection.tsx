@@ -40,27 +40,44 @@ const TitleStyle = styled('h1')`
 		line-height: 43px;
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-bottom: 16px;
 		font-size: 21px;
 		line-height: 25px;
 	}
 `;
-const SubtitleStyle = styled('h4')`
+
+const SubtitleBoxStyle = styled('div')`
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 64px;
+
+	@media (max-width: 820px) {
+		flex-direction: column;
+	}
+	@media (max-width: 480px) {
+		margin-bottom: 20px;
+	}
+`;
+
+const SubtitleStyle = styled('span')`
 	font-weight: 500;
 	font-size: 24px;
 	line-height: 29px;
 	color: #222227;
 	margin: 0;
-	margin-bottom: 64px;
+	margin-bottom: 0px;
+	/* display: inline; */
 
 	@media (max-width: 820px) {
 		font-size: 18px;
 		line-height: 22px;
+		margin-bottom: 0px;
+		display: block;
 	}
 
-	@media (max-width: 430px) {
-		margin-bottom: 20px;
+	@media (max-width: 480px) {
+		margin-bottom: 0px;
 		font-size: 13px;
 		line-height: 16px;
 	}
@@ -78,7 +95,7 @@ const MainServiceCardBoxStyle = styled('div')`
 	}
 	@media (max-width: 820px) {
 	}
-	/* @media (max-width: 430px) {
+	/* @media (max-width: 480px) {
 		padding: 60px 24px;
 	} */
 `;
@@ -116,7 +133,7 @@ const MainServiceCardStyle = styled('div')`
 
 	@media (max-width: 1200px) {
 		flex: 0.5 0.5 auto;
-		max-width: 430px;
+		max-width: 480px;
 
 		img {
 		}
@@ -135,7 +152,7 @@ const MainServiceCardStyle = styled('div')`
 		margin-bottom: 50px;
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-bottom: 0px;
 		max-width: none;
 
@@ -183,10 +200,15 @@ function MainServiceSection() {
 		<MainServiceContainer>
 			<ContainerInnerStyle>
 				<TitleStyle>핵심 서비스</TitleStyle>
-				<SubtitleStyle>
-					고객관리부터 사후관리/멤버십을 통해 유저와의 점접 만들기까지
-					지금 바로 이용하세요!
-				</SubtitleStyle>
+
+				<SubtitleBoxStyle>
+					<SubtitleStyle>
+						고객관리부터 사후관리/멤버십을&nbsp;
+					</SubtitleStyle>
+					<SubtitleStyle>
+						통해 유저와의 점접 만들기까지 지금 바로 이용하세요!
+					</SubtitleStyle>
+				</SubtitleBoxStyle>
 
 				<MainServiceCardBoxStyle>
 					{mainServiceCardList.map(({title, desc, img}, idx) => (

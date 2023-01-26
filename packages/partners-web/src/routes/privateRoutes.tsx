@@ -37,6 +37,9 @@ const ProfileSetting = lazy(
 	() => import('@/features/profileSetting/ProfileSetting.page')
 );
 const Signout = lazy(() => import('@/features/profileSetting/Signout.page'));
+const Signedout = lazy(
+	() => import('@/features/profileSetting/Signedout.page')
+);
 const PasswordReset = lazy(
 	() => import('@/features/auth/password-reset/PasswordReset.page')
 );
@@ -126,6 +129,7 @@ const privateRoutes: RouteObject[] = [
 			},
 			{path: '/setting/profile/v2', element: <ProfileSetting />},
 			{path: '/setting/signout/v2', element: <Signout />},
+			// {path: '/signedout/v2', element: <Signedout />},
 			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
 			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
 			{path: '/cafe24/interwork/v2', element: <Cafe24Interwork />},
@@ -137,7 +141,13 @@ const privateRoutes: RouteObject[] = [
 				<Layout hasSidebar={false} />
 			</IframeChild>
 		),
-		children: [{path: '/reset/password/v2', element: <PasswordReset />}],
+		children: [
+			{path: '/reset/password/v2', element: <PasswordReset />},
+			{
+				path: '/signedout/v2',
+				element: <Signedout />,
+			},
+		],
 	},
 ];
 

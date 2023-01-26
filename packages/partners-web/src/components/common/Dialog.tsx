@@ -101,8 +101,8 @@ function Dialog({
 						position: 'absolute',
 						width: '100%',
 						zIndex: 1,
-						paddingTop: '32px',
-						paddingBottom: '16px',
+						paddingTop: {xs: '24px', sm: '32px'},
+						paddingBottom: {xs: '0px', sm: '16px'},
 						paddingX: dialogPadding,
 						background: '#FFF',
 					}}>
@@ -114,7 +114,7 @@ function Dialog({
 			)}
 			<DialogContent
 				sx={{
-					marginTop: '74px',
+					marginTop: {xs: '59px', sm: '74px'},
 					...(ActionComponent && {
 						marginBottom: '70px',
 					}),

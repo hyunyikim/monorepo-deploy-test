@@ -1,28 +1,19 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Stack} from '@mui/system';
-import {Typography, List, ListItem, SelectChangeEvent} from '@mui/material';
+import {Typography, List, ListItem} from '@mui/material';
 import {
 	Button,
-	CapsuleButton,
 	InputWithLabel,
 	TitleTypography,
 	ControlledInputComponent,
-	Select,
-	Checkbox,
 } from '@/components';
 import {goToParentUrl, updateParentPartnershipData} from '@/utils';
-import {Option} from '@/@types';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 
-interface SignoutInfoProps {
-	reason: Option;
-	isChecked: boolean;
-}
-
-function Signout() {
+function Signedout() {
 	const {
 		handleSubmit,
 		watch,
@@ -35,26 +26,15 @@ function Signout() {
 		resolver: yupResolver(
 			yup.object().shape({
 				password: yup.string().required('비밀번호를 입력해주세요'),
-				reasonText: yup.string(),
 			})
 		),
 		mode: 'onChange',
 	});
-	const selectRef = useRef<HTMLSelectElement>();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const closeMessageModal = useMessageDialog((state) => state.onClose);
 	const {data: partnershipData, isLoading} = useGetPartnershipInfo();
-
-	const [signoutInfo, setSignoutInfo] = useState<SignoutInfoProps>({
-		reason: {
-			name: '',
-			label: '',
-			value: '',
-		},
-		isChecked: false,
-	});
-	const [isChecked, setIsChecked] = useState<boolean>(false);
-	const [isButtonActivated, setIsButtonActivated] = useState<boolean>(false);
+	const [isCancelButtonActivated, setIiCancelButtonActivated] =
+		useState<boolean>(false);
 
 	const listArr = [
 		'회원 탈퇴 시, 고객님의 가입 정보, 등록한 상품정보는 모두 삭제됩니다.',
@@ -80,97 +60,55 @@ function Signout() {
 
 	const onSubmit = () => {
 		const values = getValues();
-		const {
-			reason: {value, name},
-		} = signoutInfo;
 
 		/* TODO: 
-            1. 탈퇴하기 눌렀을때, 비밀번호 체크 
+            1. 탈퇴철회하기 눌렀을때, 비밀번호 체크  
             setError('password', {
 				message: '비밀번호를 다시 입력해주세요.',
 			});
         */
-
-		openConfirmModal();
+		openCancelSignouConfirmModal();
 	};
 
 	const submitSignoutData = async () => {
 		const values = getValues();
-		const {
-			reason: {value, name},
-		} = signoutInfo;
-
 		closeMessageModal();
-		goToParentUrl('/signedout');
+		// updateParentPartnershipData();
+	};
+
+	const confirmCancleSignoutHandler = () => {
+		goToParentUrl('/dashboard');
 		setTimeout(() => {
 			updateParentPartnershipData();
 		}, 300);
 	};
 
-	const openConfirmModal = () => {
+	const openCancelSignouConfirmModal = () => {
+		/* TODO: 확인버튼 누르면 파트너쉽데이터 업데이트 추가하기 */
 		onOpenMessageDialog({
-			title: '정말 탈퇴하시겠습니까?',
-			message: (
-				<>
-					탈퇴하실 경우, 현재 서비스에서 진행중인 모든 항목들은
-					취소됩니다.
-					<br />
-					단, 24시간내에 탈퇴를 철회하실 수 있습니다.
-				</>
-			),
-			buttons: (
-				<Stack flexDirection={'row'} gap="8px">
-					<Button
-						variant="outlined"
-						color="black"
-						onClick={closeMessageModal}>
-						취소
-					</Button>
-					<Button color="black" onClick={submitSignoutData}>
-						확인
-					</Button>
-				</Stack>
-			),
+			title: '버클 탈퇴 요청이 철회되었습니다.',
+			message:
+				'회원탈퇴 요청 후 보관중 이었던 데이터는 정상화 되었습니다.',
+			closeButtonValue: '확인',
+			showBottomCloseButton: true,
 			disableClickBackground: true,
+			onCloseFunc: confirmCancleSignoutHandler,
 		});
 	};
 
-	const selectHandler = (e: SelectChangeEvent<unknown>) => {
-		const targetVal = e.target;
-
-		setSignoutInfo((pre) => {
-			return {
-				...pre,
-				reason: {
-					...pre.reason,
-					value: targetVal.value,
-				},
-			};
-		});
-	};
-
-	const buttonActivator = () => {
+	const cancelButtonActivator = () => {
 		const values = getValues();
-		if (values.password && signoutInfo.reason.value && isChecked) {
-			if (signoutInfo.reason.value === '직접입력') {
-				if (values.reasonText) {
-					return setIsButtonActivated(true);
-				} else {
-					return setIsButtonActivated(false);
-				}
-			} else {
-				return setIsButtonActivated(true);
-			}
+		if (values.password) {
+			return setIiCancelButtonActivated(true);
 		}
 
-		return setIsButtonActivated(false);
+		return setIiCancelButtonActivated(false);
 	};
 
 	useEffect(() => {
-		buttonActivator();
+		cancelButtonActivator();
 		// console.log('watch', watch());
-		// console.log('signoutInfo', signoutInfo);
-	}, [signoutInfo, isChecked, watch()]);
+	}, [watch()]);
 
 	return (
 		<Stack
@@ -194,14 +132,14 @@ function Signout() {
 							sx={{
 								marginBottom: '15px',
 							}}>
-							버클을 탈퇴하시나요?
+							버클 탈퇴 요청이 완료되었습니다.
 						</Typography>
 						<Typography variant="body1">
-							고객님께서 회원 탈퇴를 원하신다니 저희 서비스가 많이
-							부족하고 미흡했나 봅니다.
-							<br /> 서비스를 이용하면서 불편했던 점이나 보완할 수
-							있는 방안을 알려주시면 서비스 개선에 적극적으로
-							반영하도록 하겠습니다.
+							고객님께서 요청하신 회원탈퇴가 접수되었습니다.
+							요청하신 시점 부터 24시간동안 데이터가 보관되며,
+							24시간 내에 탈퇴를 철회하실 수 있습니다. (단, 24시간
+							후에는 모든 데이터가 삭제되며 탈퇴 철회가 불가능
+							합니다.)
 						</Typography>
 					</Stack>
 
@@ -255,59 +193,6 @@ function Signout() {
 						</List>
 					</Stack>
 
-					<Stack>
-						<Typography
-							variant="body3"
-							sx={{
-								color: 'grey.900',
-								fontWeight: 700,
-								fontSize: '14px',
-								lineHeight: '20px',
-								marginBottom: '8px',
-							}}>
-							탈퇴하시는 이유를 선택해주세요
-						</Typography>
-
-						<Stack
-							sx={{
-								flexDirection: 'row',
-								gap: '24px',
-
-								'& .MuiFormControl-root': {
-									maxWidth: '356px',
-									flexBasis: '50%',
-								},
-								'& .MuiGrid-root': {
-									maxWidth: '356px',
-									flexBasis: '50%',
-								},
-							}}>
-							<Select
-								ref={selectRef}
-								width="auto"
-								options={selectOpt.map((item) => ({
-									label: item,
-									value: item,
-								}))}
-								value={signoutInfo.reason.value}
-								placeholder="선택해주세요"
-								onChange={selectHandler}
-							/>
-
-							{signoutInfo.reason.value &&
-								signoutInfo.reason.value === '직접입력' && (
-									<ControlledInputComponent
-										type="text"
-										name="reasonText"
-										control={control}
-										placeholder="탈퇴이유를 입력해주세요"
-										fullWidth={false}
-										required={false}
-									/>
-								)}
-						</Stack>
-					</Stack>
-
 					<Stack
 						sx={{
 							'& .MuiGrid-root': {
@@ -335,31 +220,13 @@ function Signout() {
 						/>
 					</Stack>
 
-					<Stack mb="7px" flexDirection={'row'} gap="8px">
-						<Checkbox
-							name="checked"
-							onChange={(e) => {
-								setIsChecked(e?.target?.checked);
-							}}
-						/>
-						<Typography
-							sx={{
-								color: 'grey.900',
-								fontWeight: 500,
-								fontSize: '14px',
-								lineHeight: '20px',
-							}}>
-							유의사항을 모두 확인하였으면, 회원 탈퇴합니다.
-						</Typography>
-					</Stack>
-
 					<Button
 						color="primary"
-						width="116px"
+						width="145px"
 						height={48}
-						disabled={!isButtonActivated}
+						disabled={!isCancelButtonActivated}
 						type="submit">
-						탈퇴하기
+						탈퇴 철회하기
 					</Button>
 				</Stack>
 			</form>
@@ -367,4 +234,4 @@ function Signout() {
 	);
 }
 
-export default Signout;
+export default Signedout;

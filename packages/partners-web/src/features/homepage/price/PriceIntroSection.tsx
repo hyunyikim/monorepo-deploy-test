@@ -45,13 +45,13 @@ const ContainerInnerStyle = styled('div')`
 	@media (max-width: 820px) {
 		max-width: 820px;
 	}
-	@media (max-width: 430px) {
-		max-width: 430px;
+	@media (max-width: 480px) {
+		max-width: 480px;
 	}
 `;
 const TitleArea = styled('div')`
 	margin-bottom: 140px;
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-bottom: 80px;
 	}
 `;
@@ -64,7 +64,7 @@ const TitleStyle = styled('h1')`
 	margin-bottom: 14px;
 	text-align: center;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-bottom: 11px;
 		font-size: 24px;
 		line-height: 29px;
@@ -79,7 +79,7 @@ const SubtitleStyle = styled('h4')`
 	margin-bottom: 30px;
 	text-align: center;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		font-size: 13px;
 		line-height: 16px;
 	}
@@ -89,7 +89,7 @@ const ButtonBoxStyle = styled('div')`
 	align-items: center;
 	gap: 16px;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		flex-direction: column;
 	}
 `;
@@ -106,7 +106,7 @@ const GradientButton = styled('button')`
 	background: linear-gradient(98.38deg, #5d9bf9 43.58%, #5c3ef6 104.42%);
 	cursor: pointer;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		font-size: 14px;
 		height: 49px;
 		line-height: 49px;
@@ -137,7 +137,7 @@ const CapsuleButton = styled('div')`
 		background-size: contain;
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		height: 18px;
 		font-size: 14px;
 		line-height: 17px;
@@ -167,7 +167,7 @@ const PriceTitleBoxStyle = styled('div')`
 		align-items: flex-start;
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-bottom: 61px;
 	}
 `;
@@ -194,7 +194,7 @@ const PriceTitleStyle = styled('h2')`
 	margin: 0;
 	margin-right: 12px;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		font-size: 21px;
 		line-height: 25px;
 	}
@@ -208,7 +208,7 @@ const PriceSubtitleStyle = styled('h4')`
 	margin: 0;
 	cursor: pointer;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		font-size: 14px;
 		line-height: 17px;
 		width: 210px;
@@ -229,7 +229,7 @@ const GreyTextStyle = styled('span')`
 	line-height: 22px;
 	color: #7b7b86;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		font-size: 12px;
 		line-height: 14px;
 	}
@@ -239,7 +239,8 @@ const RedTextStyle = styled('span')`
 	font-size: 18px;
 	line-height: 22px;
 	color: #f8434e;
-	@media (max-width: 430px) {
+	margin-left: 4px;
+	@media (max-width: 480px) {
 		font-size: 12px;
 		line-height: 14px;
 	}
@@ -249,7 +250,7 @@ const BlackTextStyle = styled('span')`
 	font-size: 18px;
 	line-height: 22px;
 	color: #222227;
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		font-size: 12px;
 		line-height: 14px;
 	}
@@ -287,7 +288,7 @@ const ToggleStyle = styled('div')<PricePlanProps>`
 		},
 	})}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		width: 42px;
 		height: 24px;
 		margin: 0 4px 0 4px;
@@ -315,7 +316,7 @@ const PriceBoxStyle = styled('div')`
 		justify-content: center;
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 	}
 `;
 
@@ -327,7 +328,7 @@ const PriceTaxTextStyle = styled('span')`
 	margin-top: 30px;
 	margin-left: auto;
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-top: 20px;
 		margin-right: auto;
 		font-size: 12px;
@@ -339,12 +340,12 @@ const PriceInnerFlexBoxStyle = styled('div')`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		align-items: flex-start;
 	}
 `;
 const PriceInnerPriceFlexBoxStyle = styled('div')`
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-left: auto;
 	}
 `;
@@ -462,7 +463,7 @@ const PricePlanBoxStyle = styled('div')<PricePlanCard>`
 		cursor: pointer;
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		height: ${({mainColor}) => (mainColor === 'blue' ? '150px' : '88px')};
 		width: 100%;
 		padding: 20px;
@@ -523,11 +524,12 @@ const TopContentBoxStyle = styled('div')`
 	border-bottom: 1px solid #dfdfdf;
 	margin-bottom: 26px;
 
-	@media (max-width: 430px) {
-		padding-bottom: 20px;
-		margin-bottom: 20px;
+	@media (max-width: 480px) {
+		margin-top: 0px;
+		padding-bottom: 16px;
+		margin-bottom: 16px;
 		font-size: 13px;
-		line-height: 16px;
+		line-height: 19px;
 	}
 `;
 const BottomContentBoxStyle = styled('div')`
@@ -583,7 +585,7 @@ const BottomContentBoxStyle = styled('div')`
 		margin: 0;
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		margin-top: 0px;
 		padding-bottom: 0px;
 		gap: 16px;
@@ -600,7 +602,7 @@ const BottomContentBoxStyle = styled('div')`
 			padding-inline-start: 18px;
 			li {
 				font-size: 12px;
-				line-height: 18px;
+				line-height: 17px;
 			}
 		}
 
@@ -689,6 +691,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 			title: '합리적으로 구독하는 개런티 플랜',
 			maxWidth: '800px',
 			align: 'left',
+			titlePadding: 24,
 			children: (
 				<div>
 					<TopContentBoxStyle>
@@ -811,7 +814,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 									/>
 									<PriceInnerFlexBoxStyle>
 										<h4>{planName}</h4>
-										<p>발급량 {planLimit}개 이하</p>
+										<p>발급량 {planLimit}개</p>
 									</PriceInnerFlexBoxStyle>
 									<PriceInnerPriceFlexBoxStyle>
 										<h6>

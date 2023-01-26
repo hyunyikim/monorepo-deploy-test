@@ -12,6 +12,7 @@ function ModalComponent() {
 		id,
 		isOpen,
 		title,
+		titlePadding,
 		subtitle,
 		subtitleFontSize,
 		children,
@@ -60,6 +61,7 @@ function ModalComponent() {
 			onClose={closeHandler}
 			showCloseButton={true}
 			titleAlign={titleAlign}
+			padding={titlePadding ? titlePadding : 32}
 			TitleComponent={
 				<Typography
 					sx={{
@@ -75,11 +77,15 @@ function ModalComponent() {
 						maxWidth: maxWidth ? maxWidth : '700px',
 						width: width ? width : 'auto',
 						'& .MuiDialogContent-root': {
-							paddingTop: '4px !important',
+							paddingTop: {
+								xs: '0px !important',
+								sm: '4px !important',
+							},
 						},
 					},
 					'& .MuiDialogContent-root': {
 						paddingBottom: '32px',
+						padding: {xs: '0px 20px 24px 20px', sm: '32px'},
 					},
 				},
 				...sx,

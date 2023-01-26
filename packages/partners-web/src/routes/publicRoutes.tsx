@@ -51,15 +51,7 @@ const publicRoutes: RouteObject[] = [
 				element: <PartnersHomepage />,
 			},
 			{
-				path: '/',
-				element: <PartnersHomepage />,
-			},
-			{
-				path: '/home/v2',
-				element: <PartnersHomepage />,
-			},
-			{
-				path: '/price/v2',
+				path: '/pricing/v2',
 				element: <AboutPrice />,
 			},
 		],

@@ -44,7 +44,7 @@ function HomepageHeader({
 		sendAmplitudeLog('homepage_logo_click', {
 			button_title: '버클 로고 클릭',
 		});
-		goToParentUrl('/home');
+		goToParentUrl('/');
 		window.scrollTo(0, 0);
 	};
 
@@ -147,7 +147,7 @@ function HomepageHeader({
 									});
 								}}>
 								<a
-									href="https://guide.vircle.co.kr/team"
+									href="https://blog.naver.com/vircle_"
 									target="_blank"
 									rel="noreferrer" /* className='faq_link' */
 								>

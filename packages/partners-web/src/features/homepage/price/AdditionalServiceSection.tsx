@@ -54,7 +54,7 @@ const TitleSectionStyle = styled('div')`
 		}
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		gap: 13px;
 		margin-bottom: 30px;
 
@@ -70,7 +70,8 @@ const TitleSectionStyle = styled('div')`
 `;
 
 const GreenBoxStyle = styled('div')`
-	height: 194px;
+	max-height: 194px;
+	height: auto;
 	width: 100%;
 	background: #edf9f7;
 	border: 1px solid #00c29f;
@@ -87,6 +88,7 @@ const GreenBoxStyle = styled('div')`
 	}
 
 	> div {
+		width: 100%;
 		display: flex;
 		/* flex-direction: column; */
 		align-items: center;
@@ -146,7 +148,7 @@ const GreenBoxStyle = styled('div')`
 		}
 	}
 
-	@media (max-width: 430px) {
+	@media (max-width: 480px) {
 		flex-direction: column;
 		gap: 20px;
 		padding: 20px;
@@ -156,6 +158,7 @@ const GreenBoxStyle = styled('div')`
 			width: 78px;
 			height: 78px;
 			border-radius: 12px;
+			margin-right: 12px;
 		}
 
 		> div {
@@ -179,6 +182,16 @@ const GreenBoxStyle = styled('div')`
 	}
 `;
 
+const TestBox = styled('div')``;
+const TextGridStyle = styled('div')`
+	display: flex;
+	flex-direction: row;
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+	}
+`;
+
 function AdditionalServiceSection() {
 	const goToSignup = () => {
 		goToParentUrl('/auth/signup');
@@ -196,10 +209,10 @@ function AdditionalServiceSection() {
 						<img src={imgScissorsInGreenBox} alt="sicssors" />
 						<div>
 							<h6>수선신청 관리</h6>
-							<p>
-								고객이 간편하게 수선신청하고, 신청 내역을
-								한곳에서 관리하세요.
-							</p>
+							<TextGridStyle>
+								<p>고객이 간편하게 수선신청하고,&nbsp;</p>
+								<p>신청 내역을 한곳에서 관리하세요.</p>
+							</TextGridStyle>
 						</div>
 					</div>
 
