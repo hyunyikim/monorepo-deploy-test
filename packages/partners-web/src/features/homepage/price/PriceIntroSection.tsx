@@ -691,7 +691,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 			title: '합리적으로 구독하는 개런티 플랜',
 			maxWidth: '800px',
 			align: 'left',
-			titlePadding: 24,
+			titlePadding: 20,
 			children: (
 				<div>
 					<TopContentBoxStyle>

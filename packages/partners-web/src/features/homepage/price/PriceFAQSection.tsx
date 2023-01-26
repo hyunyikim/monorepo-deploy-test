@@ -236,15 +236,15 @@ const EndingSignupBoxStyle = styled('div')`
 
 const EndingBgImg = styled('div')`
 	background: url(${imgEndingBg2x}) no-repeat center;
-	background-size: contain;
 	width: 100%;
 	height: 100%;
 	border-radius: 30px;
+	background-size: cover;
 
 	@media (max-width: 480px) {
 		border-radius: 16px;
 		background: url(${imgMobileEndingBg2x}) no-repeat center;
-		background-size: contain;
+		background-size: cover;
 	}
 `;
 

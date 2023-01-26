@@ -22,9 +22,6 @@ import {
 } from '@/assets/images/index';
 import {IcClose} from '@/assets/icon/index';
 
-// import closeBtn from '../../assets/images/homepage/img_header_close.png';
-// import closeBtn2x from '../../assets/images/homepage/img_header_close@2x.png';
-
 interface openEmailModalProps {
 	openEmailModal(): void;
 	bgColor?: 'white' | 'black';
@@ -62,7 +59,7 @@ function HomepageHeader({
 					button_title: '무료로 가입하기 클릭',
 				});
 				break;
-			case 'price':
+			case 'pricing':
 				sendAmplitudeLog('homepage_pricing_click', {
 					button_title: '가격안내 클릭',
 				});
@@ -172,7 +169,7 @@ function HomepageHeader({
 
 							<li
 								className="header_list"
-								data-path="price"
+								data-path="pricing"
 								onClick={goToPage}>
 								가격안내
 							</li>

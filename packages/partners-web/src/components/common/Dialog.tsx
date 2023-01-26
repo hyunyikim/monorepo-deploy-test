@@ -101,7 +101,7 @@ function Dialog({
 						position: 'absolute',
 						width: '100%',
 						zIndex: 1,
-						paddingTop: {xs: '24px', sm: '32px'},
+						paddingTop: {xs: '20px', sm: '32px'},
 						paddingBottom: {xs: '0px', sm: '16px'},
 						paddingX: dialogPadding,
 						background: '#FFF',
