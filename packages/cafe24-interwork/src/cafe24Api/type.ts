@@ -390,6 +390,12 @@ export class Order {
 	/** 배송 상태 (F : 배송전, M : 배송중, T : 배송완료, W : 배송보류, X : 발주전) */
 	shipping_status: string;
 
+	/** 판매처 ID (판매처가 따로 없을 경우 self 또는 mobile) */
+	order_place_id: string;
+
+	/** 판매처 이름 (판매처가 따로 없을 경우 PC쇼핑몰 또는 모바일웹) */
+	order_place_name: string;
+
 	items: OrderItem[];
 	buyer: OrderBuyer;
 }

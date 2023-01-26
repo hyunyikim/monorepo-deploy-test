@@ -68,6 +68,7 @@ import {MasterCafe24InterworkController} from './cafe24Interwork/cafe24intework.
 							format.timestamp(),
 							utilities.format.nestLike('@vircle/cafe24', {
 								prettyPrint: true,
+								colors: true,
 							})
 						),
 					}),
