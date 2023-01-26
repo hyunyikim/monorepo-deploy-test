@@ -21,6 +21,7 @@ import {
 import {Cafe24EventService} from './cafe24Event.service';
 import {HttpExceptionFilter} from '../filter';
 import {Cafe24OrderEventHandler} from './cafe24OrderEvent.handler';
+import {ApiHeader} from '@nestjs/swagger';
 
 @Controller({version: '1', path: 'events'})
 @UseFilters(HttpExceptionFilter)
@@ -47,6 +48,12 @@ export class Cafe24EventController {
 	}
 
 	@Post('order/shipping')
+	@ApiHeader({
+		name: 'x-api-key',
+		allowEmptyValue: false,
+		description: '카페24 api 키',
+		required: true,
+	})
 	@UseGuards(ApiKeyGuard)
 	async handleOrderShippingEvent(
 		@Headers('x-trace-id') traceId: string,

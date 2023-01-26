@@ -1,4 +1,9 @@
 import {
+	CAFE24_ORDER_STATUS,
+	WEBHOOK_ACTION,
+	orderStatus2Action,
+} from './../common/constant';
+import {
 	Inject,
 	Injectable,
 	InternalServerErrorException,
@@ -80,6 +85,7 @@ export class Cafe24EventService {
 			)
 		);
 
+		// TODO: 웹훅이니 응답을 줄 필요가 없다면 지워도 될 것 같다.
 		const report = await lastValueFrom(report$);
 		this.logger.log(report);
 		return report;
@@ -177,14 +183,12 @@ export class Cafe24EventService {
 		nftReqIdx: number | undefined;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
-		const status = hook.item.order_status;
+		const status = hook.item.order_status as CAFE24_ORDER_STATUS;
 		const issued = !!hook.nftReqIdx;
 		const action =
-			status === 'N40' && !issued
-				? 'issue'
-				: ['R40', 'E40'].includes(status)
-				? 'cancel'
-				: 'pass';
+			status === CAFE24_ORDER_STATUS.DELIVERED && !issued
+				? WEBHOOK_ACTION.ISSUE
+				: orderStatus2Action(status);
 
 		return {
 			...hook,
@@ -199,13 +203,13 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		nftReqIdx: number | undefined;
 		webHook: WebHookBody<EventBatchOrderShipping>;
-		action: string;
+		action: WEBHOOK_ACTION;
 	}) {
 		const productNo = hook.item.product_no;
 		const mallId = hook.webHook.resource.mall_id;
 		const accessToken = hook.interwork.accessToken.access_token;
 		const productInfo =
-			hook.action === 'issue'
+			hook.action === WEBHOOK_ACTION.ISSUE
 				? await this.cafe24Api.getProductResource(
 						mallId,
 						accessToken,
@@ -226,19 +230,19 @@ export class Cafe24EventService {
 			interwork: Cafe24Interwork;
 			nftReqIdx: number | undefined;
 			webHook: WebHookBody<EventBatchOrderShipping>;
-			action: string;
+			action: WEBHOOK_ACTION;
 			productInfo: Product | undefined;
 		},
 		traceId: string
 	) {
 		switch (hook.action) {
-			case 'issue':
+			case WEBHOOK_ACTION.ISSUE:
 				const issued = await this.issueGuarantee(hook, traceId);
 				return issued;
-			case 'cancel':
+			case WEBHOOK_ACTION.CANCEL:
 				const canceled = await this.cancelGuarantee(hook, traceId);
 				return canceled;
-			case 'pass':
+			case WEBHOOK_ACTION.PASS:
 				return hook;
 			default:
 				return hook;
@@ -252,7 +256,7 @@ export class Cafe24EventService {
 			item: OrderItem;
 			interwork: Cafe24Interwork;
 			productInfo: Product | undefined;
-			action: string;
+			action: WEBHOOK_ACTION;
 			webHook: WebHookBody<EventBatchOrderShipping>;
 		},
 		traceId: string
@@ -283,7 +287,7 @@ export class Cafe24EventService {
 			coreApiToken,
 			this.createDirectReqPayload(
 				issueType.toString(),
-				hook.orderId,
+				hook.order,
 				buyer.name,
 				buyer.cellphone,
 				interwork,
@@ -322,7 +326,7 @@ export class Cafe24EventService {
 		interwork: Cafe24Interwork;
 		productInfo: Product | undefined;
 		webHook: WebHookBody<EventBatchOrderShipping>;
-		action: string;
+		action: WEBHOOK_ACTION;
 		nftReqIdx: number | undefined;
 	}) {
 		const setting = hook.interwork.issueSetting;
@@ -333,7 +337,10 @@ export class Cafe24EventService {
 			return hook;
 		}
 
-		if (hook.action === 'pass' || hook.action === 'cancel') {
+		if (
+			hook.action === WEBHOOK_ACTION.PASS ||
+			hook.action === WEBHOOK_ACTION.CANCEL
+		) {
 			return hook;
 		}
 
@@ -344,15 +351,15 @@ export class Cafe24EventService {
 				.includes(category.idx);
 		});
 
-		if (hook.action === 'issue' && !include) {
-			hook.action = 'pass';
+		if (hook.action === WEBHOOK_ACTION.ISSUE && !include) {
+			hook.action = WEBHOOK_ACTION.PASS;
 		}
 		return hook;
 	}
 
 	private createDirectReqPayload(
 		issueType: string,
-		orderId: string,
+		{order_id, order_place_name, order_place_id}: Order,
 		buyerName: string,
 		buyerPhone: string,
 		interwork: Cafe24Interwork,
@@ -366,14 +373,16 @@ export class Cafe24EventService {
 				parseInt(orderItem.option_price),
 			ordererName: buyerName,
 			ordererTel: buyerPhone.replaceAll('-', ''),
-			platformName: interwork.store.shop_name,
+			platformName: ['self', 'mobile'].includes(order_place_id)
+				? interwork.store.shop_name
+				: order_place_name,
 			modelNum:
 				orderItem.internal_product_name ||
 				orderItem.custom_product_code ||
 				undefined,
 			warranty: interwork.partnerInfo?.warrantyDate,
 			orderedAt: orderItem.ordered_date,
-			orderId: orderId,
+			orderId: order_id,
 			brandIdx: interwork.partnerInfo?.brand?.idx,
 			size: orderItem.volume_size ?? undefined,
 			// 중량 표시 않함 (SXLP-2352) :weight: orderItem.product_weight ?? undefined,
@@ -419,7 +428,7 @@ export class Cafe24EventService {
 			item: OrderItem;
 			interwork: Cafe24Interwork;
 			productInfo: Product | undefined;
-			action: string;
+			action: WEBHOOK_ACTION;
 			webHook: WebHookBody<EventBatchOrderShipping>;
 			nftReqIdx: number | undefined;
 		},
