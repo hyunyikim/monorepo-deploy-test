@@ -373,8 +373,9 @@ export class Cafe24EventService {
 				parseInt(orderItem.option_price),
 			ordererName: buyerName,
 			ordererTel: buyerPhone.replaceAll('-', ''),
+			// (SXLP-2806): 판매처 변경
 			platformName: ['self', 'mobile'].includes(order_place_id)
-				? interwork.store.shop_name
+				? '공식 홈페이지'
 				: order_place_name,
 			modelNum:
 				orderItem.internal_product_name ||
