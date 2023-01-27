@@ -31,6 +31,7 @@ export class FindPaymentsHandler
 	async execute(query: FindPaymentsQuery): Promise<PaymentProps[]> {
 		const {partnerIdx, params} = query;
 		const {sort, page, pageSize, startAt, endAt} = params;
+
 		const payments = await this.paymentRepo.search(
 			partnerIdx,
 			sort ?? 'DESC',

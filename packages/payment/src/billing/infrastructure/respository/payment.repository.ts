@@ -122,6 +122,7 @@ export class PlanPaymentRepository
 		let items: DynamoDB.DocumentClient.ItemList = [];
 		let exclusiveStartKey: DynamoDB.Key | undefined;
 
+		// 페이지 수 만큼 이동하며 조회
 		for (let i = 0; i < page; i++) {
 			const params: DynamoDB.DocumentClient.QueryInput = {
 				TableName: this.tableName,
@@ -155,7 +156,8 @@ export class PlanPaymentRepository
 
 			exclusiveStartKey = LastEvaluatedKey;
 
-			if (!LastEvaluatedKey || !ScannedCount) break;
+			// 해당 페이지에 도달했지만 데이터가 없을 경우
+			if (i < page - 1 && (!LastEvaluatedKey || !ScannedCount)) break;
 
 			if (i === page - 1 && Items) {
 				items = Items;

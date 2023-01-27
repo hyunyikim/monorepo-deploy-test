@@ -16,8 +16,10 @@ export interface Billing {
 	billingKey: string;
 	/** 발급된 빌링키와 연결된 카드 정보입니다. */
 	card: {
-		/** 카드사 코드입니다. */
+		/** 카드사 이름입니다. */
 		company: string;
+		/** 카드사 코드입니다. */
+		issuerCode: string;
 		/** 카드 번호입니다. 번호의 일부는 마스킹 되어 있습니다. */
 		number: string;
 		/** 카드 종류입니다. 신용, 체크, 기프트 중 하나입니다. */

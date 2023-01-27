@@ -24,7 +24,7 @@ import {
 	ChangeBillingPlanCommand,
 } from '../application/command';
 import {
-	FindBillingByCustomerKeyQuery,
+	FindBillingByPartnerIdxQuery,
 	FindPaymentsQuery,
 	FindPlanQuery,
 	FindPaymentByOrderIdQuery,
@@ -45,13 +45,17 @@ class BillingInterface {
 		ownerType: string;
 		number: string;
 		company: string;
+		companyCode: string;
 	};
 	readonly authenticatedAt: string;
 
 	constructor(billing: BillingProps) {
 		this.customerKey = billing.customerKey;
 		this.pricePlan = billing.pricePlan;
-		this.card = billing.card;
+		this.card = {
+			...billing.card,
+			companyCode: billing.card.issuerCode,
+		};
 		this.authenticatedAt = DateTime.fromISO(
 			billing.authenticatedAt
 		).toFormat('yyyy-MM-dd HH:mm:ss');
@@ -168,27 +172,22 @@ export class BillingController {
 		);
 		await this.commandBus.execute(registerCommand);
 
-		return this.getBilling({customerKey}, token);
+		return this.getBilling(token);
 	}
 
 	/**
 	 * 구독 취소 API
-	 * @param body
 	 * @param token
 	 */
 	@Delete('/')
 	@UseGuards(JwtAuthGuard)
-	async unregisterBilling(
-		@Body() body: UnregisterBillingDTO,
-		@GetToken() token: TokenInfo
-	) {
+	async unregisterBilling(@GetToken() token: TokenInfo) {
 		const {partnerIdx} = token;
-		const {customerKey} = body;
 
 		// 구독 조회
-		const query = new FindBillingByCustomerKeyQuery(customerKey);
+		const query = new FindBillingByPartnerIdxQuery(partnerIdx);
 		const billingProps = await this.queryBus.execute<
-			FindBillingByCustomerKeyQuery,
+			FindBillingByPartnerIdxQuery,
 			BillingProps
 		>(query);
 
@@ -200,38 +199,8 @@ export class BillingController {
 		// TODO: 구독 상태 체크
 
 		// 구독 취소 커맨드 실행
-		const command = new UnregisterBillingCommand(customerKey);
+		const command = new UnregisterBillingCommand(billingProps.customerKey);
 		await this.commandBus.execute(command);
-	}
-
-	/**
-	 * 구독 조회 API
-	 *
-	 * @param body
-	 * @param token
-	 */
-	@Get('/')
-	@UseGuards(JwtAuthGuard)
-	async getBilling(
-		@Body() body: FindBillingDTO,
-		@GetToken() token: TokenInfo
-	) {
-		const {partnerIdx} = token;
-		const {customerKey} = body;
-
-		// 구독 조회
-		const query = new FindBillingByCustomerKeyQuery(customerKey);
-		const billingProps = await this.queryBus.execute<
-			FindBillingByCustomerKeyQuery,
-			BillingProps
-		>(query);
-
-		// 회원 검증
-		if (billingProps.partnerIdx !== partnerIdx) {
-			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
-		}
-
-		return new BillingInterface(billingProps);
 	}
 
 	/**
@@ -284,6 +253,30 @@ export class BillingController {
 	}
 
 	/**
+	 * 현재 구독 조회 API
+	 * @param token
+	 */
+	@Get('/')
+	@UseGuards(JwtAuthGuard)
+	async getBilling(@GetToken() token: TokenInfo) {
+		const {partnerIdx} = token;
+
+		// 구독 조회
+		const query = new FindBillingByPartnerIdxQuery(partnerIdx);
+		const billingProps = await this.queryBus.execute<
+			FindBillingByPartnerIdxQuery,
+			BillingProps
+		>(query);
+
+		// 회원 검증
+		if (billingProps.partnerIdx !== partnerIdx) {
+			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
+		}
+
+		return new BillingInterface(billingProps);
+	}
+
+	/**
 	 * 구독 변경 API
 	 *
 	 * @param token
@@ -298,9 +291,9 @@ export class BillingController {
 		const {partnerIdx} = token;
 
 		// 구독 조회
-		const query = new FindBillingByCustomerKeyQuery(body.customerKey);
+		const query = new FindBillingByPartnerIdxQuery(partnerIdx);
 		const billingProps = await this.queryBus.execute<
-			FindBillingByCustomerKeyQuery,
+			FindBillingByPartnerIdxQuery,
 			BillingProps
 		>(query);
 
@@ -311,12 +304,12 @@ export class BillingController {
 
 		// 구독 변경 커맨드 실행
 		const command = new ChangeBillingPlanCommand(
-			body.customerKey,
+			billingProps.customerKey,
 			body.planId,
 			billingProps
 		);
 		await this.commandBus.execute(command);
 
-		return this.getBilling({customerKey: body.customerKey}, token);
+		return this.getBilling(token);
 	}
 }

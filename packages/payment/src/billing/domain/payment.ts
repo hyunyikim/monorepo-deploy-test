@@ -10,6 +10,7 @@ import {PricePlanProps} from './pricePlan';
 export type PaymentProps = Omit<TossPayment, 'version'> & {
 	partnerIdx: number;
 	pricePlan: PricePlanProps;
+	canceledPricePlan?: PricePlanProps;
 	expiredAt?: string;
 };
 
@@ -31,6 +32,7 @@ export interface Payment {
 export class PlanPayment extends AggregateRoot implements Payment {
 	private readonly partnerIdx: number;
 	private readonly pricePlan: PricePlanProps;
+	private readonly canceledPricePlan?: PricePlanProps;
 	private expiredAt?: string;
 
 	constructor(private props: PaymentProps) {
@@ -43,6 +45,9 @@ export class PlanPayment extends AggregateRoot implements Payment {
 			...this.props,
 			partnerIdx: this.partnerIdx,
 			pricePlan: this.pricePlan,
+			...(this.canceledPricePlan && {
+				canceledPricePlan: this.canceledPricePlan,
+			}),
 			expiredAt: this.expiredAt,
 		};
 	}

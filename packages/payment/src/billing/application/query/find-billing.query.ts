@@ -4,26 +4,26 @@ import {PlanBillingRepository} from '../../infrastructure/respository';
 import {BillingRepository} from '../../domain/repository';
 import {BillingProps} from '../../domain';
 
-export class FindBillingByCustomerKeyQuery implements IQuery {
-	constructor(readonly customerKey: string) {}
+export class FindBillingByPartnerIdxQuery implements IQuery {
+	constructor(readonly partnerIdx: number) {}
 }
 
 /**
  * CustomerKey로 빌링 조회
  */
-@QueryHandler(FindBillingByCustomerKeyQuery)
+@QueryHandler(FindBillingByPartnerIdxQuery)
 export class FindBillingByCustomerKeyHandler
-	implements IQueryHandler<FindBillingByCustomerKeyQuery, BillingProps>
+	implements IQueryHandler<FindBillingByPartnerIdxQuery, BillingProps>
 {
 	constructor(
 		@Inject(PlanBillingRepository)
 		private readonly billingRepo: BillingRepository
 	) {}
 
-	async execute(query: FindBillingByCustomerKeyQuery) {
-		const {customerKey} = query;
+	async execute(query: FindBillingByPartnerIdxQuery) {
+		const {partnerIdx} = query;
 
-		const billing = await this.billingRepo.findByCustomerKey(customerKey);
+		const billing = await this.billingRepo.findByPartnerIdx(partnerIdx);
 		if (!billing) throw new NotFoundException('NOT_FOUND_BILLING');
 
 		return billing.properties();

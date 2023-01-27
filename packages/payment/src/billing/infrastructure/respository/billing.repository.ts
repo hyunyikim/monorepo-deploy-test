@@ -82,6 +82,31 @@ export class PlanBillingRepository
 	}
 
 	/**
+	 * 파트너 계정으로 조회
+	 * @param partnerIdx
+	 */
+	async findByPartnerIdx(partnerIdx: number) {
+		const {Items} = await this.query({
+			TableName: this.tableName,
+			IndexName: 'partnerIdx-index',
+			KeyConditionExpression: 'partnerIdx = :key',
+			ExpressionAttributeValues: {
+				':key': partnerIdx,
+			},
+		}).promise();
+		if (!Items || Items.length === 0) return null;
+
+		const entities = Items as BillingEntity[];
+
+		const entity = entities.find(
+			(entity) => entity.unregisteredAt === undefined
+		);
+		if (!entity) return null;
+
+		return this.entityToModel(entity);
+	}
+
+	/**
 	 * 전체 조회
 	 * @param registered
 	 */

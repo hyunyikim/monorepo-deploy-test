@@ -36,9 +36,6 @@ export class FindBillingDTO {
 export class ChangeBillingPlanBodyDTO {
 	@IsString()
 	readonly planId: string;
-
-	@IsString()
-	readonly customerKey: string;
 }
 
 export class PauseBillingParamDTO {

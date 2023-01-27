@@ -21,6 +21,7 @@ export interface BillingRepository {
 	saveBilling: (billing: Billing) => Promise<void>;
 	findByKey: (billingKey: string) => Promise<Billing | null>;
 	findByCustomerKey: (customerKey: string) => Promise<Billing | null>;
+	findByPartnerIdx: (partnerIdx: number) => Promise<Billing | null>;
 }
 
 export interface PlanRepository {
