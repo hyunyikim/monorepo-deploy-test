@@ -212,7 +212,8 @@ function MainServiceSection() {
 
 				<MainServiceCardBoxStyle>
 					{mainServiceCardList.map(({title, desc, img}, idx) => (
-						<MainServiceCardStyle>
+						<MainServiceCardStyle
+							key={`main_service_card_list_${idx}`}>
 							<img src={img} alt={`service${idx + 1}`} />
 							<h3>{title}</h3>
 							<h6>{desc}</h6>

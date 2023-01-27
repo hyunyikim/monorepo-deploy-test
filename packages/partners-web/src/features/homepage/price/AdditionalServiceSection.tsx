@@ -135,7 +135,7 @@ const GreenBoxStyle = styled('div')`
 			h6 {
 				font-size: 28px;
 				line-height: 29px;
-				margin-bottom: 5px;
+				margin-bottom: 16px;
 			}
 			p {
 				font-size: 16px;
@@ -182,12 +182,11 @@ const GreenBoxStyle = styled('div')`
 	}
 `;
 
-const TestBox = styled('div')``;
 const TextGridStyle = styled('div')`
 	display: flex;
 	flex-direction: row;
 
-	@media (max-width: 480px) {
+	@media (max-width: 820px) {
 		flex-direction: column;
 	}
 `;

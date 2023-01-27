@@ -11,12 +11,8 @@ import {
 /**
  * 구독 플랜 목록 조회
  */
-export const getPricePlanList = () => {
-	return new Promise<PricePlan[]>((resolve) => {
-		setTimeout(() => {
-			resolve(pricePlanExample);
-		}, 100);
-	});
+export const getPricePlanList = async () => {
+	return await nonAuthInstance.get<PricePlan[]>('/payment/v1/billing/plans');
 };
 
 /**

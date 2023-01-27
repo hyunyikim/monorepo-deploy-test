@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
-import {goToParentUrl} from '@/utils';
+import {formatCommaNum, goToParentUrl} from '@/utils';
 import {
 	imgBlueCheckTick,
 	imgBlueCheckTick2x,
@@ -14,15 +14,16 @@ import {
 	imgHeadPhone2x,
 } from '@/assets/images/index';
 import {useModalStore} from '@/stores';
-import {getPricePlanList as getPricePlanListData} from '@/api/payment.api';
-import {PricePlan} from '@/@types';
+import {getPricePlanList} from '@/api/payment.api';
+import {PricePlan, PlanType} from '@/@types';
 
 type PricePlanCard = {
 	mainColor: string;
 };
+type PricePlanPeriodProps = PlanType;
 
-type PricePlanProps = {
-	isAnnualPayment: boolean;
+type ToggleProps = {
+	isAnnualPayment: PricePlanPeriodProps;
 };
 
 const IntroContainerSectionStyle = styled('section')`
@@ -256,7 +257,7 @@ const BlackTextStyle = styled('span')`
 	}
 `;
 
-const ToggleStyle = styled('div')<PricePlanProps>`
+const ToggleStyle = styled('div')<ToggleProps>`
 	width: 56px;
 	height: 32px;
 	background: #00c29f;
@@ -281,9 +282,9 @@ const ToggleStyle = styled('div')<PricePlanProps>`
 	}
 
 	${({isAnnualPayment}) => ({
-		background: isAnnualPayment ? '#00c29f' : '#CACAD3',
+		background: isAnnualPayment === 'YEAR' ? '#00c29f' : '#CACAD3',
 		'::after': {
-			right: isAnnualPayment ? '4px' : '26px',
+			right: isAnnualPayment === 'YEAR' ? '4px' : '26px',
 			transition: 'all 350ms ease-in-out',
 		},
 	})}
@@ -300,9 +301,9 @@ const ToggleStyle = styled('div')<PricePlanProps>`
 		}
 
 		${({isAnnualPayment}) => ({
-			background: isAnnualPayment ? '#00c29f' : '#CACAD3',
+			background: isAnnualPayment === 'YEAR' ? '#00c29f' : '#CACAD3',
 			'::after': {
-				right: isAnnualPayment ? '3px' : '19px',
+				right: isAnnualPayment === 'YEAR' ? '3px' : '19px',
 			},
 		})}
 	}
@@ -620,61 +621,47 @@ const BottomContentBoxStyle = styled('div')`
 interface openEmailModalProps {
 	openEmailModal(): void;
 }
-type PricePlanListProps = Pick<
-	PricePlan,
-	'planName' | 'planLimit' | 'planPrice' | 'displayPrice'
->;
-
-const tempPriceList: PricePlanListProps[] = [
-	{
-		planName: '엑스 스몰',
-		planLimit: 250,
-		planPrice: 6,
-		displayPrice: 5,
-	},
-	{
-		planName: '스몰',
-		planLimit: 500,
-		planPrice: 12,
-		displayPrice: 10,
-	},
-	{
-		planName: '미디엄',
-		planLimit: 750,
-		planPrice: 18,
-		displayPrice: 15,
-	},
-	{
-		planName: '라지',
-		planLimit: 1000,
-		planPrice: 24,
-		displayPrice: 20,
-	},
-];
+type PricePlanListProps = PricePlan;
 
 function PriceIntroSection({openEmailModal}: openEmailModalProps) {
-	const [isAnnualPayment, setIsAnnualPayment] = useState<boolean>(true);
+	const [pricePlanPeriodState, setPricePlanPeriodState] =
+		useState<PricePlanPeriodProps>('YEAR');
 	const [priceClickState, setPriceClickState] = useState<number>(0);
 	const [priceList, setPriceList] = useState<PricePlanListProps[] | []>([]);
 	const setModal = useModalStore((state) => state.setModalOption);
 
-	const getPricePlanList = async () => {
+	const getPricePlanListHandler = async () => {
 		try {
-			const pricePlanList = await getPricePlanListData();
+			const {data: pricePlanList} = await getPricePlanList();
 			// console.log('pricePlanList', pricePlanList);
-			setPriceList([...tempPriceList]);
+			setPriceList([...pricePlanList]);
 		} catch (error) {
 			console.log('error', error);
 		}
 	};
 
+	const pricePlanList: PricePlanListProps[] | [] = useMemo(() => {
+		return priceList.filter((li) => {
+			if (li.planType === pricePlanPeriodState) {
+				return li;
+			}
+		});
+	}, [pricePlanPeriodState, priceList]);
+
 	useEffect(() => {
-		getPricePlanList();
+		getPricePlanListHandler();
 	}, []);
 
 	const priceToggleHandler = () => {
-		setIsAnnualPayment((pre) => !pre);
+		setPricePlanPeriodState((pre) => {
+			if (pre === 'YEAR') {
+				return 'MONTH';
+			} else {
+				return 'YEAR';
+			}
+		});
 	};
+
 	const cardClickHandler = (_idx: number) => {
 		setPriceClickState(_idx);
 	};
@@ -779,18 +766,15 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 							<RedTextStyle>+20%</RedTextStyle>
 							<ToggleStyle
 								onClick={priceToggleHandler}
-								isAnnualPayment={isAnnualPayment}
+								isAnnualPayment={pricePlanPeriodState}
 							/>
 							<BlackTextStyle>연결제</BlackTextStyle>
 						</PriceTitleRightBoxStyle>
 					</PriceTitleBoxStyle>
 
 					<PriceBoxStyle>
-						{priceList.map(
-							(
-								{planName, planPrice, displayPrice, planLimit},
-								idx
-							) => (
+						{pricePlanList.map(
+							({planName, displayPrice, planLimit}, idx) => (
 								<PricePlanBoxStyle
 									mainColor={
 										idx === priceClickState
@@ -818,10 +802,10 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 									</PriceInnerFlexBoxStyle>
 									<PriceInnerPriceFlexBoxStyle>
 										<h6>
-											{isAnnualPayment
-												? displayPrice
-												: planPrice}
-											만원
+											{formatCommaNum(
+												String(displayPrice)
+											)}
+											원
 										</h6>
 										<span>/월</span>
 									</PriceInnerPriceFlexBoxStyle>
