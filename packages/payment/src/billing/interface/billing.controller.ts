@@ -9,6 +9,7 @@ import {
 	UseGuards,
 	UnauthorizedException,
 	Param,
+	UseFilters,
 } from '@nestjs/common';
 import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {
@@ -34,6 +35,7 @@ import {GetToken, TokenInfo} from './getToken.decorator';
 import {createHmac} from 'crypto';
 import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
+import {HttpExceptionFilter} from './httpException.filter';
 
 class BillingInterface {
 	readonly customerKey: string;
@@ -102,6 +104,7 @@ class PaymentDetailInterface extends PaymentSummaryInterface {
  * 정기결제 API 컨트롤러
  */
 @Controller({version: '1', path: 'billing'})
+@UseFilters(HttpExceptionFilter)
 export class BillingController {
 	constructor(readonly commandBus: CommandBus, readonly queryBus: QueryBus) {}
 
@@ -236,7 +239,7 @@ export class BillingController {
 	 * @param orderId
 	 * @param token
 	 */
-	@Get('/payment/:orderId')
+	@Get('/receipt/:orderId')
 	@UseGuards(JwtAuthGuard)
 	async getPayment(
 		@Param('orderId') orderId: string,
@@ -260,7 +263,7 @@ export class BillingController {
 	 * @param params
 	 * @param token
 	 */
-	@Get('/payment')
+	@Get('/receipt')
 	@UseGuards(JwtAuthGuard)
 	async getPaymentHistory(
 		@Query() params: FindPaymentsQueryDto,
