@@ -118,38 +118,43 @@ export class PlanPaymentRepository
 		page: number,
 		pageSize: number,
 		range?: {startAt: Date; endAt: Date}
-	) {
+	): Promise<{
+		total: number;
+		data: Payment[];
+	}> {
 		let items: DynamoDB.DocumentClient.ItemList = [];
 		let exclusiveStartKey: DynamoDB.Key | undefined;
 
+		const params: DynamoDB.DocumentClient.QueryInput = {
+			TableName: this.tableName,
+			IndexName: 'partnerIdx-approvedAt-index',
+			KeyConditionExpression: 'partnerIdx = :key',
+			ExpressionAttributeValues: {
+				':key': partnerIdx,
+			},
+			ScanIndexForward: sort === 'ASC',
+		};
+
+		if (range) {
+			const {startAt, endAt} = range;
+			params.KeyConditionExpression +=
+				' and approvedAt between :startAt and :endAt';
+			params.ExpressionAttributeValues = {
+				...params.ExpressionAttributeValues,
+				':startAt': DateTime.fromJSDate(startAt).toISO(),
+				':endAt': DateTime.fromJSDate(endAt).toISO(),
+			};
+		}
+
+		const {Count} = await this.query(params).promise();
+
 		// 페이지 수 만큼 이동하며 조회
 		for (let i = 0; i < page; i++) {
-			const params: DynamoDB.DocumentClient.QueryInput = {
-				TableName: this.tableName,
-				IndexName: 'partnerIdx-approvedAt-index',
-				KeyConditionExpression: 'partnerIdx = :key',
-				Limit: pageSize,
-				ExpressionAttributeValues: {
-					':key': partnerIdx,
-				},
-				ScanIndexForward: sort === 'ASC',
-			};
-
-			if (range) {
-				const {startAt, endAt} = range;
-				params.KeyConditionExpression +=
-					' and approvedAt between :startAt and :endAt';
-				params.ExpressionAttributeValues = {
-					...params.ExpressionAttributeValues,
-					':startAt': DateTime.fromJSDate(startAt).toISO(),
-					':endAt': DateTime.fromJSDate(endAt).toISO(),
-				};
-			}
+			params.Limit = pageSize;
 
 			if (exclusiveStartKey) {
 				params.ExclusiveStartKey = exclusiveStartKey;
 			}
-
 			const {Items, LastEvaluatedKey, ScannedCount} = await this.query(
 				params
 			).promise();
@@ -164,10 +169,15 @@ export class PlanPaymentRepository
 			}
 		}
 
-		if (!items || items.length === 0) return [];
-		const entities = items as PaymentEntity[];
-
-		return entities.map((entity) => this.factory.create(entity));
+		return {
+			total: Number(Count || 0),
+			data:
+				items?.length > 0
+					? (items as PaymentEntity[]).map((entity) =>
+							this.factory.create(entity)
+					  )
+					: [],
+		};
 	}
 
 	private entityToModel(entity: PaymentEntity) {

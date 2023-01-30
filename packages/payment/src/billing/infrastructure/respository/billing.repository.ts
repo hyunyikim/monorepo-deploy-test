@@ -20,7 +20,7 @@ export class PlanBillingRepository
 		@Inject(InjectionToken.BILLING_TABLE_NAME)
 		private readonly tableName: string,
 		@Inject(InjectionToken.AWS_REGION)
-		private readonly region: string // private region: string = 'ap-northeast-2'
+		private readonly region: string
 	) {
 		super({region});
 	}
@@ -98,9 +98,7 @@ export class PlanBillingRepository
 
 		const entities = Items as BillingEntity[];
 
-		const entity = entities.find(
-			(entity) => entity.unregisteredAt === undefined
-		);
+		const entity = entities.find((entity) => !entity.unregisteredAt);
 		if (!entity) return null;
 
 		return this.entityToModel(entity);

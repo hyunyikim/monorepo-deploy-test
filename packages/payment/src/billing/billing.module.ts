@@ -42,6 +42,7 @@ import {BillingSaga} from './application/sagas';
 import {ScheduleModule} from '@nestjs/schedule';
 import {FindPaymentsHandler} from './application/query';
 import {RegularPaymentService} from './application/service/payment.service';
+import {VircleCoreAPI} from './infrastructure/api-client/vircleCoreApi';
 
 const infra: Provider[] = [
 	{
@@ -51,6 +52,15 @@ const infra: Provider[] = [
 				secretKey: configService.getOrThrow('TOSS_PAYMENTS_SECRET_KEY'),
 				baseURL: configService.getOrThrow('TOSS_PAYMENTS_API'),
 			});
+		},
+		inject: [ConfigService],
+	},
+	{
+		provide: VircleCoreAPI,
+		useFactory: (configService: ConfigService) => {
+			const baseURL = configService.getOrThrow<string>('VIRCLE_API_URL');
+
+			return new VircleCoreAPI(baseURL);
 		},
 		inject: [ConfigService],
 	},

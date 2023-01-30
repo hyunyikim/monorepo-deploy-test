@@ -21,18 +21,29 @@ export class FindPaymentByOrderIdQuery implements IQuery {
  */
 @QueryHandler(FindPaymentsQuery)
 export class FindPaymentsHandler
-	implements IQueryHandler<FindPaymentsQuery, PaymentProps[]>
+	implements
+		IQueryHandler<
+			FindPaymentsQuery,
+			{
+				total: number;
+				data: PaymentProps[];
+			}
+		>
 {
 	constructor(
 		@Inject(PlanPaymentRepository)
 		private readonly paymentRepo: PaymentRepository
 	) {}
 
-	async execute(query: FindPaymentsQuery): Promise<PaymentProps[]> {
+	async execute(query: FindPaymentsQuery): Promise<{
+		total: number;
+		page: number;
+		data: PaymentProps[];
+	}> {
 		const {partnerIdx, params} = query;
 		const {sort, page, pageSize, startAt, endAt} = params;
 
-		const payments = await this.paymentRepo.search(
+		const results = await this.paymentRepo.search(
 			partnerIdx,
 			sort ?? 'DESC',
 			page ?? 1,
@@ -43,7 +54,11 @@ export class FindPaymentsHandler
 			}
 		);
 
-		return payments.map((payment) => payment.properties());
+		return {
+			total: results.total,
+			page,
+			data: results.data.map((payment) => payment.properties()),
+		};
 	}
 }
 

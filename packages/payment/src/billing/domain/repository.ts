@@ -13,7 +13,10 @@ export interface PaymentRepository {
 		page: number,
 		pageSize: number,
 		range?: {startAt: Date; endAt: Date}
-	) => Promise<Payment[]>;
+	) => Promise<{
+		total: number;
+		data: Payment[];
+	}>;
 }
 
 export interface BillingRepository {

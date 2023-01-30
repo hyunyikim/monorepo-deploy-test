@@ -24,12 +24,12 @@ import {
 	ChangeBillingPlanCommand,
 } from '../application/command';
 import {
-	FindBillingByPartnerIdxQuery,
+	FindBillingByPartnerTokenQuery,
 	FindPaymentsQuery,
 	FindPlanQuery,
 	FindPaymentByOrderIdQuery,
 } from '../application/query';
-import {BillingProps, PaymentProps, PricePlanProps} from '../domain';
+import {BillingProps, Payment, PaymentProps, PricePlanProps} from '../domain';
 import {JwtAuthGuard} from './guards/jwt-auth.guard';
 import {GetToken, TokenInfo} from './getToken.decorator';
 import {createHmac} from 'crypto';
@@ -40,6 +40,7 @@ import {HttpExceptionFilter} from './httpException.filter';
 class BillingInterface {
 	readonly customerKey: string;
 	readonly pricePlan: PricePlanProps;
+	readonly nextPricePlan?: PricePlanProps;
 	readonly card: {
 		cardType: string;
 		ownerType: string;
@@ -47,18 +48,30 @@ class BillingInterface {
 		company: string;
 		companyCode: string;
 	};
-	readonly authenticatedAt: string;
+	readonly usedNftCount: number;
+	readonly planStartedAt: string;
+	readonly planExpireDate?: string;
+	readonly nextPlanStartDate?: string;
 
 	constructor(billing: BillingProps) {
 		this.customerKey = billing.customerKey;
 		this.pricePlan = billing.pricePlan;
+		this.nextPricePlan = billing.nextPricePlan;
 		this.card = {
-			...billing.card,
+			cardType: billing.card.cardType,
+			ownerType: billing.card.ownerType,
+			number: billing.card.number,
+			company: billing.card.company,
 			companyCode: billing.card.issuerCode,
 		};
-		this.authenticatedAt = DateTime.fromISO(
-			billing.authenticatedAt
-		).toFormat('yyyy-MM-dd HH:mm:ss');
+		this.usedNftCount = billing.usedNftCount ?? 0;
+		this.planStartedAt = billing.authenticatedAt;
+		this.planExpireDate = billing.nextPaymentAt
+			? DateTime.fromISO(billing.nextPaymentAt)
+					.plus({milliseconds: -1})
+					.toISO()
+			: undefined;
+		this.nextPlanStartDate = billing.nextPaymentAt;
 	}
 }
 
@@ -185,9 +198,9 @@ export class BillingController {
 		const {partnerIdx} = token;
 
 		// 구독 조회
-		const query = new FindBillingByPartnerIdxQuery(partnerIdx);
+		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
-			FindBillingByPartnerIdxQuery,
+			FindBillingByPartnerTokenQuery,
 			BillingProps
 		>(query);
 
@@ -210,7 +223,7 @@ export class BillingController {
 	 */
 	@Get('/receipt/:orderId')
 	@UseGuards(JwtAuthGuard)
-	async getPayment(
+	async getReceipt(
 		@Param('orderId') orderId: string,
 		@GetToken() token: TokenInfo
 	) {
@@ -234,7 +247,7 @@ export class BillingController {
 	 */
 	@Get('/receipt')
 	@UseGuards(JwtAuthGuard)
-	async getPaymentHistory(
+	async getReceiptList(
 		@Query() params: FindPaymentsQueryDto,
 		@GetToken() token: TokenInfo
 	) {
@@ -242,14 +255,21 @@ export class BillingController {
 
 		// 구독 조회
 		const query = new FindPaymentsQuery(partnerIdx, params);
-		const paymentProps = await this.queryBus.execute<
+		const results = await this.queryBus.execute<
 			FindPaymentsQuery,
-			PaymentProps[]
+			{
+				total: number;
+				page: number;
+				data: PaymentProps[];
+			}
 		>(query);
 
-		return paymentProps.map(
-			(payment) => new PaymentSummaryInterface(payment)
-		);
+		return {
+			...results,
+			data: results.data.map(
+				(payment) => new PaymentSummaryInterface(payment)
+			),
+		};
 	}
 
 	/**
@@ -262,9 +282,9 @@ export class BillingController {
 		const {partnerIdx} = token;
 
 		// 구독 조회
-		const query = new FindBillingByPartnerIdxQuery(partnerIdx);
+		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
-			FindBillingByPartnerIdxQuery,
+			FindBillingByPartnerTokenQuery,
 			BillingProps
 		>(query);
 
@@ -291,9 +311,9 @@ export class BillingController {
 		const {partnerIdx} = token;
 
 		// 구독 조회
-		const query = new FindBillingByPartnerIdxQuery(partnerIdx);
+		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
-			FindBillingByPartnerIdxQuery,
+			FindBillingByPartnerTokenQuery,
 			BillingProps
 		>(query);
 
