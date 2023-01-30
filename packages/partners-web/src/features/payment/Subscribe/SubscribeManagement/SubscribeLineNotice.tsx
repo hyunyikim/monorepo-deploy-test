@@ -1,32 +1,21 @@
 import {useMemo} from 'react';
-import {parse, differenceInCalendarDays, format} from 'date-fns';
+import {differenceInCalendarDays, format} from 'date-fns';
 
 import {Typography} from '@mui/material';
 
 import {useGetUserPricePlan, useGetPricePlanList} from '@/stores/payment.store';
+import {checkSubscribeNoticeStatus} from '@/data';
 
 import {LineNotice} from '@/components';
-import {PricePlan} from '@/@types';
-import {TRIAL_PLAN} from '@/data';
+import {SubscribeLineNoticeKey, UserPricePlanWithDate} from '@/@types';
 
-type LineNoticeKey =
-	| 'TRIAL'
-	| 'TRIAL_ALMOST_FINISH'
-	| 'TRIAL_FINISHED'
-	| 'CHARGED_GROUP_PLAN'
-	| 'LACKING_GUARANTEE'
-	| 'CHANGE_PLAN_MONTH_TO_YEAR'
-	| 'CHANGE_PLAN_YEAR_TO_MONTH'
-	| 'CHANGE_PLAN_UPGRADE'
-	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY'
-	| 'PLAN_WILL_END';
 type LineNoticeValue = {
 	content: LineNoticeContent;
 	color: 'green' | 'red' | 'primary';
 };
 type LineNoticeContent = string | [string, React.ReactNode];
 type LineNotice = {
-	[key in LineNoticeKey]: LineNoticeValue;
+	[key in SubscribeLineNoticeKey]: LineNoticeValue;
 };
 
 const REPLACE_CHARACTOR = {
@@ -60,7 +49,7 @@ const LINE_NOTICE: LineNotice = {
 	},
 	// 유료플랜
 	// 유료플랜 이용 중일 때
-	CHARGED_GROUP_PLAN: {
+	CHARGED: {
 		content: `발급량이 부족하다면 UPGRADE_PLAN_NAME 플랜으로 업그레이드를 권장합니다. 발급량 초과시 서비스 사용이 제한될 수 있어요.`,
 		color: 'green',
 	},
@@ -100,17 +89,26 @@ const LINE_NOTICE: LineNotice = {
 
 export const replaceLineNotice = (
 	content: LineNoticeContent,
-	expiredDate?: Date,
-	leftDays?: number,
-	planName?: string,
-	upgradePlanName?: string,
-	downgradePlanName?: string
+	data: {
+		expiredDate?: Date;
+		leftDays?: number;
+		planName?: string;
+		upgradePlanName?: string;
+		downgradePlanName?: string;
+	}
 ): LineNoticeContent => {
 	let replacedContent = Array.isArray(content) ? content[0] : content;
+	const {
+		expiredDate,
+		leftDays,
+		planName,
+		upgradePlanName,
+		downgradePlanName,
+	} = data;
 	const parsedDate = expiredDate && {
 		year: format(expiredDate, 'yyyy'),
 		month: format(expiredDate, 'M'),
-		date: format(expiredDate, 'dd'),
+		date: format(expiredDate, 'd'),
 	};
 	if (parsedDate) {
 		replacedContent = replacedContent
@@ -149,106 +147,130 @@ function SubscribeLineNotice() {
 		if (!userPlan || !planList) return;
 
 		const {
-			payPlanName,
-			payPlanId,
-			payPlanExpireDate,
-			payPlanLimit,
+			pricePlan,
+			planStartDate,
+			planExpireDate,
+			nextPricePlan,
+			nextPlanStartDate,
 			usedNftCount,
 		} = userPlan;
-		const parsedPlanExpireDate = parse(
-			payPlanExpireDate,
-			'yyyy-MM-dd',
-			new Date()
-		);
+		const {planLimit} = pricePlan;
 		const leftDays =
-			differenceInCalendarDays(parsedPlanExpireDate, new Date()) + 1;
+			differenceInCalendarDays(planExpireDate, new Date()) + 1;
+
+		const subscribeStatus = checkSubscribeNoticeStatus(userPlan);
 
 		// trial
-		if (payPlanId === TRIAL_PLAN.PLAN_ID) {
+		if (subscribeStatus === 'TRIAL') {
 			if (leftDays <= 0) {
 				return LINE_NOTICE.TRIAL_FINISHED;
 			}
 			if (leftDays <= 10) {
 				const lineNotice = LINE_NOTICE.TRIAL_ALMOST_FINISH;
+				const replacedContent = replaceLineNotice(lineNotice.content, {
+					expiredDate: planExpireDate,
+					leftDays,
+				});
 				return {
 					...lineNotice,
-					content: replaceLineNotice(
-						lineNotice.content,
-						parsedPlanExpireDate,
-						leftDays
+					content: (
+						<>
+							<Typography
+								component="div"
+								variant="caption1"
+								fontWeight="bold">
+								{replacedContent[0]}
+							</Typography>
+							{replacedContent[1]}
+						</>
 					),
 				};
 			}
 			const lineNotice = LINE_NOTICE.TRIAL;
 			return {
 				...lineNotice,
-				content: replaceLineNotice(
-					lineNotice.content,
-					parsedPlanExpireDate
-				),
+				content: replaceLineNotice(lineNotice.content, {
+					expiredDate: planExpireDate,
+				}),
 			};
 		}
 
 		// 유료플랜
-		const nowPlan = planList.filter((plan) => plan.planId === payPlanId)[0];
-		let nextPlan: PricePlan[] | PricePlan | null = planList.filter(
-			(plan) =>
-				plan.planLevel === nowPlan.planLevel + 1 &&
-				nowPlan.planType === plan.planType
-		);
-		nextPlan = nextPlan?.length > 0 ? nextPlan[0] : null;
-		let downgradePlan: PricePlan[] | PricePlan | null = planList.filter(
-			(plan) =>
-				plan.planLevel === nowPlan.planLevel - 1 &&
-				nowPlan.planType === plan.planType
-		);
-		downgradePlan = downgradePlan?.length > 0 ? downgradePlan[0] : null;
+		// 다음 플랜 예정
+		if (nextPricePlan) {
+			if (subscribeStatus === 'CHANGE_PLAN_MONTH_TO_YEAR') {
+				const lineNotice = LINE_NOTICE.CHANGE_PLAN_MONTH_TO_YEAR;
+				return {
+					...lineNotice,
+					content: replaceLineNotice(lineNotice.content, {
+						expiredDate: nextPlanStartDate,
+					}),
+				};
+			}
+			if (subscribeStatus === 'CHANGE_PLAN_YEAR_TO_MONTH') {
+				const lineNotice = LINE_NOTICE.CHANGE_PLAN_YEAR_TO_MONTH;
+				return {
+					...lineNotice,
+					content: replaceLineNotice(lineNotice.content, {
+						expiredDate: planStartDate,
+						planName: pricePlan.planName,
+						downgradePlanName: nextPricePlan.planName,
+					}),
+				};
+			}
+			if (subscribeStatus === 'CHANGE_PLAN_UPGRADE') {
+				const lineNotice = LINE_NOTICE.CHANGE_PLAN_UPGRADE;
+				return {
+					...lineNotice,
+					content: replaceLineNotice(lineNotice.content, {
+						expiredDate: nextPlanStartDate,
+						upgradePlanName: nextPricePlan.planName,
+					}),
+				};
+			}
+			if (subscribeStatus === 'CHANGE_PLAN_DOWNGRADE_MONTHLY') {
+				const lineNotice = LINE_NOTICE.CHANGE_PLAN_DOWNGRADE_MONTHLY;
+				return {
+					...lineNotice,
+					content: replaceLineNotice(lineNotice.content, {
+						expiredDate: planStartDate,
+						planName: pricePlan.planName,
+						upgradePlanName: nextPricePlan.planName,
+					}),
+				};
+			}
+		}
+
+		// TODO: 엔터프라이즈 사용한다면?
+		const upgradePlanName =
+			planList.find(
+				(plan) =>
+					plan.planLevel === pricePlan.planLevel + 1 &&
+					plan.planType === pricePlan.planType
+			)?.planName || '';
 
 		// 개런티 부족
-		if (payPlanLimit - usedNftCount < Math.ceil(payPlanLimit * 0.3)) {
+		if (planLimit - usedNftCount < Math.ceil(planLimit * 0.3)) {
 			const lineNotice = LINE_NOTICE.LACKING_GUARANTEE;
 			return {
 				...lineNotice,
-				content: replaceLineNotice(
-					lineNotice.content,
-					parsedPlanExpireDate,
-					leftDays,
-					nowPlan?.planName,
-					nextPlan?.planName,
-					downgradePlan?.planName
-				),
+				content: replaceLineNotice(lineNotice.content, {
+					upgradePlanName,
+				}),
 			};
 		}
 
-		// TODO: 상태 변경 완료후
-		// 월결제에서 연결제로 변경 완료, 현재 아직 월결제 이용중
-		// return LINE_NOTICE.CHANGE_PLAN_MONTH_TO_YEAR;
-
-		// 연결제에서 월결제로 변경 완료, 현재 아직 연결제 이용중
-		// return LINE_NOTICE.CHANGE_PLAN_YEAR_TO_MONTH;
-
-		// 플랜 업그레이드 완료
-		// return LINE_NOTICE.CHANGE_PLAN_UPGRADE;
-
-		// 플랜 다운그레이드 예정
-		// return LINE_NOTICE.CHANGE_PLAN_DOWNGRADE_MONTHLY;
-
-		// 플랜 종료 예정
-		// return LINE_NOTICEL.PLAN_WILL_END;
-
-		// 유료플랜 이용중 기본 메시지
-		const lineNotice = LINE_NOTICE.CHARGED_GROUP_PLAN;
+		// 유료플랜 기본 메시지
+		const lineNotice = LINE_NOTICE.CHARGED;
 		return {
 			...lineNotice,
-			content: replaceLineNotice(
-				lineNotice.content,
-				parsedPlanExpireDate,
-				leftDays,
-				nowPlan?.planName,
-				nextPlan?.planName,
-				downgradePlan?.planName
-			),
+			content: replaceLineNotice(lineNotice.content, {
+				upgradePlanName,
+			}),
 		};
+
+		// TODO: 플랜 종료 예정
+		// return LINE_NOTICEL.PLAN_WILL_END;
 	}, [userPlan, planList]);
 
 	return (

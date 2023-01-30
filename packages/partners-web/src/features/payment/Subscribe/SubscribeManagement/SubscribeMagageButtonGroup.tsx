@@ -1,0 +1,245 @@
+import {useMemo} from 'react';
+import {Stack, Link} from '@mui/material';
+
+import {useGetUserPricePlan, useMessageDialog} from '@/stores';
+import {OnOpenParamType, PricePlan} from '@/@types';
+import {
+	isPlanTypeMonth,
+	isPlanTypeYear,
+	isPlanUpgraded,
+	isPlanDowngraded,
+} from '@/data';
+
+import {Button} from '@/components';
+import CancelSubscribe from './CancelSubscribe';
+
+type PaymentMessageModalKey =
+	| 'CANCEL_SUBSCRIBE'
+	| 'CHANGE_PLAN_YEAR_TO_MONTH'
+	| 'CHANGE_PLAN_MONTH_TO_YEAR'
+	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY'
+	| 'BAN_DOWNGRADE_YEAR_PLAN';
+type PaymentMessageModalType = {
+	[key in PaymentMessageModalKey]: OnOpenParamType;
+};
+
+export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
+	CANCEL_SUBSCRIBE: {
+		title: '정말 구독을 취소하시겠어요?',
+		message: `지금 구독 취소하시면 yyyy년 M월 YY일까지 이용 가능하고, 그 이후부터 개런티 발급이 제한됩니다. 계속 하시겠어요?`,
+		showBottomCloseButton: true,
+		closeButtonValue: '취소',
+	},
+	CHANGE_PLAN_YEAR_TO_MONTH: {
+		title: '연결제를 월결제로 변경하시나요?',
+		message: (
+			<>
+				연결제 이용시 월결제로 변경 할 경우에는 연결제가 끝나는 다음
+				결제일부터 월결제 요금이 결제됩니다. 자세한 사항은{' '}
+				<Link
+					sx={{
+						color: 'grey.600',
+						textDecorationColor: (theme) => theme.palette.grey[600],
+					}}
+					className="cursor-pointer">
+					구독가이드
+				</Link>
+				를 참고해주세요.
+			</>
+		),
+		showBottomCloseButton: true,
+		closeButtonValue: '취소',
+	},
+	CHANGE_PLAN_MONTH_TO_YEAR: {
+		title: '월결제를 연결제로 변경하시나요?',
+		message: (
+			<>
+				월결제를 연결제로 변경 할 경우에는 월결제가 끝나는 다음달
+				결제일에 연결제 요금이 결제됩니다. 자세한 사항은{' '}
+				<Link
+					sx={{
+						color: 'grey.600',
+						textDecorationColor: (theme) => theme.palette.grey[600],
+					}}
+					className="cursor-pointer">
+					구독가이드
+				</Link>
+				를 참고해주세요.
+			</>
+		),
+		showBottomCloseButton: true,
+		closeButtonValue: '취소',
+	},
+	CHANGE_PLAN_DOWNGRADE_MONTHLY: {
+		title: '정말 플랜을 다운그레이드 하시겠어요?',
+		message: (
+			<>
+				플랜 다운그레이드 변경시 구독 기간이 끝난 후 다음달 결제일부터
+				다운그레이드 된 플랜의 요금제가 적용됩니다.
+			</>
+		),
+		showBottomCloseButton: true,
+		closeButtonValue: '취소',
+	},
+	BAN_DOWNGRADE_YEAR_PLAN: {
+		title: '이미 연결제로 플랜을 구독중이시네요',
+		message: (
+			<>
+				연결제로 플랜을 구독중 플랜의 다운그레이드는 현재 지원하지 않고,
+				<Link
+					sx={{
+						color: 'grey.600',
+						textDecorationColor: (theme) => theme.palette.grey[600],
+					}}
+					className="cursor-pointer">
+					고객센터
+				</Link>
+				로 문의 주시면 버클팀에서 확인 후 이용중이시던 플랜의 구독
+				취소를 도와드립니다. (단, 위약금 규정에 따라 위약금을 공제 후
+				차액을 환불해드립니다.)
+			</>
+		),
+		showBottomCloseButton: true,
+		closeButtonValue: '확인',
+	},
+};
+
+function SubscribeMagageButtonGroup({
+	isTrial,
+	isAvailableSelect,
+	selectedPlan,
+	setIsAvailableSelect,
+	onSubscribeCheckModalOpen,
+}: {
+	isTrial: boolean;
+	isAvailableSelect: boolean;
+	selectedPlan?: PricePlan;
+	setIsAvailableSelect: (value: boolean) => void;
+	onSubscribeCheckModalOpen: () => void;
+}) {
+	const {onOpen: onOpenMessageDialog} = useMessageDialog();
+	const {data: userPlan} = useGetUserPricePlan();
+
+	const isPlanChanged = useMemo(() => {
+		if (userPlan?.pricePlan.planId !== selectedPlan?.planId) {
+			return true;
+		}
+		return false;
+	}, [userPlan, selectedPlan]);
+
+	const onClickSubscribeChange = () => {
+		if (!userPlan || !selectedPlan) {
+			return;
+		}
+
+		// 플랜 업그레이드 시
+		// TODO: 무료에서 유료로 업그레이드 시 체크
+		if (
+			isPlanUpgraded(userPlan.pricePlan.planLevel, selectedPlan.planLevel)
+		) {
+			onSubscribeCheckModalOpen();
+			return;
+		}
+
+		// 월결제에서 연결제로
+		let messageDialogData: OnOpenParamType | null = null;
+		if (
+			isPlanTypeMonth(userPlan.pricePlan.planType) &&
+			isPlanTypeYear(selectedPlan.planType)
+		) {
+			messageDialogData = PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_MONTH_TO_YEAR;
+		}
+		if (
+			isPlanTypeYear(userPlan.pricePlan.planType) &&
+			isPlanTypeMonth(selectedPlan.planType)
+		) {
+			messageDialogData = PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_YEAR_TO_MONTH;
+		}
+
+		// 월결제 플랜 다운그레이드
+		if (
+			isPlanTypeMonth(userPlan.pricePlan.planType) &&
+			isPlanTypeMonth(selectedPlan.planType) &&
+			isPlanDowngraded(
+				userPlan.pricePlan.planLevel,
+				selectedPlan.planLevel
+			)
+		) {
+			messageDialogData =
+				PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_DOWNGRADE_MONTHLY;
+		}
+
+		// 연결제 플랜 다운그레이드
+		if (
+			isPlanTypeYear(userPlan.pricePlan.planType) &&
+			isPlanTypeYear(selectedPlan.planType) &&
+			isPlanDowngraded(
+				userPlan.pricePlan.planLevel,
+				selectedPlan.planLevel
+			)
+		) {
+			messageDialogData = PAYMENT_MESSAGE_MODAL.BAN_DOWNGRADE_YEAR_PLAN;
+			onOpenMessageDialog({
+				title: messageDialogData.title,
+				message: messageDialogData.message,
+			});
+			return;
+		}
+
+		if (!messageDialogData) {
+			return;
+		}
+		onOpenMessageDialog({
+			title: messageDialogData.title,
+			message: messageDialogData.message,
+			buttons: (
+				<>
+					<Button
+						variant="contained"
+						color="black"
+						onClick={() => {
+							// TODO: 플랜 변경 api 호출
+						}}>
+						확인
+					</Button>
+				</>
+			),
+		});
+	};
+
+	return (
+		<Stack flexDirection="row" alignItems="center" mt="20px">
+			{isAvailableSelect ? (
+				<>
+					<Button
+						disabled={!isPlanChanged}
+						height={40}
+						sx={{
+							marginRight: '8px',
+						}}
+						onClick={onClickSubscribeChange}>
+						구독설정 변경
+					</Button>
+					<Button
+						variant="outlined"
+						color="grey-100"
+						height={40}
+						onClick={() => setIsAvailableSelect(false)}>
+						취소
+					</Button>
+				</>
+			) : (
+				<>
+					<Button
+						height={40}
+						onClick={() => setIsAvailableSelect(true)}>
+						{isTrial ? '플랜 업그레이드' : '플랜 변경하기'}
+					</Button>
+					{!isTrial && <CancelSubscribe />}
+				</>
+			)}
+		</Stack>
+	);
+}
+
+export default SubscribeMagageButtonGroup;

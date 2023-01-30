@@ -1,8 +1,13 @@
 import {useQuery} from '@tanstack/react-query';
+import {parse} from 'date-fns';
 
-import {getPricePlanList, getUserPricePlan} from '@/api/payment.api';
-import {PlanType} from '@/@types';
-import {TRIAL_PLAN} from '@/data';
+import {
+	getPaymentHistoryList,
+	getPricePlanList,
+	getUserPricePlan,
+} from '@/api/payment.api';
+import {PlanType, UserPricePlanWithDate} from '@/@types';
+import {DATE_FORMAT, TRIAL_PLAN} from '@/data';
 
 export const useGetPricePlanList = (
 	{
@@ -15,6 +20,9 @@ export const useGetPricePlanList = (
 		queryKey: ['pricePlanList'],
 		queryFn: getPricePlanList,
 		suspense: suspense,
+		select: (data) => {
+			return data.data;
+		},
 	});
 };
 
@@ -22,8 +30,8 @@ export const useGetPricePlanListByPlanType = (planType: PlanType) => {
 	return useQuery({
 		queryKey: ['pricePlanList'],
 		queryFn: getPricePlanList,
-		select: (planList) => {
-			return planList
+		select: (data) => {
+			return data?.data
 				.filter((plan) => plan.planType === planType)
 				.sort((a, b) => a.planLevel - b.planLevel);
 		},
@@ -41,13 +49,39 @@ export const useGetUserPricePlan = (
 		queryKey: ['userPricePlan'],
 		queryFn: getUserPricePlan,
 		suspense,
+		select: (userPlan) =>
+			({
+				...userPlan,
+				planStartDate: parse(
+					userPlan.planStartDate,
+					DATE_FORMAT,
+					new Date()
+				),
+				planExpireDate: parse(
+					userPlan.planExpireDate,
+					DATE_FORMAT,
+					new Date()
+				),
+				...(userPlan.nextPlanStartDate && {
+					nextPlanStartDate: parse(
+						userPlan.nextPlanStartDate,
+						DATE_FORMAT,
+						new Date()
+					),
+				}),
+				...(userPlan.nextPlanPaymentDate && {
+					nextPlanPaymentDate: parse(
+						userPlan.nextPlanPaymentDate,
+						DATE_FORMAT,
+						new Date()
+					),
+				}),
+			} as UserPricePlanWithDate),
 	});
 };
 
 /**
  * 유저가 유료플랜 구독 하고 있는지 여부
- * @param param0
- * @returns
  */
 export const useIsUserUsedTrialPlan = (
 	{
@@ -60,6 +94,29 @@ export const useIsUserUsedTrialPlan = (
 		queryKey: ['userPricePlan'],
 		queryFn: getUserPricePlan,
 		suspense,
-		select: (userPlan) => userPlan.payPlanId === TRIAL_PLAN.PLAN_ID,
+		select: (userPlan) => userPlan.pricePlan.planId === TRIAL_PLAN.PLAN_ID,
 	});
 };
+
+/**
+ * 유저의 구독 내역 목록 조회
+ */
+// export const useGetUserPaymentHistoryList = (
+// 	{
+// 		suspense,
+// 	}: {
+// 		suspense: boolean;
+// 	} = {suspense: false}
+// ) => {
+// 	return useQuery({
+// 		queryKey: ['userPaymentHistoryList'],
+// 		queryFn: getPaymentHistoryList,
+// 		suspense,
+// 		select: (paymentHistoryList) =>
+// 			paymentHistoryList.map((history) => ({
+// 				...history,
+// 				startDate: parse(history.startDate, DATE_FORMAT, new Date()),
+// 				expireDate: parse(history.expireDate, DATE_FORMAT, new Date()),
+// 			})),
+// 	});
+// };

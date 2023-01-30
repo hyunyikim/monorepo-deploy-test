@@ -2,17 +2,10 @@ import {useMemo} from 'react';
 import {Stack, Theme, Typography, Link} from '@mui/material';
 import {SxProps} from '@mui/system';
 
-import {TRIAL_PLAN} from '@/data';
+import {SubscribeNoticeKey, UserPricePlanWithDate} from '@/@types';
+import {checkSubscribeNoticeStatus} from '@/data';
 import {useGetUserPricePlan, useGetPricePlanList} from '@/stores/payment.store';
 
-type SubscribeNoticeKey =
-	| 'TRIAL'
-	| 'CHARGED'
-	| 'USING_MONTH'
-	| 'AFTER_CHANGE_PLAN_MONTH_TO_YEAR'
-	| 'AFTER_CHANGE_PLAN_YEAR_TO_MONTH'
-	| 'AFTER_MONTH_PLAN_UPGRADE'
-	| 'AFTER_MONTH_PLAN_DOWNGRADE';
 type SubscribeNoticeType = {
 	[key in SubscribeNoticeKey]: React.ReactNode;
 };
@@ -68,7 +61,7 @@ export const SUBSCRIBE_NOTICE: SubscribeNoticeType = {
 			<Link href="">결제 가이드 보기</Link>
 		</>
 	),
-	AFTER_CHANGE_PLAN_MONTH_TO_YEAR: (
+	CHANGE_PLAN_MONTH_TO_YEAR: (
 		<>
 			<Stack>
 				<Typography variant="subtitle2">
@@ -86,7 +79,7 @@ export const SUBSCRIBE_NOTICE: SubscribeNoticeType = {
 			<Link href="">구독가이드 보기</Link>
 		</>
 	),
-	AFTER_CHANGE_PLAN_YEAR_TO_MONTH: (
+	CHANGE_PLAN_YEAR_TO_MONTH: (
 		<>
 			<Stack>
 				<Typography variant="subtitle2">
@@ -103,7 +96,7 @@ export const SUBSCRIBE_NOTICE: SubscribeNoticeType = {
 			<Link href="">구독가이드 보기</Link>
 		</>
 	),
-	AFTER_MONTH_PLAN_UPGRADE: (
+	CHANGE_PLAN_UPGRADE: (
 		<>
 			<Stack>
 				<Typography variant="subtitle2">
@@ -120,7 +113,7 @@ export const SUBSCRIBE_NOTICE: SubscribeNoticeType = {
 			<Link href="">결제 가이드 보기</Link>
 		</>
 	),
-	AFTER_MONTH_PLAN_DOWNGRADE: (
+	CHANGE_PLAN_DOWNGRADE_MONTHLY: (
 		<>
 			<Stack>
 				<Typography variant="subtitle2">
@@ -149,31 +142,37 @@ function SubscribeNotice({sx = {}}: Props) {
 	const SubscribeNoticeComponent = useMemo(() => {
 		if (!userPlan || !planList) return;
 
-		// trial
-		if (userPlan?.payPlanId === TRIAL_PLAN.PLAN_ID) {
+		const {
+			pricePlan,
+			planStartDate,
+			planExpireDate,
+			nextPricePlan,
+			nextPlanStartDate,
+		} = userPlan;
+
+		const subscribeNoticeStatus = checkSubscribeNoticeStatus(userPlan);
+
+		// TODO: or 아예 종료 되었거나
+		if (subscribeNoticeStatus === 'TRIAL') {
 			return SUBSCRIBE_NOTICE.TRIAL;
 		}
 
 		// 유료플랜
-		const selectedUserPlan = planList.filter(
-			(plan) => plan.planId === userPlan.payPlanId
-		)[0];
-
-		// 변경 완료 후 보여줌
-		// 월결제에서 연결제로 변경 완료
-		return SUBSCRIBE_NOTICE.AFTER_CHANGE_PLAN_MONTH_TO_YEAR;
-
-		// 연결제에서 월결제로 변경 완료, 현재 아직 연결제 이용중
-		return SUBSCRIBE_NOTICE.AFTER_CHANGE_PLAN_YEAR_TO_MONTH;
-
-		// 월결제 플랜 다운그레이드 변경 완료, 현재 아직 상위플랜 이용중
-		return SUBSCRIBE_NOTICE.AFTER_MONTH_PLAN_DOWNGRADE;
-
-		// 월결제 플랜 업그레이드 변경 완료, 현재 아직 하위플랜 이용중
-		return SUBSCRIBE_NOTICE.AFTER_MONTH_PLAN_UPGRADE;
-
-		// 월결제 이용중
-		if (selectedUserPlan?.planType === 'MONTH') {
+		if (nextPricePlan) {
+			if (subscribeNoticeStatus === 'CHANGE_PLAN_MONTH_TO_YEAR') {
+				return SUBSCRIBE_NOTICE.CHANGE_PLAN_MONTH_TO_YEAR;
+			}
+			if (subscribeNoticeStatus === 'CHANGE_PLAN_YEAR_TO_MONTH') {
+				return SUBSCRIBE_NOTICE.CHANGE_PLAN_YEAR_TO_MONTH;
+			}
+			if (subscribeNoticeStatus === 'CHANGE_PLAN_UPGRADE') {
+				return SUBSCRIBE_NOTICE.CHANGE_PLAN_UPGRADE;
+			}
+			if (subscribeNoticeStatus === 'CHANGE_PLAN_DOWNGRADE_MONTHLY') {
+				return SUBSCRIBE_NOTICE.CHANGE_PLAN_DOWNGRADE_MONTHLY;
+			}
+		}
+		if (pricePlan.planType === 'MONTH') {
 			return SUBSCRIBE_NOTICE.USING_MONTH;
 		}
 		return SUBSCRIBE_NOTICE.CHARGED;

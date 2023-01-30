@@ -48,11 +48,11 @@ function PaymentReceiptList() {
 				totalSize={totalSize}
 				headcell={
 					<>
-						<HeadTableCell minWidth={120}>ID</HeadTableCell>
-						<HeadTableCell minWidth={180}>종류</HeadTableCell>
+						<HeadTableCell width={120}>ID</HeadTableCell>
+						<HeadTableCell width={180}>종류</HeadTableCell>
 						<HeadTableCell minWidth={500}>날짜 </HeadTableCell>
-						<HeadTableCell minWidth={180}>결제 금액</HeadTableCell>
-						<HeadTableCell minWidth={180}>결제 상태</HeadTableCell>
+						<HeadTableCell width={180}>결제 금액</HeadTableCell>
+						<HeadTableCell width={180}>결제 상태</HeadTableCell>
 					</>
 				}>
 				<TableRow>

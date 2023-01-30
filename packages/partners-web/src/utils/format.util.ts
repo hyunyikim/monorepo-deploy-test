@@ -1,4 +1,4 @@
-import {ChangeEvent} from 'react';
+import React, {ChangeEvent} from 'react';
 
 type HandleChangeDataFormat = 'phoneNum' | 'businessNum' | 'date' | 'commaNum';
 
@@ -118,4 +118,14 @@ export const formatCommaNum = (value: string) => {
 		return '';
 	}
 	return pureNumber.toLocaleString();
+};
+
+export const onChangeOnlyNumber = (
+	e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) => {
+	const value = e?.target?.value;
+	if (!value) {
+		return;
+	}
+	e.target.value = value.replace(/[^0-9]/g, '') || '';
 };

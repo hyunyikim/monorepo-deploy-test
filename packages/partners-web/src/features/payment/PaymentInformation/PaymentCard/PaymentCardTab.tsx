@@ -21,7 +21,10 @@ function PaymentCardTab() {
 	return (
 		<>
 			<Stack mt="40px">
-				<Stack flexDirection="row" justifyContent="space-between">
+				<Stack
+					flexDirection="row"
+					justifyContent="space-between"
+					mb="16px">
 					<Typography
 						variant="subtitle2"
 						fontWeight="bold"
@@ -36,29 +39,6 @@ function PaymentCardTab() {
 						/>
 						카드
 					</Typography>
-					<Stack
-						flexDirection="row"
-						alignItems="center"
-						sx={{
-							borderRadius: '41px',
-							border: (theme) =>
-								`1px solid ${theme.palette.grey[100]}`,
-							padding: '11px 20px',
-						}}>
-						<Typography
-							variant="caption1"
-							fontWeight="bold"
-							mr="8px">
-							자동결제
-						</Typography>
-						<LabeledSwitch
-							checked={true}
-							options={[
-								{label: 'ON', value: true},
-								{label: 'OFF', value: false},
-							]}
-						/>
-					</Stack>
 				</Stack>
 				<Typography variant="body3" color="grey.500" mb="20px">
 					유료 플랜 결제를 위해서 1개 이상의 카드가 필요합니다.
@@ -69,19 +49,15 @@ function PaymentCardTab() {
 						totalSize={totalSize}
 						headcell={
 							<>
-								<HeadTableCell minWidth={240}>
-									카드
-								</HeadTableCell>
-								<HeadTableCell minWidth={180}>
+								<HeadTableCell width={240}>카드</HeadTableCell>
+								<HeadTableCell width={180}>
 									유효기간
 								</HeadTableCell>
-								<HeadTableCell minWidth={500}>
+								<HeadTableCell minWidth={300}>
 									결제사
 								</HeadTableCell>
-								<HeadTableCell minWidth={180}>
-									기타
-								</HeadTableCell>
-								<HeadTableCell minWidth={180}>
+								<HeadTableCell width={180}>기타</HeadTableCell>
+								<HeadTableCell width={180}>
 									결제 상태
 								</HeadTableCell>
 							</>

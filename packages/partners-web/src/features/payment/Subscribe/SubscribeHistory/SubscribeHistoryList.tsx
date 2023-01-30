@@ -58,10 +58,10 @@ function SubscribeHistoryList() {
 						<HeadTableCell width={52}>
 							<Checkbox disabled />
 						</HeadTableCell>
-						<HeadTableCell minWidth={120}>ID</HeadTableCell>
-						<HeadTableCell minWidth={180}>플랜</HeadTableCell>
-						<HeadTableCell minWidth={180}>구독 시작</HeadTableCell>
-						<HeadTableCell minWidth={180}>구독 종료</HeadTableCell>
+						<HeadTableCell width={120}>ID</HeadTableCell>
+						<HeadTableCell width={180}>플랜</HeadTableCell>
+						<HeadTableCell width={180}>구독 시작</HeadTableCell>
+						<HeadTableCell width={180}>구독 종료</HeadTableCell>
 						<HeadTableCell minWidth={500}>상태</HeadTableCell>
 					</>
 				}>

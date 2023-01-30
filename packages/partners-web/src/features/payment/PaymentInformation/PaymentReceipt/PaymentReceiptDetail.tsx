@@ -34,7 +34,10 @@ function PaymentReceiptDetail({idx}: Props) {
 					variant="body3"
 					fontWeight="bold"
 					color="primary.main"
-					className="flex-center cursor-pointer">
+					className="flex-center cursor-pointer"
+					onClick={() => {
+						window.print();
+					}}>
 					<IcPrinter
 						width={16}
 						height={16}
@@ -57,7 +60,8 @@ function PaymentReceiptDetail({idx}: Props) {
 					borderRadius: '8px',
 					color: (theme) => theme.palette.grey[900],
 					padding: '20px',
-				}}>
+				}}
+				ref={printElementRef}>
 				<Stack width="100%" justifyContent="flex-start" mb="20px">
 					<IcVircleLogo color={style.vircleGrey800} />
 				</Stack>

@@ -42,8 +42,11 @@ function SubscribePlan({
 					className: 'cursor-pointer',
 				})}>
 				<Stack>
-					<Stack flexDirection="row" alignItems="center" mb="4px">
-						<Typography variant="body3" fontWeight="bold" mr="6px">
+					<Stack flexDirection="row" alignItems="center">
+						<Typography
+							variant="subtitle2"
+							fontWeight="bold"
+							mr="6px">
 							{title}
 						</Typography>
 						{isSubscribed && (

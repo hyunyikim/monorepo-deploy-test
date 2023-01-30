@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
+import {addMonths, addYears, differenceInCalendarDays, format} from 'date-fns';
 
 import {Stack} from '@mui/material';
 
@@ -7,17 +8,20 @@ import {
 	useGetUserPricePlan,
 	useGetPricePlanListByPlanType,
 	useIsUserUsedTrialPlan,
-} from '@/stores/payment.store';
-import {PlanType, PricePlan, UserPricePlan} from '@/@types';
+} from '@/stores';
 import {
+	PlanType,
+	PricePlan,
+	TotalSbuscribeInfoPreviewData,
+	UserPricePlanWithDate,
+} from '@/@types';
+import {
+	DATE_FORMAT_SEPERATOR_DOT,
 	getChargedPlanDescription,
 	TRIAL_PLAN,
-	DATE_FORMAT,
-	PAYMENT_MESSAGE_MODAL,
 } from '@/data';
 import {useChildModalOpen} from '@/utils/hooks';
 
-import {Button} from '@/components';
 import ChargedSubscribePlan from './SubscribePlan/ChargedSubscribePlan';
 import SubscribeNotice from './SubscribeNotice';
 import SubscribeInfoPreview from '@/features/payment/common/SubscribeInfoPreview';
@@ -25,13 +29,11 @@ import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBull
 import SubscribePlan from './SubscribePlan/SubscribePlan';
 import SubscribeLineNotice from './SubscribeLineNotice';
 import SubscribeCheckModal from './SubscribeCheckModal';
-import CancelSubscribe from './CancelSubscribe';
-import {differenceInCalendarDays, parse} from 'date-fns';
-import {useMessageDialog} from '@/stores';
+import SubscribeMagageButtonGroup from './SubscribeMagageButtonGroup';
 
 function SubscribeManagementTab() {
+	const {data: planList} = useGetPricePlanList({suspense: true});
 	const {data: userPlan} = useGetUserPricePlan({suspense: true});
-	const {data: planList} = useGetPricePlanList();
 	const {data: yearPlanList} = useGetPricePlanListByPlanType('YEAR');
 	const {data: isUserUsedTrialPlan} = useIsUserUsedTrialPlan();
 
@@ -50,16 +52,13 @@ function SubscribeManagementTab() {
 		}
 
 		// 무료 체험중(기본 연결제 엑스스몰 플랜 선택됨)
-		if (userPlan.payPlanId === TRIAL_PLAN.PLAN_ID) {
+		if (userPlan.pricePlan.planId === TRIAL_PLAN.PLAN_ID) {
 			const xsYearPlan = yearPlanList[0];
 			return xsYearPlan;
 		}
 
 		// 유료플랜 구독중
-		const selectedUserPlan = planList.filter(
-			(plan) => plan.planId === userPlan.payPlanId
-		)[0];
-		return selectedUserPlan;
+		return userPlan.pricePlan;
 	}, [userPlan, planList, yearPlanList]);
 
 	useEffect(() => {
@@ -86,12 +85,30 @@ function SubscribeManagementTab() {
 		sameLevelSelectedPlan && setSelectedPlan(sameLevelSelectedPlan);
 	};
 
-	const isPlanChanged = useMemo(() => {
-		if (userPlan?.payPlanId !== selectedPlan?.planId) {
-			return true;
-		}
-		return false;
-	}, [userPlan, selectedPlan]);
+	const subscribePreviewData =
+		useMemo<TotalSbuscribeInfoPreviewData | null>(() => {
+			if (!selectedPlan) {
+				return null;
+			}
+			const today = format(new Date(), DATE_FORMAT_SEPERATOR_DOT);
+			const endDate = format(
+				selectedPlan.planType === 'MONTH'
+					? addMonths(new Date(), 1)
+					: addYears(new Date(), 1),
+				DATE_FORMAT_SEPERATOR_DOT
+			);
+			return {
+				data: {
+					planName: selectedPlan.planName,
+					subscribeDuration: `${today}-${endDate}`,
+					displayTotalPrice: selectedPlan?.displayTotalPrice,
+					planTotalPrice: selectedPlan?.planTotalPrice,
+					discountTotalPrice: selectedPlan?.discountTotalPrice,
+					totalPrice: selectedPlan?.totalPrice,
+					payApprovedAt: today,
+				},
+			};
+		}, [selectedPlan, userPlan]);
 
 	if (!selectedPlan) {
 		return <></>;
@@ -126,8 +143,6 @@ function SubscribeManagementTab() {
 					<SubscribeMagageButtonGroup
 						isTrial={!!isUserUsedTrialPlan}
 						isAvailableSelect={isAvailableSelect}
-						isPlanChanged={isPlanChanged}
-						userPlan={userPlan}
 						selectedPlan={selectedPlan}
 						setIsAvailableSelect={setIsAvailableSelect}
 						onSubscribeCheckModalOpen={onSubscribeCheckModalOpen}
@@ -140,7 +155,11 @@ function SubscribeManagementTab() {
 					}}>
 					{isAvailableSelect ? (
 						<>
-							<SubscribeInfoPreview selectedPlan={selectedPlan} />
+							{subscribePreviewData && (
+								<SubscribeInfoPreview
+									data={subscribePreviewData}
+								/>
+							)}
 							<SubscribeNoticeBullet
 								{...(!isUserUsedTrialPlan && {
 									data: [
@@ -154,116 +173,38 @@ function SubscribeManagementTab() {
 					)}
 				</Stack>
 			</Stack>
-			<SubscribeCheckModal
-				selectedPlan={selectedPlan}
-				open={subscribeCheckModalOpen}
-				onClose={onSubscribeCheckModalClose}
-			/>
+			{subscribePreviewData && (
+				<SubscribeCheckModal
+					selectedPlan={selectedPlan}
+					subscribePreview={subscribePreviewData.data}
+					open={subscribeCheckModalOpen}
+					onOpen={onSubscribeCheckModalOpen}
+					onClose={onSubscribeCheckModalClose}
+				/>
+			)}
 		</>
 	);
 }
 
-const NowSubscribedPlan = ({userPlan}: {userPlan?: UserPricePlan}) => {
+const NowSubscribedPlan = ({userPlan}: {userPlan?: UserPricePlanWithDate}) => {
 	if (!userPlan) {
 		return <></>;
 	}
-	const isTrial = TRIAL_PLAN.PLAN_ID === userPlan.payPlanId;
+	const isTrial = TRIAL_PLAN.PLAN_ID === userPlan.pricePlan.planId;
 	const desc = isTrial
 		? TRIAL_PLAN.PLAN_DESCRIPTION
-		: getChargedPlanDescription(userPlan?.payPlanLimit || 0);
+		: getChargedPlanDescription(userPlan?.pricePlan.planLimit || 0);
 	const leftDays =
-		differenceInCalendarDays(
-			parse(userPlan.payPlanExpireDate, DATE_FORMAT, new Date()),
-			new Date()
-		) + 1;
+		differenceInCalendarDays(userPlan.planExpireDate, new Date()) + 1;
 	const isEnded = leftDays <= 0 ? true : false;
 	return (
 		<SubscribePlan
-			title={userPlan.payPlanName}
+			title={userPlan.pricePlan.planName}
 			desc={desc}
 			isSubscribed={true}
 			isTrial={isTrial}
 			isEnded={isEnded}
 		/>
-	);
-};
-
-// 현재 구독중인 정보
-const SubscribeMagageButtonGroup = ({
-	isTrial,
-	isAvailableSelect,
-	isPlanChanged,
-	userPlan,
-	selectedPlan,
-	setIsAvailableSelect,
-	onSubscribeCheckModalOpen,
-}: {
-	isTrial: boolean;
-	isAvailableSelect: boolean;
-	isPlanChanged: boolean;
-	userPlan?: UserPricePlan;
-	selectedPlan?: PricePlan;
-	setIsAvailableSelect: (value: boolean) => void;
-	onSubscribeCheckModalOpen: () => void;
-}) => {
-	const {onOpen: onOpenMessageDialog} = useMessageDialog();
-
-	const onClickSubscribeChange = () => {
-		// TODO: 플랜을 업그레이드 할 때만, 구독 정보 확인 팝업이 뜬다.
-		onSubscribeCheckModalOpen();
-
-		// 각 케이스 별로
-		// const messageDialogData = PAYMENT_MESSAGE_MODAL.BAN_DOWNGRADE_YEAR_PLAN;
-		// onOpenMessageDialog({
-		// 	title: messageDialogData.title,
-		// 	message: messageDialogData.message,
-		// 	buttons: (
-		// 		<>
-		// 			<Button
-		// 				variant="contained"
-		// 				color="black"
-		// 				onClick={() => {
-		// 					// TODO:
-		// 				}}>
-		// 				확인
-		// 			</Button>
-		// 		</>
-		// 	),
-		// });
-	};
-
-	return (
-		<Stack flexDirection="row" alignItems="center" mt="30px">
-			{isAvailableSelect ? (
-				<>
-					<Button
-						disabled={!isPlanChanged}
-						height={40}
-						sx={{
-							marginRight: '8px',
-						}}
-						onClick={onClickSubscribeChange}>
-						구독설정 변경
-					</Button>
-					<Button
-						variant="outlined"
-						color="grey-100"
-						height={40}
-						onClick={() => setIsAvailableSelect(false)}>
-						취소
-					</Button>
-				</>
-			) : (
-				<>
-					<Button
-						height={40}
-						onClick={() => setIsAvailableSelect(true)}>
-						{isTrial ? '플랜 업그레이드' : '플랜 변경하기'}
-					</Button>
-					{!isTrial && <CancelSubscribe />}
-				</>
-			)}
-		</Stack>
 	);
 };
 

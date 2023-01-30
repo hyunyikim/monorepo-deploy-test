@@ -13,9 +13,7 @@ function CancelSubscribe({}) {
 	const onMessageDialogClose = useMessageDialog((state) => state.onClose);
 	const {data: userPlan} = useGetUserPricePlan();
 
-	const expireDate =
-		userPlan?.payPlanExpireDate &&
-		parse(userPlan?.payPlanExpireDate, DATE_FORMAT, new Date());
+	const expireDate = userPlan.planExpireDate;
 	const dialogMessage =
 		expireDate &&
 		`지금 구독 취소하시면 yyyy년 MM월 dd일까지 이용 가능하고, 그 이후부터 개런티 발급이 제한됩니다. 계속 하시겠어요?`

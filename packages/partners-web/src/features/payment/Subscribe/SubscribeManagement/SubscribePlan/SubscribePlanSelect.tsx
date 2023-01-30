@@ -1,20 +1,19 @@
-import {Dispatch, SetStateAction, useCallback, useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 
-import {Stack, Typography} from '@mui/material';
+import {Backdrop, Stack, Typography} from '@mui/material';
 
 import {PricePlan} from '@/@types';
 import {useChildModalOpen} from '@/utils/hooks';
-
-import {IcChevronDown} from '@/assets/icon';
-import {Button} from '@/components';
-import {IntroductionInquiryDialog} from '@/components';
 import style from '@/assets/styles/style.module.scss';
 import {getChargedPlanDescription} from '@/data';
 import {useGetPricePlanListByPlanType} from '@/stores';
 
+import {IcChevronDown} from '@/assets/icon';
+import {Button, IntroductionInquiryDialog} from '@/components';
+
 interface Props {
 	selectOpen: boolean;
-	setSelectOpen: Dispatch<SetStateAction<boolean>>;
+	setSelectOpen: (value: boolean) => void | null;
 	selectedPlan: PricePlan;
 	onChangePlan: (value: PricePlan) => void;
 }
@@ -91,7 +90,19 @@ function SubscribePlanSelect({
 								onModalOpen={onModalOpen}
 							/>
 						))}
+					<SubscribePlanSelectItem
+						enterprisePlan={{
+							planName: '엔터프라이즈 플랜',
+							planDesc: '개런티 발급량 1,000개 초과',
+						}}
+						onModalOpen={onModalOpen}
+					/>
 				</Stack>
+				<Backdrop
+					open={selectOpen}
+					onClick={() => setSelectOpen(false)}
+					invisible
+				/>
 			</Stack>
 			<IntroductionInquiryDialog
 				open={modalOpen}
@@ -186,18 +197,18 @@ const SubscribePlanSelectSelected = ({
 
 const SubscribePlanSelectItem = ({
 	plan,
+	enterprisePlan,
 	onSelect,
 	onModalOpen,
 }: {
-	plan: PricePlan;
-	onSelect: (value: PricePlan) => void;
+	plan?: PricePlan;
+	enterprisePlan?: {
+		planName: string;
+		planDesc: string;
+	};
+	onSelect?: (value: PricePlan) => void;
 	onModalOpen: () => void;
 }) => {
-	const isEnterprisePlan = useMemo(() => {
-		// return plan.planLevel > 4 ? true : false;
-		return false;
-	}, [plan]);
-
 	return (
 		<Stack
 			flexDirection="row"
@@ -207,7 +218,9 @@ const SubscribePlanSelectItem = ({
 			}}
 			className="cursor-pointer"
 			onClick={() => {
-				onSelect(plan);
+				if (plan && onSelect) {
+					onSelect(plan);
+				}
 			}}>
 			<Stack>
 				<Typography
@@ -215,14 +228,15 @@ const SubscribePlanSelectItem = ({
 					fontWeight="bold"
 					color="white"
 					mb="4px">
-					{plan.planName}
+					{enterprisePlan?.planName || plan?.planName}
 				</Typography>
 				<Typography variant="caption3" color="grey.300">
-					{getChargedPlanDescription(plan.planLimit)}
+					{enterprisePlan?.planDesc ||
+						(plan && getChargedPlanDescription(plan.planLimit))}
 				</Typography>
 			</Stack>
 			<Stack flexDirection="row" alignItems="center">
-				{isEnterprisePlan ? (
+				{enterprisePlan ? (
 					<InquiryButton onOpen={onModalOpen} />
 				) : (
 					<>
@@ -231,7 +245,10 @@ const SubscribePlanSelectItem = ({
 							fontWeight="bold"
 							color="white"
 							mr=" 2px">
-							{`₩${plan.planPrice?.toLocaleString() || ''}`}
+							{`₩${
+								(plan && plan?.planPrice?.toLocaleString()) ||
+								''
+							}`}
 						</Typography>
 						<Typography variant="caption3" color="white">
 							월

@@ -1,16 +1,15 @@
 import {Options} from '@/@types';
 import {Stack, Tabs, Tab as MuiTab, Theme} from '@mui/material';
-import {SystemStyleObject} from '@mui/system';
 import {SxProps} from '@mui/system';
 
 interface Props {
 	tabLabel: string;
 	selected: any;
 	options: Options;
-	sx?: SystemStyleObject<Theme>;
+	sx?: SxProps<Theme>;
 	children?: React.ReactNode;
 	handleChange: (
-		event: React.SyntheticEvent<Element, Event>,
+		event: React.SyntheticEvent<Element, Event> | any,
 		value: any
 	) => void;
 }
@@ -24,7 +23,6 @@ function Tab({
 	handleChange,
 }: Props) {
 	return (
-		// TODO: style 에러
 		<Stack
 			mt={{
 				xs: '16px',
@@ -32,11 +30,13 @@ function Tab({
 			}}
 			flexDirection="row"
 			justifyContent={children ? 'space-between' : 'flex-start'}
-			sx={{
-				borderBottom: 1,
-				borderColor: 'divider',
-				...sx,
-			}}>
+			sx={[
+				{
+					boxShadow: (theme) =>
+						`0px -1px 0px 0px ${theme.palette.grey[100]} inset`,
+				},
+				...(Array.isArray(sx) ? sx : [sx]),
+			]}>
 			<Tabs
 				value={selected || options[0].value}
 				onChange={handleChange}
@@ -50,6 +50,8 @@ function Tab({
 						'&.Mui-selected': {
 							fontWeight: 700,
 						},
+						// TODO: 반응형
+						minHeight: '60px',
 					},
 				}}>
 				{options?.map((option) => (
@@ -57,6 +59,9 @@ function Tab({
 						key={option.value}
 						label={option.label}
 						value={option.value}
+						onClick={() => {
+							handleChange(null, option.value);
+						}}
 						{...a11yProps(option.value)}
 					/>
 				))}

@@ -1,31 +1,56 @@
-import {Divider, Grid, Stack, Typography} from '@mui/material';
-import {SxProps} from '@mui/system';
+import {Divider, Grid, Stack, Theme, Typography} from '@mui/material';
+import {SxProps, SystemStyleObject} from '@mui/system';
 
-import {PricePlan} from '@/@types';
+import {
+	TotalSbuscribeInfoPreviewData,
+	SbuscribeInfoPreviewData,
+} from '@/@types';
 
 interface Props {
-	selectedPlan: PricePlan;
+	data: TotalSbuscribeInfoPreviewData;
 	sx?: SxProps;
 }
 
-// TODO: 선택된 플랜 마다 변경 되도록 수정
-function SubscribeInfoPreview({selectedPlan, sx = []}: Props) {
+const previewStyle: SystemStyleObject<Theme> = {
+	width: '100%',
+	minHeight: '116px',
+	backgroundColor: 'grey.50',
+	border: (theme) => `1px solid ${theme.palette.grey[100]}`,
+	borderRadius: '8px',
+	color: (theme) => theme.palette.grey[900],
+	padding: '20px',
+};
+
+function SubscribeInfoPreview({data, sx = []}: Props) {
 	return (
 		<Stack
 			className="flex-center"
-			sx={[
-				{
-					width: '100%',
-					maxWidth: '346px',
-					minHeight: '116px',
-					backgroundColor: 'grey.50',
-					border: (theme) => `1px solid ${theme.palette.grey[100]}`,
-					borderRadius: '8px',
-					color: (theme) => theme.palette.grey[900],
-					padding: '20px',
-				},
-				...(Array.isArray(sx) ? sx : [sx]),
-			]}>
+			flexDirection="column"
+			gap="12px"
+			sx={[...(Array.isArray(sx) ? sx : [sx])]}>
+			<SubscribeInfoPreviewItem subscribeType="new" data={data?.data} />
+			{data?.canceledData && (
+				<SubscribeInfoPreviewItem
+					subscribeType="cancel"
+					data={data.canceledData}
+				/>
+			)}
+			{data?.totalPaidPrice && (
+				<TotalPrice totalPaidPrice={data?.totalPaidPrice || 0} />
+			)}
+		</Stack>
+	);
+}
+
+const SubscribeInfoPreviewItem = ({
+	subscribeType,
+	data,
+}: {
+	subscribeType: 'new' | 'cancel';
+	data: SbuscribeInfoPreviewData;
+}) => {
+	return (
+		<Stack className="flex-center" sx={[previewStyle]}>
 			<Grid
 				container
 				columns={3}
@@ -42,12 +67,12 @@ function SubscribeInfoPreview({selectedPlan, sx = []}: Props) {
 				}}>
 				<Grid item xs={1}>
 					<Typography variant="body3" fontWeight="bold">
-						새로운 구독
+						{subscribeType === 'new' ? '새로운 구독' : '구독취소'}
 					</Typography>
 				</Grid>
 				<Grid item xs={2}>
 					<Typography variant="caption1" color="grey.500">
-						2022.12.19 - 2023.12.19
+						{data?.subscribeDuration}
 					</Typography>
 				</Grid>
 				<Grid item xs={1}>
@@ -55,12 +80,12 @@ function SubscribeInfoPreview({selectedPlan, sx = []}: Props) {
 						variant="caption1"
 						fontWeight="bold"
 						color="grey.600">
-						엑스스몰
+						{data?.planName}
 					</Typography>
 				</Grid>
 				<Grid item xs={2}>
 					<Typography variant="body3" fontWeight="bold" fontSize={14}>
-						₩480,000
+						₩{(data?.displayTotalPrice || 0).toLocaleString()}
 					</Typography>
 				</Grid>
 				<Grid item xs={1}>
@@ -73,20 +98,43 @@ function SubscribeInfoPreview({selectedPlan, sx = []}: Props) {
 				</Grid>
 				<Grid item xs={2}>
 					<Typography fontSize={13} fontWeight={400} color="grey.600">
-						₩480,000
+						₩{(data?.planTotalPrice || 0).toLocaleString()}
 					</Typography>
 				</Grid>
+				{!!data?.discountTotalPrice && (
+					<>
+						<Grid item xs={1}>
+							<Typography
+								variant="caption1"
+								color="grey.600"
+								className="list-dot">
+								할인금액
+							</Typography>
+						</Grid>
+						<Grid item xs={2}>
+							<Typography
+								fontSize={13}
+								fontWeight={400}
+								color="grey.600">
+								₩
+								{(
+									data?.discountTotalPrice || 0
+								).toLocaleString()}
+							</Typography>
+						</Grid>
+					</>
+				)}
 				<Grid item xs={1}>
 					<Typography
 						variant="caption1"
 						color="grey.600"
 						className="list-dot">
-						정상가
+						구독료
 					</Typography>
 				</Grid>
 				<Grid item xs={2}>
 					<Typography fontSize={13} fontWeight={400} color="grey.600">
-						₩480,000
+						₩{(data?.totalPrice || 0).toLocaleString()}
 					</Typography>
 				</Grid>
 				<Divider
@@ -107,7 +155,7 @@ function SubscribeInfoPreview({selectedPlan, sx = []}: Props) {
 				</Grid>
 				<Grid item xs={2}>
 					<Typography variant="body3" fontWeight="bold">
-						₩480,000
+						₩{(data?.totalPrice || 0).toLocaleString()}
 					</Typography>
 				</Grid>
 				<Grid item xs={1}>
@@ -120,12 +168,38 @@ function SubscribeInfoPreview({selectedPlan, sx = []}: Props) {
 				</Grid>
 				<Grid item xs={2}>
 					<Typography variant="body3" fontWeight="bold">
-						2022.12.19
+						{data?.payApprovedAt}
 					</Typography>
 				</Grid>
 			</Grid>
 		</Stack>
 	);
-}
+};
+
+const TotalPrice = ({totalPaidPrice}: {totalPaidPrice: number}) => {
+	return (
+		<Stack
+			flexDirection="row"
+			justifyContent="space-between"
+			sx={[
+				previewStyle,
+				{
+					minHeight: '56px',
+				},
+			]}>
+			<Stack flexDirection="row" alignItems="center">
+				<Typography variant="body3" fontWeight="bold" mr="5px">
+					총 결제 금액
+				</Typography>
+				<Typography variant="body3" fontWeight="400">
+					Ⓑ - Ⓐ
+				</Typography>
+			</Stack>
+			<Typography variant="body3" fontWeight="bold" color="primary.main">
+				₩{(totalPaidPrice || 0).toLocaleString()}
+			</Typography>
+		</Stack>
+	);
+};
 
 export default SubscribeInfoPreview;

@@ -1,4 +1,7 @@
 import {Suspense} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {parse, stringify} from 'qs';
+
 import {Typography, Stack} from '@mui/material';
 
 import {useChildModalOpen, useTabQueryParam} from '@/utils/hooks';
@@ -9,13 +12,13 @@ import PaymentReceiptTab from './PaymentReceipt/PaymentReceiptTab';
 import AddPaymentCardModal from '../common/AddPaymentCardModal';
 
 function PaymentInformation() {
+	const location = useLocation();
+	const navigate = useNavigate();
 	const {selectedValue, handleChangeTab} = useTabQueryParam({
 		key: 'mode',
 		defaultValue: 'card',
 	});
-
 	const {open, onOpen, onClose} = useChildModalOpen({});
-
 	return (
 		<>
 			<ContentWrapper fullWidth={true}>
@@ -27,15 +30,29 @@ function PaymentInformation() {
 						{label: '카드', value: 'card'},
 						{label: '영수증', value: 'receipt'},
 					]}
-					handleChange={(e, value) =>
-						handleChangeTab(value as string)
-					}
+					handleChange={(e, value) => {
+						handleChangeTab(value as string);
+						const {pathname, search} = location;
+						const {idx, ...parsed} = parse(search);
+						if (idx) {
+							navigate(
+								`${pathname}${stringify(parsed, {
+									addQueryPrefix: true,
+								})}`,
+								{
+									replace: true,
+								}
+							);
+						}
+					}}
 					sx={{
 						marginTop: '16px !important',
 					}}>
-					<Button height={32} onClick={onOpen}>
-						결제 카드 추가
-					</Button>
+					{selectedValue === 'card' && (
+						<Button height={32} onClick={onOpen}>
+							결제 카드 추가
+						</Button>
+					)}
 				</Tab>
 				<Stack>
 					{selectedValue === 'card' && (

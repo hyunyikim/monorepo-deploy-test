@@ -13,7 +13,10 @@ function PaymentCardDetailModal({data, open, onClose}: Props) {
 	return (
 		<Dialog
 			TitleComponent={
-				<Typography variant="subtitle1" fontWeight="bold">
+				<Typography
+					component={'span'}
+					variant="subtitle1"
+					fontWeight="bold">
 					카드 정보
 				</Typography>
 			}

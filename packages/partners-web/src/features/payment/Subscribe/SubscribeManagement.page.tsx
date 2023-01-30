@@ -1,4 +1,7 @@
 import {Suspense} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {parse, stringify} from 'qs';
+
 import {Link, Stack, Typography, Skeleton} from '@mui/material';
 
 import {ContentWrapper, Tab} from '@/components';
@@ -11,11 +14,12 @@ import {IcChevronRight} from '@/assets/icon';
 import style from '@/assets/styles/style.module.scss';
 
 function SubscribeManagement() {
+	const location = useLocation();
+	const navigate = useNavigate();
 	const {selectedValue, handleChangeTab} = useTabQueryParam({
 		key: 'mode',
 		defaultValue: 'management',
 	});
-
 	return (
 		<ContentWrapper fullWidth={true}>
 			<Typography variant="header1">서비스 구독 관리</Typography>
@@ -26,7 +30,21 @@ function SubscribeManagement() {
 					{label: '구독관리', value: 'management'},
 					{label: '구독내역', value: 'history'},
 				]}
-				handleChange={(e, value) => handleChangeTab(value as string)}
+				handleChange={(e, value) => {
+					handleChangeTab(value as string);
+					const {pathname, search} = location;
+					const {idx, ...parsed} = parse(search);
+					if (idx) {
+						navigate(
+							`${pathname}${stringify(parsed, {
+								addQueryPrefix: true,
+							})}`,
+							{
+								replace: true,
+							}
+						);
+					}
+				}}
 				sx={{
 					marginTop: '16px !important',
 				}}>
@@ -67,7 +85,11 @@ const Fallback = () => (
 			flex={1}
 			gap="24px"
 			mt="32px">
-			<Stack>{new Array(2).fill(<FallbackItem />)}</Stack>
+			<Stack>
+				{new Array(2).fill(null).map((_, idx) => (
+					<FallbackItem key={idx} />
+				))}
+			</Stack>
 			<Stack
 				sx={{
 					borderRadius: '8px',

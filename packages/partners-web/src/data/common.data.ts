@@ -1,4 +1,5 @@
 export const DATE_FORMAT = 'yyyy-MM-dd';
+export const DATE_FORMAT_SEPERATOR_DOT = 'yyyy.MM.dd';
 export const CARD_DESIGN_GUIDE_LINK =
 	'https://guide.vircle.co.kr/guarantee-setting';
 

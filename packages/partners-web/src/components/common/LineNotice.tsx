@@ -37,15 +37,11 @@ function LineNotice({color, content, sx}: Props) {
 			<Stack ml={1}>
 				{Array.isArray(content) ? (
 					<>
-						<Typography variant="caption3" fontWeight="bold">
-							{content[0]}
-						</Typography>
+						<Typography variant="caption1">{content[0]}</Typography>
 						{content[1]}
 					</>
 				) : (
-					<Typography variant="caption3" fontWeight="bold">
-						{content}
-					</Typography>
+					<Typography variant="caption1">{content}</Typography>
 				)}
 			</Stack>
 		</Stack>

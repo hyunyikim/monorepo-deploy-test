@@ -1,44 +1,93 @@
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+
 import {Stack, Typography} from '@mui/material';
 
-import {PricePlan} from '@/@types';
+import {
+	PricePlan,
+	SbuscribeInfoPreviewData,
+	Card,
+	PatchPlanRequestParam,
+} from '@/@types';
 import {Button, Dialog} from '@/components';
-import {useMessageDialog} from '@/stores';
+import {useMessageDialog, useGetUserPricePlan} from '@/stores';
 
 import SubscribeInfoPreview from '@/features/payment/common/SubscribeInfoPreview';
 import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBullet';
 import AddPaymentCardModal from '@/features/payment/common/AddPaymentCardModal';
 import {useChildModalOpen} from '@/utils/hooks';
+import {patchPricePlan} from '@/api/payment.api';
 
 interface Props {
 	selectedPlan: PricePlan;
+	subscribePreview: SbuscribeInfoPreviewData;
 	open: boolean;
+	onOpen: () => void;
 	onClose: () => void;
 }
 
-function SubscribeCheckModal({selectedPlan, open, onClose}: Props) {
+function SubscribeCheckModal({
+	selectedPlan,
+	subscribePreview,
+	open,
+	onOpen,
+	onClose,
+}: Props) {
+	const queryClient = useQueryClient();
+	const {data: userPlan} = useGetUserPricePlan();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
-	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 	const {
 		open: openAddPaymentModal,
 		onOpen: onOpenAddPaymentModal,
 		onClose: onCloseAddPaymentModal,
 	} = useChildModalOpen({});
 
-	const onClickSubscribeChange = async () => {
-		// TODO: 결제 카드 등록 여부 확인
-		// 등록 안 되어있다면 결제 카드 등록 후 업그레이드 진행
-		// 등록 되어있다면 업그레이드 진행
+	const patchPricePlanMutation = useMutation({
+		mutationFn: (data?: PatchPlanRequestParam) => patchPricePlan(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['userPricePlan', 'userPaymentHistoryList'],
+			});
+			onOpenMessageDialog({
+				title: '구독 플랜이 변경됐습니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+				onCloseFunc: onClose,
+			});
+		},
+		onError: (e) => {
+			onOpenMessageDialog({
+				title: '구독 플랜 변경 실패', // TODO: error message
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+			});
+		},
+	});
 
-		// TODO:
-		if (true) {
-			onOpenAddPaymentModal();
+	const onClickSubscribeChange = async () => {
+		const isUserRegisterCard = (card?: Card) => (card ? true : false);
+		if (isUserRegisterCard(userPlan?.card)) {
+			await patchPricePlanMutation.mutateAsync({
+				customerKey: '',
+				planId: selectedPlan.planId,
+			});
+			return;
 		}
+
+		// 카드 등록 안되어있다면 카드 등록 선진행 후 플랜 업그레이드 진행
+		onClose();
+		onOpenAddPaymentModal();
 	};
+
 	return (
 		<>
 			<Dialog
 				TitleComponent={
-					<Typography variant="header1">구독 변경하기</Typography>
+					<Typography
+						component="span"
+						variant="header1"
+						fontWeight="bold">
+						구독 변경하기
+					</Typography>
 				}
 				ActionComponent={
 					<>
@@ -46,36 +95,14 @@ function SubscribeCheckModal({selectedPlan, open, onClose}: Props) {
 							variant="outlined"
 							color="grey-100"
 							height={32}
-							onClick={() => {
-								onOpenMessageDialog({
-									title: '플랜 업그레이드를 취소할까요?',
-									buttons: (
-										<>
-											<Button
-												variant="outlined"
-												color="grey-100"
-												onClick={onCloseMessageDialog}>
-												아니오
-											</Button>
-											<Button
-												color="black"
-												onClick={() => {
-													onClose();
-													onCloseMessageDialog();
-												}}>
-												예
-											</Button>
-										</>
-									),
-								});
-							}}>
+							onClick={onClose}>
 							닫기
 						</Button>
 						<Button
 							color="primary"
 							height={32}
 							onClick={onClickSubscribeChange}>
-							확인
+							구독 변경
 						</Button>
 					</>
 				}
@@ -105,7 +132,9 @@ function SubscribeCheckModal({selectedPlan, open, onClose}: Props) {
 							width: '100%',
 						}}>
 						<SubscribeInfoPreview
-							selectedPlan={selectedPlan}
+							data={{
+								data: subscribePreview,
+							}}
 							sx={{
 								width: '100%',
 								maxWidth: {
@@ -163,9 +192,11 @@ function SubscribeCheckModal({selectedPlan, open, onClose}: Props) {
 								backgroundColor: theme.palette.grey[50],
 							})}
 							data={[
-								'업그레이드 시 기존 개런티 발급량이 남아 있다면 업그레이드한 플랜에 함께 적용됩니다.',
+								'업그레이드 시 기존 개런티 발급량이 남아 있다면 업그레이드한 플랜에 함께 적용됩니다. ',
 								'환불은 카드취소가 불가능할 경우 고객센터를 통해 문의 주시면 사용일수를 계산해 지정계좌로 입금 해드립니다.',
+								'연결제 이용중 플랜의 업그레이드를 할 경우에는 플랜의 잔여 기간 만큼 업그레이드 한 플랜의 구독료가 결제 됩니다.',
 								'연결제 이용중 플랜의 구독을 취소하거나 다운그레이드 할 경우에는 위약금 규정에 따라 위약금을 공제 후 차액을 환불 해드립니다.',
+								'연결제 이용중 월결제로 변경 할 경우에는 연결제 계약이 끝나는 다음달부터 월단위로 결제가 진행됩니다.',
 							]}
 						/>
 					</Stack>
@@ -174,6 +205,7 @@ function SubscribeCheckModal({selectedPlan, open, onClose}: Props) {
 			<AddPaymentCardModal
 				open={openAddPaymentModal}
 				onClose={onCloseAddPaymentModal}
+				afterAddPaymentCardFunc={onOpen}
 			/>
 		</>
 	);

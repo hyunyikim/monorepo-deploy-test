@@ -36,7 +36,10 @@ function SubscribeHistoryDetail({idx}: Props) {
 					variant="body3"
 					fontWeight="bold"
 					color="primary.main"
-					className="flex-center cursor-pointer">
+					className="flex-center cursor-pointer"
+					onClick={() => {
+						window.print();
+					}}>
 					<IcPrinter
 						width={16}
 						height={16}
