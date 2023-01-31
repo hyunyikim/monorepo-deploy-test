@@ -17,6 +17,14 @@ export class RegisterBillingCommand implements ICommand {
 	) {}
 }
 
+export class RegisterFreeBillingCommand implements ICommand {
+	constructor(
+		readonly partnerIdx: number,
+		readonly planMonth?: number,
+		readonly planLimit?: number
+	) {}
+}
+
 export class UnregisterBillingCommand implements ICommand {
 	constructor(readonly customerKey: string) {}
 }

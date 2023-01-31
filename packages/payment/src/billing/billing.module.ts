@@ -11,6 +11,7 @@ import {JwtModule} from '@nestjs/jwt';
 import {
 	CancelPaymentHandler,
 	RegisterBillingHandler,
+	RegisterFreeBillingHandler,
 	UnregisterBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
@@ -73,6 +74,7 @@ const app: Provider[] = [
 	// Command Handler
 	CancelPaymentHandler,
 	RegisterBillingHandler,
+	RegisterFreeBillingHandler,
 	UnregisterBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,

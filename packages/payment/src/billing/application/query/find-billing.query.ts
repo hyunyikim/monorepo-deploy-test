@@ -5,7 +5,6 @@ import {BillingRepository} from '../../domain/repository';
 import {BillingProps} from '../../domain';
 import {TokenInfo} from '../../interface/getToken.decorator';
 import {VircleCoreAPI} from '../../infrastructure/api-client/vircleCoreApi';
-import {DateTime} from 'luxon';
 
 export class FindBillingByPartnerTokenQuery implements IQuery {
 	constructor(readonly token: TokenInfo) {}

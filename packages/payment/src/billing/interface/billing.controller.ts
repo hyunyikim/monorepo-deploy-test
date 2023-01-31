@@ -7,21 +7,20 @@ import {
 	Post,
 	Patch,
 	UseGuards,
-	UnauthorizedException,
 	Param,
 	UseFilters,
 } from '@nestjs/common';
 import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {
-	FindBillingDTO,
 	RegisterBillingBodyDTO,
-	UnregisterBillingDTO,
 	ChangeBillingPlanBodyDTO,
+	RegisterFreeBillingBodyDTO,
 } from './dto';
 import {
 	RegisterBillingCommand,
 	UnregisterBillingCommand,
 	ChangeBillingPlanCommand,
+	RegisterFreeBillingCommand,
 } from '../application/command';
 import {
 	FindBillingByPartnerTokenQuery,
@@ -29,7 +28,7 @@ import {
 	FindPlanQuery,
 	FindPaymentByOrderIdQuery,
 } from '../application/query';
-import {BillingProps, Payment, PaymentProps, PricePlanProps} from '../domain';
+import {BillingProps, PaymentProps, PricePlanProps} from '../domain';
 import {JwtAuthGuard} from './guards/jwt-auth.guard';
 import {GetToken, TokenInfo} from './getToken.decorator';
 import {createHmac} from 'crypto';
@@ -41,7 +40,7 @@ class BillingInterface {
 	readonly customerKey: string;
 	readonly pricePlan: PricePlanProps;
 	readonly nextPricePlan?: PricePlanProps;
-	readonly card: {
+	readonly card?: {
 		cardType: string;
 		ownerType: string;
 		number: string;
@@ -57,21 +56,29 @@ class BillingInterface {
 		this.customerKey = billing.customerKey;
 		this.pricePlan = billing.pricePlan;
 		this.nextPricePlan = billing.nextPricePlan;
-		this.card = {
-			cardType: billing.card.cardType,
-			ownerType: billing.card.ownerType,
-			number: billing.card.number,
-			company: billing.card.company,
-			companyCode: billing.card.issuerCode,
-		};
+		this.card = billing.card
+			? {
+					cardType: billing.card.cardType,
+					ownerType: billing.card.ownerType,
+					number: billing.card.number,
+					company: billing.card.company,
+					companyCode: billing.card.issuerCode,
+			  }
+			: undefined;
 		this.usedNftCount = billing.usedNftCount ?? 0;
-		this.planStartedAt = billing.authenticatedAt;
+		this.planStartedAt = DateTime.fromISO(billing.authenticatedAt).toFormat(
+			'yyyy-MM-dd HH:mm:ss'
+		);
 		this.planExpireDate = billing.nextPaymentAt
 			? DateTime.fromISO(billing.nextPaymentAt)
 					.plus({milliseconds: -1})
-					.toISO()
+					.toFormat('yyyy-MM-dd HH:mm:ss')
 			: undefined;
-		this.nextPlanStartDate = billing.nextPaymentAt;
+		this.nextPlanStartDate = billing.nextPaymentAt
+			? DateTime.fromISO(billing.nextPaymentAt).toFormat(
+					'yyyy-MM-dd HH:mm:ss'
+			  )
+			: undefined;
 	}
 }
 
@@ -189,6 +196,31 @@ export class BillingController {
 	}
 
 	/**
+	 * 무료플랜 생성 API
+	 *
+	 * @param planMonth
+	 * @param planLimit
+	 * @param token
+	 */
+	@Post('/free')
+	@UseGuards(JwtAuthGuard)
+	async registerFreeBilling(
+		@Body()
+		{planMonth, planLimit}: RegisterFreeBillingBodyDTO,
+		@GetToken() token: TokenInfo
+	) {
+		// 무료 플랜 생성 커맨드 실행
+		const registerCommand = new RegisterFreeBillingCommand(
+			token.partnerIdx,
+			planMonth,
+			planLimit
+		);
+		await this.commandBus.execute(registerCommand);
+
+		return this.getBilling(token);
+	}
+
+	/**
 	 * 구독 취소 API
 	 * @param token
 	 */
@@ -203,13 +235,6 @@ export class BillingController {
 			FindBillingByPartnerTokenQuery,
 			BillingProps
 		>(query);
-
-		// 회원 검증
-		if (billingProps.partnerIdx !== partnerIdx) {
-			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
-		}
-
-		// TODO: 구독 상태 체크
 
 		// 구독 취소 커맨드 실행
 		const command = new UnregisterBillingCommand(billingProps.customerKey);
@@ -227,8 +252,6 @@ export class BillingController {
 		@Param('orderId') orderId: string,
 		@GetToken() token: TokenInfo
 	) {
-		const {partnerIdx} = token;
-
 		// 결제 조회
 		const query = new FindPaymentByOrderIdQuery(orderId);
 		const paymentProps = await this.queryBus.execute<
@@ -288,11 +311,6 @@ export class BillingController {
 			BillingProps
 		>(query);
 
-		// 회원 검증
-		if (billingProps.partnerIdx !== partnerIdx) {
-			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
-		}
-
 		return new BillingInterface(billingProps);
 	}
 
@@ -316,11 +334,6 @@ export class BillingController {
 			FindBillingByPartnerTokenQuery,
 			BillingProps
 		>(query);
-
-		// 회원 검증
-		if (billingProps.partnerIdx !== partnerIdx) {
-			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
-		}
 
 		// 구독 변경 커맨드 실행
 		const command = new ChangeBillingPlanCommand(

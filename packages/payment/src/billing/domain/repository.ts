@@ -33,4 +33,7 @@ export interface PlanRepository {
 		planType?: 'YEAR' | 'MONTH'
 	) => Promise<PricePlanProps[]>;
 	findByPlanId: (planId: string) => Promise<PricePlanProps | null>;
+	findFreePlan: (
+		planType?: 'YEAR' | 'MONTH'
+	) => Promise<PricePlanProps | null>;
 }

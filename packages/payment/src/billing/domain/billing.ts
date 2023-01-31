@@ -45,6 +45,7 @@ export type BillingProps = TossBilling & {
 
 /**
  * 정기구독
+ * TODO: 추후 구독 정보와 PG사의 빌링 등록 내역을 분리하면 좋을 듯
  */
 export class PlanBilling extends AggregateRoot implements Billing {
 	private orderId?: string;
@@ -129,12 +130,16 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.orderId = payment.orderId;
 		this.lastPaymentKey = payment.paymentKey;
 		this.lastPaymentAt = now.toISO();
-		this.nextPaymentAt = now
-			.plus({
-				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
-				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
-			})
-			.toISO();
+
+		// 무료플랜 및 직접 만료일자를 넣어준 경우 예외처리
+		if (!this.nextPaymentAt) {
+			this.nextPaymentAt = now
+				.plus({
+					year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
+					month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+				})
+				.toISO();
+		}
 		const event = new BillingApprovedEvent(this.properties(), payment);
 		this.apply(event);
 	}

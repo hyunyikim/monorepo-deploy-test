@@ -60,4 +60,14 @@ export class PricePlanRepository
 		if (!Item) return null;
 		return new PricePlan(Item as PricePlanProps);
 	}
+
+	/**
+	 * 무료 플랜 찾기
+	 */
+	async findFreePlan(planType: 'YEAR' | 'MONTH' = 'MONTH') {
+		const plans: PricePlan[] = await this.getAll(false);
+		return plans.filter(
+			(plan) => plan.planLevel === 0 && plan.planType === planType
+		)[0];
+	}
 }

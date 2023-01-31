@@ -1,4 +1,4 @@
-import {IsString} from 'class-validator';
+import {IsNumber, IsString} from 'class-validator';
 
 export class RegisterBillingBodyDTO {
 	@IsString()
@@ -21,6 +21,14 @@ export class RegisterBillingBodyDTO {
 
 	@IsString()
 	readonly customerEmail: string;
+}
+
+export class RegisterFreeBillingBodyDTO {
+	@IsNumber()
+	readonly planMonth?: number;
+
+	@IsNumber()
+	readonly planLimit?: number;
 }
 
 export class UnregisterBillingDTO {

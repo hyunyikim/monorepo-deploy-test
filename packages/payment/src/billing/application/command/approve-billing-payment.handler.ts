@@ -54,8 +54,6 @@ export class ApproveBillingPaymentHandler
 		billing.approve(payment.properties());
 		await this.billingRepo.saveBilling(billing);
 
-		// TODO: 변경된 구독플랜 정보를 Core API로 Partnership에 업데이트하는 로직 추가
-
 		payment.commit();
 		billing.commit();
 	}
