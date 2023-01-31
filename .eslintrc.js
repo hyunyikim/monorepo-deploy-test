@@ -49,7 +49,7 @@ module.exports = {
 		{
 			files: [
 				'packages/ui-component/**/*.ts?(x)',
-				'packages/ui-component/**/*.js?(x)',
+				// 'packages/ui-component/**/*.js?(x)',
 			],
 			settings: {
 				'import/resolver': {
@@ -65,7 +65,7 @@ module.exports = {
 		{
 			files: [
 				'packages/admin-web/**/*.ts?(x)',
-				'packages/admin-web/**/*.js?(x)',
+				// 'packages/admin-web/**/*.js?(x)',
 			],
 			settings: {
 				'import/resolver': {
@@ -81,7 +81,7 @@ module.exports = {
 		{
 			files: [
 				'packages/cafe24-interwork/**/*.ts?(x)',
-				'packages/cafe24-interwork/**/*.js?(x)',
+				// 'packages/cafe24-interwork/**/*.js?(x)',
 			],
 			settings: {
 				'import/resolver': {
