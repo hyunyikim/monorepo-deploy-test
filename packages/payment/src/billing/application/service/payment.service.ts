@@ -21,7 +21,7 @@ export class RegularPaymentService {
 		@Inject(PlanBillingRepository)
 		private readonly billingRepo: BillingRepository,
 		@Inject(PricePlanRepository)
-		private readonly planRepository: PlanRepository,
+		private readonly planRepo: PlanRepository,
 		@Inject(InjectionToken.CRON_TASK_ON) private readonly cronTask: boolean,
 		@Inject(Logger) private readonly logger: Logger
 	) {}

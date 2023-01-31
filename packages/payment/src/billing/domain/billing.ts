@@ -84,7 +84,9 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			lastPaymentKey: this.lastPaymentKey,
 			planExpireDate: this.planExpireDate,
 			nextPaymentDate: this.nextPaymentDate,
-			nextPricePlan: this.nextPricePlan,
+			nextPricePlan: this.nextPricePlan
+				? new PricePlan(this.nextPricePlan)
+				: undefined,
 			usedNftCount: this.usedNftCount,
 		};
 	}
@@ -161,6 +163,6 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	}
 
 	get isRegistered() {
-		return this.unregisteredAt === undefined;
+		return !!this.unregisteredAt;
 	}
 }

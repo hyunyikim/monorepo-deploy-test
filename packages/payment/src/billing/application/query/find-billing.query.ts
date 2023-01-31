@@ -46,9 +46,6 @@ export class FindBillingByCustomerKeyHandler
 
 		billingProps.usedNftCount = total;
 
-		console.log('total: ', total);
-		console.log(billingProps);
-
 		return billingProps;
 	}
 }
