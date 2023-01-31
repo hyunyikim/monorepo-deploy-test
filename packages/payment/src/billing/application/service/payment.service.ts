@@ -113,7 +113,7 @@ export class RegularPaymentService {
 		if (unregisteredAt !== undefined) return false;
 
 		// 카드 정보가 등록되지 않은 경우
-		if (!card || !card.number) return false;
+		if (!card) return false;
 
 		// 다음 결제 예정일자가 없는 경우
 		if (!nextPaymentDate) return false;
