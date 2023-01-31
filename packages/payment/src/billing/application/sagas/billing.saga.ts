@@ -39,15 +39,7 @@ export class BillingSaga {
 	planChanged = (events$: Observable<any>): Observable<ICommand> => {
 		return events$.pipe(
 			ofType(PlanChangedEvent),
-
 			filter((e) => e.billing.unregisteredAt === undefined),
-
-			//filter((e) => e.offset !== 0),
-
-			tap((e) => {
-				console.log('CALL', e.billing.billingKey);
-			}),
-
 			map((e) => this.composeApproveBillingCommand(e.billing))
 		);
 	};
@@ -63,7 +55,8 @@ export class BillingSaga {
 			filter((e) => e.billing.unregisteredAt === undefined),
 			filter(
 				(e) =>
-					DateTime.now() > DateTime.fromISO(e.billing.nextPaymentAt!)
+					DateTime.now() >
+					DateTime.fromISO(e.billing.nextPaymentDate!)
 			),
 			map((e) => this.composeApproveBillingCommand(e.billing))
 		);

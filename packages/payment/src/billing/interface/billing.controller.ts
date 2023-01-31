@@ -66,18 +66,12 @@ class BillingInterface {
 			  }
 			: undefined;
 		this.usedNftCount = billing.usedNftCount ?? 0;
-		this.planStartedAt = DateTime.fromISO(billing.authenticatedAt).toFormat(
-			'yyyy-MM-dd HH:mm:ss'
-		);
-		this.planExpireDate = billing.nextPaymentAt
-			? DateTime.fromISO(billing.nextPaymentAt)
-					.plus({milliseconds: -1})
-					.toFormat('yyyy-MM-dd HH:mm:ss')
+		this.planStartedAt = DateTime.fromISO(billing.authenticatedAt).toISO();
+		this.planExpireDate = billing.planExpireDate
+			? DateTime.fromISO(billing.planExpireDate).toISO()
 			: undefined;
-		this.nextPlanStartDate = billing.nextPaymentAt
-			? DateTime.fromISO(billing.nextPaymentAt).toFormat(
-					'yyyy-MM-dd HH:mm:ss'
-			  )
+		this.nextPlanStartDate = billing.nextPaymentDate
+			? DateTime.fromISO(billing.nextPaymentDate).toISO()
 			: undefined;
 	}
 }
@@ -94,17 +88,15 @@ class PaymentSummaryInterface {
 		this.displayOrderId = tempOrderId[tempOrderId.length - 1];
 		this.orderId = payment.orderId;
 		this.planName = payment.pricePlan.planName;
-		this.startDate = DateTime.fromISO(payment.approvedAt).toFormat(
-			'yyyy-MM-dd'
-		);
+		this.startDate = DateTime.fromISO(payment.approvedAt).toISODate();
 		this.expireDate = payment.expiredAt
-			? DateTime.fromISO(payment.expiredAt).toFormat('yyyy-MM-dd')
+			? DateTime.fromISO(payment.expiredAt).toISODate()
 			: DateTime.fromISO(payment.approvedAt)
 					.plus({
 						year: payment.pricePlan.planType === 'YEAR' ? 1 : 0,
 						month: payment.pricePlan.planType === 'YEAR' ? 0 : 1,
 					})
-					.toFormat('yyyy-MM-dd');
+					.toISODate();
 	}
 }
 
@@ -118,9 +110,7 @@ class PaymentDetailInterface extends PaymentSummaryInterface {
 
 		this.pricePlan = payment.pricePlan;
 		this.canceledPricePlan = undefined; //payment.canceledPricePlan;
-		this.payApprovedAt = DateTime.fromISO(payment.approvedAt).toFormat(
-			'yyyy-MM-dd HH:mm:ss'
-		);
+		this.payApprovedAt = DateTime.fromISO(payment.approvedAt).toISO();
 	}
 }
 

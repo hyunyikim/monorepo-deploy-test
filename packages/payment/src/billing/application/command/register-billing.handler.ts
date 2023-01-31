@@ -110,7 +110,7 @@ export class RegisterFreeBillingHandler
 				throw new ConflictException('ALREADY_USE_PAID_PLAN');
 			}
 
-			// TODO: 무료 플랜을 이용중인 경우에도 현재 플랜을 연장해주는 로직 추가
+			// 무료 플랜을 이용중인 경우 현재 플랜을 연장
 		}
 
 		// 무료플랜 조회
@@ -136,7 +136,7 @@ export class RegisterFreeBillingHandler
 			partnerIdx,
 			pricePlan: freePlan,
 			authenticatedAt: DateTime.now().toISO(),
-			nextPaymentAt: DateTime.now()
+			planExpireDate: DateTime.now()
 				.plus({month: planMonth || 1})
 				.toISO(),
 		} as BillingProps;

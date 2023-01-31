@@ -36,9 +36,10 @@ export type BillingProps = TossBilling & {
 	pricePlan: PricePlanProps;
 	pausedAt?: string;
 	unregisteredAt?: string;
-	nextPaymentAt?: string;
 	lastPaymentAt?: string;
 	lastPaymentKey?: string;
+	planExpireDate?: string;
+	nextPaymentDate?: string;
 	nextPricePlan?: PricePlanProps;
 	usedNftCount?: number;
 };
@@ -51,9 +52,10 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	private orderId?: string;
 	private pausedAt?: string;
 	private unregisteredAt?: string;
-	private nextPaymentAt?: string;
 	private lastPaymentAt?: string;
 	private lastPaymentKey?: string;
+	private planExpireDate?: string;
+	private nextPaymentDate?: string;
 	private nextPricePlan?: PricePlanProps;
 	private usedNftCount?: number;
 
@@ -63,9 +65,10 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.orderId = props?.orderId;
 		this.pausedAt = props?.pausedAt;
 		this.unregisteredAt = props?.unregisteredAt;
-		this.nextPaymentAt = props?.nextPaymentAt;
 		this.lastPaymentAt = props?.lastPaymentAt;
 		this.lastPaymentKey = props?.lastPaymentKey;
+		this.planExpireDate = props?.planExpireDate;
+		this.nextPaymentDate = props?.nextPaymentDate;
 		this.nextPricePlan = props?.nextPricePlan;
 		this.usedNftCount = props?.usedNftCount;
 	}
@@ -77,9 +80,10 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			pricePlan: new PricePlan(this.props.pricePlan),
 			pausedAt: this.pausedAt,
 			unregisteredAt: this.unregisteredAt,
-			nextPaymentAt: this.nextPaymentAt,
 			lastPaymentAt: this.lastPaymentAt,
 			lastPaymentKey: this.lastPaymentKey,
+			planExpireDate: this.planExpireDate,
+			nextPaymentDate: this.nextPaymentDate,
 			nextPricePlan: this.nextPricePlan,
 			usedNftCount: this.usedNftCount,
 		};
@@ -132,8 +136,9 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.lastPaymentAt = now.toISO();
 
 		// 무료플랜 및 직접 만료일자를 넣어준 경우 예외처리
-		if (!this.nextPaymentAt) {
-			this.nextPaymentAt = now
+		if (!this.nextPaymentDate) {
+			this.nextPricePlan = this.props.pricePlan;
+			this.nextPaymentDate = now
 				.plus({
 					year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
 					month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,

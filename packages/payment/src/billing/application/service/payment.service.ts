@@ -106,7 +106,7 @@ export class RegularPaymentService {
 	 * @private
 	 */
 	private isPaymentTiming(billing: Billing) {
-		const {unregisteredAt, nextPaymentAt, pausedAt, card} =
+		const {unregisteredAt, nextPaymentDate, pausedAt, card} =
 			billing.properties();
 
 		// 빌링이 취소된 경우
@@ -116,13 +116,13 @@ export class RegularPaymentService {
 		if (!card || !card.number) return false;
 
 		// 다음 결제 예정일자가 없는 경우
-		if (!nextPaymentAt) return false;
+		if (!nextPaymentDate) return false;
 
 		// 현재 이용중인 플랜이 일시 중지된 경우
 		if (pausedAt !== undefined) return false;
 
 		// 다음 예정 플랜이 무료플랜인 경우
 
-		return DateTime.now() > DateTime.fromISO(nextPaymentAt);
+		return DateTime.now() > DateTime.fromISO(nextPaymentDate);
 	}
 }

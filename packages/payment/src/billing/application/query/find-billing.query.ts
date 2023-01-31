@@ -35,7 +35,7 @@ export class FindBillingByCustomerKeyHandler
 		const billingProps: BillingProps = billing.properties();
 		const payload = {
 			from: billingProps.lastPaymentAt?.substring(0, 19),
-			to: billingProps.nextPaymentAt?.substring(0, 19),
+			to: billingProps.nextPaymentDate?.substring(0, 19),
 		};
 
 		// 사용량 조회
