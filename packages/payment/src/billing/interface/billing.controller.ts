@@ -9,6 +9,7 @@ import {
 	UseGuards,
 	Param,
 	UseFilters,
+	NotFoundException,
 } from '@nestjs/common';
 import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {
@@ -316,14 +317,20 @@ export class BillingController {
 		@GetToken() token: TokenInfo,
 		@Body() body: ChangeBillingPlanBodyDTO
 	) {
-		const {partnerIdx} = token;
-
 		// 구독 조회
 		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
 			FindBillingByPartnerTokenQuery,
 			BillingProps
 		>(query);
+
+		if (
+			!billingProps.customerKey ||
+			!billingProps.card ||
+			!billingProps.card.number
+		) {
+			throw new NotFoundException('NOT_FOUND_BILLING');
+		}
 
 		// 구독 변경 커맨드 실행
 		const command = new ChangeBillingPlanCommand(

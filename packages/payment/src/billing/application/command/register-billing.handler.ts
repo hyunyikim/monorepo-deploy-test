@@ -17,6 +17,8 @@ import {BillingProps, PlanBillingFactory} from '../../domain';
 import {PricePlanRepository} from '../../infrastructure/respository';
 import {DateTime} from 'luxon';
 import {createHmac} from 'crypto';
+import {FindBillingByPartnerTokenQuery} from '../query';
+import {BillingUnregisteredEvent} from '../../domain/event';
 
 /**
  * 빌링 등록 및 구독신청 커맨드 핸들러
@@ -42,6 +44,14 @@ export class RegisterBillingHandler
 		const saved = await this.billingRepo.findByCustomerKey(customerKey);
 		if (saved?.isRegistered) {
 			throw new BadRequestException('ALREADY_REGISTERED_BILLING');
+		}
+
+		// 기존 플랜이 남아 있는 경우 취소처리 (무료플랜 등)
+		const prevBilling = await this.billingRepo.findByPartnerIdx(partnerIdx);
+		if (prevBilling?.isRegistered) {
+			prevBilling.unregister();
+			await this.billingRepo.saveBilling(prevBilling);
+			prevBilling.commit();
 		}
 
 		// 구독플랜 조회
@@ -132,9 +142,11 @@ export class RegisterFreeBillingHandler
 			partnerIdx,
 			pricePlan: freePlan,
 			authenticatedAt: DateTime.now().toISO(),
-			planExpireDate: DateTime.now()
-				.plus({month: planMonth || 1})
-				.toISO(),
+			planExpireDate: `${DateTime.now()
+				.plus({
+					month: planMonth || 1,
+				})
+				.toISODate()} 23:59:59`,
 		} as BillingProps;
 
 		const registered = this.factory.create(billingProps);
