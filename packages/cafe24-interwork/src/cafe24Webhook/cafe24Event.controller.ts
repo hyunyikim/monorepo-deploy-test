@@ -5,7 +5,6 @@ import {
 	Headers,
 	InternalServerErrorException,
 	Post,
-	UseFilters,
 	UseGuards,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from '../cafe24Interwork/cafe24Interwork.service';
@@ -19,12 +18,10 @@ import {
 	WebHookBody,
 } from '../cafe24Interwork';
 import {Cafe24EventService} from './cafe24Event.service';
-import {HttpExceptionFilter} from '../filter';
 import {Cafe24OrderEventHandler} from './cafe24OrderEvent.handler';
 import {ApiHeader} from '@nestjs/swagger';
 
 @Controller({version: '1', path: 'events'})
-@UseFilters(HttpExceptionFilter)
 export class Cafe24EventController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService,

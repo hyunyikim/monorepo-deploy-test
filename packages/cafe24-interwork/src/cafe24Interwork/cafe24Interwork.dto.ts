@@ -1,6 +1,5 @@
 import {EVENT_ORDER_REGISTER_SAMPLE} from './cafe24Interwork.mock';
 import {ApiProperty} from '@nestjs/swagger';
-import {} from 'class-transformer';
 import {IsISO8601, IsNumber, IsObject, IsString} from 'class-validator';
 
 export class WebHookBody<T> {
