@@ -1,45 +1,32 @@
 import {
-	ArgumentsHost,
-	Catch,
 	ExceptionFilter,
+	Catch,
+	ArgumentsHost,
 	HttpException,
-	Inject,
 	InternalServerErrorException,
-	LoggerService,
+	Logger,
 } from '@nestjs/common';
-
 import {Request, Response} from 'express';
-import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-	constructor(
-		@Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
-	) {}
+	catch(err: any, host: ArgumentsHost) {
+		Logger.error(err);
 
-	catch(err: Error, host: ArgumentsHost) {
 		const ctx = host.switchToHttp();
-		const req = ctx.getRequest<Request>();
-		const res = ctx.getResponse<Response>();
-		let exception: HttpException;
+		const response = ctx.getResponse<Response>();
+		const request = ctx.getRequest<Request>();
+		const exception =
+			err instanceof HttpException
+				? err
+				: new InternalServerErrorException(err);
+		const httpStatus = exception.getStatus();
 
-		if (!(err instanceof HttpException)) {
-			exception = new InternalServerErrorException(err);
-		} else {
-			exception = err;
-		}
-
-		this.logger.error({
-			exception,
-			req: {
-				path: req.path,
-				params: req.params,
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				body: req.body,
-				headers: req.headers,
-			},
+		response.status(httpStatus).json({
+			statusCode: httpStatus,
+			timestamp: new Date().toISOString(),
+			path: request.url,
+			message: exception.message,
 		});
-		const response = exception.getResponse();
-		res.status(exception.getStatus()).json(response);
 	}
 }

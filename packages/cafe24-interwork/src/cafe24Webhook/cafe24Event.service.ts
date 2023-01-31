@@ -1,9 +1,4 @@
 import {
-	CAFE24_ORDER_STATUS,
-	WEBHOOK_ACTION,
-	orderStatus2Action,
-} from './../common/constant';
-import {
 	Inject,
 	Injectable,
 	InternalServerErrorException,
@@ -33,6 +28,11 @@ import {
 	map,
 	groupBy,
 } from 'rxjs';
+import {
+	CAFE24_ORDER_STATUS,
+	orderStatus2Action,
+	WEBHOOK_ACTION,
+} from 'src/common/constant/constant';
 
 @Injectable()
 export class Cafe24EventService {
@@ -52,13 +52,13 @@ export class Cafe24EventService {
 		webHook: WebHookBody<EventBatchOrderShipping>
 	) {
 		this.logger.log(
-			`EventType: ${webHook.event_no}
+			`Delivery Hook Start
+			EventType: ${webHook.event_no}
 			OrderIDs: ${webHook.resource.order_id}
-			MallId: ${webHook.resource.mall_id}
-			`
+			MallId: ${webHook.resource.mall_id}`
 		);
 		const hook = await this.addInterworkInfo(webHook);
-
+		this.logger.log(`Passed auth and refreshed token`);
 		const orderItems = of(hook).pipe(
 			concatMap((hook) => this.divideEachOrderId(hook)),
 			mergeMap((hook) => this.addOrderInfo(hook)),
@@ -155,6 +155,7 @@ export class Cafe24EventService {
 			interwork.accessToken.access_token,
 			orderId
 		);
+		this.logger.log(`order: ${JSON.stringify(order)}`);
 		return {
 			order,
 			...hook,
@@ -216,6 +217,7 @@ export class Cafe24EventService {
 						productNo
 				  )
 				: undefined;
+		this.logger.log(`productInfo: ${JSON.stringify(productInfo)}`);
 		return {
 			...hook,
 			productInfo,
@@ -235,6 +237,7 @@ export class Cafe24EventService {
 		},
 		traceId: string
 	) {
+		this.logger.log(`hook.action: ${hook.action}`);
 		switch (hook.action) {
 			case WEBHOOK_ACTION.ISSUE:
 				const issued = await this.issueGuarantee(hook, traceId);
@@ -297,21 +300,25 @@ export class Cafe24EventService {
 		);
 		this.logger.log('ISSUE REQ', nftReq);
 
-		await this.guaranteeReqRepo.putRequest({
-			reqIdx: nftReq.nft_req_idx,
-			reqState: nftReq.nft_req_state,
-			productCode: hook.item.product_code,
-			orderItemCode: hook.item.order_item_code,
-			eventShopNo: hook.item.shop_no,
-			reqAt: DateTime.now().toISO(),
-			mallId: hook.interwork.mallId,
-			orderId: hook.orderId,
-			webhook: hook.webHook,
-			productInfo: hook.productInfo,
-			orderItem: hook.item,
-			canceledAt: null,
-			traceId,
-		});
+		await this.guaranteeReqRepo
+			.putRequest({
+				reqIdx: nftReq.nft_req_idx,
+				reqState: nftReq.nft_req_state,
+				productCode: hook.item.product_code,
+				orderItemCode: hook.item.order_item_code,
+				eventShopNo: hook.item.shop_no,
+				reqAt: DateTime.now().toISO(),
+				mallId: hook.interwork.mallId,
+				orderId: hook.orderId,
+				webhook: hook.webHook,
+				productInfo: hook.productInfo,
+				orderItem: hook.item,
+				canceledAt: null,
+				traceId,
+			})
+			.then((result) => {
+				this.logger.log(`aws ddb guarantee put request success`);
+			});
 
 		return {
 			...hook,
@@ -409,15 +416,19 @@ export class Cafe24EventService {
 			throw new InternalServerErrorException('IDX NOT DEFINED');
 		}
 
-		await this.guaranteeReqRepo.putRequest({
-			reqIdx: idx,
-			orderId: hook.orderId,
-			mallId: hook.interwork.mallId,
-			cancelTraceId: traceId,
-			orderItemCode: hook.item.order_item_code,
-			canceledAt: DateTime.now().toISO(),
-			orderItem: hook.item,
-		});
+		await this.guaranteeReqRepo
+			.putRequest({
+				reqIdx: idx,
+				orderId: hook.orderId,
+				mallId: hook.interwork.mallId,
+				cancelTraceId: traceId,
+				orderItemCode: hook.item.order_item_code,
+				canceledAt: DateTime.now().toISO(),
+				orderItem: hook.item,
+			})
+			.then((result) => {
+				this.logger.log(`aws ddb guarantee put request success`);
+			});
 
 		return hook;
 	}
@@ -460,6 +471,7 @@ export class Cafe24EventService {
 			hook.orderId,
 			hook.interwork.mallId
 		);
+		this.logger.log(`reqList: ${JSON.stringify(reqList)}`);
 
 		let req = reqList.find(
 			(req) =>

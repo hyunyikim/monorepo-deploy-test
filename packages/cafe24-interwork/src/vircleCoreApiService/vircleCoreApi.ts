@@ -1,9 +1,10 @@
-import {Injectable} from '@nestjs/common';
+import {Inject, Injectable, LoggerService} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
 import {Partnership} from '../cafe24Interwork';
 import {Nft} from '@vircle/entity';
 import * as FormData from 'form-data';
 import {Readable} from 'stream';
+import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
 export interface GuaranteeRequestPayload {
 	nftState: string; // "2"
 	productName: string;
@@ -26,7 +27,10 @@ export interface GuaranteeRequestPayload {
 export class VircleCoreAPI {
 	private httpAgent: AxiosInstance;
 
-	constructor(baseURL: string) {
+	constructor(
+		baseURL: string,
+		@Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
+	) {
 		this.httpAgent = Axios.create({
 			baseURL,
 		});
@@ -45,6 +49,7 @@ export class VircleCoreAPI {
 				},
 			}
 		);
+		this.logger.log('vircle api cancel guarantee success');
 		return data;
 	}
 
