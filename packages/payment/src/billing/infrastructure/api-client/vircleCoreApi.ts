@@ -18,7 +18,6 @@ export class VircleCoreAPI {
 		token: string,
 		payload: FindRangePayload
 	): Promise<any> {
-		console.log(payload);
 		const {data} = await this.httpAgent.get<{
 			total: number;
 			confirmed: number;

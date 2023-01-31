@@ -21,7 +21,11 @@ export interface Billing {
 	unregister: () => void;
 	isRegistered: boolean;
 	approve: (payment: PaymentProps) => void;
-	changePlan: (plan: PricePlanProps) => void;
+	changePlan: (
+		plan: PricePlanProps,
+		remainLimit: number,
+		scheduledDate?: string
+	) => void;
 	pause: () => void;
 	resume: () => void;
 	commit: () => void;
@@ -84,7 +88,9 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			lastPaymentKey: this.lastPaymentKey,
 			planExpireDate: this.planExpireDate,
 			nextPaymentDate: this.nextPaymentDate,
-			nextPricePlan: this.nextPricePlan,
+			nextPricePlan: this.nextPricePlan
+				? new PricePlan(this.nextPricePlan)
+				: undefined,
 			usedNftCount: this.usedNftCount,
 		};
 	}
@@ -152,15 +158,26 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	/**
 	 * 플랜 변경
 	 * @param pricePlan
+	 * @param remainLimit
+	 * @param scheduledDate
 	 */
-	changePlan(pricePlan: PricePlanProps): void {
-		const offset = pricePlan.planLevel - this.props.pricePlan.planLevel;
-		this.props.pricePlan = pricePlan;
-		const event = new PlanChangedEvent(this.props, offset);
+	changePlan(
+		pricePlan: PricePlanProps,
+		remainLimit: number,
+		scheduledDate?: string
+	): void {
+		if (!scheduledDate) {
+			this.props.pricePlan = {
+				...pricePlan,
+				planLimit: pricePlan.planLimit + remainLimit,
+			};
+		}
+		this.nextPricePlan = pricePlan;
+		const event = new PlanChangedEvent(this.props, !!scheduledDate);
 		this.apply(event);
 	}
 
 	get isRegistered() {
-		return this.unregisteredAt === undefined;
+		return !!this.unregisteredAt;
 	}
 }

@@ -17,6 +17,8 @@ import {BillingProps, PlanBillingFactory} from '../../domain';
 import {PricePlanRepository} from '../../infrastructure/respository';
 import {DateTime} from 'luxon';
 import {createHmac} from 'crypto';
+import {FindBillingByPartnerTokenQuery} from '../query';
+import {BillingUnregisteredEvent} from '../../domain/event';
 
 /**
  * 빌링 등록 및 구독신청 커맨드 핸들러
@@ -28,26 +30,32 @@ export class RegisterBillingHandler
 	constructor(
 		@Inject(TossPaymentsAPI) private readonly paymentsApi: TossPaymentsAPI,
 		@Inject(PlanBillingRepository)
-		private readonly billingRepository: BillingRepository,
+		private readonly billingRepo: BillingRepository,
 		@Inject(PlanBillingFactory)
 		private readonly factory: PlanBillingFactory,
 		@Inject(PricePlanRepository)
-		private readonly planRepository: PlanRepository
+		private readonly planRepo: PlanRepository
 	) {}
 
 	async execute(command: RegisterBillingCommand): Promise<void> {
 		const {partnerIdx, planId, customerKey, cardInfo} = command;
 
 		// customerKey 중복검사
-		const saved = await this.billingRepository.findByCustomerKey(
-			customerKey
-		);
-		if (saved && saved.isRegistered) {
+		const saved = await this.billingRepo.findByCustomerKey(customerKey);
+		if (saved?.isRegistered) {
 			throw new BadRequestException('ALREADY_REGISTERED_BILLING');
 		}
 
+		// 기존 플랜이 남아 있는 경우 취소처리 (무료플랜 등)
+		const prevBilling = await this.billingRepo.findByPartnerIdx(partnerIdx);
+		if (prevBilling?.isRegistered) {
+			prevBilling.unregister();
+			await this.billingRepo.saveBilling(prevBilling);
+			prevBilling.commit();
+		}
+
 		// 구독플랜 조회
-		const pricePlan = await this.planRepository.findByPlanId(planId);
+		const pricePlan = await this.planRepo.findByPlanId(planId);
 		if (!pricePlan || !pricePlan.activated) {
 			throw new NotFoundException('NOT_FOUND_PLAN');
 		}
@@ -70,7 +78,7 @@ export class RegisterBillingHandler
 		registered.register();
 
 		// DB 저장
-		await this.billingRepository.saveBilling(registered);
+		await this.billingRepo.saveBilling(registered);
 
 		registered.commit();
 	}
@@ -85,20 +93,18 @@ export class RegisterFreeBillingHandler
 {
 	constructor(
 		@Inject(PlanBillingRepository)
-		private readonly billingRepository: BillingRepository,
+		private readonly billingRepo: BillingRepository,
 		@Inject(PlanBillingFactory)
 		private readonly factory: PlanBillingFactory,
 		@Inject(PricePlanRepository)
-		private readonly planRepository: PlanRepository
+		private readonly planRepo: PlanRepository
 	) {}
 
 	async execute(command: RegisterFreeBillingCommand): Promise<void> {
 		const {partnerIdx, planMonth, planLimit} = command;
 
 		// 이미 이용중인 유료 플랜이 있을 경우
-		const billing = await this.billingRepository.findByPartnerIdx(
-			partnerIdx
-		);
+		const billing = await this.billingRepo.findByPartnerIdx(partnerIdx);
 		if (billing) {
 			const billingProps = billing.properties();
 
@@ -114,7 +120,7 @@ export class RegisterFreeBillingHandler
 		}
 
 		// 무료플랜 조회
-		const freePlan = await this.planRepository.findFreePlan();
+		const freePlan = await this.planRepo.findFreePlan();
 		if (!freePlan) {
 			throw new NotFoundException('NOT_FOUND_PLAN');
 		}
@@ -136,15 +142,17 @@ export class RegisterFreeBillingHandler
 			partnerIdx,
 			pricePlan: freePlan,
 			authenticatedAt: DateTime.now().toISO(),
-			planExpireDate: DateTime.now()
-				.plus({month: planMonth || 1})
-				.toISO(),
+			planExpireDate: `${DateTime.now()
+				.plus({
+					month: planMonth || 1,
+				})
+				.toISODate()} 23:59:59`,
 		} as BillingProps;
 
 		const registered = this.factory.create(billingProps);
 
 		// DB 저장
-		await this.billingRepository.saveBilling(registered);
+		await this.billingRepo.saveBilling(registered);
 
 		registered.commit();
 	}
@@ -159,16 +167,14 @@ export class UnregisterBillingHandler
 {
 	constructor(
 		@Inject(PlanBillingRepository)
-		private readonly billingRepository: BillingRepository
+		private readonly billingRepo: BillingRepository
 	) {}
 
 	async execute(command: UnregisterBillingCommand): Promise<void> {
 		const {customerKey} = command;
 
 		// 빌링 조회
-		const billing = await this.billingRepository.findByCustomerKey(
-			customerKey
-		);
+		const billing = await this.billingRepo.findByCustomerKey(customerKey);
 		if (!billing) {
 			throw new NotFoundException('NOT_FOUND_BILLING_RESOURCE');
 		}
@@ -177,7 +183,7 @@ export class UnregisterBillingHandler
 		billing.unregister();
 
 		// DB 저장
-		await this.billingRepository.saveBilling(billing);
+		await this.billingRepo.saveBilling(billing);
 
 		billing.commit();
 	}

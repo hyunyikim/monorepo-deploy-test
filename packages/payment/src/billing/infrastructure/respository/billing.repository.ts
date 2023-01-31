@@ -97,7 +97,6 @@ export class PlanBillingRepository
 		if (!Items || Items.length === 0) return null;
 
 		const entities = Items as BillingEntity[];
-
 		const entity = entities.find((entity) => !entity.unregisteredAt);
 		if (!entity) return null;
 

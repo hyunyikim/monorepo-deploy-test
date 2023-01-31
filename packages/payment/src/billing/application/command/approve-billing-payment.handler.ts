@@ -42,6 +42,18 @@ export class ApproveBillingPaymentHandler
 			payload
 		);
 
+		// 직전 결제건 종료 처리
+		const lastPaymentKey = billing.properties().lastPaymentKey;
+		if (lastPaymentKey) {
+			const lastPayment = await this.paymentRepo.findByKey(
+				lastPaymentKey
+			);
+			if (lastPayment) {
+				lastPayment.expire();
+				await this.paymentRepo.savePayment(lastPayment);
+			}
+		}
+
 		// 결제 내역 DB 저장
 		const payment = this.factory.create({
 			...tossPayment,

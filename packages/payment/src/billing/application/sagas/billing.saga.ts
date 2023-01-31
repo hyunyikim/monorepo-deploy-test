@@ -39,6 +39,7 @@ export class BillingSaga {
 	planChanged = (events$: Observable<any>): Observable<ICommand> => {
 		return events$.pipe(
 			ofType(PlanChangedEvent),
+			filter((e) => !e.scheduled),
 			filter((e) => e.billing.unregisteredAt === undefined),
 			map((e) => this.composeApproveBillingCommand(e.billing))
 		);
