@@ -48,7 +48,8 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 			authInfo: partnershipData?.authInfo,
 			customerCenterUrl: partnershipData?.customerCenterUrl,
 
-			nftBackgroundImage: partnershipData?.nftBackgroundImg,
+			nftBackgroundImage:
+				data?.nftCardImg || partnershipData?.nftBackgroundImg,
 			profileImage: partnershipData?.profileImage,
 			returnInfo: partnershipData?.returnInfo,
 
@@ -62,8 +63,7 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 
 			price: data?.price ? `${data?.price.toLocaleString()}원` : '0원',
 			nftCustomFieldValue: nftCustomFieldValue || null,
-			previewImage:
-				data?.productImages?.length > 0 ? data?.productImages[0] : '',
+			previewImage: null,
 			nftRequestId: data?.nftNumber,
 			nftIssueDt: data?.issuedAt ? data?.issuedAt.slice(0, 10) : '-',
 			modelNum: data?.modelNumber,
