@@ -5,6 +5,7 @@ import {BillingRepository} from '../../domain/repository';
 import {BillingProps} from '../../domain';
 import {TokenInfo} from '../../interface/getToken.decorator';
 import {VircleCoreAPI} from '../../infrastructure/api-client/vircleCoreApi';
+import {DateTime} from 'luxon';
 
 export class FindBillingByPartnerTokenQuery implements IQuery {
 	constructor(readonly token: TokenInfo) {}
@@ -32,10 +33,17 @@ export class FindBillingByCustomerKeyHandler
 		);
 		if (!billing) throw new NotFoundException('NOT_FOUND_BILLING');
 
+		console.log('@@ billing @@', billing);
+
 		const billingProps: BillingProps = billing.properties();
+
+		// TODO: 연결제일 경우 오늘일자가 포함된 1개월치만 검색되도록
+
 		const payload = {
-			from: billingProps.lastPaymentAt?.substring(0, 19),
-			to: billingProps.nextPaymentDate?.substring(0, 19),
+			from: DateTime.fromISO(billingProps.authenticatedAt).toISODate(),
+			to: billingProps.planExpireDate
+				? DateTime.fromISO(billingProps.planExpireDate).toISODate()
+				: undefined,
 		};
 
 		// 사용량 조회

@@ -142,11 +142,11 @@ export class RegisterFreeBillingHandler
 			partnerIdx,
 			pricePlan: freePlan,
 			authenticatedAt: DateTime.now().toISO(),
-			planExpireDate: DateTime.now()
+			planExpireDate: `${DateTime.now()
 				.plus({
 					month: planMonth || 1,
 				})
-				.toISO(),
+				.toISODate()}T23:59:59+09:00`,
 		} as BillingProps;
 
 		const registered = this.factory.create(billingProps);
