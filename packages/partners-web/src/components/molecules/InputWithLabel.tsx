@@ -12,6 +12,8 @@ interface Props extends Omit<InputProps, 'name' | 'error'> {
 	control?: Control<any, any> | undefined;
 	desc?: string;
 	error?: FieldError;
+	linkUrl?: string;
+	linkTitle?: string;
 }
 
 function InputWithLabel({
@@ -19,6 +21,8 @@ function InputWithLabel({
 	isLast = false,
 	showRequiredChip = true,
 	control,
+	linkUrl,
+	linkTitle,
 	...props
 }: Props) {
 	return (
@@ -27,6 +31,8 @@ function InputWithLabel({
 				required={!!props.required}
 				showRequiredChip={showRequiredChip}
 				labelTitle={labelTitle}
+				linkUrl={linkUrl}
+				linkTitle={linkTitle}
 			/>
 			{control ? (
 				<ControlledInputComponent control={control} {...props} />

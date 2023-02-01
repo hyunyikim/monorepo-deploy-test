@@ -3,8 +3,10 @@ import {
 	Controller,
 	UseFormSetValue,
 	FieldErrors,
+	UseFormWatch,
 	Control,
 	FieldError,
+	FieldValues,
 } from 'react-hook-form';
 
 import {ProductRegisterFormData, InputType, InputTypeList} from '@/@types';
@@ -23,6 +25,7 @@ interface Props {
 	control:
 		| Control<ProductRegisterFormData, any>
 		| Control<Partial<ProductRegisterFormData>, any>;
+	watch: UseFormWatch<FieldValues>;
 	setValue:
 		| UseFormSetValue<ProductRegisterFormData>
 		| UseFormSetValue<Partial<ProductRegisterFormData>>;
@@ -35,6 +38,7 @@ function ProductRegisterFormInput({
 	setImages,
 	control,
 	setValue,
+	watch,
 	errors,
 }: Props) {
 	return (
@@ -43,9 +47,22 @@ function ProductRegisterFormInput({
 				inputList?.length > 0 &&
 				inputList.map((input: InputType) => {
 					const {name, type, ...restInput} = input;
+					const inputValue = String(watch()[input.name]);
+					const isUrl =
+						inputValue.includes('http') ||
+						inputValue.includes('www.');
+
 					if (type === 'text') {
 						return (
 							<InputWithLabel
+								linkUrl={
+									isUrl && !input.required ? inputValue : ''
+								}
+								linkTitle={
+									isUrl && !input.required
+										? '연결 확인하기'
+										: ''
+								}
 								key={name}
 								name={name}
 								control={control}

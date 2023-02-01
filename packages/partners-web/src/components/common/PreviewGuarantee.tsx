@@ -10,6 +10,7 @@ import Tab from '../atoms/ButtonTab';
 
 import {useGetPartnershipInfo} from '@/stores';
 import {IcWarningTriangle} from '@/assets/icon';
+import AtagComponent from '../atoms/AtagComponent';
 
 type LogoProps = {
 	logo: string | undefined;
@@ -136,6 +137,16 @@ const TitleTextStyle = styled.h4`
 	line-height: 19px;
 	color: #ffffff;
 	max-width: 120px;
+`;
+const LinkTextStyle = styled.h4`
+	margin: 0;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 19px;
+	color: #526eff;
+	max-width: 120px;
+	text-decoration: underline;
+	cursor: pointer;
 `;
 
 const DescTextStyle = styled.h4`
@@ -569,11 +580,26 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									justifyContent={'space-between'}
 									alignItems="flex-start">
 									<DescTextStyle>{el}</DescTextStyle>
-									<TitleTextStyle className="text-ellipsis">
-										{(values?.nftCustomFieldValue &&
-											values?.nftCustomFieldValue[el]) ??
-											'-'}
-									</TitleTextStyle>
+									{values?.nftCustomFieldValue[el].includes(
+										'http'
+									) ? (
+										<AtagComponent
+											url={
+												values?.nftCustomFieldValue[el]
+											}>
+											<LinkTextStyle className="text-ellipsis">
+												보러가기
+											</LinkTextStyle>
+										</AtagComponent>
+									) : (
+										<TitleTextStyle className="text-ellipsis">
+											{(values?.nftCustomFieldValue &&
+												values?.nftCustomFieldValue[
+													el
+												]) ??
+												'-'}
+										</TitleTextStyle>
+									)}
 								</Grid>
 							))}
 						{values?.orderDate && (

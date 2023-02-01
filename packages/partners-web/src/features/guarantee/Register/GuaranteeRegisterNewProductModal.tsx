@@ -140,6 +140,7 @@ function GuaranteeRegisterNewProductModal({
 							setImages={setInputImages}
 							control={control}
 							setValue={setValue}
+							watch={watch}
 							errors={errors}
 						/>
 					</Stack>
