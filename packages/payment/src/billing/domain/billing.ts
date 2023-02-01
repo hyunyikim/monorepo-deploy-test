@@ -178,6 +178,6 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	}
 
 	get isRegistered() {
-		return !!this.unregisteredAt;
+		return !this.unregisteredAt;
 	}
 }
