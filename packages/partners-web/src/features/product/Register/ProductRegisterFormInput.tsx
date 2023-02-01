@@ -25,7 +25,7 @@ interface Props {
 	control:
 		| Control<ProductRegisterFormData, any>
 		| Control<Partial<ProductRegisterFormData>, any>;
-	watch: UseFormWatch<FieldValues>;
+	watch?: UseFormWatch<FieldValues> | UseFormWatch<ProductRegisterFormData>;
 	setValue:
 		| UseFormSetValue<ProductRegisterFormData>
 		| UseFormSetValue<Partial<ProductRegisterFormData>>;
@@ -47,19 +47,25 @@ function ProductRegisterFormInput({
 				inputList?.length > 0 &&
 				inputList.map((input: InputType) => {
 					const {name, type, ...restInput} = input;
-					const inputValue = String(watch()[input.name]);
-					const isUrl =
-						inputValue.includes('http') ||
-						inputValue.includes('www.');
+					let isUrl = false;
+					let inputValue;
+					if (watch) {
+						inputValue = String(watch()[input.name]);
+						isUrl =
+							inputValue.includes('http') ||
+							inputValue.includes('www.');
+					}
 
 					if (type === 'text') {
 						return (
 							<InputWithLabel
 								linkUrl={
-									isUrl && !input.required ? inputValue : ''
+									isUrl && !input.placeholder
+										? inputValue
+										: ''
 								}
 								linkTitle={
-									isUrl && !input.required
+									isUrl && !input.placeholder
 										? '연결 확인하기'
 										: ''
 								}
@@ -78,9 +84,16 @@ function ProductRegisterFormInput({
 								{...restInput}
 								onChange={(e) => {
 									if (name === 'price') {
+										const regex = RegExp(/^[0-9]+$/);
+
 										let value = e?.target?.value
 											? String(e?.target?.value)
 											: null;
+
+										// if (regex.test(e?.target?.value)) {
+										// 	return;
+										// }
+
 										if (value) {
 											const pureNumber = value.replace(
 												/\,/g,

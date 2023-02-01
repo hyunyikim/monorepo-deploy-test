@@ -109,6 +109,7 @@ function InputLabelTag({
 						fontSize: '14px',
 						textDecoration: 'underline',
 						color: '#526EFF',
+						cursor: 'pointer',
 					}}>
 					{linkTitle || '링크 확인하기'}
 				</Typography>

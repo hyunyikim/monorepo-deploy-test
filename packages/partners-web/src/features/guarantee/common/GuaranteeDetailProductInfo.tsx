@@ -11,6 +11,7 @@ import {ImageModal} from '@/components';
 import DetailInfoColumn from '@/features/common/DetailInfoColumn';
 import ProductImage from '@/features/product/common/ProductImage';
 import {sendAmplitudeLog} from '@/utils';
+import AtagComponent from '@/components/atoms/AtagComponent';
 
 function GuaranteeDetailProductInfo({data}: {data: GuaranteeDetail}) {
 	const {data: partnershipData} = useGetPartnershipInfo();
@@ -158,13 +159,24 @@ function GuaranteeDetailProductInfo({data}: {data: GuaranteeDetail}) {
 					)}
 					{customFields && customFields?.length > 0 && (
 						<>
-							{customFields.map((item) => (
-								<DetailInfoColumn
-									key={item[0]}
-									title={item[0]}
-									value={item[1] || '-'}
-								/>
-							))}
+							{customFields.map((item) =>
+								item[1].includes('http') ? (
+									<AtagComponent url={item[1]}>
+										<DetailInfoColumn
+											key={item[0]}
+											title={item[0]}
+											value={item[1] || '-'}
+											isLink={true}
+										/>
+									</AtagComponent>
+								) : (
+									<DetailInfoColumn
+										key={item[0]}
+										title={item[0]}
+										value={item[1] || '-'}
+									/>
+								)
+							)}
 						</>
 					)}
 				</Stack>
