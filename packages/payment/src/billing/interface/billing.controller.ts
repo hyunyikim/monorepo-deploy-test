@@ -9,7 +9,6 @@ import {
 	UseGuards,
 	Param,
 	UseFilters,
-	NotFoundException,
 } from '@nestjs/common';
 import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {
@@ -83,6 +82,8 @@ class PaymentSummaryInterface {
 	readonly displayOrderId: string;
 	readonly orderId: string;
 	readonly planName: string;
+	readonly payPrice: number;
+	readonly payStatus: 'SUCCESS' | 'FAIL';
 	readonly startDate: string;
 	readonly expireDate: string;
 
@@ -91,15 +92,17 @@ class PaymentSummaryInterface {
 		this.displayOrderId = tempOrderId[tempOrderId.length - 1];
 		this.orderId = payment.orderId;
 		this.planName = payment.pricePlan.planName;
-		this.startDate = DateTime.fromISO(payment.approvedAt).toISODate();
+		this.payPrice = payment.totalAmount;
+		this.payStatus = 'SUCCESS'; // TODO: 결제 실패건 처리 시 변경
+		this.startDate = DateTime.fromISO(payment.approvedAt).toISO();
 		this.expireDate = payment.expiredAt
-			? DateTime.fromISO(payment.expiredAt).toISODate()
+			? DateTime.fromISO(payment.expiredAt).toISO()
 			: DateTime.fromISO(payment.approvedAt)
 					.plus({
 						year: payment.pricePlan.planType === 'YEAR' ? 1 : 0,
 						month: payment.pricePlan.planType === 'YEAR' ? 0 : 1,
 					})
-					.toISODate();
+					.toISO();
 	}
 }
 
@@ -214,24 +217,37 @@ export class BillingController {
 	}
 
 	/**
-	 * 결제 상세 조회 API
-	 * @param orderId
+	 * 구독 이력 조회 API
+	 *
+	 * @param params
 	 * @param token
 	 */
-	@Get('/receipt/:orderId')
+	@Get('/history')
 	@UseGuards(JwtAuthGuard)
-	async getReceipt(
-		@Param('orderId') orderId: string,
+	async getPlanHistory(
+		@Query() params: FindPaymentsQueryDto,
 		@GetToken() token: TokenInfo
 	) {
-		// 결제 조회
-		const query = new FindPaymentByOrderIdQuery(orderId);
-		const paymentProps = await this.queryBus.execute<
-			FindPaymentByOrderIdQuery,
-			PaymentProps
+		const {partnerIdx} = token;
+
+		// 구독 조회
+		// TODO: 유효한 구독에 대한 결제건만 가져오는 쿼리로 수정
+		const query = new FindPaymentsQuery(partnerIdx, params);
+		const results = await this.queryBus.execute<
+			FindPaymentsQuery,
+			{
+				total: number;
+				page: number;
+				data: PaymentProps[];
+			}
 		>(query);
 
-		return new PaymentDetailInterface(paymentProps);
+		return {
+			...results,
+			data: results.data.map(
+				(payment) => new PaymentSummaryInterface(payment)
+			),
+		};
 	}
 
 	/**
@@ -265,6 +281,27 @@ export class BillingController {
 				(payment) => new PaymentSummaryInterface(payment)
 			),
 		};
+	}
+
+	/**
+	 * 결제 상세 조회 API
+	 * @param orderId
+	 * @param token
+	 */
+	@Get('/receipt/:orderId')
+	@UseGuards(JwtAuthGuard)
+	async getReceipt(
+		@Param('orderId') orderId: string,
+		@GetToken() token: TokenInfo
+	) {
+		// 결제 조회
+		const query = new FindPaymentByOrderIdQuery(orderId);
+		const paymentProps = await this.queryBus.execute<
+			FindPaymentByOrderIdQuery,
+			PaymentProps
+		>(query);
+
+		return new PaymentDetailInterface(paymentProps);
 	}
 
 	/**

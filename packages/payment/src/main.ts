@@ -24,6 +24,6 @@ async function bootstrap() {
 
 	logger.log(`NODE_ENV: ${process.env.NODE_ENV ?? 'UNDEFINED'}`, 'Bootstrap');
 
-	await app.listen(3000);
+	await app.listen(9000);
 }
 bootstrap();
