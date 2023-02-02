@@ -129,8 +129,14 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	 * 구독 취소
 	 */
 	unregister(): void {
-		const now = DateTime.now();
-		this.unregisteredAt = now.toISO();
+		this.nextPricePlan = undefined;
+		this.nextPaymentDate = undefined;
+		this.planExpireDate = DateTime.fromISO(this.lastPaymentAt!)
+			.plus({
+				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
+				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+			})
+			.toISO();
 		const event = new BillingUnregisteredEvent(this.properties());
 		this.apply(event);
 	}

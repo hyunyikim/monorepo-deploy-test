@@ -179,6 +179,11 @@ export class UnregisterBillingHandler
 			throw new NotFoundException('NOT_FOUND_BILLING_RESOURCE');
 		}
 
+		const billingProps = billing.properties();
+		if (!billingProps.nextPricePlan && !billingProps.nextPaymentDate) {
+			throw new BadRequestException('ALREADY_PLAN_CANCELED');
+		}
+
 		// 구독 취소
 		billing.unregister();
 

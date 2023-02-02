@@ -43,22 +43,16 @@ export class ChangeBillingPlanHandler
 			throw new NotFoundException('NOT_FOUND_BILLING_RESOURCE');
 		}
 
-		// 이전 플랜
+		// 이전/다음 플랜
 		const prevPricePlan = prevBillingProps.pricePlan;
+		const nextPricePlan = prevBillingProps.nextPricePlan;
 
-		// 신규 플랜 조회
-		const pricePlan = await this.planRepo.findByPlanId(planId);
-		if (!pricePlan) {
-			throw new NotFoundException('NOT_FOUND_PLAN');
-		}
+		// 무료 플랜 사용중
+		const isFreePlan =
+			!nextPricePlan && prevBillingProps.pricePlan.planLevel === 0;
 
-		console.log('@@@@@@@@@ 변경할 플랜 @@@@@@@@');
-		console.log(pricePlan);
-
-		// 동일한 플랜으로 변경 불가
-		if (prevPricePlan.planLevel === pricePlan.planLevel) {
-			throw new BadRequestException('ALREADY_USED_SAME_PLAN');
-		}
+		// 구독 취소상태 (무료 플랜이 아니지만 다음 플랜이 없는 경우)
+		const isCanceledPlan = !nextPricePlan && !isFreePlan;
 
 		// 플랜 변경 예정 일자
 		let scheduledDate: string | undefined;
@@ -69,21 +63,38 @@ export class ChangeBillingPlanHandler
 		// 취소된 플랜
 		let canceledPricePlan: PricePlanProps | undefined;
 
+		// 신규 플랜 조회
+		const newPricePlan = await this.planRepo.findByPlanId(planId);
+		if (!newPricePlan) {
+			throw new NotFoundException('NOT_FOUND_PLAN');
+		}
+
+		// 현재 이용중인 플랜과 동일한 플랜으로 변경 불가
+		if (
+			!isFreePlan &&
+			!isCanceledPlan &&
+			prevPricePlan.planLevel === newPricePlan.planLevel
+		) {
+			throw new BadRequestException('ALREADY_USED_SAME_PLAN');
+		}
+
+		////////////////////
 		// 상위 플랜으로 변경
-		if (prevPricePlan.planLevel < pricePlan.planLevel) {
-			// 월결제 -> 연결제
+		////////////////////
+		if (!isFreePlan && prevPricePlan.planLevel < newPricePlan.planLevel) {
+			// 월결제 -> 연결제 (변경 예약)
 			if (
 				prevPricePlan.planType === 'MONTH' &&
-				pricePlan.planType === 'YEAR'
+				newPricePlan.planType === 'YEAR'
 			) {
 				// 다음달 결제예정일에 업그레이드 예약
 				scheduledDate = prevBillingProps.nextPaymentDate;
 			}
 
-			// 연결제 -> 연결제
+			// 연결제 -> 연결제 (즉시 변경)
 			if (
 				prevPricePlan.planType === 'YEAR' &&
-				pricePlan.planType === 'YEAR'
+				newPricePlan.planType === 'YEAR'
 			) {
 				// 사용한 개월수 = 플랜 시작일(직전 결제일) 부터 현재까지 개월 수
 				const usedMonths: number =
@@ -111,10 +122,10 @@ export class ChangeBillingPlanHandler
 				}
 			}
 
-			// 월결제 -> 월결제
+			// 월결제 -> 월결제 (즉시 변경)
 			if (
 				prevPricePlan.planType === 'MONTH' &&
-				pricePlan.planType === 'MONTH'
+				newPricePlan.planType === 'MONTH'
 			) {
 				// 사용량 조회
 				const payload = {
@@ -138,15 +149,17 @@ export class ChangeBillingPlanHandler
 			}
 		}
 
+		////////////////////
 		// 하위 플랜으로 변경
-		if (prevPricePlan.planLevel > pricePlan.planLevel) {
+		////////////////////
+		if (prevPricePlan.planLevel > newPricePlan.planLevel) {
 			// 모든 다운그레이드는 다음달 결제예정일로 예약
 			scheduledDate = prevBillingProps.nextPaymentDate;
 
 			// 연결제 -> 연결제 (변경불가!)
 			if (
 				prevPricePlan.planType === 'YEAR' &&
-				pricePlan.planType === 'YEAR'
+				newPricePlan.planType === 'YEAR'
 			) {
 				throw new BadRequestException('IMPOSSIBLE_CHANGE_PLAN');
 			}
@@ -154,7 +167,7 @@ export class ChangeBillingPlanHandler
 
 		// 구독 변경정보 DB 업데이트
 		billing.changePlan(
-			pricePlan,
+			newPricePlan,
 			remainLimit,
 			scheduledDate,
 			canceledPricePlan
