@@ -146,7 +146,7 @@ export class RegisterFreeBillingHandler
 				.plus({
 					month: planMonth || 1,
 				})
-				.toISODate()} 23:59:59`,
+				.toISODate()}T23:59:59+09:00`,
 		} as BillingProps;
 
 		const registered = this.factory.create(billingProps);

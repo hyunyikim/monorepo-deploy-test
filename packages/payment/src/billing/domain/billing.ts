@@ -24,7 +24,8 @@ export interface Billing {
 	changePlan: (
 		plan: PricePlanProps,
 		remainLimit: number,
-		scheduledDate?: string
+		scheduledDate?: string,
+		canceledPricePlan?: PricePlanProps
 	) => void;
 	pause: () => void;
 	resume: () => void;
@@ -45,6 +46,7 @@ export type BillingProps = TossBilling & {
 	planExpireDate?: string;
 	nextPaymentDate?: string;
 	nextPricePlan?: PricePlanProps;
+	canceledPricePlan?: PricePlanProps;
 	usedNftCount?: number;
 };
 
@@ -61,6 +63,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	private planExpireDate?: string;
 	private nextPaymentDate?: string;
 	private nextPricePlan?: PricePlanProps;
+	private canceledPricePlan?: PricePlanProps;
 	private usedNftCount?: number;
 
 	constructor(private props: BillingProps) {
@@ -74,6 +77,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.planExpireDate = props?.planExpireDate;
 		this.nextPaymentDate = props?.nextPaymentDate;
 		this.nextPricePlan = props?.nextPricePlan;
+		this.canceledPricePlan = props?.canceledPricePlan;
 		this.usedNftCount = props?.usedNftCount;
 	}
 
@@ -141,43 +145,51 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.lastPaymentKey = payment.paymentKey;
 		this.lastPaymentAt = now.toISO();
 
-		// 무료플랜 및 직접 만료일자를 넣어준 경우 예외처리
-		if (!this.nextPaymentDate) {
-			this.nextPricePlan = this.props.pricePlan;
-			this.nextPaymentDate = now
-				.plus({
-					year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
-					month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
-				})
-				.toISO();
+		// 다음 결제 예정 플랜이 있을 경우 플랜 변경
+		if (this.props.nextPricePlan) {
+			this.props.pricePlan = this.props.nextPricePlan;
 		}
+
+		this.nextPricePlan = this.props.pricePlan;
+		this.nextPaymentDate = now
+			.plus({
+				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
+				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+			})
+			.toISO();
 		const event = new BillingApprovedEvent(this.properties(), payment);
 		this.apply(event);
 	}
 
 	/**
 	 * 플랜 변경
-	 * @param pricePlan
+	 * @param newPricePlan
 	 * @param remainLimit
 	 * @param scheduledDate
+	 * @param canceledPricePlan
 	 */
 	changePlan(
-		pricePlan: PricePlanProps,
+		newPricePlan: PricePlanProps,
 		remainLimit: number,
-		scheduledDate?: string
+		scheduledDate?: string,
+		canceledPricePlan?: PricePlanProps
 	): void {
+		// 예약이 아니면 현재 플랜까지 변경
 		if (!scheduledDate) {
 			this.props.pricePlan = {
-				...pricePlan,
-				planLimit: pricePlan.planLimit + remainLimit,
+				...newPricePlan,
+				planLimit: newPricePlan.planLimit + remainLimit,
 			};
 		}
-		this.nextPricePlan = pricePlan;
+		console.log('@@ 취소된 플랜 @@');
+		console.log(canceledPricePlan);
+		this.nextPricePlan = newPricePlan;
+		this.canceledPricePlan = canceledPricePlan;
 		const event = new PlanChangedEvent(this.props, !!scheduledDate);
 		this.apply(event);
 	}
 
 	get isRegistered() {
-		return !!this.unregisteredAt;
+		return !this.unregisteredAt;
 	}
 }

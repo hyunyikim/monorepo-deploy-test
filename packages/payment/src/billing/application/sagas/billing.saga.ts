@@ -69,7 +69,16 @@ export class BillingSaga {
 	 * @private
 	 */
 	private composeApproveBillingCommand(billingProps: BillingProps) {
-		const {partnerIdx, billingKey, pricePlan, customerKey} = billingProps;
+		const {
+			partnerIdx,
+			billingKey,
+			pricePlan,
+			canceledPricePlan,
+			customerKey,
+		} = billingProps;
+
+		console.log(' @@@@ 결제 요청 @@@@');
+		console.log(billingProps);
 
 		return new ApproveBillingPaymentCommand(
 			partnerIdx,
@@ -78,7 +87,8 @@ export class BillingSaga {
 			this.paymentService.generatePaymentPayload(
 				partnerIdx,
 				customerKey,
-				pricePlan
+				pricePlan,
+				canceledPricePlan
 			)
 		);
 	}
