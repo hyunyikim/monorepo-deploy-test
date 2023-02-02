@@ -17,7 +17,7 @@ import {
 	ChangeBillingPlanHandler,
 } from './application/command';
 import {
-	FindBillingByCustomerKeyHandler,
+	FindBillingByPartnerTokenHandler,
 	FindPaymentByOrderIdHandler,
 	FindPlanHandler,
 } from './application/query';
@@ -86,7 +86,7 @@ const app: Provider[] = [
 	BillingPlanChangedHandler,
 
 	// Query Handler
-	FindBillingByCustomerKeyHandler,
+	FindBillingByPartnerTokenHandler,
 	FindPaymentsHandler,
 	FindPaymentByOrderIdHandler,
 	FindPlanHandler,

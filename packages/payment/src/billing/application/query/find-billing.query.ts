@@ -15,7 +15,7 @@ export class FindBillingByPartnerTokenQuery implements IQuery {
  * 파트너 토큰으로 빌링 조회
  */
 @QueryHandler(FindBillingByPartnerTokenQuery)
-export class FindBillingByCustomerKeyHandler
+export class FindBillingByPartnerTokenHandler
 	implements IQueryHandler<FindBillingByPartnerTokenQuery, BillingProps>
 {
 	constructor(
@@ -33,20 +33,19 @@ export class FindBillingByCustomerKeyHandler
 		);
 		if (!billing) throw new NotFoundException('NOT_FOUND_BILLING');
 
-		console.log('@@ billing @@', billing);
-
 		const billingProps: BillingProps = billing.properties();
 
 		// TODO: 연결제일 경우 오늘일자가 포함된 1개월치만 검색되도록
 
+		// 사용량 조회
 		const payload = {
-			from: DateTime.fromISO(billingProps.authenticatedAt).toISODate(),
+			from: DateTime.fromISO(
+				billingProps.lastPaymentAt || billingProps.authenticatedAt
+			).toISODate(),
 			to: billingProps.planExpireDate
 				? DateTime.fromISO(billingProps.planExpireDate).toISODate()
 				: undefined,
 		};
-
-		// 사용량 조회
 		const {total} = await this.vircleCoreApi.getUsedGuaranteeCount(
 			token.token,
 			payload

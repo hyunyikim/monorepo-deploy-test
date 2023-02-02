@@ -67,7 +67,9 @@ class BillingInterface {
 			  }
 			: undefined;
 		this.usedNftCount = billing.usedNftCount ?? 0;
-		this.planStartedAt = DateTime.fromISO(billing.authenticatedAt).toISO();
+		this.planStartedAt = DateTime.fromISO(
+			billing.lastPaymentAt || billing.authenticatedAt
+		).toISO();
 		this.planExpireDate = billing.planExpireDate
 			? DateTime.fromISO(billing.planExpireDate).toISO()
 			: undefined;
@@ -212,27 +214,6 @@ export class BillingController {
 	}
 
 	/**
-	 * 구독 취소 API
-	 * @param token
-	 */
-	@Delete('/')
-	@UseGuards(JwtAuthGuard)
-	async unregisterBilling(@GetToken() token: TokenInfo) {
-		const {partnerIdx} = token;
-
-		// 구독 조회
-		const query = new FindBillingByPartnerTokenQuery(token);
-		const billingProps = await this.queryBus.execute<
-			FindBillingByPartnerTokenQuery,
-			BillingProps
-		>(query);
-
-		// 구독 취소 커맨드 실행
-		const command = new UnregisterBillingCommand(billingProps.customerKey);
-		await this.commandBus.execute(command);
-	}
-
-	/**
 	 * 결제 상세 조회 API
 	 * @param orderId
 	 * @param token
@@ -318,12 +299,30 @@ export class BillingController {
 		@Body() body: ChangeBillingPlanBodyDTO
 	) {
 		// 구독 변경 커맨드 실행
-		const command = new ChangeBillingPlanCommand(
-			body.planId,
-			token.partnerIdx
-		);
+		const command = new ChangeBillingPlanCommand(body.planId, token);
 		await this.commandBus.execute(command);
 
 		return this.getBilling(token);
+	}
+
+	/**
+	 * 구독 취소 API
+	 * @param token
+	 */
+	@Delete('/')
+	@UseGuards(JwtAuthGuard)
+	async unregisterBilling(@GetToken() token: TokenInfo) {
+		const {partnerIdx} = token;
+
+		// 구독 조회
+		const query = new FindBillingByPartnerTokenQuery(token);
+		const billingProps = await this.queryBus.execute<
+			FindBillingByPartnerTokenQuery,
+			BillingProps
+		>(query);
+
+		// 구독 취소 커맨드 실행
+		const command = new UnregisterBillingCommand(billingProps.customerKey);
+		await this.commandBus.execute(command);
 	}
 }
