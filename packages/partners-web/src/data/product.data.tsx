@@ -213,8 +213,6 @@ export const convertProductRegisterFormData = (
 ) => {
 	const formData = new FormData();
 	const customFieldObj: Record<string, string> = {};
-	console.log('data', data);
-	console.log('customFields', customFields);
 
 	Object.keys(data).forEach((key: string) => {
 		let value = data[key as keyof ProductRegisterFormData];
@@ -223,7 +221,6 @@ export const convertProductRegisterFormData = (
 		if (['idx', 'brandName', 'brandNameEn', 'customField'].includes(key)) {
 			return;
 		}
-
 		if (customFields?.includes(key)) {
 			const urlCheck = RegExp(
 				/^([a-zA-Z0-9]+([-.]{1}[a-zA-Z0-9]+)*\.)([a-zA-Z]{2,6})(:[0-9]+)?(\/\S*)?/
@@ -235,7 +232,6 @@ export const convertProductRegisterFormData = (
 			} else {
 				customFieldObj[key] = String(value) || '';
 			}
-
 			return;
 		}
 		if (key === 'price') {

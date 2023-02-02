@@ -1,3 +1,4 @@
+import {textLineChangeHelper} from '@/utils';
 import {Stack, Typography, StackProps} from '@mui/material';
 
 interface Props extends StackProps {
@@ -36,7 +37,14 @@ function GuaranteeDetailInfoColumn({
 					},
 					onClick,
 				})}>
-				{value}
+				{value
+					? textLineChangeHelper(String(value)).map((line) => (
+							<>
+								{line}
+								<br />
+							</>
+					  ))
+					: ''}
 			</Typography>
 		</Stack>
 	);

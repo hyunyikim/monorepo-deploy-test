@@ -11,6 +11,7 @@ import Tab from '../atoms/ButtonTab';
 import {useGetPartnershipInfo} from '@/stores';
 import {IcWarningTriangle} from '@/assets/icon';
 import AtagComponent from '../atoms/AtagComponent';
+import {textLineChangeHelper} from '@/utils/common.util';
 
 type LogoProps = {
 	logo: string | undefined;
@@ -138,6 +139,7 @@ const TitleTextStyle = styled.h4`
 	color: #ffffff;
 	max-width: 120px;
 `;
+
 const LinkTextStyle = styled.h4`
 	margin: 0;
 	font-weight: 700;
@@ -270,6 +272,18 @@ function GreyBoxComponent({title, desc}: GreyBoxProps) {
 				/>
 			</Grid>
 			<HiddenBoxStyle open={open} className="hidden-box">
+				{desc ? (
+					textLineChangeHelper(desc).map((line) => (
+						<DescTextStyle>
+							{line}
+							<br />
+						</DescTextStyle>
+					))
+				) : (
+					<DescTextStyle>
+						{'예시) 제품 구매 후 3년간 보증됩니다.'}
+					</DescTextStyle>
+				)}
 				<DescTextStyle className="desc-text">{desc}</DescTextStyle>
 			</HiddenBoxStyle>
 		</GreyInfoBoxStyle>
@@ -517,18 +531,29 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							<Grid
 								container
 								flexDirection="column"
-								gap="11px"
+								// gap="11px"
 								sx={{
 									padding: '14px 16px 14px 18px',
 									backgroundColor: 'grey.700',
 									borderRadius: '8px',
 								}}>
-								<TitleTextStyle>보증기간</TitleTextStyle>
-
-								<DescTextStyle>
-									{values?.warrantyDate ||
-										'예시) 제품 구매 후 3년간 보증됩니다.'}
-								</DescTextStyle>
+								<TitleTextStyle mb={'11px'}>
+									보증기간
+								</TitleTextStyle>
+								{values?.warrantyDate ? (
+									textLineChangeHelper(
+										values?.warrantyDate
+									).map((line) => (
+										<DescTextStyle>
+											{line}
+											<br />
+										</DescTextStyle>
+									))
+								) : (
+									<DescTextStyle>
+										{'예시) 제품 구매 후 3년간 보증됩니다.'}
+									</DescTextStyle>
+								)}
 							</Grid>
 						</GreyInfoBoxStyle>
 
@@ -572,6 +597,40 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								</TitleTextStyle>
 							</Grid>
 						)}
+						{/* {values?.nftCustomField &&
+							values?.nftCustomField.map((el: string) => {
+								return (
+									<Grid
+										key={el}
+										container
+										justifyContent={'space-between'}
+										alignItems="flex-start">
+										<DescTextStyle>{el}</DescTextStyle>
+										{String(
+											values?.nftCustomFieldValue[el]
+										).includes('http') ? (
+											<AtagComponent
+												url={
+													values?.nftCustomFieldValue[
+														el
+													]
+												}>
+												<LinkTextStyle className="text-ellipsis">
+													보러가기
+												</LinkTextStyle>
+											</AtagComponent>
+										) : (
+											<TitleTextStyle className="text-ellipsis">
+												{(values?.nftCustomFieldValue &&
+													values?.nftCustomFieldValue[
+														el
+													]) ??
+													'-'}
+											</TitleTextStyle>
+										)}
+									</Grid>
+								);
+							})} */}
 						{values?.nftCustomField &&
 							values?.nftCustomField.map((el: string) => (
 								<Grid
@@ -580,9 +639,11 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									justifyContent={'space-between'}
 									alignItems="flex-start">
 									<DescTextStyle>{el}</DescTextStyle>
-									{values?.nftCustomFieldValue[el].includes(
-										'http'
-									) ? (
+									{String(
+										values?.nftCustomFieldValue[
+											el
+										] as string
+									).includes('http') ? (
 										<AtagComponent
 											url={
 												values?.nftCustomFieldValue[el]
@@ -669,7 +730,19 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									fontWeight: 400,
 									lineHeight: '16px',
 								}}>
-								{values?.authInfo || '-'}
+								{values?.authInfo ? (
+									textLineChangeHelper(values?.authInfo).map(
+										(line) => (
+											<DescTextStyle>
+												{line}
+												<br />
+											</DescTextStyle>
+										)
+									)
+								) : (
+									<DescTextStyle>{'-'}</DescTextStyle>
+								)}
+								{/* {values?.authInfo || '-'} */}
 							</TitleTextStyle>
 						</Grid>
 						<ServiceCenterButtonStyle

@@ -89,10 +89,10 @@ function ProductRegisterFormInput({
 										let value = e?.target?.value
 											? String(e?.target?.value)
 											: null;
-
-										// if (regex.test(e?.target?.value)) {
-										// 	return;
-										// }
+										/* TODO: 인풋에 붙여넣기 했을때, 숫자가 아니면 빈값으로 만들기!! */
+										/* if (regex.test(e?.target?.value)) {
+											return;
+										} */
 
 										if (value) {
 											const pureNumber = value.replace(
