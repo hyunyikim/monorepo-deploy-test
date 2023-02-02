@@ -122,6 +122,13 @@ export const menuData: MenuList = [
 				icon: <IcUser />,
 				path: '/setting/profile',
 			},
+			// {
+			// 	num: 12,
+			// 	menu: 'profile-setting',
+			// 	title: '회원 탈퇴',
+			// 	icon: <IcUser />,
+			// 	path: '/setting/signout',
+			// },
 		],
 	},
 	{
@@ -178,6 +185,7 @@ const initialMenu: CurrentMenu = {
 export const getCurrentMenu = (): CurrentMenu => {
 	const pathname = window.location.pathname;
 	let currentMenu: CurrentMenu = initialMenu;
+
 	menuData.forEach((group) => {
 		group.list?.forEach((item) => {
 			if (item?.path === pathname) {

@@ -4,20 +4,21 @@ import {Button as MuiButton, ButtonProps, SxProps} from '@mui/material';
 
 import style from '@/assets/styles/style.module.scss';
 
-type Color =
-	| 'primary'
-	| 'blue-50'
-	| 'black'
-	| 'grey-100'
-	| 'grey-50'
+import {ColorType} from '@/@types';
+
+type ButtonColor =
+	| Extract<
+			ColorType,
+			'primary' | 'primary-50' | 'grey-100' | 'grey-50' | 'black'
+	  >
 	| 'gradient';
+
 type Height = 60 | 48 | 40 | 32;
 
 interface Props extends Omit<ButtonProps, 'color' | 'size'> {
-	color?: Color;
+	color?: ButtonColor;
 	width?: number | string;
 	height?: Height;
-	onClick?: () => void;
 }
 /**
  *
@@ -35,7 +36,7 @@ function Button({
 }: Props) {
 	const colorSx = useMemo(() => {
 		switch (color) {
-			case 'blue-50':
+			case 'primary-50':
 				return {
 					backgroundColor: 'primary.50',
 					color: 'primary.main',

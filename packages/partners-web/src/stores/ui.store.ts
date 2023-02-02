@@ -3,22 +3,7 @@ import React from 'react';
 import create from 'zustand';
 
 import {ERROR_MESSAGE, ERROR_TITLE} from '@/data';
-
-type CloseButtonValueType = '확인' | '취소' | '닫기';
-
-interface OnOpenParamType {
-	title: string;
-	message?: string | React.ReactElement;
-	showBottomCloseButton?: boolean;
-	disableClickBackground?: boolean;
-	disableScroll?: boolean;
-	useCloseIcon?: boolean;
-	closeButtonValue?: CloseButtonValueType;
-	buttons?: React.ReactElement;
-	sendCloseModalControlToParent?: boolean;
-	onCloseFunc?: () => void;
-}
-
+import {CloseButtonValueType, OnOpenParamType} from '@/@types';
 interface MessageDialogState {
 	open: boolean;
 	disableClickBackground: boolean;

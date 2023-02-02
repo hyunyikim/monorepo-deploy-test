@@ -19,7 +19,7 @@ import {
 import {
 	formatPhoneNum,
 	goToParentUrl,
-	trackingToParent,
+	sendAmplitudeLog,
 	goToGuaranteeExcelUploadPage,
 } from '@/utils';
 
@@ -43,7 +43,7 @@ const menuKo = '개런티';
 
 function GuaranteeList() {
 	useEffect(() => {
-		trackingToParent('guarantee_pv', {pv_title: '개런티목록 노출'});
+		sendAmplitudeLog('guarantee_pv', {pv_title: '개런티목록 노출'});
 	}, []);
 
 	const {
@@ -141,7 +141,7 @@ function GuaranteeList() {
 								color="primary"
 								height={32}
 								onClick={() => {
-									trackingToParent(
+									sendAmplitudeLog(
 										'guarantee_list_firstexcelregistration_click',
 										{button_title: `신규등록 클릭`}
 									);
@@ -159,7 +159,7 @@ function GuaranteeList() {
 							[key: string]: any;
 							pageMaxNum: number;
 						}) => {
-							trackingToParent(`${menu}_unit_view_click`, {
+							sendAmplitudeLog(`${menu}_unit_view_click`, {
 								button_title: `노출수_${value.pageMaxNum}개씩`,
 							});
 							onHandleChangeFilter(value);
@@ -234,7 +234,7 @@ function GuaranteeList() {
 											variant="body3"
 											className="underline"
 											onClick={() => {
-												trackingToParent(
+												sendAmplitudeLog(
 													'guarantee_list_numberclick_click',
 													{
 														button_title: `신청번호 클릭`,

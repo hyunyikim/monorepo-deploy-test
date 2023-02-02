@@ -15,6 +15,7 @@ type ModalOpt = {
 	width?: string;
 	align?: alignType;
 	titleAlign?: alignType;
+	titlePadding?: string | number;
 	customisedButton?: React.ReactElement | null;
 	maxWidth?: string;
 	sx?: SxProps;
@@ -38,6 +39,7 @@ interface ModalState {
 	titleAlign?: alignType;
 	customisedButton?: React.ReactElement | null;
 	maxWidth?: string;
+	titlePadding?: string | number;
 	sx?: SxProps;
 	useBackgroundClickClose?: boolean;
 	onClickButton?: (
@@ -60,6 +62,7 @@ export const useModalStore = create<ModalState>((set) => ({
 	onClickButton: undefined,
 	align: 'center',
 	titleAlign: 'left',
+	titlePadding: 32,
 	sx: {},
 	useBackgroundClickClose: true,
 	customisedButton: null,

@@ -1,7 +1,12 @@
 import {useEffect} from 'react';
 import {Stack} from '@mui/system';
 import {Typography, Grid} from '@mui/material';
-import {Button, InputWithLabel, TitleTypography} from '@/components';
+import {
+	Button,
+	CapsuleButton,
+	InputWithLabel,
+	TitleTypography,
+} from '@/components';
 import {profileSettingSchemaShape} from '@/utils/schema';
 
 import {useForm} from 'react-hook-form';
@@ -16,6 +21,7 @@ import {
 	formatPhoneNum,
 	formatBusinessNum,
 	updateParentPartnershipData,
+	goToParentUrl,
 } from '@/utils';
 
 function ProfileSetting() {
@@ -39,16 +45,14 @@ function ProfileSetting() {
 		{
 			title: '회사명',
 			placeholder: '회사명을 입력해주세요.',
-			readonly: false,
-			value: data?.companyName,
+			readOnly: false,
 			type: 'text',
 			name: 'companyName',
 		},
 		{
 			title: '사업자등록번호',
 			placeholder: '사업자등록번호를 입력해주세요.',
-			readonly: false,
-			value: data?.businessNum,
+			readOnly: false,
 			type: 'text',
 			name: 'businessNum',
 			inputProps: {
@@ -58,8 +62,7 @@ function ProfileSetting() {
 		{
 			title: '휴대전화번호',
 			placeholder: '담당자 연락처를 입력해주세요.',
-			readonly: false,
-			value: data?.phoneNum,
+			readOnly: false,
 			type: 'text',
 			name: 'phoneNum',
 			inputProps: {
@@ -69,12 +72,15 @@ function ProfileSetting() {
 		{
 			title: '담당자 이름',
 			placeholder: '담당자 이름을 입력해주세요',
-			readonly: false,
-			value: data?.name,
+			readOnly: false,
 			type: 'text',
 			name: 'name',
 		},
 	];
+
+	const goToSignoutPage = () => {
+		goToParentUrl('/setting/signout');
+	};
 
 	/**
 	 * Form Data 생성하기
@@ -372,7 +378,6 @@ function ProfileSetting() {
 								name={'email'}
 								fullWidth={true}
 								disabled={true}
-								value={data?.email}
 							/>
 
 							{basicInfoInputList.map((li, idx) => {
@@ -381,15 +386,15 @@ function ProfileSetting() {
 									title,
 									placeholder,
 									type,
-									value,
 									...restInput
 								} = li;
 
 								return (
 									<InputWithLabel
+										key={`profile_input_${name}`}
 										labelTitle={title}
 										placeholder={placeholder}
-										inputType={type}
+										type={type}
 										isLast={
 											idx ===
 											basicInfoInputList.length - 1
@@ -400,7 +405,6 @@ function ProfileSetting() {
 										name={name}
 										error={errors && errors[name]}
 										fullWidth={true}
-										value={value}
 										onChange={(e) => {
 											if (
 												name === 'phoneNum' ||
@@ -433,14 +437,13 @@ function ProfileSetting() {
 						<Stack>
 							<Grid container sx={{maxWidth: 'calc(50% - 14px)'}}>
 								<InputWithLabel
-									inputType="password"
+									type="password"
 									labelTitle={'현재 비밀번호'}
 									placeholder={'현재 비밀번호를 입력하세요'}
 									isLast={false}
 									control={control}
 									name={'currentPassword'}
 									fullWidth={false}
-									value={''}
 									error={errors && errors.currentPassword}
 								/>
 							</Grid>
@@ -457,8 +460,7 @@ function ProfileSetting() {
 									control={control}
 									name={'newPassword'}
 									fullWidth={true}
-									value={''}
-									inputType="password"
+									type="password"
 									error={errors && errors.newPassword}
 								/>
 								<InputWithLabel
@@ -470,14 +472,19 @@ function ProfileSetting() {
 									control={control}
 									name={'passwordConfirm'}
 									fullWidth={true}
-									value={''}
-									inputType="password"
+									type="password"
 									error={errors && errors.passwordConfirm}
 								/>
 							</Grid>
 						</Stack>
 					</Stack>
 				</Stack>
+				{/* 
+				<CapsuleButton
+					sx={{marginTop: '24px'}}
+					onClick={goToSignoutPage}>
+					회원탈퇴
+				</CapsuleButton> */}
 
 				<FixedBottomNavBar
 					sx={{

@@ -1,8 +1,9 @@
-import React, {useMemo} from 'react';
+import {useMemo} from 'react';
 import {Box, InputLabel, Typography} from '@mui/material';
 import AtagComponent from './AtagComponent';
 interface Props {
 	required?: boolean;
+	showRequiredChip?: boolean;
 	sx?: object;
 	labelTitle: string;
 	linkUrl?: string;
@@ -11,12 +12,20 @@ interface Props {
 
 function InputLabelTag({
 	required = false,
+	showRequiredChip,
 	sx,
 	labelTitle,
 	linkUrl,
 	linkTitle,
 }: Props) {
 	const requireSx = useMemo(() => {
+		if (!showRequiredChip) {
+			return {
+				content: "''",
+				padding: 0,
+				display: 'none',
+			};
+		}
 		switch (required) {
 			case true:
 				return {
@@ -29,7 +38,7 @@ function InputLabelTag({
 					display: 'none',
 				};
 		}
-	}, [required]);
+	}, [required, showRequiredChip]);
 
 	/**
 	 * 링크 확인

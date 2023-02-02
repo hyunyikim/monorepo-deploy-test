@@ -1,5 +1,6 @@
 import {Payment} from './payment';
-import {Billing, PricePlan} from './billing';
+import {Billing} from './billing';
+import {PricePlanProps} from './pricePlan';
 
 export interface PaymentRepository {
 	savePayment: (payment: Payment) => Promise<void>;
@@ -7,9 +8,15 @@ export interface PaymentRepository {
 	findByKeys: (keys: string[]) => Promise<Payment[]>;
 	findByOrderId: (id: string) => Promise<Payment | null>;
 	search: (
-		key: string,
-		range: {startAt: Date; endAt: Date}
-	) => Promise<Payment[]>;
+		partnerIdx: number,
+		sort: 'ASC' | 'DESC',
+		page: number,
+		pageSize: number,
+		range?: {startAt: Date; endAt: Date}
+	) => Promise<{
+		total: number;
+		data: Payment[];
+	}>;
 }
 
 export interface BillingRepository {
@@ -17,9 +24,16 @@ export interface BillingRepository {
 	saveBilling: (billing: Billing) => Promise<void>;
 	findByKey: (billingKey: string) => Promise<Billing | null>;
 	findByCustomerKey: (customerKey: string) => Promise<Billing | null>;
+	findByPartnerIdx: (partnerIdx: number) => Promise<Billing | null>;
 }
 
 export interface PlanRepository {
-	getAll: (activated: boolean) => Promise<PricePlan[]>;
-	findByPlanId: (planId: string) => Promise<PricePlan | null>;
+	getAll: (
+		activated: boolean,
+		planType?: 'YEAR' | 'MONTH'
+	) => Promise<PricePlanProps[]>;
+	findByPlanId: (planId: string) => Promise<PricePlanProps | null>;
+	findFreePlan: (
+		planType?: 'YEAR' | 'MONTH'
+	) => Promise<PricePlanProps | null>;
 }

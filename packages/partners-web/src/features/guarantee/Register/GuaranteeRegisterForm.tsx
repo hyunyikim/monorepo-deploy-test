@@ -515,7 +515,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 									control={control}
 									labelTitle={input.label}
 									placeholder={input.placeholder}
-									inputType={input.type}
+									type={input.type}
 									required={input.required}
 									error={
 										errors[

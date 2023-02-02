@@ -6,7 +6,7 @@ import smallPhoneFrame from '@/assets/images/img_small_phone_frame.png';
 import smallPhoneFrame2x from '@/assets/images/img_small_phone_frame@2x.png';
 
 import greyArrowButton from '@/assets/icon/icon_grey_up_arrow_button_18@2x.png';
-import Tab from '../atoms/Tab';
+import Tab from '../atoms/ButtonTab';
 
 import {useGetPartnershipInfo} from '@/stores';
 import {IcWarningTriangle} from '@/assets/icon';
@@ -822,6 +822,7 @@ export function ExamplePreviewGuarantee() {
 			<Grid container gap="10px" mb="40px">
 				{guaranteeSample.map((el, idx) => (
 					<Tab
+						key={el.name}
 						text={el.name}
 						isActive={idx === exampleIdx}
 						idx={idx}

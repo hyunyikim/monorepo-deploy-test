@@ -1,6 +1,6 @@
 import {Box} from '@mui/material';
 
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog, sendAmplitudeLog} from '@/utils';
 
 import {IcEmptyImage} from '@/assets/icon';
 
@@ -24,7 +24,7 @@ const imagePopupSx = {
 
 function ImagePopup({image, alt, style = {}, onClick}: Props) {
 	const onImageClick = (imgSrc: string, imgAlt: string) => {
-		trackingToParent('guarantee_list_itemimage_click', {
+		sendAmplitudeLog('guarantee_list_itemimage_click', {
 			button_title: `상품이미지 클릭`,
 		});
 

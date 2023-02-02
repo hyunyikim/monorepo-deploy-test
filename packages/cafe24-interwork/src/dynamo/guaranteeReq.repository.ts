@@ -62,7 +62,7 @@ export class GuaranteeRequestRepository {
 	}
 
 	async putRequest(req: Partial<GuaranteeRequest>) {
-		await this.ddbClient
+		return await this.ddbClient
 			.put({
 				TableName: this.tableName,
 				Item: req,

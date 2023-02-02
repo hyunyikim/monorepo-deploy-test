@@ -11,13 +11,15 @@ import {JwtModule} from '@nestjs/jwt';
 import {
 	CancelPaymentHandler,
 	RegisterBillingHandler,
+	RegisterFreeBillingHandler,
 	UnregisterBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
 } from './application/command';
 import {
 	FindBillingByCustomerKeyHandler,
-	FindPaymentsQuery,
+	FindPaymentByOrderIdHandler,
+	FindPlanHandler,
 } from './application/query';
 import {
 	BillingRegisteredHandler,
@@ -38,10 +40,10 @@ import {
 } from './domain';
 import {InjectionToken} from '../injection.token';
 import {BillingSaga} from './application/sagas';
-import {JwtService} from '@nestjs/jwt';
 import {ScheduleModule} from '@nestjs/schedule';
-import {FindPaymentsHandler} from './application/query/find-payments.query';
+import {FindPaymentsHandler} from './application/query';
 import {RegularPaymentService} from './application/service/payment.service';
+import {VircleCoreAPI} from './infrastructure/api-client/vircleCoreApi';
 
 const infra: Provider[] = [
 	{
@@ -54,6 +56,15 @@ const infra: Provider[] = [
 		},
 		inject: [ConfigService],
 	},
+	{
+		provide: VircleCoreAPI,
+		useFactory: (configService: ConfigService) => {
+			const baseURL = configService.getOrThrow<string>('VIRCLE_API_URL');
+
+			return new VircleCoreAPI(baseURL);
+		},
+		inject: [ConfigService],
+	},
 	PlanPaymentRepository,
 	PlanBillingRepository,
 	PricePlanRepository,
@@ -63,9 +74,11 @@ const app: Provider[] = [
 	// Command Handler
 	CancelPaymentHandler,
 	RegisterBillingHandler,
+	RegisterFreeBillingHandler,
 	UnregisterBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
+
 	// Event Handler
 	BillingRegisteredHandler,
 	BillingUnregisteredHandler,
@@ -75,6 +88,9 @@ const app: Provider[] = [
 	// Query Handler
 	FindBillingByCustomerKeyHandler,
 	FindPaymentsHandler,
+	FindPaymentByOrderIdHandler,
+	FindPlanHandler,
+
 	// Saga
 	BillingSaga,
 

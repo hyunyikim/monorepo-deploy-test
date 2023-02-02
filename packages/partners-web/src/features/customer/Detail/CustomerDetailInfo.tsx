@@ -1,13 +1,12 @@
-import {Grid, Stack, Box, Typography} from '@mui/material';
+import {Grid, Stack} from '@mui/material';
 
-import {BreadCrumb, CustomerInfoLabel} from '@/components';
+import {CustomerInfoLabel, Breadcrumbs, DetailInfoCard} from '@/components';
 import {IcWallet, IcWon, IcDoc} from '@/assets/icon';
 
 import style from '@/assets/styles/style.module.scss';
 import {useEffect, useState} from 'react';
 import {NftCustomerDetail} from '@/@types';
 import {getNftCustomerDetail} from '@/api/customer.api';
-import {goToParentUrl} from '@/utils';
 
 function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 	const [data, setData] = useState<NftCustomerDetail | null>(null);
@@ -23,12 +22,9 @@ function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 		<>
 			{data && (
 				<>
-					<BreadCrumb
-						before={[{title: '고객관리', href: '/customer'}]}
+					<Breadcrumbs
+						before={[{title: '고객관리', href: '/b2b/customer'}]}
 						current={data?.customerName ?? '-'}
-						onClick={() => {
-							goToParentUrl('/b2b/customer');
-						}}
 					/>
 					<Stack
 						direction={{sm: 'column', md: 'row'}}
@@ -43,21 +39,21 @@ function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 							}}
 						/>
 						<Grid container width="fit-content" gap={'12px'}>
-							<CustomerInfoBox
+							<DetailInfoCard
 								title="지갑 연동 상태"
 								value={
 									data?.walletLinked ? '연동완료' : '미연동'
 								}
 								Icon={<IcWallet fill={style.vircleGrey500} />}
 							/>
-							<CustomerInfoBox
+							<DetailInfoCard
 								title="총 상품금액"
 								value={`${(
 									data?.totalPrice ?? 0
 								).toLocaleString()}원`}
 								Icon={<IcWon fill={style.vircleGrey500} />}
 							/>
-							<CustomerInfoBox
+							<DetailInfoCard
 								title="총 발급건수"
 								value={`${(
 									data?.amount ?? 0
@@ -71,50 +67,5 @@ function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 		</>
 	);
 }
-
-const CustomerInfoBox = ({
-	title,
-	value,
-	Icon,
-}: {
-	title: string;
-	value: string;
-	Icon: React.ReactElement;
-}) => {
-	return (
-		<Stack
-			flexDirection="row"
-			justifyContent="space-between"
-			alignItems="center"
-			minWidth={250}
-			sx={{
-				borderWidth: '1px',
-				borderStyle: 'solid',
-				borderColor: 'grey.100',
-				borderRadius: '8px',
-				padding: '20px',
-				height: '80px',
-			}}>
-			<Box>
-				<Typography color="grey.500" variant="caption1" pb={0.5}>
-					{title}
-				</Typography>
-				<Typography variant="subtitle2">{value}</Typography>
-			</Box>
-			<Box
-				sx={{
-					width: '48px',
-					height: '48px',
-					display: 'flex',
-					justifyContent: 'center',
-					alignItems: 'center',
-					borderRadius: '50%',
-					backgroundColor: 'grey.50',
-				}}>
-				{Icon}
-			</Box>
-		</Stack>
-	);
-};
 
 export default CustomerDetailInfo;

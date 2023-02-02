@@ -18,7 +18,7 @@ import {
 import {
 	handleChangeDataFormat,
 	openParantModal,
-	trackingToParent,
+	sendAmplitudeLog,
 } from '@/utils';
 import {signUp} from '@/api/auth.api';
 
@@ -379,7 +379,7 @@ function SignUpForm({
 						},
 					}}
 					onClick={() => {
-						trackingToParent('signup_click', {
+						sendAmplitudeLog('signup_click', {
 							button_title: '회원가입 완료',
 						});
 					}}>

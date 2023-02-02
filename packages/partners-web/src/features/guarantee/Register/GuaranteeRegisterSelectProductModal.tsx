@@ -159,7 +159,12 @@ function GuaranteeRegisterSelectProductModal({
 			width={900}
 			height={600}
 			TitleComponent={
-				<Typography variant="subtitle2">상품 추가</Typography>
+				<Typography
+					variant="subtitle2"
+					fontWeight="bold"
+					component="span">
+					상품 추가
+				</Typography>
 			}
 			ActionComponent={
 				<>
@@ -177,17 +182,7 @@ function GuaranteeRegisterSelectProductModal({
 					</Button>
 				</>
 			}
-			sx={{
-				'& .MuiDialogContent-root': {
-					marginBottom: '65px',
-				},
-				'& .MuiDialogActions-root': {
-					backgroundColor: 'grey.10',
-					paddingY: '16px',
-					borderTop: (theme) =>
-						`1px solid ${theme.palette.grey[100]}`,
-				},
-			}}>
+			showBottomLine={true}>
 			<Box>
 				<SearchFilter
 					menu={menu}

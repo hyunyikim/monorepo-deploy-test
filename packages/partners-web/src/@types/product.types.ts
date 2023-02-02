@@ -18,9 +18,9 @@ export interface Product {
 	productImage?: string;
 	partnerIdx?: number;
 	registrantIdx?: number;
-	registered?: string;
-	modified?: string;
-	deleted?: any;
+	registeredAt?: string;
+	modifiedAt?: string;
+	deletedAt?: any;
 	brand: Brand;
 }
 
@@ -28,7 +28,7 @@ export interface ProductListResponse extends Omit<Product, 'customField'> {
 	customField?: CustomField;
 }
 
-export interface ProductDetailResponse extends Product {
+export interface ProductDetailResponse extends Omit<Product, 'brand'> {
 	nftCount: number;
 }
 
@@ -42,7 +42,7 @@ export interface Brand {
 	mainImage: any;
 	detailImage: any;
 	registrantIdx: string;
-	registered: string;
+	registeredAt: string;
 }
 
 // 상품 등록 요청시 보낼 타입

@@ -29,18 +29,7 @@ module.exports = (env, argv) => {
 				},
 				{
 					test: /\.s[ac]ss$/i,
-					use: [
-						'style-loader',
-						'css-loader',
-						'sass-loader',
-						{
-							loader: 'esbuild-loader',
-							options: {
-								loader: 'css',
-								minify: true,
-							},
-						},
-					],
+					use: ['style-loader', 'css-loader', 'sass-loader'],
 				},
 				{
 					test: /\.css$/i,
@@ -57,9 +46,22 @@ module.exports = (env, argv) => {
 					],
 				},
 				{
-					test: /\.svg$/,
+					test: /\.svg$/i,
 					issuer: /\.[t]sx?$/,
-					use: ['@svgr/webpack'],
+					use: [
+						{
+							loader: require.resolve('@svgr/webpack'),
+							options: {
+								prettier: false,
+								svgo: false,
+								svgoConfig: {
+									plugins: [{removeViewBox: false}],
+								},
+								titleProp: true,
+								ref: true,
+							},
+						},
+					],
 				},
 				{
 					test: /\.(jpe?g|gif|png|ico)$/i,

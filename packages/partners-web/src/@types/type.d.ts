@@ -30,9 +30,16 @@ declare global {
 		interface Color {
 			10?: string;
 		}
+		interface Palette {
+			red: PaletteColor;
+			green: PaletteColor;
+		}
 		interface PaletteOptions {
 			red: PaletteColor;
 			green: PaletteColor;
+		}
+		interface PaletteColor {
+			100?: string;
 		}
 	}
 

@@ -49,7 +49,7 @@ module.exports = {
 		{
 			files: [
 				'packages/ui-component/**/*.ts?(x)',
-				'packages/ui-component/**/*.js?(x)',
+				// 'packages/ui-component/**/*.js?(x)',
 			],
 			settings: {
 				'import/resolver': {
@@ -65,7 +65,7 @@ module.exports = {
 		{
 			files: [
 				'packages/admin-web/**/*.ts?(x)',
-				'packages/admin-web/**/*.js?(x)',
+				// 'packages/admin-web/**/*.js?(x)',
 			],
 			settings: {
 				'import/resolver': {
@@ -81,7 +81,7 @@ module.exports = {
 		{
 			files: [
 				'packages/cafe24-interwork/**/*.ts?(x)',
-				'packages/cafe24-interwork/**/*.js?(x)',
+				// 'packages/cafe24-interwork/**/*.js?(x)',
 			],
 			settings: {
 				'import/resolver': {
@@ -97,7 +97,7 @@ module.exports = {
 		{
 			files: [
 				'packages/payment/**/*.ts?(x)',
-				'packages/payment/**/*.js?(x)',
+				//'packages/payment/**/*.js?(x)',
 			],
 			rules: {
 				'@typescript-eslint/no-unsafe-member-access': 'warn',
@@ -124,6 +124,9 @@ module.exports = {
 				'@typescript-eslint/no-unsafe-member-access': 'warn',
 				'@typescript-eslint/require-await': 'warn',
 				'@typescript-eslint/no-unsafe-return': 'warn',
+				'@typescript-eslint/no-unsafe-call': 'warn',
+				'@typescript-eslint/no-unsafe-argument': 'warn',
+				'@typescript-eslint/restrict-plus-operands': 'warn',
 			},
 			settings: {
 				'import/resolver': {

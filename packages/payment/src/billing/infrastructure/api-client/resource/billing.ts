@@ -30,6 +30,7 @@ export class BillingResource implements Resource {
 	) {
 		const url = join(this.path, 'authorizations', 'card');
 		const {data: billing} = await this.httpClient.post<Billing>(url, body);
+
 		return billing;
 	}
 
@@ -45,13 +46,10 @@ export class BillingResource implements Resource {
 		customerKey: string
 	) {
 		const url = join(this.path, 'authorizations', 'issue');
-		const {data: billing, request} = await this.httpClient.post<Billing>(
-			url,
-			{
-				authKey,
-				customerKey,
-			}
-		);
+		const {data: billing} = await this.httpClient.post<Billing>(url, {
+			authKey,
+			customerKey,
+		});
 
 		return billing;
 	}

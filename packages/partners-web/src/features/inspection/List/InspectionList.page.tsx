@@ -20,7 +20,7 @@ import {
 	formatPhoneNum,
 	goToParentUrl,
 	openParantModal,
-	trackingToParent,
+	sendAmplitudeLog,
 } from '@/utils';
 
 import {
@@ -43,7 +43,7 @@ const menuKo = '감정';
 
 function InspectionList() {
 	useEffect(() => {
-		trackingToParent(`${menu}_pv`, {pv_title: '감정신청목록 진입'});
+		sendAmplitudeLog(`${menu}_pv`, {pv_title: '감정신청목록 진입'});
 	}, []);
 
 	const {
@@ -94,7 +94,7 @@ function InspectionList() {
 								sortSearchFilter.find(
 									(item) => item.value === e.target.value
 								)?.label || '';
-							trackingToParent(`${menu}_unit_view_click`, {
+							sendAmplitudeLog(`${menu}_unit_view_click`, {
 								button_title: `정렬_${sortLabel}`,
 							});
 							handleChangeFilter({
@@ -111,7 +111,7 @@ function InspectionList() {
 							[key: string]: any;
 							pageMaxNum: number;
 						}) => {
-							trackingToParent(`${menu}_unit_view_click`, {
+							sendAmplitudeLog(`${menu}_unit_view_click`, {
 								button_title: `노출수_${value.pageMaxNum}개씩`,
 							});
 							handleChangeFilter(value);

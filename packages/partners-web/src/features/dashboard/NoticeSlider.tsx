@@ -1,7 +1,5 @@
 import {useState, useEffect, useCallback} from 'react';
 
-import Slider from 'react-slick';
-
 import {nonAuthInstance} from '@/api';
 import useDashboardStyles from './useDashboardStyles';
 
@@ -62,7 +60,7 @@ function NoticeSlider() {
 	}, []);
 
 	return (
-		<Slider {...settings} className={classes.noticeCarouselContainer}>
+		<div>
 			{notionTableList &&
 				notionTableList?.map((li, idx: number) => (
 					<div
@@ -92,7 +90,7 @@ function NoticeSlider() {
 						/>
 					</div>
 				))}
-		</Slider>
+		</div>
 	);
 }
 

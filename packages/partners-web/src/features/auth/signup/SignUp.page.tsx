@@ -7,7 +7,7 @@ import {Stack} from '@mui/material';
 import SignUpStep1 from '@/features/auth/signup/SignUpStep1';
 import SignUpStep2 from '@/features/auth/signup/SignUpStep2';
 import SignUpStep3 from '@/features/auth/signup/SignUpStep3';
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import {SignUpRequestFormData} from '@/@types';
 
 function SignUp() {
@@ -19,7 +19,7 @@ function SignUp() {
 	const {search} = useLocation();
 
 	useEffect(() => {
-		trackingToParent('signup_pv', {pv_title: '회원가입 진입'});
+		sendAmplitudeLog('signup_pv', {pv_title: '회원가입 진입'});
 	}, []);
 
 	useEffect(() => {

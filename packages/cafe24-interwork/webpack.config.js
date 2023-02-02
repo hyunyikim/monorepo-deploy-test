@@ -1,5 +1,12 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const webpack = require('webpack');
+
+const lazyImports = [
+	'@nestjs/microservices/microservices-module',
+	'@nestjs/websockets/socket-module',
+	'class-transformer/storage',
+];
 
 module.exports = {
 	target: 'node',
@@ -13,4 +20,27 @@ module.exports = {
 	optimization: {
 		minimize: false, // enabling this reduces file size and readability
 	},
+	plugins: [
+		new webpack.IgnorePlugin({
+			resourceRegExp: /^pg-native$/,
+		}),
+		// new webpack.IgnorePlugin({
+		//   resourceRegExp: /^aws-sdk$/,
+		// }),
+		// new webpack.IgnorePlugin({
+		//   resourceRegExp: /^aws-lambda$/,
+		// }),
+		new webpack.IgnorePlugin({
+			checkResource(resource) {
+				if (lazyImports.includes(resource)) {
+					try {
+						require.resolve(resource);
+					} catch (err) {
+						return true;
+					}
+				}
+				return false;
+			},
+		}),
+	],
 };

@@ -2,7 +2,7 @@ import {useState, useCallback, useEffect} from 'react';
 
 import {Box, Typography, DialogActions, Stack} from '@mui/material';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import {IcReload} from '@/assets/icon';
 import {Button} from '@/components';
 import {FileData, CropPreviewData, CropConfigProps} from '@/@types';
@@ -114,7 +114,7 @@ function CustomiseBrandCard({
 	};
 
 	const handleRefresh = useCallback(() => {
-		trackingToParent('guaranteesetting_cardcustom_popup_reset_click', {
+		sendAmplitudeLog('guaranteesetting_cardcustom_popup_reset_click', {
 			button_title: '업로드한 이미지 초기화',
 		});
 		setStep(1);
@@ -124,7 +124,7 @@ function CustomiseBrandCard({
 
 	useEffect(() => {
 		if (isOpen) {
-			trackingToParent('guaranteesetting_cardcustom_popupview', {
+			sendAmplitudeLog('guaranteesetting_cardcustom_popupview', {
 				pv_title: '브랜드 카드제작 팝업 노출',
 			});
 		}
@@ -161,7 +161,7 @@ function CustomiseBrandCard({
 							cursor: 'pointer',
 						}}
 						onClick={() => {
-							trackingToParent(
+							sendAmplitudeLog(
 								'guaranteesetting_cardcustom_popup_guide_click',
 								{button_title: '이미지 제작 가이드 링크로 이동'}
 							);
@@ -204,7 +204,7 @@ function CustomiseBrandCard({
 					<Button
 						variant="contained"
 						onClick={() => {
-							trackingToParent(
+							sendAmplitudeLog(
 								'guaranteesetting_cardcustom_popup_imagecomplate_click',
 								{
 									button_title:
@@ -224,7 +224,7 @@ function CustomiseBrandCard({
 								marginRight: '12px',
 							}}
 							onClick={() => {
-								trackingToParent(
+								sendAmplitudeLog(
 									'guaranteesetting_cardcustom_popup_back_click',
 									{
 										button_title:
@@ -238,7 +238,7 @@ function CustomiseBrandCard({
 						<Button
 							variant="contained"
 							onClick={() => {
-								trackingToParent(
+								sendAmplitudeLog(
 									'guaranteesetting_cardcustom_popup_confirm_click',
 									{button_title: '이미지 적용 완료'}
 								);

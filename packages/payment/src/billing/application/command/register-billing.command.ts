@@ -2,9 +2,26 @@ import {ICommand} from '@nestjs/cqrs';
 
 export class RegisterBillingCommand implements ICommand {
 	constructor(
-		readonly authKey: string,
+		readonly partnerIdx: number,
+		readonly planId: string,
 		readonly customerKey: string,
-		readonly planId: string
+		readonly cardInfo: {
+			cardNumber: string;
+			cardExpirationYear: string;
+			cardExpirationMonth: string;
+			cardPassword: string;
+			customerIdentityNumber: string;
+			customerName?: string;
+			customerEmail?: string;
+		}
+	) {}
+}
+
+export class RegisterFreeBillingCommand implements ICommand {
+	constructor(
+		readonly partnerIdx: number,
+		readonly planMonth?: number,
+		readonly planLimit?: number
 	) {}
 }
 

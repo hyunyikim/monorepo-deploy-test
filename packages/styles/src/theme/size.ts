@@ -9,7 +9,7 @@ export interface ContainerSize {
 }
 
 export const containerSize: ContainerSize = {
-	xs: '',
+	xs: '480px',
 	sm: '640px',
 	base: '720px',
 	lg: '960px',

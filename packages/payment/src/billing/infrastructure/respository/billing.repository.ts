@@ -1,11 +1,14 @@
 import {Injectable, Inject} from '@nestjs/common';
 import {DynamoDB} from 'aws-sdk';
-import {PlanBillingFactory} from '../../domain/factory';
-import {BillingProps, Billing} from '../../domain/billing';
+import {PlanBillingFactory, BillingProps, Billing} from '../../domain';
 import {BillingRepository} from '../../domain/repository';
-import {InjectionToken} from 'src/injection.token';
+import {InjectionToken} from '../../../injection.token';
 
 type BillingEntity = BillingProps;
+
+/**
+ * 빌링(정기결제 카드등록) 데이터 저장소
+ */
 @Injectable()
 export class PlanBillingRepository
 	extends DynamoDB.DocumentClient
@@ -17,11 +20,15 @@ export class PlanBillingRepository
 		@Inject(InjectionToken.BILLING_TABLE_NAME)
 		private readonly tableName: string,
 		@Inject(InjectionToken.AWS_REGION)
-		private readonly region: string // private region: string = 'ap-northeast-2'
+		private readonly region: string
 	) {
 		super({region});
 	}
 
+	/**
+	 * 빌링 저장
+	 * @param billing
+	 */
 	async saveBilling(billing: Billing) {
 		const entity = billing.properties();
 		await this.put({
@@ -31,6 +38,10 @@ export class PlanBillingRepository
 		}).promise();
 	}
 
+	/**
+	 * 빌링키로 조회
+	 * @param billingKey
+	 */
 	async findByKey(billingKey: string) {
 		const {Item} = await this.get({
 			TableName: this.tableName,
@@ -45,6 +56,10 @@ export class PlanBillingRepository
 		return this.entityToModel(entity);
 	}
 
+	/**
+	 * 커스터머키로 조회
+	 * @param customerKey
+	 */
 	async findByCustomerKey(customerKey: string) {
 		const {Items} = await this.query({
 			TableName: this.tableName,
@@ -54,7 +69,6 @@ export class PlanBillingRepository
 				':key': customerKey,
 			},
 		}).promise();
-
 		if (!Items || Items.length === 0) return null;
 
 		const entities = Items as BillingEntity[];
@@ -63,9 +77,37 @@ export class PlanBillingRepository
 			(entity) => entity.unregisteredAt === undefined
 		);
 		if (!entity) return null;
+
 		return this.entityToModel(entity);
 	}
 
+	/**
+	 * 파트너 계정으로 조회
+	 * @param partnerIdx
+	 */
+	async findByPartnerIdx(partnerIdx: number) {
+		const {Items} = await this.query({
+			TableName: this.tableName,
+			IndexName: 'partnerIdx-index',
+			KeyConditionExpression: 'partnerIdx = :key',
+			ExpressionAttributeValues: {
+				':key': partnerIdx,
+			},
+		}).promise();
+		if (!Items || Items.length === 0) return null;
+
+		const entities = Items as BillingEntity[];
+
+		const entity = entities.find((entity) => !entity.unregisteredAt);
+		if (!entity) return null;
+
+		return this.entityToModel(entity);
+	}
+
+	/**
+	 * 전체 조회
+	 * @param registered
+	 */
 	async getAll(registered: boolean) {
 		const {Items} = await this.scan({
 			TableName: this.tableName,

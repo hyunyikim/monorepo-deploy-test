@@ -1,70 +1,30 @@
-import React from 'react';
-import {
-	Input,
-	InputProps,
-	Typography,
-	Grid,
-	SxProps,
-	Theme,
-} from '@mui/material';
+import {Input, InputProps, Typography, Grid} from '@mui/material';
 import {FieldError} from 'react-hook-form';
 
 type Height = '60px' | '48px' | '40px' | '32px' | 'auto';
 
-interface Props extends Omit<InputProps, 'control' | 'name' | 'error'> {
-	type: string;
-	value?: string;
-	onChange?(e: React.ChangeEvent<HTMLInputElement>): void;
-	defaultValue?: string;
+interface Props extends Omit<InputProps, 'error'> {
 	height?: Height;
 	maxHeight?: Height;
-	placeholder: string;
-	fullWidth?: boolean;
-	readonly?: boolean;
-	required?: boolean;
-	sx?: SxProps<Theme>;
-	multiline?: boolean;
-	autoFocus?: boolean;
+	desc?: string;
 	error?: FieldError;
 }
 
 function InputComponent({
-	type,
-	defaultValue = '',
-	placeholder,
 	height = '48px',
 	maxHeight = 'auto',
-	fullWidth = true,
-	readonly = false,
-	required = false,
-	sx,
-	multiline = false,
-	autoFocus = false,
-	onBlur,
-	onKeyDown,
+	multiline,
+	desc,
 	error,
-	value,
-	onChange,
+	sx,
 	...props
 }: Props) {
 	return (
 		<Grid container flexDirection={'column'} gap="6px">
 			<Input
-				type={type}
-				readOnly={readonly}
-				placeholder={placeholder}
 				disableUnderline={true}
-				fullWidth={fullWidth}
-				required={required}
 				multiline={multiline}
 				minRows={multiline ? '3' : '0'}
-				value={value}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-					onChange && onChange(e);
-				}}
-				onBlur={onBlur}
-				autoFocus={autoFocus}
-				onKeyDown={onKeyDown}
 				error={error ? true : false}
 				sx={{
 					height: multiline ? 'auto' : height,
@@ -78,7 +38,6 @@ function InputComponent({
 						padding: '0px 16px',
 						color: 'grey.900',
 						fontSize: '14px',
-						// lineHeight: `${height}`,
 						lineHeight: '0px',
 
 						'&::placeholder': {
@@ -112,6 +71,11 @@ function InputComponent({
 				}}
 				{...props}
 			/>
+			{desc && (
+				<Typography variant="caption3" color="grey.500" mt="4px">
+					{desc}
+				</Typography>
+			)}
 			{error && (
 				<Typography
 					fontSize={13}

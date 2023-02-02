@@ -1,9 +1,9 @@
 <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M14.874 8.49219H19.039" stroke="#5C5C65" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M14.874 14.4883H19.039" stroke="#5C5C65" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M9.33301 20.4863H10.4997" stroke="#5C5C65" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M14.874 20.4863H19.039" stroke="#5C5C65" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12.074 7.51172L10.1257 9.46005L8.95898 8.29339" stroke="#5C5C65" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12.074 13.5078L10.1257 15.4561L8.95898 14.2895" stroke="#5C5C65" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M19.2493 3.20703H8.74935C6.97744 3.20703 5.54102 4.64345 5.54102 6.41536V21.582C5.54102 23.3539 6.97744 24.7904 8.74935 24.7904H19.2493C21.0213 24.7904 22.4577 23.3539 22.4577 21.582V6.41536C22.4577 4.64345 21.0213 3.20703 19.2493 3.20703Z" stroke="#5C5C65" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.874 8.49219H19.039" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.874 14.4883H19.039" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.33301 20.4863H10.4997" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.874 20.4863H19.039" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12.074 7.51172L10.1257 9.46005L8.95898 8.29339" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12.074 13.5078L10.1257 15.4561L8.95898 14.2895" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M19.2493 3.20703H8.74935C6.97744 3.20703 5.54102 4.64345 5.54102 6.41536V21.582C5.54102 23.3539 6.97744 24.7904 8.74935 24.7904H19.2493C21.0213 24.7904 22.4577 23.3539 22.4577 21.582V6.41536C22.4577 4.64345 21.0213 3.20703 19.2493 3.20703Z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

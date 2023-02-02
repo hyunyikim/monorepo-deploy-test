@@ -1,4 +1,5 @@
-import {Module} from '@nestjs/common';
+import {WinstonLoggerService} from './common/config/logger.config';
+import {Logger, Module} from '@nestjs/common';
 import {Cafe24InterworkController} from './cafe24Interwork';
 import {Cafe24InterworkService} from './cafe24Interwork/cafe24Interwork.service';
 import {ConfigModule, ConfigService} from '@nestjs/config';
@@ -12,9 +13,7 @@ import {JwtModule} from '@nestjs/jwt';
 import {GuaranteeRequestRepository} from './dynamo';
 import {Cafe24EventService} from './cafe24Webhook';
 import {SlackReporter} from './slackReporter';
-import {WinstonModule, utilities} from 'nest-winston';
-import {transports, format} from 'winston';
-import * as WinstonCloudWatch from 'winston-cloudwatch';
+import {WinstonModule} from 'nest-winston';
 import {TokenRefresher} from './tokenRefresher/tokenRefresher';
 import {ScheduleModule} from '@nestjs/schedule';
 import {
@@ -40,42 +39,8 @@ import {MasterCafe24InterworkController} from './cafe24Interwork/cafe24intework.
 				process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
 		}),
 		WinstonModule.forRootAsync({
+			useClass: WinstonLoggerService,
 			imports: [ConfigModule],
-			useFactory: (configService: ConfigService) => {
-				const transportList = [
-					new WinstonCloudWatch({
-						level:
-							process.env.NODE_ENV === 'production'
-								? 'info'
-								: 'silly',
-						logGroupName: configService.getOrThrow(
-							'AWS_CLOUDWATCH_LOG_GROUP'
-						),
-						logStreamName: configService.getOrThrow(
-							'AWS_CLOUDWATCH_LOG_STREAM'
-						),
-						jsonMessage: true,
-						awsRegion: configService.getOrThrow(
-							'AWS_CLOUDWATCH_REGION'
-						),
-					}),
-					new transports.Console({
-						level:
-							process.env.NODE_ENV === 'production'
-								? 'info'
-								: 'silly',
-						format: format.combine(
-							format.timestamp(),
-							utilities.format.nestLike('@vircle/cafe24', {
-								prettyPrint: true,
-							})
-						),
-					}),
-				];
-				return {
-					transports: transportList,
-				};
-			},
 			inject: [ConfigService],
 		}),
 		KakaoAlimTalkModule,
@@ -135,7 +100,7 @@ import {MasterCafe24InterworkController} from './cafe24Interwork/cafe24intework.
 				const baseURL =
 					configService.getOrThrow<string>('VIRCLE_API_URL');
 
-				return new VircleCoreAPI(baseURL);
+				return new VircleCoreAPI(baseURL, Logger);
 			},
 			inject: [ConfigService],
 		},

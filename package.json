@@ -7,7 +7,7 @@
 		"email": "it@mass-adoption.com"
 	},
 	"scripts": {
-		"lint": "eslint -c .eslintrc.js --ignore-path .eslintignore ./ --ext .ts,.tsx,.js,.jsx",
+		"lint": "eslint -c .eslintrc.js --ignore-path .eslintignore ./ --ext .ts,.tsx,.js,.jsx --cache",
 		"format": "prettier ./ -w",
 		"postinstall": "husky install",
 		"release": "standard-version"

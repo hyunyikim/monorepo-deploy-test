@@ -6,7 +6,6 @@ import {
 	Post,
 	Patch,
 	UseGuards,
-	UseFilters,
 	NotFoundException,
 	Query,
 } from '@nestjs/common';
@@ -14,12 +13,10 @@ import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {GetToken, TokenInfo} from '../getToken.decorator';
 import {IssueSetting} from './interwork.entity';
 import {JwtAuthGuard, MasterAuthGuard} from '../guard';
-import {HttpExceptionFilter} from '../filter';
 import {TransformInstanceToPlain} from 'class-transformer';
 import {CategoryListParams} from './cafe24Interwork.service';
 
 @Controller({version: '1', path: 'interwork'})
-@UseFilters(HttpExceptionFilter)
 export class Cafe24InterworkController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService

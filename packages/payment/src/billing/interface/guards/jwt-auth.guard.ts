@@ -57,6 +57,7 @@ export class MasterAuthGuard implements CanActivate {
 				return payload.type === 'M';
 			})
 			.catch((error) => {
+				console.log(error);
 				throw new BadRequestException('Invalid Token');
 			});
 	}

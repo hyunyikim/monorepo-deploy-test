@@ -4,7 +4,7 @@ import {Options} from '@/@types';
 
 import {RadioGroup} from '@/components';
 import {useCallback} from 'react';
-import {trackingToParent} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 interface Props {
 	menu: string;
@@ -30,7 +30,7 @@ function SearchRadioGroup({
 			onChange(value);
 			const stateLabel =
 				options.find((item) => item.value === value)?.label || '';
-			trackingToParent(`${menu}_state_click`, {
+			sendAmplitudeLog(`${menu}_state_click`, {
 				button_title: `${menuKo}_${stateLabel}`,
 			});
 		},

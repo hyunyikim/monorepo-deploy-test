@@ -37,3 +37,36 @@ jobs:
 
             - name: build 하기
               run: yarn build
+
+            - name: bundle 하기
+              run: yarn bundle
+
+    deploy_on_dev:
+        if: ${{ github.ref_name == 'dev' && github.event_name == 'push' }}
+        runs-on: ubuntu-20.04
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./packages/payment
+        steps:
+            - name: git Checkout
+              uses: actions/checkout@v3
+
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: aws 세팅
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ap-northeast-2
+
+            - name: 개발 서버에 배포 (aws ssm send-command)
+              run: |
+                  aws ssm send-command \
+                    --document-name "AWS-RunShellScript" \
+                    --targets '[{"Key":"InstanceIds","Values":["i-0db464460d9597593"]}]' \
+                    --parameters '{"commands":[ "#!/bin/bash","cd ~/vircle/packages/payment", "bash ./script/start.dev.sh"]}'

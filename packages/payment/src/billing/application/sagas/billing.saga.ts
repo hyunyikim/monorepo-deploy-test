@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import {ICommand, ofType, Saga} from '@nestjs/cqrs';
 import {Observable} from 'rxjs';
 import {map, filter, tap} from 'rxjs/operators';
@@ -10,32 +10,44 @@ import {
 	BillingResumedEvent,
 } from '../../domain/event';
 import {DateTime} from 'luxon';
+import {RegularPaymentService} from '../service/payment.service';
+
 @Injectable()
 export class BillingSaga {
+	constructor(
+		@Inject(RegularPaymentService)
+		private readonly paymentService: RegularPaymentService
+	) {}
+
+	/**
+	 * 빌링 등록 이벤트 발생 시
+	 * @param events$
+	 */
 	@Saga()
 	billingRegistered = (events$: Observable<any>): Observable<ICommand> => {
 		return events$.pipe(
 			ofType(BillingRegisteredEvent),
-			map((e) => this.composeApproveBillingCmd(e.billing))
+			map((e) => this.composeApproveBillingCommand(e.billing))
 		);
 	};
 
+	/**
+	 * 플랜 변경 이벤트 발생 시
+	 * @param events$
+	 */
 	@Saga()
 	planChanged = (events$: Observable<any>): Observable<ICommand> => {
 		return events$.pipe(
 			ofType(PlanChangedEvent),
-
 			filter((e) => e.billing.unregisteredAt === undefined),
-
-			filter((e) => e.offset > 0),
-			tap((e) => {
-				console.log('CALL', e.billing.billingKey);
-			}),
-
-			map((e) => this.composeApproveBillingCmd(e.billing))
+			map((e) => this.composeApproveBillingCommand(e.billing))
 		);
 	};
 
+	/**
+	 * 플랜 재개 이벤트 발생 시
+	 * @param events$
+	 */
 	@Saga()
 	billingResumed = (events$: Observable<any>): Observable<ICommand> => {
 		return events$.pipe(
@@ -43,22 +55,30 @@ export class BillingSaga {
 			filter((e) => e.billing.unregisteredAt === undefined),
 			filter(
 				(e) =>
-					DateTime.now() > DateTime.fromISO(e.billing.nextPaymentAt!)
+					DateTime.now() >
+					DateTime.fromISO(e.billing.nextPaymentDate!)
 			),
-			map((e) => this.composeApproveBillingCmd(e.billing))
+			map((e) => this.composeApproveBillingCommand(e.billing))
 		);
 	};
 
-	private composeApproveBillingCmd(billingProps: BillingProps) {
-		const {billingKey, pricePlan, customerKey} = billingProps;
-		console.log('commnads');
-		return new ApproveBillingPaymentCommand(billingKey, {
-			amount: pricePlan.planPrice,
-			customerKey: customerKey,
-			orderId: `${customerKey}_${pricePlan.planId}_${DateTime.now()
-				.valueOf()
-				.toString(16)}`,
-			orderName: pricePlan.planName,
-		});
+	/**
+	 * 결제 승인요청 커맨드
+	 * @param billingProps
+	 * @private
+	 */
+	private composeApproveBillingCommand(billingProps: BillingProps) {
+		const {partnerIdx, billingKey, pricePlan, customerKey} = billingProps;
+
+		return new ApproveBillingPaymentCommand(
+			partnerIdx,
+			billingKey,
+			pricePlan,
+			this.paymentService.generatePaymentPayload(
+				partnerIdx,
+				customerKey,
+				pricePlan
+			)
+		);
 	}
 }

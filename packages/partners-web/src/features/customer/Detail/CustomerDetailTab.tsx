@@ -1,37 +1,19 @@
-import {useState, useCallback} from 'react';
-import {Box, Tabs, Tab} from '@mui/material';
+import {useState} from 'react';
+import {Box} from '@mui/material';
+import {Tab} from '@/components';
 
 import CustomerGuaranteeTable from '@/features/customer/Detail/CustomerGuaranteeTable';
 
 function CustomerDetailTab({name, phone}: {name: string; phone: string}) {
 	const [value, setValue] = useState(0);
-	const handleChange = useCallback(
-		(event: React.SyntheticEvent, newValue: number) => {
-			setValue(newValue);
-		},
-		[]
-	);
 	return (
 		<Box sx={{width: '100%'}}>
-			<Box
-				sx={{
-					borderBottom: 1,
-					borderColor: 'divider',
-					marginTop: '40px',
-				}}>
-				<Tabs
-					value={value}
-					onChange={handleChange}
-					aria-label="customer detail tab"
-					sx={{
-						'& .MuiButtonBase-root.MuiTab-root': {
-							fontWeight: 700,
-							padding: '16px',
-						},
-					}}>
-					<Tab label="개런티" {...a11yProps(0)} />
-				</Tabs>
-			</Box>
+			<Tab
+				tabLabel={'개런티'}
+				selected={value}
+				options={[{label: '개런티', value: 0}]}
+				handleChange={(e, value) => setValue(value as number)}
+			/>
 			<TabPanel value={value} index={0}>
 				<CustomerGuaranteeTable name={name} phone={phone} />
 			</TabPanel>
@@ -57,13 +39,6 @@ function TabPanel(props: TabPanelProps) {
 			{value === index && <>{children}</>}
 		</div>
 	);
-}
-
-function a11yProps(index: number) {
-	return {
-		id: `tab-${index}`,
-		'aria-controls': `tabpanel-${index}`,
-	};
 }
 
 export default CustomerDetailTab;

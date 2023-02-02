@@ -16,8 +16,10 @@ export interface Billing {
 	billingKey: string;
 	/** 발급된 빌링키와 연결된 카드 정보입니다. */
 	card: {
-		/** 카드사 코드입니다. */
+		/** 카드사 이름입니다. */
 		company: string;
+		/** 카드사 코드입니다. */
+		issuerCode: string;
 		/** 카드 번호입니다. 번호의 일부는 마스킹 되어 있습니다. */
 		number: string;
 		/** 카드 종류입니다. 신용, 체크, 기프트 중 하나입니다. */
@@ -51,10 +53,10 @@ export interface RequestBillingAuthByCustomerKey {
 	customerIdentityNumber: string;
 
 	/** 고객 이름입니다. */
-	customerName: string;
+	customerName?: string;
 
 	/** 고객의 이메일 주소입니다. 결제 결과를 알려줄 때 사용합니다. */
-	customerEmail: string;
+	customerEmail?: string;
 
 	/** 해외 카드로 결제하는 경우 3DS 인증 적용을 위해 사용합니다. */
 	vbv?: {

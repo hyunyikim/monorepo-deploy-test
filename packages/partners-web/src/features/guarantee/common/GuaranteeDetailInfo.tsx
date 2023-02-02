@@ -51,8 +51,7 @@ function GuaranteeDetailInfo({data}: {data: GuaranteeDetail}) {
 								button_title: 'nft id 클릭',
 							});
 							const klaytnUrl = `${KLAYTN_SCOPE_URL}/nft/${
-								// TODO:
-								data.blockchain_platform === 'klaytn-kas'
+								data.blockchainPlatform === 'klaytn-kas'
 									? KLAYTN_CONTRACT_ADDRESS
 									: KLIP_CONTRACT_ADDRESS
 							}/${parseInt(data?.tokenId, 16)}`;
@@ -84,7 +83,7 @@ function GuaranteeDetailInfo({data}: {data: GuaranteeDetail}) {
 				</Button>
 				<Button
 					variant="contained"
-					color="blue-50"
+					color="primary-50"
 					startIcon={<IcPaperPlane />}
 					onClick={() => {
 						const transactionHash = data?.transactionHash;

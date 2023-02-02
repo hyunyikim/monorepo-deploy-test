@@ -12,6 +12,7 @@ import {useMemo} from 'react';
 interface Props extends Omit<DialogProps, 'open' | 'onClose'> {
 	open: boolean;
 	showCloseButton?: boolean;
+	showBottomLine?: boolean;
 	width?: number | string;
 	height?: number | string;
 	padding?: number | string;
@@ -31,6 +32,7 @@ const DIALOG_PADDING = '32px';
 function Dialog({
 	open,
 	showCloseButton = false,
+	showBottomLine = false,
 	width,
 	height,
 	padding = DIALOG_PADDING,
@@ -52,19 +54,36 @@ function Dialog({
 			open={open}
 			maxWidth="md"
 			onClose={useBackgroundClickClose && onClose}
-			sx={{
-				'& .MuiPaper-root': {
-					borderRadius: '16px',
-					isolation: 'isolate',
-					...(width && {
-						width: typeof width === 'number' ? `${width}px` : width,
-					}),
+			sx={[
+				{
+					'& .MuiPaper-root': {
+						borderRadius: '16px',
+						isolation: 'isolate',
+						...(width && {
+							width:
+								typeof width === 'number'
+									? `${width}px`
+									: width,
+						}),
+					},
+					'& .MuiDialogTitle-root': {
+						marginBottom: '8px',
+					},
 				},
-				'& .MuiDialogTitle-root': {
-					marginBottom: '8px',
+				showBottomLine && {
+					'& .MuiDialogContent-root': {
+						marginBottom: '65px',
+					},
+					'& .MuiDialogActions-root': {
+						backgroundColor: 'grey.10',
+						paddingY: '16px',
+						paddingX: '24px',
+						borderTop: (theme) =>
+							`1px solid ${theme.palette.grey[100]}`,
+					},
 				},
-				...sx,
-			}}
+				...(Array.isArray(sx) ? sx : [sx]),
+			]}
 			{...props}>
 			{(TitleComponent || showCloseButton) && (
 				<DialogTitle
@@ -82,8 +101,8 @@ function Dialog({
 						position: 'absolute',
 						width: '100%',
 						zIndex: 1,
-						paddingTop: '32px',
-						paddingBottom: '16px',
+						paddingTop: {xs: '20px', sm: '32px'},
+						paddingBottom: {xs: '0px', sm: '16px'},
 						paddingX: dialogPadding,
 						background: '#FFF',
 					}}>
@@ -95,7 +114,7 @@ function Dialog({
 			)}
 			<DialogContent
 				sx={{
-					marginTop: '74px',
+					marginTop: {xs: '59px', sm: '74px'},
 					...(ActionComponent && {
 						marginBottom: '70px',
 					}),
