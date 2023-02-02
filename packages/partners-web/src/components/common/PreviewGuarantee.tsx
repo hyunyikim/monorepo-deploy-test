@@ -289,11 +289,8 @@ function GreyBoxComponent({title, desc}: GreyBoxProps) {
 						</DescTextStyle>
 					))
 				) : (
-					<DescTextStyle>
-						{'예시) 제품 구매 후 3년간 보증됩니다.'}
-					</DescTextStyle>
+					<DescTextStyle className="desc-text">{desc}</DescTextStyle>
 				)}
-				<DescTextStyle className="desc-text">{desc}</DescTextStyle>
 			</HiddenBoxStyle>
 		</GreyInfoBoxStyle>
 	);
