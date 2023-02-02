@@ -122,13 +122,13 @@ export const menuData: MenuList = [
 				icon: <IcUser />,
 				path: '/setting/profile',
 			},
-			{
-				num: 12,
-				menu: 'profile-setting',
-				title: '회원 탈퇴',
-				icon: <IcUser />,
-				path: '/setting/signout',
-			},
+			// {
+			// 	num: 12,
+			// 	menu: 'profile-setting',
+			// 	title: '회원 탈퇴',
+			// 	icon: <IcUser />,
+			// 	path: '/setting/signout',
+			// },
 		],
 	},
 	{

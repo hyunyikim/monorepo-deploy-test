@@ -206,6 +206,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			});
 			return;
 		}
+
 		const formData = new FormData();
 		const customFields = partnershipInfo?.nftCustomFields;
 		Object.keys(data).forEach((key: string) => {

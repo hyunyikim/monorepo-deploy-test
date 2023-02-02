@@ -3,6 +3,7 @@ import {Box, Stack, Typography} from '@mui/material';
 import {GuaranteeDetail} from '@/@types';
 
 import {IcShopPrimary} from '@/assets/icon';
+import {textLineChangeHelper} from '@/utils';
 
 function GuaranteeDetailSellerInfo({data}: {data: GuaranteeDetail}) {
 	return (
@@ -47,7 +48,16 @@ function GuaranteeDetailSellerInfo({data}: {data: GuaranteeDetail}) {
 						{data?.issuerName || '-'}
 					</Typography>
 					<Typography variant="body3">
-						{data?.issuerInfo || '-'}
+						{data?.issuerInfo
+							? textLineChangeHelper(
+									String(data?.issuerInfo)
+							  ).map((line) => (
+									<>
+										{line}
+										<br />
+									</>
+							  ))
+							: '-'}
 					</Typography>
 				</Stack>
 			</Stack>

@@ -52,6 +52,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 		control,
 		handleSubmit,
 		setValue,
+		watch,
 		formState: {errors},
 	} = useForm<ProductRegisterFormData>({
 		resolver: yupResolver(productRegisterSchemaShape),
@@ -214,6 +215,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 						control={control}
 						setValue={setValue}
 						errors={errors}
+						watch={watch}
 					/>
 				</Stack>
 				<BottomNavigation>

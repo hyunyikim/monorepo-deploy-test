@@ -68,7 +68,10 @@ function GuaranteeRegisterPreviewCard() {
 				? `${String(previewData?.product?.price)}원`
 				: '0원',
 			nftCustomFieldValue: nftCustomFieldValue || null,
-			previewImage: previewData?.productImage?.preview,
+			previewImage:
+				partnershipData?.useNftProdImage === 'Y'
+					? previewData?.productImage?.preview
+					: null,
 			nftRequestId: previewData?.nft_req_num || '000000000000',
 			nftIssueDt:
 				previewData?.nft_issue_dt || format(new Date(), DATE_FORMAT),
