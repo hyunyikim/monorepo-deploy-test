@@ -15,6 +15,7 @@ export interface PricePlanProps {
 	discountTotalPrice: number;
 	totalPrice: number;
 	vat: number;
+	payPrice: number;
 	planLimit: number;
 	planType: 'DAY' | 'MONTH' | 'YEAR';
 	planLevel: number;
@@ -36,6 +37,7 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 	discountTotalPrice: number;
 	totalPrice: number;
 	vat: number;
+	payPrice: number;
 	planLimit: number;
 	planType: 'DAY' | 'MONTH' | 'YEAR';
 	planLevel: number;
@@ -63,5 +65,6 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 		this.planTotalPrice = this.planPrice * months; // 정상가 * 개월
 		this.totalPrice = this.displayPrice * months; // 최종 금액 = (정상가 - 할인금액) * 개월;
 		this.vat = this.totalPrice * 0.1; // 부가세 = 최종 금액 * 0.1
+		this.payPrice = this.totalPrice + this.vat;
 	}
 }

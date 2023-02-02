@@ -22,7 +22,8 @@ export class RegularPaymentService {
 		private readonly billingRepo: BillingRepository,
 		@Inject(PricePlanRepository)
 		private readonly planRepo: PlanRepository,
-		@Inject(InjectionToken.CRON_TASK_ON) private readonly cronTask: boolean,
+		@Inject(InjectionToken.CRON_TASK_ON)
+		private readonly cronTask: boolean,
 		@Inject(Logger) private readonly logger: Logger
 	) {}
 
@@ -92,7 +93,7 @@ export class RegularPaymentService {
 		})`;
 
 		// 결제 금액 (부가세 적용)
-		let payPrice = pricePlan.totalPrice + pricePlan.vat;
+		let payPrice = pricePlan.payPrice;
 
 		console.log(' @ 결제 금액 : ', payPrice);
 
