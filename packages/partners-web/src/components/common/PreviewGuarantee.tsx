@@ -639,11 +639,12 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									justifyContent={'space-between'}
 									alignItems="flex-start">
 									<DescTextStyle>{el}</DescTextStyle>
-									{String(
+									{values?.nftCustomFieldValue &&
+									String(
 										values?.nftCustomFieldValue[
 											el
 										] as string
-									).includes('http') ? (
+									)?.includes('http') ? (
 										<AtagComponent
 											url={
 												values?.nftCustomFieldValue[el]

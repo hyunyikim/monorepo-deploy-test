@@ -1597,19 +1597,9 @@ export function InputFormSection({
 							<InputLabelTag
 								required={false}
 								labelTitle={'고객센터'}
+								linkUrl={watch()?.customerCenterUrl}
+								linkTitle={'연결 확인하기'}
 							/>
-							<Typography
-								onClick={handleCheckOutLinkClick}
-								sx={{
-									fontSize: '14px',
-									lineHeight: '14px',
-									color: 'primary.main',
-									fontWeight: 700,
-									textDecoration: 'underline',
-									cursor: 'pointer',
-								}}>
-								연결 확인하기
-							</Typography>
 						</Grid>
 
 						<ControlledInputComponent
