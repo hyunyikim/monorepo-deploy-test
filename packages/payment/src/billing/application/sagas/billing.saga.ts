@@ -40,7 +40,7 @@ export class BillingSaga {
 		return events$.pipe(
 			ofType(PlanChangedEvent),
 			filter((e) => !e.scheduled),
-			filter((e) => e.billing.unregisteredAt === undefined),
+			filter((e) => !e.billing.deletedAt),
 			map((e) => this.composeApproveBillingCommand(e.billing))
 		);
 	};
@@ -53,7 +53,7 @@ export class BillingSaga {
 	billingResumed = (events$: Observable<any>): Observable<ICommand> => {
 		return events$.pipe(
 			ofType(BillingResumedEvent),
-			filter((e) => e.billing.unregisteredAt === undefined),
+			filter((e) => !e.billing.deletedAt),
 			filter(
 				(e) =>
 					DateTime.now() >

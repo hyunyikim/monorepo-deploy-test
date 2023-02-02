@@ -73,9 +73,7 @@ export class PlanBillingRepository
 
 		const entities = Items as BillingEntity[];
 
-		const entity = entities.find(
-			(entity) => entity.unregisteredAt === undefined
-		);
+		const entity = entities.find((entity) => !entity.deletedAt);
 		if (!entity) return null;
 
 		return this.entityToModel(entity);
@@ -97,7 +95,7 @@ export class PlanBillingRepository
 		if (!Items || Items.length === 0) return null;
 
 		const entities = Items as BillingEntity[];
-		const entity = entities.find((entity) => !entity.unregisteredAt);
+		const entity = entities.find((entity) => !entity.deletedAt);
 		if (!entity) return null;
 
 		return this.entityToModel(entity);
@@ -116,7 +114,7 @@ export class PlanBillingRepository
 		return billings
 			.filter((billing) => {
 				if (!registered) return true;
-				return billing.unregisteredAt === undefined;
+				return !billing.deletedAt;
 			})
 			.map((props) => this.entityToModel(props));
 	}

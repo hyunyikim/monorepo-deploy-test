@@ -44,9 +44,16 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 	activated: boolean;
 	usedMonths?: number;
 
-	constructor(props: PricePlanProps) {
+	constructor(props?: PricePlanProps) {
 		super();
 		Object.assign(this, props);
+
+		if (!props) {
+			this.planPrice = 0;
+			this.discountRate = 0;
+			this.planLimit = 0;
+			this.planLevel = 0;
+		}
 
 		this.calculateTotalAmount();
 	}

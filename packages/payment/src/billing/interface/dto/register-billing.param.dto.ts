@@ -1,9 +1,6 @@
 import {IsNumber, IsString} from 'class-validator';
 
-export class RegisterBillingBodyDTO {
-	@IsString()
-	readonly planId: string;
-
+export class RegisterCardBodyDTO {
 	@IsString()
 	readonly cardNumber: string;
 
@@ -23,6 +20,11 @@ export class RegisterBillingBodyDTO {
 	readonly customerEmail: string;
 }
 
+export class RegisterBillingBodyDTO extends RegisterCardBodyDTO {
+	@IsString()
+	readonly planId: string;
+}
+
 export class RegisterFreeBillingBodyDTO {
 	@IsNumber()
 	readonly planMonth?: number;
@@ -31,12 +33,7 @@ export class RegisterFreeBillingBodyDTO {
 	readonly planLimit?: number;
 }
 
-export class UnregisterBillingDTO {
-	@IsString()
-	readonly customerKey: string;
-}
-
-export class FindBillingDTO {
+export class CustomerKeyDTO {
 	@IsString()
 	readonly customerKey: string;
 }
@@ -44,9 +41,4 @@ export class FindBillingDTO {
 export class ChangeBillingPlanBodyDTO {
 	@IsString()
 	readonly planId: string;
-}
-
-export class PauseBillingParamDTO {
-	@IsString()
-	readonly customerKey: string;
 }

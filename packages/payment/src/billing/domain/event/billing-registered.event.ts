@@ -8,3 +8,15 @@ export class BillingRegisteredEvent implements IEvent {
 export class BillingUnregisteredEvent implements IEvent {
 	constructor(public readonly billing: BillingProps) {}
 }
+
+export class BillingDeletedEvent implements IEvent {
+	constructor(public readonly billing: BillingProps) {}
+}
+
+export class CardRegisteredEvent implements IEvent {
+	constructor(public readonly billing: BillingProps) {}
+}
+
+export class CardDeletedEvent implements IEvent {
+	constructor(public readonly billing: BillingProps) {}
+}

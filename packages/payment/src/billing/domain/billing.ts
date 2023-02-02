@@ -3,12 +3,18 @@ import {
 	BillingApprovedEvent,
 	BillingRegisteredEvent,
 	BillingUnregisteredEvent,
+	BillingDeletedEvent,
 	PlanChangedEvent,
 	BillingPausedEvent,
 	BillingResumedEvent,
+	CardRegisteredEvent,
+	CardDeletedEvent,
 } from './event';
 import {PaymentProps} from './payment';
-import {Billing as TossBilling} from '../infrastructure/api-client';
+import {
+	Billing as TossBilling,
+	BillingCard as TossBillingCard,
+} from '../infrastructure/api-client';
 import {DateTime} from 'luxon';
 import {PricePlan, PricePlanProps} from './pricePlan';
 
@@ -19,7 +25,10 @@ export interface Billing {
 	properties: () => BillingProps;
 	register: () => void;
 	unregister: () => void;
-	isRegistered: boolean;
+	registerCard: () => void;
+	deleteCard: () => void;
+	delete: () => void;
+	isDeleted: boolean;
 	approve: (payment: PaymentProps) => void;
 	changePlan: (
 		plan: PricePlanProps,
@@ -40,7 +49,7 @@ export type BillingProps = TossBilling & {
 	orderId?: string;
 	pricePlan: PricePlanProps;
 	pausedAt?: string;
-	unregisteredAt?: string;
+	deletedAt?: string;
 	lastPaymentAt?: string;
 	lastPaymentKey?: string;
 	planExpireDate?: string;
@@ -55,23 +64,25 @@ export type BillingProps = TossBilling & {
  * TODO: 추후 구독 정보와 PG사의 빌링 등록 내역을 분리하면 좋을 듯
  */
 export class PlanBilling extends AggregateRoot implements Billing {
+	private card?: TossBillingCard;
 	private orderId?: string;
 	private pausedAt?: string;
-	private unregisteredAt?: string;
+	private deletedAt?: string;
 	private lastPaymentAt?: string;
 	private lastPaymentKey?: string;
 	private planExpireDate?: string;
 	private nextPaymentDate?: string;
 	private nextPricePlan?: PricePlanProps;
 	private canceledPricePlan?: PricePlanProps;
-	private usedNftCount?: number;
+	private readonly usedNftCount?: number;
 
 	constructor(private props: BillingProps) {
 		super();
 
+		this.card = props?.card;
 		this.orderId = props?.orderId;
 		this.pausedAt = props?.pausedAt;
-		this.unregisteredAt = props?.unregisteredAt;
+		this.deletedAt = props?.deletedAt;
 		this.lastPaymentAt = props?.lastPaymentAt;
 		this.lastPaymentKey = props?.lastPaymentKey;
 		this.planExpireDate = props?.planExpireDate;
@@ -84,10 +95,11 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	properties(): BillingProps {
 		return {
 			...this.props,
+			card: this.card,
 			orderId: this.orderId,
 			pricePlan: new PricePlan(this.props.pricePlan),
 			pausedAt: this.pausedAt,
-			unregisteredAt: this.unregisteredAt,
+			deletedAt: this.deletedAt,
 			lastPaymentAt: this.lastPaymentAt,
 			lastPaymentKey: this.lastPaymentKey,
 			planExpireDate: this.planExpireDate,
@@ -97,24 +109,6 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				: undefined,
 			usedNftCount: this.usedNftCount,
 		};
-	}
-
-	/**
-	 * 구독 중지
-	 */
-	pause(): void {
-		this.pausedAt = DateTime.now().toISO();
-		const event = new BillingPausedEvent(this.properties());
-		this.apply(event);
-	}
-
-	/**
-	 * 구독 재개
-	 */
-	resume(): void {
-		this.pausedAt = undefined;
-		const event = new BillingResumedEvent(this.properties());
-		this.apply(event);
 	}
 
 	/**
@@ -138,6 +132,33 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			})
 			.toISO();
 		const event = new BillingUnregisteredEvent(this.properties());
+		this.apply(event);
+	}
+
+	/**
+	 * 카드 등록
+	 */
+	registerCard(): void {
+		const event = new CardRegisteredEvent(this.properties());
+		this.apply(event);
+	}
+
+	/**
+	 * 카드 삭제
+	 */
+	deleteCard(): void {
+		const event = new CardDeletedEvent(this.properties());
+		this.apply(event);
+	}
+
+	/**
+	 * 구독 삭제
+	 */
+	delete(): void {
+		this.deletedAt = DateTime.now().toISO();
+		this.nextPricePlan = undefined;
+		this.nextPaymentDate = undefined;
+		const event = new BillingDeletedEvent(this.properties());
 		this.apply(event);
 	}
 
@@ -195,7 +216,25 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.apply(event);
 	}
 
-	get isRegistered() {
-		return !this.unregisteredAt;
+	/**
+	 * 구독 중지
+	 */
+	pause(): void {
+		this.pausedAt = DateTime.now().toISO();
+		const event = new BillingPausedEvent(this.properties());
+		this.apply(event);
+	}
+
+	/**
+	 * 구독 재개
+	 */
+	resume(): void {
+		this.pausedAt = undefined;
+		const event = new BillingResumedEvent(this.properties());
+		this.apply(event);
+	}
+
+	get isDeleted() {
+		return !!this.deletedAt;
 	}
 }

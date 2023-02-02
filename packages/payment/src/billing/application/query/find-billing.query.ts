@@ -35,13 +35,10 @@ export class FindBillingByPartnerTokenHandler
 
 		const billingProps: BillingProps = billing.properties();
 
-		// TODO: 연결제일 경우 오늘일자가 포함된 1개월치만 검색되도록
-
 		// 사용량 조회
+		// TODO: 연결제일 경우 오늘일자가 포함된 1개월치만 검색되도록
 		const payload = {
-			from: DateTime.fromISO(
-				billingProps.lastPaymentAt || billingProps.authenticatedAt
-			).toISODate(),
+			from: DateTime.fromISO(billingProps.lastPaymentAt!).toISODate(),
 			to: billingProps.planExpireDate
 				? DateTime.fromISO(billingProps.planExpireDate).toISODate()
 				: undefined,

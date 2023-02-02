@@ -15,12 +15,17 @@ import {
 	RegisterBillingBodyDTO,
 	ChangeBillingPlanBodyDTO,
 	RegisterFreeBillingBodyDTO,
+	CustomerKeyDTO,
+	RegisterCardBodyDTO,
 } from './dto';
 import {
 	RegisterBillingCommand,
 	UnregisterBillingCommand,
+	DeleteBillingCommand,
 	ChangeBillingPlanCommand,
 	RegisterFreeBillingCommand,
+	RegisterCardCommand,
+	DeleteCardCommand,
 } from '../application/command';
 import {
 	FindBillingByPartnerTokenQuery,
@@ -31,7 +36,6 @@ import {
 import {BillingProps, PaymentProps, PricePlanProps} from '../domain';
 import {JwtAuthGuard} from './guards/jwt-auth.guard';
 import {GetToken, TokenInfo} from './getToken.decorator';
-import {createHmac} from 'crypto';
 import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
 import {HttpExceptionFilter} from './httpException.filter';
@@ -167,25 +171,15 @@ export class BillingController {
 		}: RegisterBillingBodyDTO,
 		@GetToken() token: TokenInfo
 	) {
-		// 유저가 보유한 카드당 1개만 빌링 생성 가능하도록 고정 해시값 생성
-		const hmac = createHmac('sha256', token.token);
-		hmac.update([token.partnerIdx, cardNumber].join('_'));
-		const customerKey = hmac.digest('base64');
-
 		// 구독 신청 커맨드 실행
-		const registerCommand = new RegisterBillingCommand(
-			token.partnerIdx,
-			planId,
-			customerKey,
-			{
-				cardNumber,
-				cardExpirationYear,
-				cardExpirationMonth,
-				cardPassword,
-				customerIdentityNumber,
-				customerEmail,
-			}
-		);
+		const registerCommand = new RegisterBillingCommand(token, planId, {
+			cardNumber,
+			cardExpirationYear,
+			cardExpirationMonth,
+			cardPassword,
+			customerIdentityNumber,
+			customerEmail,
+		});
 		await this.commandBus.execute(registerCommand);
 
 		return this.getBilling(token);
@@ -214,6 +208,41 @@ export class BillingController {
 		await this.commandBus.execute(registerCommand);
 
 		return this.getBilling(token);
+	}
+
+	/**
+	 * 카드 등록 API
+	 *
+	 * @param body
+	 * @param token
+	 */
+	@Post('/card')
+	@UseGuards(JwtAuthGuard)
+	async registerCard(
+		@Body() body: RegisterCardBodyDTO,
+		@GetToken() token: TokenInfo
+	) {
+		// 무료 플랜 생성 커맨드 실행
+		const registerCommand = new RegisterCardCommand(token, body);
+		await this.commandBus.execute(registerCommand);
+
+		return this.getBilling(token);
+	}
+
+	/**
+	 * 카드 삭제 API
+	 * @param customerKey
+	 * @param token
+	 */
+	@Delete('/card')
+	@UseGuards(JwtAuthGuard)
+	async deleteCard(
+		@Body() {customerKey}: CustomerKeyDTO,
+		@GetToken() token: TokenInfo
+	) {
+		// 구독 삭제 커맨드 실행
+		const command = new DeleteCardCommand(token);
+		await this.commandBus.execute(command);
 	}
 
 	/**
@@ -311,8 +340,6 @@ export class BillingController {
 	@Get('/')
 	@UseGuards(JwtAuthGuard)
 	async getBilling(@GetToken() token: TokenInfo) {
-		const {partnerIdx} = token;
-
 		// 구독 조회
 		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
@@ -346,11 +373,9 @@ export class BillingController {
 	 * 구독 취소 API
 	 * @param token
 	 */
-	@Delete('/')
+	@Patch('/cancel')
 	@UseGuards(JwtAuthGuard)
 	async unregisterBilling(@GetToken() token: TokenInfo) {
-		const {partnerIdx} = token;
-
 		// 구독 조회
 		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
@@ -360,6 +385,18 @@ export class BillingController {
 
 		// 구독 취소 커맨드 실행
 		const command = new UnregisterBillingCommand(billingProps.customerKey);
+		await this.commandBus.execute(command);
+	}
+
+	/**
+	 * 구독 삭제 API
+	 * @param token
+	 */
+	@Delete('/')
+	@UseGuards(JwtAuthGuard)
+	async deleteBilling(@GetToken() token: TokenInfo) {
+		// 구독 삭제 커맨드 실행
+		const command = new DeleteBillingCommand(token.partnerIdx);
 		await this.commandBus.execute(command);
 	}
 }

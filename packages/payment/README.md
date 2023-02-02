@@ -29,18 +29,17 @@ yarn workspace @vircle/payment start
 ```
 src
 └─ billing
-    ├─ application
+    ├─ application      : 비지니스 로직
     │    ├─ command         : 커맨드 로직
-    │    ├─ event           : 이벤트 정의
+    │    ├─ event           : 이벤트 핸들러
     │    ├─ query           : 데이터 조회 로직
-    │    ├─ sagas           : 특수 이벤트 핸들러
+    │    ├─ sagas           : 이벤트 구독 로직
     │    └─ services        : 서비스 로직
     ├─ domain           : 도메인 단위의 클래스 정의
     │  └─ event             : 각 클래스의 이벤트 핸들러 정의
     ├─ infrastructure
-    │  ├─ api-client        : PG사 API 통신 로직
-    │  ├─ cache             : 캐시
-    │  └─ repository        : 데이터 엑세스 로직
+    │  ├─ api-client        : 외부 API 통신 로직
+    │  └─ repository        : DB 데이터 엑세스 로직
     └─ interface        : REST 라우팅 컨트롤러
       ├─ dto                : DTO 모음
       └─ guards             : JWT 미들웨어

@@ -129,11 +129,11 @@ export class RegularPaymentService {
 	 * @private
 	 */
 	private isPaymentTiming(billing: Billing) {
-		const {unregisteredAt, nextPaymentDate, nextPricePlan, pausedAt, card} =
+		const {deletedAt, nextPaymentDate, nextPricePlan, pausedAt, card} =
 			billing.properties();
 
 		// 빌링이 취소된 경우
-		if (unregisteredAt) return false;
+		if (deletedAt) return false;
 
 		// 카드 정보가 등록되지 않은 경우
 		if (!card) return false;
