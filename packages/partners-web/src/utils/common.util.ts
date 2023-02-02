@@ -49,3 +49,11 @@ export const delay = (ms: number) => {
 		}, ms);
 	});
 };
+
+export const textLineChangeHelper = (_text: string) => {
+	if (_text.includes('\n')) {
+		return _text.split('\n');
+	}
+
+	return [_text];
+};

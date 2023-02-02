@@ -24,6 +24,8 @@ interface Props {
 	defaultValue?: string;
 	InputProps?: InputProps;
 	inputProps?: object;
+	linkUrl?: string;
+	linkTitle?: string;
 }
 
 function InputWithLabel({
@@ -43,6 +45,8 @@ function InputWithLabel({
 	disabled,
 	defaultValue,
 	inputProps,
+	linkUrl,
+	linkTitle,
 	...props
 }: Props) {
 	return (
@@ -50,6 +54,8 @@ function InputWithLabel({
 			<InputLabelTag
 				required={required}
 				labelTitle={labelTitle}
+				linkUrl={linkUrl}
+				linkTitle={linkTitle}
 				{...(sx && {
 					sx,
 				})}

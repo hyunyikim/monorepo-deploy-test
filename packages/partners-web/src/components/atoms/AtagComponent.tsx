@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 interface AtagProps {
 	children: ReactNode;
 	url: string;
-	target: string;
+	target?: string;
 }
 const LinkStyle = styled('a')`
 	text-decoration: none;

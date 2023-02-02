@@ -3,8 +3,10 @@ import {
 	Controller,
 	UseFormSetValue,
 	FieldErrors,
+	UseFormWatch,
 	Control,
 	FieldError,
+	FieldValues,
 } from 'react-hook-form';
 
 import {ProductRegisterFormData, InputType, InputTypeList} from '@/@types';
@@ -23,6 +25,7 @@ interface Props {
 	control:
 		| Control<ProductRegisterFormData, any>
 		| Control<Partial<ProductRegisterFormData>, any>;
+	watch?: UseFormWatch<FieldValues> | UseFormWatch<ProductRegisterFormData>;
 	setValue:
 		| UseFormSetValue<ProductRegisterFormData>
 		| UseFormSetValue<Partial<ProductRegisterFormData>>;
@@ -35,6 +38,7 @@ function ProductRegisterFormInput({
 	setImages,
 	control,
 	setValue,
+	watch,
 	errors,
 }: Props) {
 	return (
@@ -43,15 +47,34 @@ function ProductRegisterFormInput({
 				inputList?.length > 0 &&
 				inputList.map((input: InputType) => {
 					const {name, type, ...restInput} = input;
+					let isUrl = false;
+					let inputValue;
+					if (watch) {
+						inputValue = String(watch()[input.name]);
+						isUrl =
+							inputValue.includes('http') ||
+							inputValue.includes('www.');
+					}
+
 					if (type === 'text') {
 						return (
 							<InputWithLabel
+								linkUrl={
+									isUrl && !input.placeholder
+										? inputValue
+										: ''
+								}
+								linkTitle={
+									isUrl && !input.placeholder
+										? '연결 확인하기'
+										: ''
+								}
 								key={name}
 								name={name}
 								control={control}
 								labelTitle={input.label}
 								placeholder={input.placeholder}
-								inputType={input.type}
+								type={input.type}
 								required={input?.required || false}
 								error={
 									errors[
@@ -61,9 +84,16 @@ function ProductRegisterFormInput({
 								{...restInput}
 								onChange={(e) => {
 									if (name === 'price') {
+										const regex = RegExp(/^[0-9]+$/);
+
 										let value = e?.target?.value
 											? String(e?.target?.value)
 											: null;
+										/* TODO: 인풋에 붙여넣기 했을때, 숫자가 아니면 빈값으로 만들기!! */
+										/* if (regex.test(e?.target?.value)) {
+											return;
+										} */
+
 										if (value) {
 											const pureNumber = value.replace(
 												/\,/g,
