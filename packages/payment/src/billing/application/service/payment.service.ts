@@ -95,19 +95,13 @@ export class RegularPaymentService {
 		// 결제 금액 (부가세 적용)
 		let payPrice = pricePlan.payPrice;
 
-		console.log(' @ 결제 금액 : ', payPrice);
-
 		// 취소할 금액이 있을 경우
 		if (canceledPricePlan) {
-			payPrice -= canceledPricePlan.totalPrice + canceledPricePlan.vat;
-
-			console.log(
-				' @ 취소 금액 : ',
-				canceledPricePlan.totalPrice + canceledPricePlan.vat
-			);
+			payPrice -= canceledPricePlan.usedMonths
+				? (canceledPricePlan.totalPrice + canceledPricePlan.vat) *
+				  (canceledPricePlan.usedMonths / 12)
+				: 0;
 		}
-
-		console.log(' @ 최종 결제 금액 : ', payPrice);
 
 		const orderId = [
 			partnerIdx.toString(),
@@ -147,14 +141,6 @@ export class RegularPaymentService {
 		if (pausedAt) return false;
 
 		// TODO: 이미 결제를 완료한 경우 중복결제 방지
-
-		console.log(
-			'## 결제 시점 체크 ##',
-			DateTime.now().toISO(),
-			DateTime.fromISO(nextPaymentDate).toISO(),
-			nextPricePlan.planId,
-			nextPricePlan.planPrice
-		);
 
 		return DateTime.now() > DateTime.fromISO(nextPaymentDate);
 	}

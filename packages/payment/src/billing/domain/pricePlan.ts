@@ -20,6 +20,7 @@ export interface PricePlanProps {
 	planType: 'DAY' | 'MONTH' | 'YEAR';
 	planLevel: number;
 	activated: boolean;
+	usedMonths?: number;
 }
 
 /**

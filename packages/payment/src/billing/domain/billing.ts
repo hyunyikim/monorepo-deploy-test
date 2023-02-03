@@ -107,6 +107,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			nextPricePlan: this.nextPricePlan
 				? new PricePlan(this.nextPricePlan)
 				: undefined,
+			canceledPricePlan: this.canceledPricePlan,
 			usedNftCount: this.usedNftCount,
 		};
 	}
@@ -208,11 +209,9 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				planLimit: newPricePlan.planLimit + remainLimit,
 			};
 		}
-		console.log('@@ 취소된 플랜 @@');
-		console.log(canceledPricePlan);
 		this.nextPricePlan = newPricePlan;
 		this.canceledPricePlan = canceledPricePlan;
-		const event = new PlanChangedEvent(this.props, !!scheduledDate);
+		const event = new PlanChangedEvent(this.properties(), !!scheduledDate);
 		this.apply(event);
 	}
 

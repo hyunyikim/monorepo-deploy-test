@@ -28,7 +28,8 @@ export class ApproveBillingPaymentHandler
 	) {}
 
 	async execute(command: ApproveBillingPaymentCommand): Promise<void> {
-		const {partnerIdx, billingKey, pricePlan, payload} = command;
+		const {partnerIdx, billingKey, pricePlan, payload, canceledPricePlan} =
+			command;
 
 		// 결제정보 조회
 		const billing = await this.billingRepo.findByKey(billingKey);
@@ -59,6 +60,7 @@ export class ApproveBillingPaymentHandler
 			...tossPayment,
 			partnerIdx,
 			pricePlan,
+			canceledPricePlan,
 		});
 		await this.paymentRepo.savePayment(payment);
 

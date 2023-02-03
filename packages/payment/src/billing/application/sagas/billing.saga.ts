@@ -77,9 +77,6 @@ export class BillingSaga {
 			customerKey,
 		} = billingProps;
 
-		console.log(' @@@@ 결제 요청 @@@@');
-		console.log(billingProps);
-
 		return new ApproveBillingPaymentCommand(
 			partnerIdx,
 			billingKey,
@@ -89,7 +86,8 @@ export class BillingSaga {
 				customerKey,
 				pricePlan,
 				canceledPricePlan
-			)
+			),
+			canceledPricePlan
 		);
 	}
 }

@@ -119,7 +119,7 @@ class PaymentDetailInterface extends PaymentSummaryInterface {
 		super(payment);
 
 		this.pricePlan = payment.pricePlan;
-		this.canceledPricePlan = undefined; //payment.canceledPricePlan;
+		this.canceledPricePlan = payment.canceledPricePlan;
 		this.payApprovedAt = DateTime.fromISO(payment.approvedAt).toISO();
 	}
 }

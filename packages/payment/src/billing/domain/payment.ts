@@ -45,9 +45,7 @@ export class PlanPayment extends AggregateRoot implements Payment {
 			...this.props,
 			partnerIdx: this.partnerIdx,
 			pricePlan: this.pricePlan,
-			...(this.canceledPricePlan && {
-				canceledPricePlan: this.canceledPricePlan,
-			}),
+			canceledPricePlan: this.canceledPricePlan,
 			expiredAt: this.expiredAt,
 		};
 	}

@@ -105,20 +105,11 @@ export class ChangeBillingPlanHandler
 			) {
 				// 사용한 개월수 = 플랜 시작일(직전 결제일) 부터 현재까지 개월 수
 				const usedMonths: number =
-					-Math.ceil(
-						DateTime.fromISO(billingProps.lastPaymentAt!).diffNow(
+					Math.ceil(
+						-DateTime.fromISO(billingProps.lastPaymentAt!).diffNow(
 							'months'
 						).months
 					) || 1;
-
-				console.log('@@ 플랜 시작일: ', billingProps.lastPaymentAt);
-				console.log(
-					'@@ diffnow: ',
-					DateTime.fromISO(billingProps.lastPaymentAt!).diffNow(
-						'months'
-					)
-				);
-				console.log('@@ 사용한 개월수: ', usedMonths);
 
 				if (usedMonths > 0) {
 					// 취소할 플랜

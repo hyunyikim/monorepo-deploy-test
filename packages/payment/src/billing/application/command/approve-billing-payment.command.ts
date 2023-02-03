@@ -11,6 +11,7 @@ export class ApproveBillingPaymentCommand implements ICommand {
 			customerKey: string;
 			orderId: string;
 			orderName: string;
-		}
+		},
+		readonly canceledPricePlan?: PricePlanProps
 	) {}
 }
