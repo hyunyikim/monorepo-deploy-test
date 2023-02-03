@@ -371,21 +371,14 @@ export class DeleteBillingHandler
 
 		// 빌링 조회
 		const billing = await this.billingRepo.findByPartnerIdx(partnerIdx);
-		if (!billing) {
-			throw new NotFoundException('NOT_FOUND_BILLING_RESOURCE');
+		if (billing) {
+			// 구독 삭제
+			billing.delete();
+
+			// DB 저장
+			await this.billingRepo.saveBilling(billing);
+
+			billing.commit();
 		}
-
-		const billingProps = billing.properties();
-		if (billingProps.deletedAt) {
-			throw new BadRequestException('ALREADY_PLAN_DELETED');
-		}
-
-		// 구독 삭제
-		billing.delete();
-
-		// DB 저장
-		await this.billingRepo.saveBilling(billing);
-
-		billing.commit();
 	}
 }

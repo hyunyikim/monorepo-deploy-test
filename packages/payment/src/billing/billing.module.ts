@@ -15,6 +15,7 @@ import {
 	RegisterCardHandler,
 	DeleteCardHandler,
 	UnregisterBillingHandler,
+	DeleteBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
 } from './application/command';
@@ -80,6 +81,7 @@ const app: Provider[] = [
 	RegisterCardHandler,
 	DeleteCardHandler,
 	UnregisterBillingHandler,
+	DeleteBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
 
