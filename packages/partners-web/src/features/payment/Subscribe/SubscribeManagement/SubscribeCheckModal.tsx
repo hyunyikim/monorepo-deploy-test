@@ -1,15 +1,20 @@
+import {Dispatch, SetStateAction} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {Stack, Typography} from '@mui/material';
 
 import {
 	PricePlan,
-	SbuscribeInfoPreviewData,
+	TotalSubscribeInfoPreviewData,
 	Card,
 	PatchPlanRequestParam,
 } from '@/@types';
 import {Button, Dialog} from '@/components';
-import {useMessageDialog, useGetUserPricePlan} from '@/stores';
+import {
+	useMessageDialog,
+	useGetUserPricePlan,
+	useGlobalLoading,
+} from '@/stores';
 
 import SubscribeInfoPreview from '@/features/payment/common/SubscribeInfoPreview';
 import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBullet';
@@ -19,10 +24,11 @@ import {patchPricePlan} from '@/api/payment.api';
 
 interface Props {
 	selectedPlan: PricePlan;
-	subscribePreview: SbuscribeInfoPreviewData;
+	subscribePreview: TotalSubscribeInfoPreviewData;
 	open: boolean;
 	onOpen: () => void;
 	onClose: () => void;
+	setIsAvailableSelect: Dispatch<SetStateAction<boolean>>;
 }
 
 function SubscribeCheckModal({
@@ -31,10 +37,14 @@ function SubscribeCheckModal({
 	open,
 	onOpen,
 	onClose,
+	setIsAvailableSelect,
 }: Props) {
 	const queryClient = useQueryClient();
 	const {data: userPlan} = useGetUserPricePlan();
+
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const {
 		open: openAddPaymentModal,
 		onOpen: onOpenAddPaymentModal,
@@ -42,10 +52,13 @@ function SubscribeCheckModal({
 	} = useChildModalOpen({});
 
 	const patchPricePlanMutation = useMutation({
-		mutationFn: (data?: PatchPlanRequestParam) => patchPricePlan(data),
+		onMutate: () => {
+			setIsLoading(true);
+		},
+		mutationFn: (data: PatchPlanRequestParam) => patchPricePlan(data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['userPricePlan', 'userPaymentHistoryList'],
+				queryKey: ['userPricePlan'],
 			});
 			onOpenMessageDialog({
 				title: '구독 플랜이 변경됐습니다.',
@@ -53,21 +66,20 @@ function SubscribeCheckModal({
 				closeButtonValue: '확인',
 				onCloseFunc: onClose,
 			});
+			setIsAvailableSelect(false);
 		},
 		onError: (e) => {
-			onOpenMessageDialog({
-				title: '구독 플랜 변경 실패', // TODO: error message
-				showBottomCloseButton: true,
-				closeButtonValue: '확인',
-			});
+			onOpenError();
+		},
+		onSettled: () => {
+			setIsLoading(false);
 		},
 	});
 
 	const onClickSubscribeChange = async () => {
-		const isUserRegisterCard = (card?: Card) => (card ? true : false);
-		if (isUserRegisterCard(userPlan?.card)) {
+		const isCardRegistered = userPlan?.card ? true : false;
+		if (isCardRegistered) {
 			await patchPricePlanMutation.mutateAsync({
-				customerKey: '',
 				planId: selectedPlan.planId,
 			});
 			return;
@@ -132,9 +144,7 @@ function SubscribeCheckModal({
 							width: '100%',
 						}}>
 						<SubscribeInfoPreview
-							data={{
-								data: subscribePreview,
-							}}
+							data={subscribePreview}
 							sx={{
 								width: '100%',
 								maxWidth: {
@@ -202,11 +212,13 @@ function SubscribeCheckModal({
 					</Stack>
 				</Stack>
 			</Dialog>
-			<AddPaymentCardModal
-				open={openAddPaymentModal}
-				onClose={onCloseAddPaymentModal}
-				afterAddPaymentCardFunc={onOpen}
-			/>
+			{openAddPaymentModal && (
+				<AddPaymentCardModal
+					open={openAddPaymentModal}
+					onClose={onCloseAddPaymentModal}
+					afterAddPaymentCardFunc={onOpen}
+				/>
+			)}
 		</>
 	);
 }

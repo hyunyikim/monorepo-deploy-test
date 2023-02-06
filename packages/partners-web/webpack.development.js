@@ -7,5 +7,9 @@ module.exports = {
 		historyApiFallback: true,
 	},
 	devtool: 'inline-source-map',
-	plugins: [new ReactRefreshWebpackPlugin()],
+	plugins: [
+		new ReactRefreshWebpackPlugin({
+			overlay: false,
+		}),
+	],
 };

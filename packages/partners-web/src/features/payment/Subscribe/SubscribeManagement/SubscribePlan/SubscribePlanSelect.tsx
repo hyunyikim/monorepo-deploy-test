@@ -5,7 +5,7 @@ import {Backdrop, Stack, Typography} from '@mui/material';
 import {PricePlan} from '@/@types';
 import {useChildModalOpen} from '@/utils/hooks';
 import style from '@/assets/styles/style.module.scss';
-import {getChargedPlanDescription} from '@/data';
+import {ENTERPRISE_PLAN, getChargedPlanDescription} from '@/data';
 import {useGetPricePlanListByPlanType} from '@/stores';
 
 import {IcChevronDown} from '@/assets/icon';
@@ -92,8 +92,8 @@ function SubscribePlanSelect({
 						))}
 					<SubscribePlanSelectItem
 						enterprisePlan={{
-							planName: '엔터프라이즈 플랜',
-							planDesc: '개런티 발급량 1,000개 초과',
+							planName: ENTERPRISE_PLAN.PLAN_NAME,
+							planDesc: ENTERPRISE_PLAN.PLAN_DESCRIPTION,
 						}}
 						onModalOpen={onModalOpen}
 					/>
@@ -124,9 +124,6 @@ const SubscribePlanSelectSelected = ({
 	onClick: () => void;
 	onModalOpen: () => void;
 }) => {
-	const isEnterprisePlan = useMemo(() => {
-		return selectedPlan.planLevel > 4 ? true : false;
-	}, [selectedPlan]);
 	return (
 		<Stack
 			flexDirection="row"
@@ -163,33 +160,25 @@ const SubscribePlanSelectSelected = ({
 				flexDirection="row"
 				justifyContent="flex-end"
 				alignItems="center">
-				{isEnterprisePlan ? (
-					<InquiryButton onOpen={onModalOpen} />
-				) : (
-					<>
-						<Typography
-							variant="body3"
-							fontWeight="bold"
-							color="white"
-							mr=" 2px">
-							₩{selectedPlan?.planPrice?.toLocaleString() || ''}
-						</Typography>
-						<Typography variant="caption3" color="white" mr="8px">
-							월
-						</Typography>
-						<IcChevronDown
-							width={18}
-							height={18}
-							color={style.vircleGrey400}
-							style={{
-								transform: selectOpen
-									? 'rotate(-180deg)'
-									: 'rotate(0)',
-								transition: 'transform 0.25s ease-in-out',
-							}}
-						/>
-					</>
-				)}
+				<Typography
+					variant="body3"
+					fontWeight="bold"
+					color="white"
+					mr=" 2px">
+					₩{selectedPlan?.planPrice?.toLocaleString() || ''}
+				</Typography>
+				<Typography variant="caption3" color="white" mr="8px">
+					월
+				</Typography>
+				<IcChevronDown
+					width={18}
+					height={18}
+					color={style.vircleGrey400}
+					style={{
+						transform: selectOpen ? 'rotate(-180deg)' : 'rotate(0)',
+						transition: 'transform 0.25s ease-in-out',
+					}}
+				/>
 			</Stack>
 		</Stack>
 	);

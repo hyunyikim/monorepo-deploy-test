@@ -1,5 +1,4 @@
 import {useEffect, useMemo, useState} from 'react';
-import {addMonths, addYears, differenceInCalendarDays, format} from 'date-fns';
 
 import {Stack} from '@mui/material';
 
@@ -12,12 +11,13 @@ import {
 import {
 	PlanType,
 	PricePlan,
-	TotalSbuscribeInfoPreviewData,
+	TotalSubscribeInfoPreviewData,
 	UserPricePlanWithDate,
 } from '@/@types';
 import {
-	DATE_FORMAT_SEPERATOR_DOT,
 	getChargedPlanDescription,
+	getSubscribePreviwData,
+	isPlanOnSubscription,
 	TRIAL_PLAN,
 } from '@/data';
 import {useChildModalOpen} from '@/utils/hooks';
@@ -33,7 +33,7 @@ import SubscribeMagageButtonGroup from './SubscribeMagageButtonGroup';
 
 function SubscribeManagementTab() {
 	const {data: planList} = useGetPricePlanList({suspense: true});
-	const {data: userPlan} = useGetUserPricePlan({suspense: true});
+	const {data: userPlan} = useGetUserPricePlan();
 	const {data: yearPlanList} = useGetPricePlanListByPlanType('YEAR');
 	const {data: isUserUsedTrialPlan} = useIsUserUsedTrialPlan();
 
@@ -47,19 +47,19 @@ function SubscribeManagementTab() {
 	} = useChildModalOpen({});
 
 	const initialPlan = useMemo(() => {
-		if (!planList || !yearPlanList || !userPlan) {
+		if (!planList || !yearPlanList) {
 			return;
 		}
 
-		// 무료 체험중(기본 연결제 엑스스몰 플랜 선택됨)
-		if (userPlan.pricePlan.planId === TRIAL_PLAN.PLAN_ID) {
+		// 플랜 종료/무료 체험중(기본 연결제 엑스스몰 플랜 선택됨)
+		if (!userPlan || isUserUsedTrialPlan) {
 			const xsYearPlan = yearPlanList[0];
 			return xsYearPlan;
 		}
 
 		// 유료플랜 구독중
 		return userPlan.pricePlan;
-	}, [userPlan, planList, yearPlanList]);
+	}, [userPlan, isUserUsedTrialPlan, planList, yearPlanList]);
 
 	useEffect(() => {
 		// 선택된 플랜 최초 설정
@@ -77,38 +77,23 @@ function SubscribeManagementTab() {
 		if (selectedPlan && selectedPlan?.planType === planType) {
 			return;
 		}
-		const sameLevelSelectedPlan = planList?.find(
-			(plan) =>
-				plan.planType === planType &&
-				plan.planLevel === selectedPlan?.planLevel
+		const initialSelectedPlan = planList?.find(
+			(plan) => plan.planType === planType
 		);
-		sameLevelSelectedPlan && setSelectedPlan(sameLevelSelectedPlan);
+		initialSelectedPlan && setSelectedPlan(initialSelectedPlan);
 	};
 
 	const subscribePreviewData =
-		useMemo<TotalSbuscribeInfoPreviewData | null>(() => {
+		useMemo<TotalSubscribeInfoPreviewData | null>(() => {
 			if (!selectedPlan) {
 				return null;
 			}
-			const today = format(new Date(), DATE_FORMAT_SEPERATOR_DOT);
-			const endDate = format(
-				selectedPlan.planType === 'MONTH'
-					? addMonths(new Date(), 1)
-					: addYears(new Date(), 1),
-				DATE_FORMAT_SEPERATOR_DOT
-			);
-			return {
-				data: {
-					planName: selectedPlan.planName,
-					subscribeDuration: `${today}-${endDate}`,
-					displayTotalPrice: selectedPlan?.displayTotalPrice,
-					planTotalPrice: selectedPlan?.planTotalPrice,
-					discountTotalPrice: selectedPlan?.discountTotalPrice,
-					totalPrice: selectedPlan?.totalPrice,
-					payApprovedAt: today,
-				},
-			};
-		}, [selectedPlan, userPlan]);
+			return getSubscribePreviwData({
+				selectedPlan,
+				userPlan,
+				isUserUsedTrialPlan: !!isUserUsedTrialPlan,
+			});
+		}, [isUserUsedTrialPlan, selectedPlan, userPlan]);
 
 	if (!selectedPlan) {
 		return <></>;
@@ -130,7 +115,10 @@ function SubscribeManagementTab() {
 					}}>
 					{!isAvailableSelect ? (
 						<>
-							<NowSubscribedPlan userPlan={userPlan} />
+							<NowSubscribedPlan
+								userPlan={userPlan}
+								isTrial={!!isUserUsedTrialPlan}
+							/>
 							<SubscribeLineNotice />
 						</>
 					) : (
@@ -176,34 +164,43 @@ function SubscribeManagementTab() {
 			{subscribePreviewData && (
 				<SubscribeCheckModal
 					selectedPlan={selectedPlan}
-					subscribePreview={subscribePreviewData.data}
+					subscribePreview={subscribePreviewData}
 					open={subscribeCheckModalOpen}
 					onOpen={onSubscribeCheckModalOpen}
 					onClose={onSubscribeCheckModalClose}
+					setIsAvailableSelect={setIsAvailableSelect}
 				/>
 			)}
 		</>
 	);
 }
 
-const NowSubscribedPlan = ({userPlan}: {userPlan?: UserPricePlanWithDate}) => {
+const NowSubscribedPlan = ({
+	userPlan,
+	isTrial,
+}: {
+	userPlan?: UserPricePlanWithDate;
+	isTrial: boolean;
+}) => {
 	if (!userPlan) {
 		return <></>;
 	}
-	const isTrial = TRIAL_PLAN.PLAN_ID === userPlan.pricePlan.planId;
 	const desc = isTrial
 		? TRIAL_PLAN.PLAN_DESCRIPTION
 		: getChargedPlanDescription(userPlan?.pricePlan.planLimit || 0);
-	const leftDays =
-		differenceInCalendarDays(userPlan.planExpireDate, new Date()) + 1;
-	const isEnded = leftDays <= 0 ? true : false;
+
+	const isOnSubscription = isPlanOnSubscription({
+		startDate: userPlan.planStartedAt,
+		endDate: userPlan.planExpireDate,
+		isNextPlanExisted: !!userPlan?.nextPlanStartDate,
+	});
 	return (
 		<SubscribePlan
 			title={userPlan.pricePlan.planName}
 			desc={desc}
 			isSubscribed={true}
 			isTrial={isTrial}
-			isEnded={isEnded}
+			isEnded={!isOnSubscription}
 		/>
 	);
 };

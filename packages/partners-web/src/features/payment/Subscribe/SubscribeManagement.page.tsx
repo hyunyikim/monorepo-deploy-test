@@ -1,5 +1,6 @@
 import {Suspense} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
+import {ErrorBoundary} from 'react-error-boundary';
 import {parse, stringify} from 'qs';
 
 import {Link, Stack, Typography, Skeleton} from '@mui/material';

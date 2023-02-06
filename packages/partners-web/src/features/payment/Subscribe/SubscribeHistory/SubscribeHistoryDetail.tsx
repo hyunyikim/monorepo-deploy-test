@@ -1,19 +1,82 @@
+import {useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {format, parse} from 'date-fns';
 
 import style from '@/assets/styles/style.module.scss';
 
 import {Stack, Typography} from '@mui/material';
+
+import {useGetUserPaymentHistoryDetail} from '@/stores';
+import {TotalSubscribeInfoPreviewData} from '@/@types';
+import {DATE_FORMAT, DATE_FORMAT_SEPERATOR_DOT} from '@/data';
+
 import {IcPrinter} from '@/assets/icon';
 import Breadcrumbs from '@/features/payment/common/Breadcrumbs';
 import SubscribeInfoPreview from '@/features/payment/common/SubscribeInfoPreview';
-import SubscribeNoticeBullet from '../../common/SubscribeNoticeBullet';
+import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBullet';
 
 interface Props {
-	idx: number;
+	idx: string;
 }
 
 function SubscribeHistoryDetail({idx}: Props) {
 	const navigate = useNavigate();
+	const {data} = useGetUserPaymentHistoryDetail(idx);
+
+	const previewData = useMemo<TotalSubscribeInfoPreviewData | null>(() => {
+		if (!data) {
+			return null;
+		}
+		const {
+			planName,
+			startDate,
+			expireDate,
+			pricePlan,
+			canceledPlan,
+			payApprovedAt,
+			totalPaidPrice,
+		} = data;
+
+		const res: TotalSubscribeInfoPreviewData = {
+			data: {
+				planName: planName,
+				displayTotalPrice: pricePlan.displayTotalPrice,
+				planTotalPrice: pricePlan.planTotalPrice,
+				...(pricePlan.discountTotalPrice && {
+					discountTotalPrice: pricePlan.discountTotalPrice,
+				}),
+				totalPrice: pricePlan.totalPrice,
+				subscribeDuration: `${format(
+					new Date(startDate),
+					DATE_FORMAT_SEPERATOR_DOT
+				)} - ${format(
+					new Date(expireDate),
+					DATE_FORMAT_SEPERATOR_DOT
+				)}`,
+				payApprovedAt: format(
+					new Date(payApprovedAt),
+					DATE_FORMAT_SEPERATOR_DOT
+				),
+			},
+			...(canceledPlan && {
+				canceledData: {
+					planName: canceledPlan.planName,
+					displayTotalPrice: canceledPlan.displayTotalPrice,
+					planTotalPrice: canceledPlan.planTotalPrice,
+					...(canceledPlan.discountTotalPrice && {
+						discountTotalPrice: canceledPlan.discountTotalPrice,
+					}),
+					totalPrice: canceledPlan.totalPrice,
+					subscribeDuration: `${startDate} - ${expireDate}`,
+				},
+			}),
+			...(totalPaidPrice && {
+				totalPaidPrice,
+			}),
+		};
+		return res;
+	}, [data]);
+
 	return (
 		<Stack
 			sx={{
@@ -30,7 +93,7 @@ function SubscribeHistoryDetail({idx}: Props) {
 							},
 						},
 					]}
-					now="Breadcrumbs"
+					now={data?.displayOrderId || ''}
 				/>
 				<Typography
 					variant="body3"
@@ -51,11 +114,14 @@ function SubscribeHistoryDetail({idx}: Props) {
 					인쇄
 				</Typography>
 			</Stack>
-			<SubscribeInfoPreview
-				sx={{
-					maxWidth: 'none',
-				}}
-			/>
+			{previewData && (
+				<SubscribeInfoPreview
+					data={previewData}
+					sx={{
+						maxWidth: 'none',
+					}}
+				/>
+			)}
 			<SubscribeNoticeBullet
 				data={[
 					'업그레이드 시 기존 개런티 발급량이 남아 있다면 업그레이드한 플랜에 함께 적용됩니다.',

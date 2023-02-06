@@ -1,13 +1,15 @@
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {
 	Control,
 	FieldArrayWithId,
 	useFieldArray,
 	useForm,
+	UseFormSetFocus,
 } from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
+import {AxiosError} from 'axios';
 
 import {InputProps, Stack, Typography} from '@mui/material';
 
@@ -22,6 +24,7 @@ import {RegisterCardRequestParam} from '@/@types';
 import {onChangeOnlyNumber} from '@/utils';
 import {emailSchemaValidation} from '@/utils/schema';
 import {registerCard} from '@/api/payment.api';
+import {useGlobalLoading, useMessageDialog} from '@/stores';
 
 interface RegisterCardForm
 	extends Omit<RegisterCardRequestParam, 'cardNumber'> {
@@ -119,10 +122,13 @@ interface Props {
 }
 
 function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
+	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const queryClient = useQueryClient();
 	const {
 		control,
 		handleSubmit,
+		setFocus,
 		formState: {errors},
 	} = useForm<RegisterCardForm>({
 		defaultValues: {
@@ -162,6 +168,7 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
 	});
+	const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
 
 	const errorMessage = useMemo<string | undefined>(() => {
 		const errorsArray = Object.entries(errors).map((error) => {
@@ -172,8 +179,8 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 			}
 			return value?.message;
 		});
-		return errorsArray.find((error) => error);
-	}, [errors]);
+		return errorsArray.find((error) => error) || apiErrorMessage;
+	}, [errors, apiErrorMessage]);
 
 	const {fields} = useFieldArray({
 		control,
@@ -181,27 +188,51 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 	});
 
 	const registerPaymentCardMutation = useMutation({
-		mutationFn: (data: RegisterCardRequestParam) => registerCard(data),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
+		onMutate: () => {
+			setIsLoading(true);
+		},
+		mutationFn: async (data: RegisterCardRequestParam) =>
+			registerCard(data),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});
-			afterAddPaymentCardFunc && afterAddPaymentCardFunc();
+			// 구독변경 과정 중 넘어온 경우
+			if (afterAddPaymentCardFunc) {
+				onClose();
+				afterAddPaymentCardFunc();
+				return;
+			}
+			onMessageDialogOpen({
+				title: '결제 카드를 등록했습니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+				onCloseFunc: onClose,
+			});
 		},
 		onError: (e) => {
-			console.log('error !!!!');
-			console.log('e :>> ', e);
-			// TODO: 에러 메시지 하단에 띄워줌
+			const errorMessage = (e as AxiosError)?.response.data.message;
+			if (errorMessage === 'ALREADY_REGISTERED_BILLING') {
+				setApiErrorMessage(
+					'이미 카드가 등록되어있습니다. 기존 결제 카드를 삭제하고 다시 등록해주세요.'
+				);
+				return;
+			}
+			setApiErrorMessage(
+				'결제 카드 등록에 실패했습니다. 다시 시도해주세요.'
+			);
+		},
+		onSettled: () => {
+			setIsLoading(false);
 		},
 	});
 
-	// TODO:
 	const onSubmit = async (data: RegisterCardForm) => {
-		console.log('result data :>> ', data);
-		await registerPaymentCardMutation.mutateAsync({
+		const param = {
 			...data,
-			cardNumber: data.cardNumber.join(''),
-		});
+			cardNumber: data.cardNumber.map((item) => item.value).join(''),
+		};
+		await registerPaymentCardMutation.mutateAsync(param);
 	};
 
 	return (
@@ -264,6 +295,7 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 											}
 											control={control}
 											fields={fields}
+											setFocus={setFocus}
 										/>
 									);
 								}
@@ -271,11 +303,12 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 								if (name === 'cardExpirationMonth') {
 									return (
 										<CardExpirationInput
-											key={`payment_input_card_${idx}`}
+											key={`payment_input_card_expiration_${idx}`}
 											inputs={
 												input as AddPaymentCardInput[]
 											}
 											control={control}
+											setFocus={setFocus}
 										/>
 									);
 								}
@@ -297,6 +330,18 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 									{...(name !== 'customerEmail' && {
 										onChange: onChangeOnlyNumber,
 									})}
+									{...(name === 'cardPassword' && {
+										onChange: (e) => {
+											onChangeOnlyNumber(e);
+											const length =
+												e?.target?.value?.length;
+											if (length === 2) {
+												setFocus(
+													'customerIdentityNumber'
+												);
+											}
+										},
+									})}
 									{...input}
 								/>
 							);
@@ -317,10 +362,12 @@ const CardNumberInputList = ({
 	inputs,
 	control,
 	fields,
+	setFocus,
 }: {
 	inputs: AddPaymentCardInput[];
 	control: Control<any, any>;
 	fields: FieldArrayWithId<RegisterCardForm, 'cardNumber', 'id'>[];
+	setFocus: UseFormSetFocus<RegisterCardForm>;
 }) => {
 	const firstInput = inputs[0];
 	return (
@@ -343,16 +390,24 @@ const CardNumberInputList = ({
 					const fieldInput = inputs[idx];
 					const {name, ...restFieldInput} = fieldInput;
 					return (
-						<>
-							<ControlledInputComponent
-								key={`cardNumber.cardNumber${idx}`}
-								name={`cardNumber[${idx}].value`}
-								type={fieldInput['type'] as string}
-								control={control}
-								onChange={onChangeOnlyNumber}
-								{...restFieldInput}
-							/>
-						</>
+						<ControlledInputComponent
+							key={`cardNumber.cardNumber${idx}`}
+							name={`cardNumber[${idx}].value`}
+							type={fieldInput['type'] as string}
+							control={control}
+							onChange={(e) => {
+								onChangeOnlyNumber(e);
+								const length = e?.target?.value?.length;
+								if (length === 4) {
+									if (idx === 3) {
+										setFocus('cardExpirationMonth');
+										return;
+									}
+									setFocus(`cardNumber[${idx + 1}].value`);
+								}
+							}}
+							{...restFieldInput}
+						/>
 					);
 				})}
 			</Stack>
@@ -363,9 +418,11 @@ const CardNumberInputList = ({
 const CardExpirationInput = ({
 	inputs,
 	control,
+	setFocus,
 }: {
 	inputs: AddPaymentCardInput[];
 	control: Control<any, any>;
+	setFocus: UseFormSetFocus<RegisterCardForm>;
 }) => {
 	const firstInput = inputs[0];
 	return (
@@ -388,11 +445,21 @@ const CardExpirationInput = ({
 					return (
 						<>
 							<ControlledInputComponent
-								key={`card_expiration_input_${idx}`}
+								key={`payment_input_item_card_expiration_${idx}`}
 								type={item.type as string}
 								name={item.name as string}
 								control={control}
-								onChange={onChangeOnlyNumber}
+								onChange={(e) => {
+									onChangeOnlyNumber(e);
+									const length = e?.target?.value?.length;
+									if (length === 2) {
+										if (idx === 0) {
+											setFocus('cardExpirationYear');
+											return;
+										}
+										setFocus('cardPassword');
+									}
+								}}
 								{...item}
 							/>
 						</>

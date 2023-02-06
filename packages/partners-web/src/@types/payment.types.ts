@@ -18,13 +18,13 @@ export interface PricePlan {
 }
 
 export interface UserPricePlan {
+	customerKey?: string;
 	pricePlan: PricePlan; // 현재 이용 플랜
-	planStartDate: string; // 플랜시작일자
-	planExpireDate: string; // 플랜종료일자
-	nextPricePlan?: PricePlan; // 변경 예정 플랜
-	nextPlanStartDate?: string; // 다음 플랜시작일자
-	nextPlanPaymentDate?: string; // 다음 플랜 결제 시작일자		// TODO: 필드명 임시 설정
-	usedNftCount: number; // 현재 발급량
+	nextPricePlan?: PricePlan; // 다음 예정 플랜
+	planStartedAt: string; // 플랜시작일자(ISO8601)
+	planExpireDate?: string; // 플랜종료 예정일자(ISO8601)
+	nextPlanStartDate?: string; // 다음 플랜시작일자(ISO8601)
+	usedNftCount: number; // 현재 사용량
 	card?: Card; // 카드
 }
 export interface Card {
@@ -38,18 +38,13 @@ export interface Card {
 export interface UserPricePlanWithDate
 	extends Omit<
 		UserPricePlan,
-		| 'planStartDate'
-		| 'planExpireDate'
-		| 'nextPlanStartDate'
-		| 'nextPlanPaymentDate'
+		'planStartedAt' | 'planExpireDate' | 'nextPlanStartDate'
 	> {
-	planStartDate: Date;
-	planExpireDate: Date;
+	planStartedAt: Date;
+	planExpireDate?: Date;
 	nextPlanStartDate?: Date;
-	nextPlanPaymentDate?: Date;
 }
 export interface RegisterCardRequestParam {
-	planId?: string;
 	cardNumber: string;
 	cardExpirationYear: string;
 	cardExpirationMonth: string;
@@ -59,7 +54,6 @@ export interface RegisterCardRequestParam {
 }
 
 export interface PatchPlanRequestParam {
-	customerKey: string;
 	planId: string;
 }
 export interface PaymentHistory {
@@ -68,6 +62,8 @@ export interface PaymentHistory {
 	planName: string;
 	startDate: string;
 	expireDate: string;
+	payPrice: number;
+	payStatus: 'SUCCESS' | 'FAIL';
 }
 
 export interface PaymentHistoryDetail extends PaymentHistory {
@@ -75,4 +71,9 @@ export interface PaymentHistoryDetail extends PaymentHistory {
 	canceledPlan?: PricePlan; // 취소된 플랜
 	payApprovedAt: string; // 결제 승인일자
 	totalPaidPrice: number; // 최종 결제금액
+}
+
+export interface RegisterFreePlanRequestParam {
+	planMonth: number;
+	planLimit: number;
 }

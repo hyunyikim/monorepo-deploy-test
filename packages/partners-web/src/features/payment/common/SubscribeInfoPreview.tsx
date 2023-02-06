@@ -2,12 +2,12 @@ import {Divider, Grid, Stack, Theme, Typography} from '@mui/material';
 import {SxProps, SystemStyleObject} from '@mui/system';
 
 import {
-	TotalSbuscribeInfoPreviewData,
-	SbuscribeInfoPreviewData,
+	TotalSubscribeInfoPreviewData,
+	SubscribeInfoPreviewData,
 } from '@/@types';
 
 interface Props {
-	data: TotalSbuscribeInfoPreviewData;
+	data: TotalSubscribeInfoPreviewData;
 	sx?: SxProps;
 }
 
@@ -28,13 +28,18 @@ function SubscribeInfoPreview({data, sx = []}: Props) {
 			flexDirection="column"
 			gap="12px"
 			sx={[...(Array.isArray(sx) ? sx : [sx])]}>
-			<SubscribeInfoPreviewItem subscribeType="new" data={data?.data} />
 			{data?.canceledData && (
 				<SubscribeInfoPreviewItem
 					subscribeType="cancel"
 					data={data.canceledData}
+					totalMark={data?.canceledData && 'Ⓐ'}
 				/>
 			)}
+			<SubscribeInfoPreviewItem
+				subscribeType="new"
+				data={data?.data}
+				totalMark={data?.canceledData && 'Ⓑ'}
+			/>
 			{data?.totalPaidPrice && (
 				<TotalPrice totalPaidPrice={data?.totalPaidPrice || 0} />
 			)}
@@ -45,9 +50,11 @@ function SubscribeInfoPreview({data, sx = []}: Props) {
 const SubscribeInfoPreviewItem = ({
 	subscribeType,
 	data,
+	totalMark = '',
 }: {
 	subscribeType: 'new' | 'cancel';
-	data: SbuscribeInfoPreviewData;
+	data: SubscribeInfoPreviewData;
+	totalMark?: string;
 }) => {
 	return (
 		<Stack className="flex-center" sx={[previewStyle]}>
@@ -124,19 +131,6 @@ const SubscribeInfoPreviewItem = ({
 						</Grid>
 					</>
 				)}
-				<Grid item xs={1}>
-					<Typography
-						variant="caption1"
-						color="grey.600"
-						className="list-dot">
-						구독료
-					</Typography>
-				</Grid>
-				<Grid item xs={2}>
-					<Typography fontSize={13} fontWeight={400} color="grey.600">
-						₩{(data?.totalPrice || 0).toLocaleString()}
-					</Typography>
-				</Grid>
 				<Divider
 					sx={{
 						width: '100%',
@@ -150,7 +144,7 @@ const SubscribeInfoPreviewItem = ({
 						variant="body3"
 						fontWeight="bold"
 						color="grey.600">
-						합계
+						합계 {totalMark}
 					</Typography>
 				</Grid>
 				<Grid item xs={2}>
@@ -158,19 +152,23 @@ const SubscribeInfoPreviewItem = ({
 						₩{(data?.totalPrice || 0).toLocaleString()}
 					</Typography>
 				</Grid>
-				<Grid item xs={1}>
-					<Typography
-						variant="body3"
-						fontWeight="bold"
-						color="grey.600">
-						결제일
-					</Typography>
-				</Grid>
-				<Grid item xs={2}>
-					<Typography variant="body3" fontWeight="bold">
-						{data?.payApprovedAt}
-					</Typography>
-				</Grid>
+				{data?.payApprovedAt && (
+					<>
+						<Grid item xs={1}>
+							<Typography
+								variant="body3"
+								fontWeight="bold"
+								color="grey.600">
+								결제일
+							</Typography>
+						</Grid>
+						<Grid item xs={2}>
+							<Typography variant="body3" fontWeight="bold">
+								{data?.payApprovedAt}
+							</Typography>
+						</Grid>
+					</>
+				)}
 			</Grid>
 		</Stack>
 	);
@@ -192,7 +190,7 @@ const TotalPrice = ({totalPaidPrice}: {totalPaidPrice: number}) => {
 					총 결제 금액
 				</Typography>
 				<Typography variant="body3" fontWeight="400">
-					Ⓑ - Ⓐ
+					Ⓑ-Ⓐ
 				</Typography>
 			</Stack>
 			<Typography variant="body3" fontWeight="bold" color="primary.main">

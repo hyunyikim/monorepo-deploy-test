@@ -1,14 +1,20 @@
-import {useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {Stack, Link} from '@mui/material';
 
-import {useGetUserPricePlan, useMessageDialog} from '@/stores';
+import {
+	useGetUserPricePlan,
+	useGlobalLoading,
+	useMessageDialog,
+} from '@/stores';
 import {OnOpenParamType, PricePlan} from '@/@types';
 import {
 	isPlanTypeMonth,
 	isPlanTypeYear,
 	isPlanUpgraded,
 	isPlanDowngraded,
+	isPlanOnSubscription,
 } from '@/data';
+import {patchPricePlan} from '@/api/payment.api';
 
 import {Button} from '@/components';
 import CancelSubscribe from './CancelSubscribe';
@@ -117,7 +123,8 @@ function SubscribeMagageButtonGroup({
 	setIsAvailableSelect: (value: boolean) => void;
 	onSubscribeCheckModalOpen: () => void;
 }) {
-	const {onOpen: onOpenMessageDialog} = useMessageDialog();
+	const {onOpen: onOpenMessageDialog, onOpenError} = useMessageDialog();
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const {data: userPlan} = useGetUserPricePlan();
 
 	const isPlanChanged = useMemo(() => {
@@ -127,14 +134,20 @@ function SubscribeMagageButtonGroup({
 		return false;
 	}, [userPlan, selectedPlan]);
 
-	const onClickSubscribeChange = () => {
-		if (!userPlan || !selectedPlan) {
+	const onClickSubscribeChange = useCallback(() => {
+		if (!selectedPlan) {
 			return;
 		}
 
+		// 기존 구독 종료
 		// 플랜 업그레이드 시
-		// TODO: 무료에서 유료로 업그레이드 시 체크
 		if (
+			!userPlan ||
+			!isPlanOnSubscription({
+				startDate: userPlan.planStartedAt,
+				endDate: userPlan?.planExpireDate,
+				isNextPlanExisted: !!userPlan?.nextPricePlan,
+			}) ||
 			isPlanUpgraded(userPlan.pricePlan.planLevel, selectedPlan.planLevel)
 		) {
 			onSubscribeCheckModalOpen();
@@ -149,6 +162,7 @@ function SubscribeMagageButtonGroup({
 		) {
 			messageDialogData = PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_MONTH_TO_YEAR;
 		}
+		// 연결제에서 월결제로
 		if (
 			isPlanTypeYear(userPlan.pricePlan.planType) &&
 			isPlanTypeMonth(selectedPlan.planType)
@@ -190,22 +204,33 @@ function SubscribeMagageButtonGroup({
 			return;
 		}
 		onOpenMessageDialog({
-			title: messageDialogData.title,
-			message: messageDialogData.message,
+			...messageDialogData,
 			buttons: (
-				<>
-					<Button
-						variant="contained"
-						color="black"
-						onClick={() => {
-							// TODO: 플랜 변경 api 호출
-						}}>
-						확인
-					</Button>
-				</>
+				<Button
+					variant="contained"
+					color="black"
+					onClick={async () => {
+						try {
+							setIsLoading(true);
+							await patchPricePlan({
+								planId: selectedPlan.planId,
+							});
+							onOpenMessageDialog({
+								title: '구독 플랜이 변경됐습니다.',
+								showBottomCloseButton: true,
+								closeButtonValue: '확인',
+							});
+						} catch (e) {
+							onOpenError();
+						} finally {
+							setIsLoading(false);
+						}
+					}}>
+					확인
+				</Button>
 			),
 		});
-	};
+	}, [selectedPlan, userPlan]);
 
 	return (
 		<Stack flexDirection="row" alignItems="center" mt="20px">
@@ -235,7 +260,7 @@ function SubscribeMagageButtonGroup({
 						onClick={() => setIsAvailableSelect(true)}>
 						{isTrial ? '플랜 업그레이드' : '플랜 변경하기'}
 					</Button>
-					{!isTrial && <CancelSubscribe />}
+					{!isTrial && userPlan && <CancelSubscribe />}
 				</>
 			)}
 		</Stack>

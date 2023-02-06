@@ -1,96 +1,127 @@
-import {useCallback, useEffect} from 'react';
-import {parse, stringify} from 'qs';
-
-import {
-	useParams,
-	useSearchParams,
-	useLocation,
-	useNavigate,
-} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 import {Stack, TableRow, Typography} from '@mui/material';
+
+import {useList} from '@/utils/hooks';
+import {getPaymentHistoryList} from '@/api/payment.api';
+import {DATE_FORMAT, defaultPageSize, sortSearchFilter} from '@/data';
+import {ListRequestParam, ListResponseV2, PaymentHistory} from '@/@types';
+
 import {
-	TitleTypography,
-	SearchFilter,
 	TableInfo,
 	Table,
 	PageSelect,
 	Pagination,
-	Button,
 	HeadTableCell,
 	TableCell,
-	SearchFilterTab,
 	Checkbox,
+	Select,
 } from '@/components';
-
-const totalSize = 10;
-const isLoading = false;
+import {format} from 'date-fns';
 
 function SubscribeHistoryList() {
 	const {pathname, search} = useLocation();
 	const navigate = useNavigate();
 
-	const goToDetailSubscribePage = (idx: number) => {
+	const goToDetailSubscribePage = (idx: string) => {
 		navigate(`${pathname}${search}&idx=${idx}`);
 	};
+
+	const {
+		isLoading,
+		data,
+		totalSize,
+		filter,
+		paginationProps: {onChange: onChangePage, ...paginationProps},
+		handleChangeFilter,
+	} = useList<
+		ListResponseV2<PaymentHistory[]>,
+		Pick<ListRequestParam, 'sort' | 'currentPage' | 'pageMaxNum'>
+	>({
+		apiFunc: getPaymentHistoryList,
+		initialFilter: {
+			sort: 'latest',
+			currentPage: 1,
+			pageMaxNum: defaultPageSize,
+		},
+		isQueryChange: false,
+	});
 
 	return (
 		<Stack>
 			<TableInfo totalSize={totalSize} unit="건">
-				{/* <PageSelect
-						value={filter.pageMaxNum}
-						onChange={(value: {
-							[key: string]: any;
-							pageMaxNum: number;
-						}) => {
-							sendAmplitudeLog(`${menu}_unit_view_click`, {
-								button_title: `노출수_${value.pageMaxNum}개씩`,
-							});
-							onHandleChangeFilter(value);
-						}}
-					/> */}
+				<Select
+					height={32}
+					value={filter?.sort ?? 'latest'}
+					options={sortSearchFilter}
+					onChange={(e) => {
+						handleChangeFilter({
+							sort: e.target.value,
+						});
+					}}
+					sx={{
+						minWidth: '150px',
+						marginRight: '8px',
+					}}
+				/>
+				<PageSelect
+					value={filter.pageMaxNum}
+					onChange={(value: {
+						[key: string]: any;
+						pageMaxNum: number;
+					}) => {
+						handleChangeFilter(value);
+					}}
+				/>
 			</TableInfo>
 			<Table
 				isLoading={isLoading}
 				totalSize={totalSize}
 				headcell={
 					<>
-						<HeadTableCell width={52}>
+						<HeadTableCell minWidth={52}>
 							<Checkbox disabled />
 						</HeadTableCell>
-						<HeadTableCell width={120}>ID</HeadTableCell>
-						<HeadTableCell width={180}>플랜</HeadTableCell>
-						<HeadTableCell width={180}>구독 시작</HeadTableCell>
-						<HeadTableCell width={180}>구독 종료</HeadTableCell>
+						<HeadTableCell minWidth={120}>ID</HeadTableCell>
+						<HeadTableCell minWidth={180}>플랜</HeadTableCell>
+						<HeadTableCell minWidth={180}>구독 시작</HeadTableCell>
+						<HeadTableCell minWidth={180}>구독 종료</HeadTableCell>
 						<HeadTableCell minWidth={500}>상태</HeadTableCell>
 					</>
 				}>
-				<TableRow>
-					<TableCell>
-						<Checkbox disabled />
-					</TableCell>
-					<TableCell>
-						<Typography
-							className="underline"
-							onClick={() => {
-								goToDetailSubscribePage(123);
-							}}>
-							test
-						</Typography>
-					</TableCell>
-					<TableCell>test</TableCell>
-					<TableCell>test</TableCell>
-					<TableCell>test</TableCell>
-					<TableCell>test</TableCell>
-				</TableRow>
+				{data?.data &&
+					data?.data.map((item) => (
+						<TableRow key={item.orderId}>
+							<TableCell>
+								<Checkbox disabled />
+							</TableCell>
+							<TableCell>
+								<Typography
+									className="underline"
+									onClick={() => {
+										goToDetailSubscribePage(item.orderId);
+									}}>
+									{item.displayOrderId}
+								</Typography>
+							</TableCell>
+							<TableCell>{item.planName}</TableCell>
+							<TableCell>
+								{format(new Date(item.startDate), DATE_FORMAT)}
+							</TableCell>
+							<TableCell>
+								{format(new Date(item.expireDate), DATE_FORMAT)}
+							</TableCell>
+							{/* TODO: 고정값 확인 */}
+							<TableCell>결제완료</TableCell>
+						</TableRow>
+					))}
 			</Table>
-			{/* <Pagination
-					{...paginationProps}
-					onChange={(_, page) => {
-						onResetCheckedItem();
-						onChangePage(_, page);
-					}}
-				/> */}
+			<Pagination
+				{...paginationProps}
+				onChange={(_, page) => {
+					onChangePage(_, page);
+				}}
+			/>
 		</Stack>
 	);
 }

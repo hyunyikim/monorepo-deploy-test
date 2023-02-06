@@ -10,6 +10,7 @@ import {Button, ContentWrapper, Tab} from '@/components';
 import PaymentCardTab from './PaymentCard/PaymentCardTab';
 import PaymentReceiptTab from './PaymentReceipt/PaymentReceiptTab';
 import AddPaymentCardModal from '../common/AddPaymentCardModal';
+import {useGetUserPricePlan, useMessageDialog} from '@/stores';
 
 function PaymentInformation() {
 	const location = useLocation();
@@ -18,7 +19,24 @@ function PaymentInformation() {
 		key: 'mode',
 		defaultValue: 'card',
 	});
+	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const {open, onOpen, onClose} = useChildModalOpen({});
+
+	const {data: userPlan} = useGetUserPricePlan();
+
+	const onOpenAddCardModal = () => {
+		if (userPlan?.card) {
+			onMessageDialogOpen({
+				title: '결제 카드는 1개만 등록이 가능합니다.',
+				message: '등록된 카드를 삭제하고 다시 등록해주세요.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+			});
+			return;
+		}
+		onOpen();
+	};
+
 	return (
 		<>
 			<ContentWrapper fullWidth={true}>
@@ -49,7 +67,7 @@ function PaymentInformation() {
 						marginTop: '16px !important',
 					}}>
 					{selectedValue === 'card' && (
-						<Button height={32} onClick={onOpen}>
+						<Button height={32} onClick={onOpenAddCardModal}>
 							결제 카드 추가
 						</Button>
 					)}
@@ -63,7 +81,7 @@ function PaymentInformation() {
 					{selectedValue === 'receipt' && <PaymentReceiptTab />}
 				</Stack>
 			</ContentWrapper>
-			<AddPaymentCardModal open={open} onClose={onClose} />
+			{open && <AddPaymentCardModal open={open} onClose={onClose} />}
 		</>
 	);
 }

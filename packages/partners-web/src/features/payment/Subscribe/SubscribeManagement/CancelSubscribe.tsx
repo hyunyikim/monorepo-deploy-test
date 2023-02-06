@@ -1,29 +1,61 @@
-import {Stack, Typography} from '@mui/material';
-import {parse, format} from 'date-fns';
+import {format} from 'date-fns';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 
-import {DATE_FORMAT} from '@/data';
-import {useGetUserPricePlan, useMessageDialog} from '@/stores';
+import {Stack, Typography} from '@mui/material';
+
+import {
+	useGetUserPricePlan,
+	useGlobalLoading,
+	useMessageDialog,
+} from '@/stores';
 
 import {IcLogin} from '@/assets/icon';
 import style from '@/assets/styles/style.module.scss';
 import {Button} from '@/components';
+import {cancelPricePlan} from '@/api/payment.api';
 
 function CancelSubscribe({}) {
+	const queryClient = useQueryClient();
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const onMessageDialogClose = useMessageDialog((state) => state.onClose);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const {data: userPlan} = useGetUserPricePlan();
 
-	const expireDate = userPlan.planExpireDate;
+	const expireDate = userPlan?.planExpireDate;
 	const dialogMessage =
 		expireDate &&
 		`지금 구독 취소하시면 yyyy년 MM월 dd일까지 이용 가능하고, 그 이후부터 개런티 발급이 제한됩니다. 계속 하시겠어요?`
 			.replace(/yyyy/g, format(expireDate, 'yyyy'))
 			.replace(/MM/g, format(expireDate, 'M'))
-			.replace(/dd/g, format(expireDate, 'dd'));
+			.replace(/dd/g, format(expireDate, 'd'));
+
+	const cancelPayment = useMutation({
+		onMutate: () => {
+			setIsLoading(true);
+		},
+		mutationFn: cancelPricePlan,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['userPricePlan'],
+			});
+			onMessageDialogOpen({
+				title: '구독 플랜이 취소됐습니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+				onCloseFunc: onMessageDialogClose,
+			});
+		},
+		onError: (e) => {
+			onOpenError();
+		},
+		onSettled: () => {
+			setIsLoading(false);
+		},
+	});
 
 	const onClickCancel = async () => {
-		// TODO: 구독 취소 api 호출
-		onMessageDialogClose();
+		await cancelPayment.mutateAsync();
 	};
 
 	if (!expireDate) {
@@ -54,7 +86,8 @@ function CancelSubscribe({}) {
 				variant="caption3"
 				fontWeight="bold"
 				color="grey.600"
-				ml="16px">
+				ml="16px"
+				mr="2px">
 				구독취소
 			</Typography>
 			<IcLogin color={style.vircleGrey300} />

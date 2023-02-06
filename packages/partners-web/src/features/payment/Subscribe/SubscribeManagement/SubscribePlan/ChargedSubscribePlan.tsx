@@ -1,14 +1,16 @@
 import {useState} from 'react';
+import {isAfter, isBefore} from 'date-fns';
 
 import {Stack} from '@mui/material';
 
-import {PlanType, PricePlan} from '@/@types';
-import {CHARGED_GROUP_PLAN} from '@/data';
+import {PlanType, PricePlan, UserPricePlanWithDate} from '@/@types';
+import {CHARGED_GROUP_PLAN, isPlanOnSubscription} from '@/data';
 import {useGetUserPricePlan, useIsUserUsedTrialPlan} from '@/stores';
 
 import SubscribePlanSelect from './SubscribePlanSelect';
 import SubscribePlan from './SubscribePlan';
 import SquaredSwitch from '../SquaredSwitch';
+
 interface Props {
 	selectedPlan: PricePlan;
 	onChangePlan: (value: PricePlan) => void;
@@ -25,19 +27,31 @@ function ChargedSubscribePlan({
 	const [selectOpen, setSelectOpen] = useState(false);
 
 	const onOpenSelect = (value: boolean) => {
-		if (!userPlan) {
-			return setSelectOpen(false);
-		}
-		if (isUserUsedTrialPlan) {
+		// 무료 플랜 이용중
+		// 구독 종료 되었다면
+		// 모두 열림
+		if (
+			!userPlan ||
+			isUserUsedTrialPlan ||
+			!isPlanOnSubscription({
+				startDate: new Date(userPlan.planStartedAt),
+				...(userPlan?.planExpireDate && {
+					endDate: new Date(userPlan?.planExpireDate),
+				}),
+				isNextPlanExisted: !!userPlan?.nextPricePlan,
+			})
+		) {
 			return setSelectOpen(value);
 		}
 
-		// 동일한 플랜 타입 선택시에만 select open
-		if (userPlan.pricePlan.planType === selectedPlan.planType) {
-			return setSelectOpen(value);
+		// 현재 구독 중인 플랜과 다른 플랜타입 선택시 select 열리지 않음
+		if (
+			userPlan &&
+			userPlan?.pricePlan.planType !== selectedPlan.planType
+		) {
+			return setSelectOpen(false);
 		}
-		// select 안열림
-		return setSelectOpen(false);
+		return setSelectOpen(value);
 	};
 
 	return (

@@ -1,13 +1,13 @@
-import {useMemo} from 'react';
-import {differenceInCalendarDays, format} from 'date-fns';
+import React, {useMemo} from 'react';
+import {format} from 'date-fns';
 
 import {Typography} from '@mui/material';
 
 import {useGetUserPricePlan, useGetPricePlanList} from '@/stores/payment.store';
-import {checkSubscribeNoticeStatus} from '@/data';
+import {checkSubscribeNoticeStatus, getPlanLeftDays} from '@/data';
 
 import {LineNotice} from '@/components';
-import {SubscribeLineNoticeKey, UserPricePlanWithDate} from '@/@types';
+import {SubscribeLineNoticeKey} from '@/@types';
 
 type LineNoticeValue = {
 	content: LineNoticeContent;
@@ -48,14 +48,9 @@ const LINE_NOTICE: LineNotice = {
 		color: 'red',
 	},
 	// 유료플랜
-	// 유료플랜 이용 중일 때
-	CHARGED: {
-		content: `발급량이 부족하다면 UPGRADE_PLAN_NAME 플랜으로 업그레이드를 권장합니다. 발급량 초과시 서비스 사용이 제한될 수 있어요.`,
-		color: 'green',
-	},
 	// 유료플랜 이용 중 사용 가능한 개런티 일정범위 미만일 때
 	LACKING_GUARANTEE: {
-		content: `UPGRADE_PLAN_NAME 플랜으로 업그레이드를 권장합니다. 발급량 초과시 서비스 사용이 제한됩니다.`,
+		content: `UPGRADE_PLAN_NAME으로 업그레이드를 권장합니다. 발급량 초과시 서비스 사용이 제한됩니다.`,
 		color: 'green',
 	},
 	// 플랜 변경될 예정일 때 (월결제 -> 연결제)
@@ -69,21 +64,20 @@ const LINE_NOTICE: LineNotice = {
 			'yyyy년 MM월 dd일 PLAN_NAME 연간 플랜 구독이 종료 되며, DOWNGRADE_PLAN_NAME 월간 플랜을 이용합니다.',
 		color: 'primary',
 	},
-	// 플랜 업그레이드 시
-	CHANGE_PLAN_UPGRADE: {
-		content:
-			'yyyy년 MM월 dd일부터 UPGRADE_PLAN_NAME 구독 플랜으로 변경됩니다.',
-		color: 'primary',
-	},
 	// 플랜 변경될 예정일 때 (월결제, 다운그레이드)
 	CHANGE_PLAN_DOWNGRADE_MONTHLY: {
-		content: `yyyy년 MM월 dd일 PLAN_NAME 플랜 구독이 종료 되며, DOWNGRADE_PLAN_NAME 플랜으로 변경됩니다.`,
+		content: `yyyy년 MM월 dd일 PLAN_NAME 구독이 종료 되며, DOWNGRADE_PLAN_NAME으로 변경됩니다.`,
 		color: 'primary',
 	},
 	// 플랜 종료 예정
 	PLAN_WILL_END: {
-		content: `yyyy년 MM월 dd일 PLAN_NAME 플랜 구독이 종료됩니다.`,
+		content: `yyyy년 MM월 dd일 PLAN_NAME 구독이 종료됩니다.`,
 		color: 'primary',
+	},
+	// 유료 플랜 종료
+	CHARGED_PLAN_FINISHED: {
+		content: `플랜 구독하고 개런티를 계속 발급해보세요.`,
+		color: 'red',
 	},
 };
 
@@ -148,20 +142,18 @@ function SubscribeLineNotice() {
 
 		const {
 			pricePlan,
-			planStartDate,
+			planStartedAt,
 			planExpireDate,
 			nextPricePlan,
 			nextPlanStartDate,
 			usedNftCount,
 		} = userPlan;
 		const {planLimit} = pricePlan;
-		const leftDays =
-			differenceInCalendarDays(planExpireDate, new Date()) + 1;
-
 		const subscribeStatus = checkSubscribeNoticeStatus(userPlan);
 
 		// trial
 		if (subscribeStatus === 'TRIAL') {
+			const leftDays = getPlanLeftDays(planExpireDate as Date) as number;
 			if (leftDays <= 0) {
 				return LINE_NOTICE.TRIAL_FINISHED;
 			}
@@ -196,6 +188,10 @@ function SubscribeLineNotice() {
 		}
 
 		// 유료플랜
+		if (subscribeStatus === 'CHARGED_PLAN_FINISHED') {
+			return LINE_NOTICE.CHARGED_PLAN_FINISHED;
+		}
+
 		// 다음 플랜 예정
 		if (nextPricePlan) {
 			if (subscribeStatus === 'CHANGE_PLAN_MONTH_TO_YEAR') {
@@ -212,19 +208,12 @@ function SubscribeLineNotice() {
 				return {
 					...lineNotice,
 					content: replaceLineNotice(lineNotice.content, {
-						expiredDate: planStartDate,
-						planName: pricePlan.planName,
-						downgradePlanName: nextPricePlan.planName,
-					}),
-				};
-			}
-			if (subscribeStatus === 'CHANGE_PLAN_UPGRADE') {
-				const lineNotice = LINE_NOTICE.CHANGE_PLAN_UPGRADE;
-				return {
-					...lineNotice,
-					content: replaceLineNotice(lineNotice.content, {
-						expiredDate: nextPlanStartDate,
-						upgradePlanName: nextPricePlan.planName,
+						expiredDate: planExpireDate,
+						planName: pricePlan.planName.replace(/플랜/g, ''),
+						downgradePlanName: nextPricePlan.planName.replace(
+							/플랜/g,
+							''
+						),
 					}),
 				};
 			}
@@ -233,21 +222,20 @@ function SubscribeLineNotice() {
 				return {
 					...lineNotice,
 					content: replaceLineNotice(lineNotice.content, {
-						expiredDate: planStartDate,
+						expiredDate: planStartedAt,
 						planName: pricePlan.planName,
-						upgradePlanName: nextPricePlan.planName,
+						downgradePlanName: nextPricePlan.planName,
 					}),
 				};
 			}
 		}
 
-		// TODO: 엔터프라이즈 사용한다면?
 		const upgradePlanName =
 			planList.find(
 				(plan) =>
 					plan.planLevel === pricePlan.planLevel + 1 &&
 					plan.planType === pricePlan.planType
-			)?.planName || '';
+			)?.planName || '엔터프라이즈 플랜';
 
 		// 개런티 부족
 		if (planLimit - usedNftCount < Math.ceil(planLimit * 0.3)) {
@@ -260,27 +248,24 @@ function SubscribeLineNotice() {
 			};
 		}
 
-		// 유료플랜 기본 메시지
-		const lineNotice = LINE_NOTICE.CHARGED;
-		return {
-			...lineNotice,
-			content: replaceLineNotice(lineNotice.content, {
-				upgradePlanName,
-			}),
-		};
-
 		// TODO: 플랜 종료 예정
+		// 구독 취소 완료 후, 아직 상품 구독중인 경우
 		// return LINE_NOTICEL.PLAN_WILL_END;
+
+		// 유료플랜 기본 메시지 -> 없음
+		return null;
 	}, [userPlan, planList]);
 
-	return (
+	return lineNoticeData ? (
 		<LineNotice
 			color={lineNoticeData?.color || 'primary'}
-			content={lineNoticeData?.content || ''}
+			content={(lineNoticeData?.content || '') as LineNoticeContent}
 			sx={{
 				marginTop: '12px',
 			}}
 		/>
+	) : (
+		<></>
 	);
 }
 
