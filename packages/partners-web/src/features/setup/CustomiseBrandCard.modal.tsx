@@ -53,6 +53,12 @@ function CustomiseBrandCard({
 		}
 	}, [isOpen]);
 
+	useEffect(() => {
+		sendAmplitudeLog('guaranteesetting_cardcustom_popupview', {
+			pv_title: '브랜드 카드제작 팝업 노출',
+		});
+	}, []);
+
 	/**
 	 * 최종 이미지 크롭
 	 *

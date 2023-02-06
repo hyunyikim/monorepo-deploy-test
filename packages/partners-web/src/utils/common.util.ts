@@ -57,3 +57,11 @@ export const textLineChangeHelper = (_text: string) => {
 
 	return [_text];
 };
+
+export const linkFormChecker = (_text: string) => {
+	const urlRegExp = RegExp(
+		/^([a-zA-Z0-9]+([-.]{1}[a-zA-Z0-9]+)*\.)([a-zA-Z]{2,6})(:[0-9]+)?(\/\S*)?/
+	);
+
+	return urlRegExp.test(String(_text));
+};

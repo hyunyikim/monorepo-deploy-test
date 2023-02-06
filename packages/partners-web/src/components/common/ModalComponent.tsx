@@ -2,7 +2,7 @@ import {DialogActions, Typography, Stack} from '@mui/material';
 import {useModalStore} from '@/stores';
 import Button from '../atoms/Button';
 
-import {openChildModal, closeChildModal} from '@/utils';
+import {openChildModal, closeChildModal, sendAmplitudeLog} from '@/utils';
 
 import {Dialog} from '@/components';
 import {useEffect} from 'react';
@@ -27,6 +27,7 @@ function ModalComponent() {
 		customisedButton,
 		sx,
 		useBackgroundClickClose,
+		amplitudeInfo,
 	} = useModalStore((state) => state);
 
 	const closeHandler = () => {
@@ -58,7 +59,19 @@ function ModalComponent() {
 		<Dialog
 			open={isOpen}
 			useBackgroundClickClose={useBackgroundClickClose}
-			onClose={closeHandler}
+			onClose={() => {
+				if (
+					amplitudeInfo?.eventName &&
+					amplitudeInfo.eventPropertyKey
+				) {
+					sendAmplitudeLog(amplitudeInfo.eventName, {
+						[amplitudeInfo.eventPropertyKey]:
+							amplitudeInfo.eventPropertyValue || '',
+					});
+				}
+
+				closeHandler();
+			}}
 			showCloseButton={true}
 			titleAlign={titleAlign}
 			padding={titlePadding ? titlePadding : 32}

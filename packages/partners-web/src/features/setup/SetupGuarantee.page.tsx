@@ -71,6 +71,7 @@ import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {
 	goToParentUrl,
 	goToParentUrlWithState,
+	sendAmplitudeLog,
 	updateParentPartnershipData,
 } from '@/utils';
 import Header from '@/components/common/layout/Header';
@@ -780,6 +781,10 @@ export function InputFormSection({
 		};
 
 		reader.readAsDataURL(currentFile);
+
+		sendAmplitudeLog('guaranteesetting_logoupload_change', {
+			button_title: '로고 이미지 파일 변경',
+		});
 		setBrandLogoError(false);
 	};
 
@@ -816,6 +821,10 @@ export function InputFormSection({
 	};
 
 	const addNewProductHandler = () => {
+		sendAmplitudeLog('guaranteesetting_infoplus_click', {
+			button_title: '상품정보 추가 클릭',
+		});
+
 		setProductInfoValue((pre) => ({
 			// ...pre,
 			newValue: '',
@@ -866,7 +875,9 @@ export function InputFormSection({
 	 */
 	const handleCheckOutLinkClick = () => {
 		const centreUrl: string | '' = getValues('customerCenterUrl');
-
+		sendAmplitudeLog('guaranteesetting_cs_click', {
+			button_title: '고객센터로 이동',
+		});
 		if (centreUrl) {
 			if (centreUrl.includes('http')) {
 				window.open(centreUrl);
@@ -910,6 +921,10 @@ export function InputFormSection({
 	const openCustomiseCardModal = () => {
 		const nftBackgroundImg = data?.nftBackgroundImg as string;
 
+		sendAmplitudeLog('guaranteesetting_cardcustom_click', {
+			button_title: '브랜드 카드제작 이미지 업로드 하기 클릭',
+		});
+
 		setModalOption({
 			id: 'CustomiseGuranteeCard',
 			isOpen: true,
@@ -948,6 +963,10 @@ export function InputFormSection({
 	const openPreviewGuaranteeModal = () => {
 		const values = getValues();
 
+		sendAmplitudeLog('guaranteesetting_preview_guide_click', {
+			button_title: '미리보기 클릭',
+		});
+
 		setModalOption({
 			id: 'exampleGuranteeCard',
 			isOpen: true,
@@ -965,6 +984,22 @@ export function InputFormSection({
 							nftBackgroundImage: brandCardPreview.preview,
 							certificationBrandName: values?.brandNameEN || '',
 						}}
+						greyBoxAmplitude={{
+							return: {
+								eventName:
+									'guaranteesetting_preview_guide_return_info_click',
+								eventPropertyKey: 'button_title',
+								eventPropertyValue:
+									'미리보기 내 교환/반품 안내 드롭다운 메뉴 클릭',
+							},
+							as: {
+								eventName:
+									'guaranteesetting_preview_guide_as_info_click',
+								eventPropertyKey: 'button_title',
+								eventPropertyValue:
+									'미리보기 내 A/S 드롭다운 메뉴 클릭',
+							},
+						}}
 					/>
 				</Box>
 			),
@@ -980,7 +1015,9 @@ export function InputFormSection({
 	};
 
 	const openExampleModal = () => {
-		const values = getValues();
+		sendAmplitudeLog('guaranteesetting_example_click', {
+			button_title: '브랜드 개런티 예시보기 클릭',
+		});
 
 		setModalOption({
 			id: 'exampleGuranteeCard',
@@ -990,8 +1027,17 @@ export function InputFormSection({
 			width: '544px',
 			buttonTitle: '확인',
 			align: 'center',
+			amplitudeInfo: {
+				eventName: 'guaranteesetting_example_popup_close',
+				eventPropertyKey: 'button_title',
+				eventPropertyValue: 'X 클릭 시 팝업 닫힘',
+			},
 			onClickButton: () => {
 				if (typeof setIsOpen === 'function') {
+					sendAmplitudeLog('guaranteesetting_example_popup_confirm', {
+						button_title: '확인 클릭 시 팝업 닫힘',
+					});
+
 					setIsOpen(false);
 				}
 			},
@@ -1192,6 +1238,7 @@ export function InputFormSection({
 
 		const formData = new FormData();
 		const data = handleFormData();
+
 		if (brandCard.file) {
 			/* 브랜드 카드 파일 */
 			formData.append('nftBackgroundImage', brandCard.file);
@@ -1243,6 +1290,10 @@ export function InputFormSection({
 		if (!hasProfileLogo) {
 			/* 재설정일때는 저장없이 그냥 나가기 */
 			/* 최초일때만, 로컬에 데이터 저장 */
+			sendAmplitudeLog('guaranteesetting_save_click', {
+				button_title: '저장 및 나가기',
+			});
+
 			localStorage.setItem(`hasInputDataSaved=${email}`, 'true');
 			Object.keys(values).forEach((key) => {
 				if (typeof values[key] === 'string') {
@@ -1273,9 +1324,15 @@ export function InputFormSection({
 				localStorage.setItem(`cafe24code=${email}`, queryData.code);
 				localStorage.setItem(`cafe24state=${email}`, queryData.state);
 			}
+		} else {
+			sendAmplitudeLog('guaranteesetting_save_click', {
+				button_title: '나가기',
+			});
 		}
 
-		goToParentUrl('/dashboard');
+		setTimeout(() => {
+			goToParentUrl('/dashboard');
+		}, 300);
 	};
 
 	/**
@@ -1385,6 +1442,12 @@ export function InputFormSection({
 		}
 	}, [data, isLoading, location, setFocus]);
 
+	useEffect(() => {
+		sendAmplitudeLog('guaranteesetting_pv', {
+			pv_title: '개런티 설정화면 진입',
+		});
+	}, []);
+
 	if (isLoading) {
 		return <></>;
 	}
@@ -1482,7 +1545,18 @@ export function InputFormSection({
 							target="_blank"
 							rel="noreferrer"
 							className="faq_link">
-							<CapsuleButton>이용가이드 보기</CapsuleButton>
+							<CapsuleButton
+								onClick={() => {
+									sendAmplitudeLog(
+										'guaranteesetting_guide_click',
+										{
+											button_title:
+												'이용가이드 링크로 이동',
+										}
+									);
+								}}>
+								이용가이드 보기
+							</CapsuleButton>
 						</LinkStyle>
 					</Grid>
 				</Grid>
@@ -1516,6 +1590,15 @@ export function InputFormSection({
 								ref={logoInputFile}
 								id={`input-file-brandLogo`}
 								onChange={(e) => handleAttachFile(e)}
+								onClick={() => {
+									sendAmplitudeLog(
+										'guaranteesetting_logoupload_click',
+										{
+											button_title:
+												'로고 이미지 파일 업로드',
+										}
+									);
+								}}
 							/>
 							<AvatarStyle
 								onClick={() => logoInputFile?.current.click()}
@@ -1597,19 +1680,9 @@ export function InputFormSection({
 							<InputLabelTag
 								required={false}
 								labelTitle={'고객센터'}
+								linkUrl={watch()?.customerCenterUrl}
+								linkTitle={'연결 확인하기'}
 							/>
-							<Typography
-								onClick={handleCheckOutLinkClick}
-								sx={{
-									fontSize: '14px',
-									lineHeight: '14px',
-									color: 'primary.main',
-									fontWeight: 700,
-									textDecoration: 'underline',
-									cursor: 'pointer',
-								}}>
-								연결 확인하기
-							</Typography>
 						</Grid>
 
 						<ControlledInputComponent
@@ -2010,6 +2083,16 @@ export function InputFormSection({
 								</Button>
 								<Button
 									type="submit"
+									onClick={() => {
+										sendAmplitudeLog(
+											'guaranteesetting_settingconfirm_click',
+											{
+												button_title: hasProfileLogo
+													? '수정 완료'
+													: '설정 완료',
+											}
+										);
+									}}
 									color="primary"
 									height={48}>
 									{hasProfileLogo
