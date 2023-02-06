@@ -1,11 +1,33 @@
 import {Injectable} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
+import {IsNotEmpty, IsNumber, IsObject, IsString} from 'class-validator';
+
 export interface FindRangePayload {
 	from?: string;
 	to?: string;
 }
+
+export class PaymentEmailPayload {
+	@IsNumber()
+	@IsNotEmpty()
+	partnerIdx: number;
+
+	@IsString()
+	@IsNotEmpty()
+	template:
+		| 'COMPLETE_PAYMENT'
+		| 'FAIL_PAYMENT'
+		| 'CANCEL_PAYMENT'
+		| 'REFUND_PAYMENT'
+		| 'UPGRADE_PAYMENT';
+
+	@IsObject()
+	@IsNotEmpty()
+	params: Record<string, string | number>;
+}
+
 @Injectable()
-export class VircleCoreAPI {
+export class VircleCoreApi {
 	private httpAgent: AxiosInstance;
 
 	constructor(baseURL: string) {
@@ -14,6 +36,11 @@ export class VircleCoreAPI {
 		});
 	}
 
+	/**
+	 * 개런티 발급량 조회
+	 * @param token
+	 * @param payload
+	 */
 	async getUsedGuaranteeCount(
 		token: string,
 		payload: FindRangePayload
@@ -33,6 +60,15 @@ export class VircleCoreAPI {
 				},
 			}
 		);
+		return data;
+	}
+
+	/**
+	 * 이메일 발송
+	 * @param body
+	 */
+	async sendPaymentEmail(body: PaymentEmailPayload): Promise<any> {
+		const {data} = await this.httpAgent.post(`v1/common/mail/send`, body);
 		return data;
 	}
 }

@@ -9,7 +9,7 @@ import {
 import {ChangeBillingPlanCommand} from './change-billing-plan.command';
 import {PricePlan, PricePlanProps} from '../../domain';
 import {DateTime} from 'luxon';
-import {VircleCoreAPI} from '../../infrastructure/api-client/vircleCoreApi';
+import {VircleCoreApi} from '../../infrastructure/api-client/vircle-core.api';
 
 /**
  * 구독플랜 변경 커맨드 핸들러
@@ -25,8 +25,8 @@ export class ChangeBillingPlanHandler
 		private readonly paymentRepo: PaymentRepository,
 		@Inject(PricePlanRepository)
 		private readonly planRepo: PricePlanRepository,
-		@Inject(VircleCoreAPI)
-		private readonly vircleCoreApi: VircleCoreAPI
+		@Inject(VircleCoreApi)
+		private readonly vircleCoreApi: VircleCoreApi
 	) {}
 
 	async execute(command: ChangeBillingPlanCommand): Promise<void> {
@@ -128,7 +128,8 @@ export class ChangeBillingPlanHandler
 				// 사용량 조회
 				const payload = {
 					from: DateTime.fromISO(
-						billingProps.lastPaymentAt!
+						billingProps.lastPaymentAt ||
+							billingProps.authenticatedAt
 					).toISODate(),
 					to: billingProps.planExpireDate
 						? DateTime.fromISO(

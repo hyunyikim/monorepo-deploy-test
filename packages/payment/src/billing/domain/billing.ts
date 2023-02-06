@@ -208,7 +208,14 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				...newPricePlan,
 				planLimit: newPricePlan.planLimit + remainLimit,
 			};
+			this.nextPaymentDate = DateTime.now()
+				.plus({
+					year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
+					month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+				})
+				.toISO();
 		}
+		this.planExpireDate = undefined;
 		this.nextPricePlan = newPricePlan;
 		this.canceledPricePlan = canceledPricePlan;
 		const event = new PlanChangedEvent(this.properties(), !!scheduledDate);

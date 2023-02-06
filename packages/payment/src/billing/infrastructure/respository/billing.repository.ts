@@ -86,11 +86,12 @@ export class PlanBillingRepository
 	async findByPartnerIdx(partnerIdx: number) {
 		const {Items} = await this.query({
 			TableName: this.tableName,
-			IndexName: 'partnerIdx-index',
+			IndexName: 'partnerIdx-authenticatedAt-index',
 			KeyConditionExpression: 'partnerIdx = :key',
 			ExpressionAttributeValues: {
 				':key': partnerIdx,
 			},
+			ScanIndexForward: false,
 		}).promise();
 		if (!Items || Items.length === 0) return null;
 

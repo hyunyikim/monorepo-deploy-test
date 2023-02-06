@@ -99,7 +99,7 @@ export class RegularPaymentService {
 		if (canceledPricePlan) {
 			payPrice -= canceledPricePlan.usedMonths
 				? (canceledPricePlan.totalPrice + canceledPricePlan.vat) *
-				  (canceledPricePlan.usedMonths / 12)
+				  ((12 - canceledPricePlan.usedMonths) / 12)
 				: 0;
 		}
 

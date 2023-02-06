@@ -48,7 +48,7 @@ export class RegisterBillingHandler
 
 		// customerKey 중복검사
 		const saved = await this.billingRepo.findByCustomerKey(customerKey);
-		if (saved?.isDeleted) {
+		if (saved) {
 			throw new BadRequestException('ALREADY_REGISTERED_BILLING');
 		}
 
@@ -56,8 +56,9 @@ export class RegisterBillingHandler
 		const prevBilling = await this.billingRepo.findByPartnerIdx(
 			token.partnerIdx
 		);
-		if (prevBilling?.isDeleted) {
-			prevBilling.unregister();
+
+		if (prevBilling) {
+			prevBilling.delete();
 			await this.billingRepo.saveBilling(prevBilling);
 			prevBilling.commit();
 		}
@@ -193,7 +194,7 @@ export class RegisterCardHandler
 
 		// customerKey 중복검사
 		const saved = await this.billingRepo.findByCustomerKey(customerKey);
-		if (saved?.isDeleted) {
+		if (saved) {
 			throw new BadRequestException('ALREADY_REGISTERED_BILLING');
 		}
 

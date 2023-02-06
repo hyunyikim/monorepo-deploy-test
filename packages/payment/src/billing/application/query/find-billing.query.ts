@@ -4,7 +4,7 @@ import {PlanBillingRepository} from '../../infrastructure/respository';
 import {BillingRepository} from '../../domain/repository';
 import {BillingProps} from '../../domain';
 import {TokenInfo} from '../../interface/getToken.decorator';
-import {VircleCoreAPI} from '../../infrastructure/api-client/vircleCoreApi';
+import {VircleCoreApi} from '../../infrastructure/api-client/vircle-core.api';
 import {DateTime} from 'luxon';
 
 export class FindBillingByPartnerTokenQuery implements IQuery {
@@ -21,8 +21,8 @@ export class FindBillingByPartnerTokenHandler
 	constructor(
 		@Inject(PlanBillingRepository)
 		private readonly billingRepo: BillingRepository,
-		@Inject(VircleCoreAPI)
-		private readonly vircleCoreApi: VircleCoreAPI
+		@Inject(VircleCoreApi)
+		private readonly vircleCoreApi: VircleCoreApi
 	) {}
 
 	async execute(query: FindBillingByPartnerTokenQuery) {
@@ -38,7 +38,9 @@ export class FindBillingByPartnerTokenHandler
 		// 사용량 조회
 		// TODO: 연결제일 경우 오늘일자가 포함된 1개월치만 검색되도록
 		const payload = {
-			from: DateTime.fromISO(billingProps.lastPaymentAt!).toISODate(),
+			from: DateTime.fromISO(
+				billingProps.lastPaymentAt || billingProps.authenticatedAt
+			).toISODate(),
 			to: billingProps.planExpireDate
 				? DateTime.fromISO(billingProps.planExpireDate).toISODate()
 				: undefined,
