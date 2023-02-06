@@ -33,7 +33,7 @@ export interface Billing {
 	approve: (payment: PaymentProps) => void;
 	delay: (payment: PaymentProps) => void;
 	changePlan: (
-		plan: PricePlanProps,
+		newPricePlan: PricePlanProps,
 		remainLimit: number,
 		scheduledDate?: string,
 		canceledPricePlan?: PricePlanProps
@@ -142,6 +142,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
 			})
 			.toISO();
+
 		const event = new BillingUnregisteredEvent(this.properties());
 		this.apply(event);
 	}
@@ -169,6 +170,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.deletedAt = DateTime.now().toISO();
 		this.nextPricePlan = undefined;
 		this.nextPaymentDate = undefined;
+
 		const event = new BillingDeletedEvent(this.properties());
 		this.apply(event);
 	}
@@ -195,6 +197,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
 			})
 			.toISO();
+
 		const event = new BillingApprovedEvent(this.properties(), payment);
 		this.apply(event);
 	}
@@ -235,7 +238,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		scheduledDate?: string,
 		canceledPricePlan?: PricePlanProps
 	): void {
-		// 예약이 아니면 현재 플랜까지 변경
+		// 예약이 아닐경우 현재 플랜까지 즉시 신규플랜으로 변경
 		if (!scheduledDate) {
 			this.props.pricePlan = {
 				...newPricePlan,
@@ -248,9 +251,11 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				})
 				.toISO();
 		}
-		this.planExpireDate = undefined;
 		this.nextPricePlan = newPricePlan;
 		this.canceledPricePlan = canceledPricePlan;
+		this.planExpireDate = undefined;
+		this.paymentFailedCount = undefined;
+
 		const event = new PlanChangedEvent(this.properties(), !!scheduledDate);
 		this.apply(event);
 	}
@@ -260,6 +265,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	 */
 	pause(): void {
 		this.pausedAt = DateTime.now().toISO();
+
 		const event = new BillingPausedEvent(this.properties());
 		this.apply(event);
 	}
@@ -269,6 +275,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	 */
 	resume(): void {
 		this.pausedAt = undefined;
+
 		const event = new BillingResumedEvent(this.properties());
 		this.apply(event);
 	}

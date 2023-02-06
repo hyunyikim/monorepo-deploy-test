@@ -45,7 +45,7 @@ export class DeleteCardCommand implements ICommand {
 }
 
 export class UnregisterBillingCommand implements ICommand {
-	constructor(readonly customerKey: string) {}
+	constructor(readonly customerKey: string, readonly partnerIdx: number) {}
 }
 
 export class DeleteBillingCommand implements ICommand {

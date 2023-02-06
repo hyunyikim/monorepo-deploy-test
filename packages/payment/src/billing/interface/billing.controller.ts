@@ -387,7 +387,10 @@ export class BillingController {
 		>(query);
 
 		// 구독 취소 커맨드 실행
-		const command = new UnregisterBillingCommand(billingProps.customerKey);
+		const command = new UnregisterBillingCommand(
+			billingProps.customerKey,
+			token.partnerIdx
+		);
 		await this.commandBus.execute(command);
 	}
 

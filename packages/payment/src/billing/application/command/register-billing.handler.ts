@@ -22,6 +22,7 @@ import {DateTime} from 'luxon';
 import {createHmac} from 'crypto';
 import {RegularPaymentService} from '../service/payment.service';
 import {ApproveBillingPaymentCommand} from './approve-billing-payment.command';
+import {VircleCoreApi} from '../../infrastructure/api-client/vircle-core.api';
 
 /**
  * 빌링 등록 및 구독신청 커맨드 핸들러
@@ -351,11 +352,13 @@ export class UnregisterBillingHandler
 {
 	constructor(
 		@Inject(PlanBillingRepository)
-		private readonly billingRepo: BillingRepository
+		private readonly billingRepo: BillingRepository,
+		@Inject(VircleCoreApi)
+		private readonly vircleCoreApi: VircleCoreApi
 	) {}
 
 	async execute(command: UnregisterBillingCommand): Promise<void> {
-		const {customerKey} = command;
+		const {customerKey, partnerIdx} = command;
 
 		// 빌링 조회
 		const billing = await this.billingRepo.findByCustomerKey(customerKey);
@@ -373,6 +376,15 @@ export class UnregisterBillingHandler
 
 		// DB 저장
 		await this.billingRepo.saveBilling(billing);
+
+		// 이메일 발송
+		await this.vircleCoreApi.sendPaymentEmail({
+			partnerIdx,
+			template: 'CANCEL_PAYMENT',
+			params: {
+				planName: billingProps.pricePlan.planName,
+			},
+		});
 
 		billing.commit();
 	}
