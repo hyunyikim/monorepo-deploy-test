@@ -522,3 +522,9 @@ export interface Cancel {
 	 */
 	transactionKey: string;
 }
+
+/** 결제 에러 */
+export interface Error {
+	code: string;
+	message: string;
+}

@@ -158,6 +158,8 @@ export enum PAYMENT_STATUS {
 	ABORTED = 'ABORTED',
 	/** 유효 시간(30분)이 지나 거래가 취소됨 */
 	EXPIRED = 'EXPIRED',
+	/** 실패 **/
+	FAILED = 'FAILED',
 }
 
 export enum MOBILE_OPERATOR {

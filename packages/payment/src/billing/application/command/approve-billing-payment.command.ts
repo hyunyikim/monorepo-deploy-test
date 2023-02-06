@@ -1,10 +1,10 @@
 import {ICommand} from '@nestjs/cqrs';
-import {PricePlanProps} from '../../domain';
+import {Billing, PricePlanProps} from '../../domain';
 
 export class ApproveBillingPaymentCommand implements ICommand {
 	constructor(
 		readonly partnerIdx: number,
-		readonly billingKey: string,
+		readonly billing: Billing,
 		readonly pricePlan: PricePlanProps,
 		readonly payload: {
 			amount: number;
@@ -12,6 +12,7 @@ export class ApproveBillingPaymentCommand implements ICommand {
 			orderId: string;
 			orderName: string;
 		},
-		readonly canceledPricePlan?: PricePlanProps
+		readonly canceledPricePlan?: PricePlanProps,
+		readonly useDelay?: boolean
 	) {}
 }

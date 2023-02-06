@@ -1,6 +1,7 @@
 import {AggregateRoot} from '@nestjs/cqrs';
 import {
 	BillingApprovedEvent,
+	BillingApproveFailedEvent,
 	BillingRegisteredEvent,
 	BillingUnregisteredEvent,
 	BillingDeletedEvent,
@@ -30,6 +31,7 @@ export interface Billing {
 	delete: () => void;
 	isDeleted: boolean;
 	approve: (payment: PaymentProps) => void;
+	delay: (payment: PaymentProps) => void;
 	changePlan: (
 		plan: PricePlanProps,
 		remainLimit: number,
@@ -52,6 +54,8 @@ export type BillingProps = TossBilling & {
 	deletedAt?: string;
 	lastPaymentAt?: string;
 	lastPaymentKey?: string;
+	lastPaymentFailedAt?: string;
+	paymentFailedCount?: number;
 	planExpireDate?: string;
 	nextPaymentDate?: string;
 	nextPricePlan?: PricePlanProps;
@@ -70,6 +74,8 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	private deletedAt?: string;
 	private lastPaymentAt?: string;
 	private lastPaymentKey?: string;
+	private lastPaymentFailedAt?: string;
+	private paymentFailedCount?: number;
 	private planExpireDate?: string;
 	private nextPaymentDate?: string;
 	private nextPricePlan?: PricePlanProps;
@@ -85,6 +91,8 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.deletedAt = props?.deletedAt;
 		this.lastPaymentAt = props?.lastPaymentAt;
 		this.lastPaymentKey = props?.lastPaymentKey;
+		this.lastPaymentFailedAt = props?.lastPaymentFailedAt;
+		this.paymentFailedCount = props?.paymentFailedCount;
 		this.planExpireDate = props?.planExpireDate;
 		this.nextPaymentDate = props?.nextPaymentDate;
 		this.nextPricePlan = props?.nextPricePlan;
@@ -102,6 +110,8 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			deletedAt: this.deletedAt,
 			lastPaymentAt: this.lastPaymentAt,
 			lastPaymentKey: this.lastPaymentKey,
+			lastPaymentFailedAt: this.lastPaymentFailedAt,
+			paymentFailedCount: this.paymentFailedCount,
 			planExpireDate: this.planExpireDate,
 			nextPaymentDate: this.nextPaymentDate,
 			nextPricePlan: this.nextPricePlan
@@ -185,6 +195,29 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
 			})
 			.toISO();
+		const event = new BillingApprovedEvent(this.properties(), payment);
+		this.apply(event);
+	}
+
+	/**
+	 * 결제 연장
+	 * @param payment
+	 */
+	delay(payment: PaymentProps): void {
+		const now = DateTime.now();
+		this.orderId = payment.orderId;
+		this.lastPaymentFailedAt = now.toISO();
+		this.paymentFailedCount = (this.paymentFailedCount || 0) + 1;
+
+		// 5일간 결제 재시도 후 사용 제한
+		if (this.paymentFailedCount < 6) {
+			this.nextPaymentDate = now.plus({days: 1}).toISO();
+		} else {
+			this.nextPricePlan = undefined;
+			this.nextPaymentDate = undefined;
+			this.planExpireDate = now.toISO();
+		}
+
 		const event = new BillingApprovedEvent(this.properties(), payment);
 		this.apply(event);
 	}

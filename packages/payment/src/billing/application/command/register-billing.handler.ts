@@ -4,7 +4,7 @@ import {
 	BadRequestException,
 	ConflictException,
 } from '@nestjs/common';
-import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {CommandBus, CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {BillingRepository, PlanRepository} from '../../domain/repository';
 import {PlanBillingRepository} from '../../infrastructure/respository';
 import {TossPaymentsAPI} from '../../infrastructure/api-client';
@@ -20,6 +20,8 @@ import {BillingProps, PlanBillingFactory, PricePlan} from '../../domain';
 import {PricePlanRepository} from '../../infrastructure/respository';
 import {DateTime} from 'luxon';
 import {createHmac} from 'crypto';
+import {RegularPaymentService} from '../service/payment.service';
+import {ApproveBillingPaymentCommand} from './approve-billing-payment.command';
 
 /**
  * 빌링 등록 및 구독신청 커맨드 핸들러
@@ -29,7 +31,11 @@ export class RegisterBillingHandler
 	implements ICommandHandler<RegisterBillingCommand, void>
 {
 	constructor(
-		@Inject(TossPaymentsAPI) private readonly paymentsApi: TossPaymentsAPI,
+		private readonly commandBus: CommandBus,
+		@Inject(RegularPaymentService)
+		private readonly paymentService: RegularPaymentService,
+		@Inject(TossPaymentsAPI)
+		private readonly paymentsApi: TossPaymentsAPI,
 		@Inject(PlanBillingRepository)
 		private readonly billingRepo: BillingRepository,
 		@Inject(PlanBillingFactory)
@@ -52,44 +58,60 @@ export class RegisterBillingHandler
 			throw new BadRequestException('ALREADY_REGISTERED_BILLING');
 		}
 
-		// 기존 플랜이 남아 있는 경우 취소처리 (무료플랜 등)
-		const prevBilling = await this.billingRepo.findByPartnerIdx(
-			token.partnerIdx
-		);
-
-		if (prevBilling) {
-			prevBilling.delete();
-			await this.billingRepo.saveBilling(prevBilling);
-			prevBilling.commit();
-		}
-
 		// 구독플랜 조회
 		const pricePlan = await this.planRepo.findByPlanId(planId);
 		if (!pricePlan || !pricePlan.activated) {
 			throw new NotFoundException('NOT_FOUND_PLAN');
 		}
 
-		// 빌링키 발급
-		const tossBilling =
-			await this.paymentsApi.billing.authorizations.customerKey({
-				customerKey,
-				...cardInfo,
+		try {
+			// 빌링키 발급
+			const tossBilling =
+				await this.paymentsApi.billing.authorizations.customerKey({
+					customerKey,
+					...cardInfo,
+				});
+
+			// 빌링 생성
+			const newBilling = this.factory.create({
+				...tossBilling,
+				partnerIdx: token.partnerIdx,
+				pricePlan,
 			});
 
-		// 빌링 생성
-		const registered = this.factory.create({
-			...tossBilling,
-			partnerIdx: token.partnerIdx,
-			pricePlan,
-		});
+			// 구독 신청
+			newBilling.register();
 
-		// 구독 신청
-		registered.register();
+			// 결제 요청
+			const approveCommand = new ApproveBillingPaymentCommand(
+				token.partnerIdx,
+				newBilling,
+				pricePlan,
+				this.paymentService.generatePaymentPayload(
+					token.partnerIdx,
+					customerKey,
+					pricePlan
+				)
+			);
+			await this.commandBus.execute(approveCommand);
 
-		// DB 저장
-		await this.billingRepo.saveBilling(registered);
+			// 기존 플랜이 남아 있는 경우 취소처리 (무료플랜 등)
+			const prevBilling = await this.billingRepo.findByPartnerIdx(
+				token.partnerIdx
+			);
+			if (prevBilling) {
+				prevBilling.delete();
+				await this.billingRepo.saveBilling(prevBilling);
+				prevBilling.commit();
+			}
 
-		registered.commit();
+			// DB 저장
+			await this.billingRepo.saveBilling(newBilling);
+
+			newBilling.commit();
+		} catch (e) {
+			throw e;
+		}
 	}
 }
 
@@ -158,12 +180,12 @@ export class RegisterFreeBillingHandler
 				.toISODate()}T23:59:59+09:00`,
 		} as BillingProps;
 
-		const registered = this.factory.create(billingProps);
+		const newBilling = this.factory.create(billingProps);
 
 		// DB 저장
-		await this.billingRepo.saveBilling(registered);
+		await this.billingRepo.saveBilling(newBilling);
 
-		registered.commit();
+		newBilling.commit();
 	}
 }
 
@@ -175,7 +197,8 @@ export class RegisterCardHandler
 	implements ICommandHandler<RegisterCardCommand, void>
 {
 	constructor(
-		@Inject(TossPaymentsAPI) private readonly paymentsApi: TossPaymentsAPI,
+		@Inject(TossPaymentsAPI)
+		private readonly paymentsApi: TossPaymentsAPI,
 		@Inject(PlanBillingRepository)
 		private readonly billingRepo: BillingRepository,
 		@Inject(PlanBillingFactory)
@@ -230,15 +253,15 @@ export class RegisterCardHandler
 			pricePlan: prevBillingProps?.pricePlan || new PricePlan(),
 		};
 
-		const registered = this.factory.create(newBillingProps);
+		const newBilling = this.factory.create(newBillingProps);
 
 		// 카드 등록
-		registered.registerCard();
+		newBilling.registerCard();
 
 		// DB 저장
-		await this.billingRepo.saveBilling(registered);
+		await this.billingRepo.saveBilling(newBilling);
 
-		registered.commit();
+		newBilling.commit();
 
 		// 기존 빌링 삭제처리
 		if (prevBilling) {
@@ -301,14 +324,14 @@ export class DeleteCardHandler
 			pausedAt: prevBillingProps.pausedAt,
 		} as BillingProps;
 
-		const registered = this.factory.create(newBillingProps);
+		const newBilling = this.factory.create(newBillingProps);
 
-		registered.deleteCard();
+		newBilling.deleteCard();
 
 		// DB 저장
-		await this.billingRepo.saveBilling(registered);
+		await this.billingRepo.saveBilling(newBilling);
 
-		registered.commit();
+		newBilling.commit();
 
 		// 기존 빌링 삭제처리
 		if (prevBilling) {

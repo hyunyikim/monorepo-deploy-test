@@ -38,7 +38,7 @@ export class RegularPaymentService {
 		for (const billing of billings) {
 			if (this.isPaymentTiming(billing)) {
 				paidBillings.push(billing.properties());
-				this.createPayment(billing);
+				await this.requestRegularPayment(billing);
 			}
 		}
 		this.logger.log(
@@ -58,9 +58,9 @@ export class RegularPaymentService {
 	 * 정기결제 요청 생성
 	 * @param billing
 	 */
-	createPayment(billing: Billing) {
+	async requestRegularPayment(billing: Billing) {
 		const props = billing.properties();
-		const {partnerIdx, billingKey, nextPricePlan, customerKey} = props;
+		const {partnerIdx, nextPricePlan, customerKey} = props;
 
 		if (!nextPricePlan) {
 			return false;
@@ -68,11 +68,13 @@ export class RegularPaymentService {
 
 		const command = new ApproveBillingPaymentCommand(
 			partnerIdx,
-			billingKey,
+			billing,
 			nextPricePlan,
-			this.generatePaymentPayload(partnerIdx, customerKey, nextPricePlan)
+			this.generatePaymentPayload(partnerIdx, customerKey, nextPricePlan),
+			undefined,
+			true
 		);
-		this.commandBus.execute(command);
+		await this.commandBus.execute(command);
 	}
 
 	/**

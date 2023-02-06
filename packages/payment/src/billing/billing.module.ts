@@ -18,6 +18,7 @@ import {
 	DeleteBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
+	DelayPaymentHandler,
 } from './application/command';
 import {
 	FindBillingByPartnerTokenHandler,
@@ -84,6 +85,7 @@ const app: Provider[] = [
 	DeleteBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
+	DelayPaymentHandler,
 
 	// Event Handler
 	BillingRegisteredHandler,

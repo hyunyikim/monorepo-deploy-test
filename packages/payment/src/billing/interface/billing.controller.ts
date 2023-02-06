@@ -39,6 +39,7 @@ import {GetToken, TokenInfo} from './getToken.decorator';
 import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
 import {HttpExceptionFilter} from './httpException.filter';
+import {PAYMENT_STATUS} from '../infrastructure/api-client';
 
 class BillingInterface {
 	readonly customerKey: string;
@@ -55,6 +56,7 @@ class BillingInterface {
 	readonly planStartedAt: string;
 	readonly planExpireDate?: string;
 	readonly nextPlanStartDate?: string;
+	readonly paymentFailedCount?: number;
 
 	constructor(billing: BillingProps) {
 		this.customerKey = billing.customerKey;
@@ -79,6 +81,7 @@ class BillingInterface {
 		this.nextPlanStartDate = billing.nextPaymentDate
 			? DateTime.fromISO(billing.nextPaymentDate).toISO()
 			: undefined;
+		this.paymentFailedCount = billing.paymentFailedCount;
 	}
 }
 
@@ -87,7 +90,7 @@ class PaymentSummaryInterface {
 	readonly orderId: string;
 	readonly planName: string;
 	readonly payPrice: number;
-	readonly payStatus: 'SUCCESS' | 'FAIL';
+	readonly payStatus: PAYMENT_STATUS;
 	readonly startDate: string;
 	readonly expireDate: string;
 
@@ -97,7 +100,7 @@ class PaymentSummaryInterface {
 		this.orderId = payment.orderId;
 		this.planName = payment.pricePlan.planName;
 		this.payPrice = payment.totalAmount;
-		this.payStatus = 'SUCCESS'; // TODO: 결제 실패건 처리 시 변경
+		this.payStatus = payment.status; // TODO: 결제 실패건 처리 시 변경
 		this.startDate = DateTime.fromISO(payment.approvedAt).toISO();
 		this.expireDate = payment.expiredAt
 			? DateTime.fromISO(payment.expiredAt).toISO()

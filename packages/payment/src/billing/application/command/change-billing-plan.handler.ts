@@ -1,5 +1,5 @@
 import {BadRequestException, Inject, NotFoundException} from '@nestjs/common';
-import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {CommandBus, CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {BillingRepository, PaymentRepository} from '../../domain/repository';
 import {
 	PricePlanRepository,
@@ -10,6 +10,8 @@ import {ChangeBillingPlanCommand} from './change-billing-plan.command';
 import {PricePlan, PricePlanProps} from '../../domain';
 import {DateTime} from 'luxon';
 import {VircleCoreApi} from '../../infrastructure/api-client/vircle-core.api';
+import {ApproveBillingPaymentCommand} from './approve-billing-payment.command';
+import {RegularPaymentService} from '../service/payment.service';
 
 /**
  * 구독플랜 변경 커맨드 핸들러
@@ -19,6 +21,9 @@ export class ChangeBillingPlanHandler
 	implements ICommandHandler<ChangeBillingPlanCommand, void>
 {
 	constructor(
+		private readonly commandBus: CommandBus,
+		@Inject(RegularPaymentService)
+		private readonly paymentService: RegularPaymentService,
 		@Inject(PlanBillingRepository)
 		private readonly billingRepo: BillingRepository,
 		@Inject(PlanPaymentRepository)
@@ -163,12 +168,33 @@ export class ChangeBillingPlanHandler
 			}
 		}
 
-		// 구독정보 변경
-		billing.changePlan(newPlan, remainLimit, scheduledDate, cancelPlan);
+		// 결제 요청
+		try {
+			if (!scheduledDate) {
+				// 즉시 결제 요청
+				const approveCommand = new ApproveBillingPaymentCommand(
+					token.partnerIdx,
+					billing,
+					newPlan,
+					this.paymentService.generatePaymentPayload(
+						token.partnerIdx,
+						billing.properties().customerKey,
+						newPlan
+					),
+					cancelPlan
+				);
+				await this.commandBus.execute(approveCommand);
+			}
 
-		// DB 저장
-		await this.billingRepo.saveBilling(billing);
+			// 구독정보 변경
+			billing.changePlan(newPlan, remainLimit, scheduledDate, cancelPlan);
 
-		billing.commit();
+			// DB 저장
+			await this.billingRepo.saveBilling(billing);
+
+			billing.commit();
+		} catch (e) {
+			throw e;
+		}
 	}
 }
