@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {Stack, Typography} from '@mui/material';
@@ -28,12 +28,22 @@ import {
 
 import ServiceInterworkDetailTitle from '@/features/service-interwork/Detail/common/ServiceInterworkDetailTitle';
 import ServiceInterworkDetailContent from '@/features/service-interwork/Detail/common/ServiceInterworkDetailContent';
+import {getUserPricePlan} from '@/api/payment.api';
+
+type CurrentPlanType = {
+	isExpired: boolean;
+	isFreeTrial: boolean;
+};
 
 function ServiceInterworkRepair() {
 	const queryClient = useQueryClient();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
+	const [currentPlan, setCurrentPlan] = useState<CurrentPlanType>({
+		isExpired: false,
+		isFreeTrial: false,
+	});
 
 	const {data: partnershipData, isLoading} = useGetPartnershipInfo();
 
@@ -71,18 +81,56 @@ function ServiceInterworkRepair() {
 		[partnershipData?.profileImage]
 	);
 
+	const getCurrentPricePlanInfo = async () => {
+		try {
+			const {planExpireDate, planStartedAt, pricePlan, usedNftCount} =
+				await getUserPricePlan();
+
+			const originalExpireDate =
+				typeof planExpireDate === 'string'
+					? planExpireDate?.split('T')[0]
+					: '';
+			const expireDate = new Date(originalExpireDate).getTime();
+			const currentDate = new Date().getTime();
+
+			setCurrentPlan((pre) => ({
+				...pre,
+				isExpired: expireDate - currentDate < 0,
+				isFreeTrial:
+					pricePlan?.planLevel === 0 &&
+					pricePlan?.planName === '무료 체험',
+			}));
+		} catch (error) {
+			console.log('error', error);
+		}
+	};
+
+	useEffect(() => {
+		getCurrentPricePlanInfo();
+	}, []);
+
 	const InstallRepairButton = useMemo(() => {
+		const {isExpired, isFreeTrial} = currentPlan;
+
 		const openPricePlanModal = () => {
-			/* TODO: 무료체험 기간이 끝났을때만 아래 모달, 그 외에는 수선 연동기능으로! */
 			return onOpenMessageDialog({
 				title: '플랜 업그레이드가 필요해요!',
-				message: (
-					<>
-						무료체험기간이 종료되어 서비스이용이 제한됩니다.
-						<br />
-						유료 플랜을 구독하고, 수선신청 서비스를 계속
-						이용해보세요!
-					</>
+				message: isExpired ? (
+					isFreeTrial ? (
+						<>
+							무료체험기간이 종료되어 서비스이용이 제한됩니다.
+							<br />
+							유료 플랜을 구독하고, 수선신청 서비스를 계속
+							이용해보세요!
+						</>
+					) : (
+						<>
+							유료 플랜을 구독하고, 수선신청 서비스를 계속
+							이용해보세요!
+						</>
+					)
+				) : (
+					'구독 플랜이 만료되었습니다. 새로운 플랜을 구독하고 수선신청 서비스를 계속 이용해보세요!'
 				),
 				disableClickBackground: true,
 				showBottomCloseButton: true,
@@ -91,7 +139,7 @@ function ServiceInterworkRepair() {
 					<Button
 						color="black"
 						onClick={() => {
-							goToParentUrl('/payment/subscribe');
+							goToParentUrl('/b2b/payment/subscribe');
 						}}>
 						플랜 업그레이드 하기
 					</Button>
@@ -102,14 +150,17 @@ function ServiceInterworkRepair() {
 		return (
 			<Button
 				onClick={() => {
-					(async () => {
-						try {
-							const res =
-								await installServiceInterworkMutation.mutateAsync();
+					if (isExpired) {
+						openPricePlanModal();
+					} else {
+						(async () => {
+							try {
+								const res =
+									await installServiceInterworkMutation.mutateAsync();
 
-							if (res.result !== 'SUCCESS') {
-								return openPricePlanModal();
-							} else {
+								// if (res.result !== 'SUCCESS') {
+								// 	return openPricePlanModal();
+								// } else {
 								onOpenMessageDialog({
 									title: '수선신청 관리가 연동됐습니다.',
 									message: (
@@ -140,11 +191,12 @@ function ServiceInterworkRepair() {
 										updateParentPartnershipData();
 									},
 								});
+								// }
+							} catch (e) {
+								onOpenError();
 							}
-						} catch (e) {
-							onOpenError();
-						}
-					})();
+						})();
+					}
 				}}>
 				연동하기
 			</Button>

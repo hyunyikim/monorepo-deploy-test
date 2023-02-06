@@ -1,6 +1,7 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {Box, TableRow, Typography} from '@mui/material';
 
+import {getUserPricePlan} from '@/api/payment.api';
 import {useList} from '@/utils/hooks';
 import {getNftCustomerList} from '@/api/customer.api';
 import {
@@ -37,6 +38,7 @@ import {
 	SearchFilterTab,
 	Button,
 } from '@/components';
+
 import {imgBlurredCustomerList} from '@/assets/images/index';
 import {useMessageDialog} from '@/stores';
 
@@ -47,6 +49,7 @@ const {sort, ...customerInitialSearchFilter} = initialSearchFilter;
 
 function CustomerList() {
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const [isPlanExpired, setIsPlanExpired] = useState<boolean>(false);
 
 	useEffect(() => {
 		sendAmplitudeLog(`${menu}_pv`, {pv_title: '고객관리 목록 진입'});
@@ -78,34 +81,66 @@ function CustomerList() {
 		},
 	});
 
-	/* TODO: 실제 데이터로 변경 */
-	const isFreeTrialPlanExpired = false;
+	const openExpiredModal = (_isFreeTrial: boolean) => {
+		onMessageDialogOpen({
+			title: '앗! 고객데이터가 보이지 않으신가요?!',
+			message: _isFreeTrial ? (
+				<>
+					무료체험 기간이 종료되어 고객 데이터를 확인할 수 없어요.
+					<br />
+					유료 플랜을 구독하고 모든 고객 데이터를 확인하세요.
+				</>
+			) : (
+				<>
+					유료 플랜 구독이 종료되어 고객 데이터를 확인할 수 없어요.
+					<br />
+					유료 플랜을 구독하고 모든 고객 데이터를 확인하세요.
+				</>
+			),
+			showBottomCloseButton: true,
+			closeButtonValue: '닫기',
+			disableClickBackground: true,
+			buttons: (
+				<Button
+					color="black"
+					onClick={() => {
+						goToParentUrl('/b2b/payment/subscribe');
+					}}>
+					플랜 업그레이드 하기
+				</Button>
+			),
+		});
+	};
+
+	const getCurrentPricePlanInfo = async () => {
+		try {
+			const {planExpireDate, planStartedAt, pricePlan, usedNftCount} =
+				await getUserPricePlan();
+
+			const originalExpireDate =
+				typeof planExpireDate === 'string'
+					? planExpireDate?.split('T')[0]
+					: '';
+			const expireDate = new Date(originalExpireDate).getTime();
+			const currentDate = new Date().getTime();
+			const isExpired = expireDate - currentDate < 0;
+			const isFreeTrial =
+				pricePlan?.planLevel === 0 &&
+				pricePlan?.planName === '무료 체험';
+
+			if (isExpired) {
+				setIsPlanExpired(true);
+				openExpiredModal(isFreeTrial);
+			} else {
+				setIsPlanExpired(false);
+			}
+		} catch (error) {
+			console.log('error', error);
+		}
+	};
 
 	useEffect(() => {
-		if (isFreeTrialPlanExpired) {
-			onMessageDialogOpen({
-				title: '앗! 고객데이터가 보이지 않으신가요?!',
-				message: (
-					<>
-						무료체험 기간이 종료되어 고객 데이터를 확인할 수 없어요.
-						<br />
-						유료 플랜을 구독하고 모든 고객 데이터를 확인하세요.
-					</>
-				),
-				showBottomCloseButton: true,
-				closeButtonValue: '닫기',
-				disableClickBackground: true,
-				buttons: (
-					<Button
-						color="black"
-						onClick={() => {
-							goToParentUrl('/payment/subscribe');
-						}}>
-						플랜 업그레이드 하기
-					</Button>
-				),
-			});
-		}
+		getCurrentPricePlanInfo();
 	}, []);
 
 	return (
@@ -133,8 +168,7 @@ function CustomerList() {
 					}
 				/>
 
-				{/* TODO: 30일 무료체험이 끝났을때만 나오게 */}
-				{isFreeTrialPlanExpired ? (
+				{isPlanExpired ? (
 					<Box sx={{position: 'relative'}}>
 						<Box
 							sx={{

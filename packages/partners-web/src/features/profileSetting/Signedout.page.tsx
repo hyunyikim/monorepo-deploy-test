@@ -75,7 +75,6 @@ function Signedout() {
 	};
 
 	const openCancelSignouConfirmModal = () => {
-		/* TODO: 확인버튼 누르면 파트너쉽데이터 업데이트 추가하기 */
 		onOpenMessageDialog({
 			title: '버클 탈퇴 요청이 철회되었습니다.',
 			message:
@@ -89,6 +88,9 @@ function Signedout() {
 
 	const confirmCancleSignoutHandler = () => {
 		updateParentPartnershipData();
+		// setTimeout(() => {
+		// 	goToParentUrl('/dashboard');
+		// }, 300);
 	};
 
 	const cancelButtonActivator = () => {
