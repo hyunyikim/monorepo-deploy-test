@@ -128,7 +128,7 @@ const privateRoutes: RouteObject[] = [
 				element: <PaymentInformation />,
 			},
 			{path: '/setting/profile/v2', element: <ProfileSetting />},
-			// {path: '/setting/signout/v2', element: <Signout />},
+			{path: '/setting/signout/v2', element: <Signout />},
 			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
 			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
 			{path: '/cafe24/interwork/v2', element: <Cafe24Interwork />},

@@ -16,6 +16,7 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
+import {requestSignout} from '@/api/auth.api';
 
 interface SignoutInfoProps {
 	reason: Option;
@@ -79,32 +80,7 @@ function Signout() {
 	];
 
 	const onSubmit = () => {
-		const values = getValues();
-		const {
-			reason: {value, name},
-		} = signoutInfo;
-
-		/* TODO: 
-            1. 탈퇴하기 눌렀을때, 비밀번호 체크 
-            setError('password', {
-				message: '비밀번호를 다시 입력해주세요.',
-			});
-        */
-
 		openConfirmModal();
-	};
-
-	const submitSignoutData = async () => {
-		const values = getValues();
-		const {
-			reason: {value, name},
-		} = signoutInfo;
-
-		closeMessageModal();
-		goToParentUrl('/signedout');
-		setTimeout(() => {
-			updateParentPartnershipData();
-		}, 300);
 	};
 
 	const openConfirmModal = () => {
@@ -133,6 +109,34 @@ function Signout() {
 			),
 			disableClickBackground: true,
 		});
+	};
+
+	const submitSignoutData = async () => {
+		const values = getValues();
+		const {
+			reason: {value, name},
+		} = signoutInfo;
+
+		try {
+			const signoutRes = await requestSignout({
+				reason: value,
+				password: values.password,
+			});
+
+			if (signoutRes && signoutRes.result === 'SUCCESS') {
+				closeMessageModal();
+				setTimeout(() => {
+					updateParentPartnershipData();
+				}, 300);
+			}
+		} catch (e) {
+			/* FIXME: 아래 워닝 수정! */
+			setError('password', {
+				message: String(e.response.data.message),
+			});
+
+			closeMessageModal();
+		}
 	};
 
 	const selectHandler = (e: SelectChangeEvent<unknown>) => {

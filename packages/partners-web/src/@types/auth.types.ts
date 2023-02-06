@@ -51,3 +51,8 @@ export interface SignUpResponseBrand {
 	name: string;
 	englishName: string;
 }
+
+export type SignoutType = {
+	reason: string;
+	password: string;
+};

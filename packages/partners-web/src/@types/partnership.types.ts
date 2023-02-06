@@ -25,6 +25,7 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	customerCenterUrl: string | null;
 	klipWalletAddress: string;
 	leavedAt: string | null;
+	isLeaved: YNType;
 	authKey: string;
 	mainYN: YNType;
 	category: number[];

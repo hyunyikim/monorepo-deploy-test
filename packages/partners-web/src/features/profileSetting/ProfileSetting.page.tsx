@@ -479,12 +479,12 @@ function ProfileSetting() {
 						</Stack>
 					</Stack>
 				</Stack>
-				{/* 
+
 				<CapsuleButton
 					sx={{marginTop: '24px'}}
 					onClick={goToSignoutPage}>
 					회원탈퇴
-				</CapsuleButton> */}
+				</CapsuleButton>
 
 				<FixedBottomNavBar
 					sx={{

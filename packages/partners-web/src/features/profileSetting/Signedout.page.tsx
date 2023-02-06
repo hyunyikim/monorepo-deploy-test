@@ -12,6 +12,7 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
+import {cancleRequestSignout} from '@/api/auth.api';
 
 function Signedout() {
 	const {
@@ -58,29 +59,19 @@ function Signedout() {
 		'직접입력',
 	];
 
-	const onSubmit = () => {
-		const values = getValues();
+	const onSubmit = async () => {
+		const {password} = getValues();
 
-		/* TODO: 
-            1. 탈퇴철회하기 눌렀을때, 비밀번호 체크  
-            setError('password', {
-				message: '비밀번호를 다시 입력해주세요.',
+		try {
+			const cancelSignoutRes = await cancleRequestSignout({password});
+			if (cancelSignoutRes && cancelSignoutRes.result === 'SUCCESS') {
+				openCancelSignouConfirmModal();
+			}
+		} catch (e) {
+			setError('password', {
+				message: String(e.response.data.message),
 			});
-        */
-		openCancelSignouConfirmModal();
-	};
-
-	const submitSignoutData = async () => {
-		const values = getValues();
-		closeMessageModal();
-		// updateParentPartnershipData();
-	};
-
-	const confirmCancleSignoutHandler = () => {
-		goToParentUrl('/dashboard');
-		setTimeout(() => {
-			updateParentPartnershipData();
-		}, 300);
+		}
 	};
 
 	const openCancelSignouConfirmModal = () => {
@@ -96,6 +87,10 @@ function Signedout() {
 		});
 	};
 
+	const confirmCancleSignoutHandler = () => {
+		updateParentPartnershipData();
+	};
+
 	const cancelButtonActivator = () => {
 		const values = getValues();
 		if (values.password) {
@@ -109,6 +104,17 @@ function Signedout() {
 		cancelButtonActivator();
 		// console.log('watch', watch());
 	}, [watch()]);
+
+	useEffect(() => {
+		if (partnershipData) {
+			const hasLeft = partnershipData.isLeaved;
+
+			if (hasLeft === 'N') {
+				goToParentUrl('/dashboard');
+				return;
+			}
+		}
+	}, [partnershipData]);
 
 	return (
 		<Stack
