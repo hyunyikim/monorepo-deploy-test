@@ -170,3 +170,4 @@ export {default as imgEndingBg2x} from './img_price_ending_bg@2x.png';
 export {default as imgMobileEndingBg2x} from './img_price_ending_mobile_bg@2x.png';
 export {default as imgEndingTitle} from './img_price_ending_title.png';
 export {default as imgEndingTitle2x} from './img_price_ending_title@2x.png';
+export {default as imgBlurredCustomerList} from './img_blurred_customers_list.png';

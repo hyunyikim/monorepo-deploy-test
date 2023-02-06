@@ -12,7 +12,11 @@ import {
 	installServiceInterwork,
 	uninstallServiceInterwork,
 } from '@/api/service-interwork.api';
-import {goToParentUrlWithState, updateParentPartnershipData} from '@/utils';
+import {
+	goToParentUrlWithState,
+	updateParentPartnershipData,
+	goToParentUrl,
+} from '@/utils';
 
 import {Button} from '@/components';
 import {
@@ -68,42 +72,75 @@ function ServiceInterworkRepair() {
 	);
 
 	const InstallRepairButton = useMemo(() => {
+		const openPricePlanModal = () => {
+			/* TODO: 무료체험 기간이 끝났을때만 아래 모달, 그 외에는 수선 연동기능으로! */
+			return onOpenMessageDialog({
+				title: '플랜 업그레이드가 필요해요!',
+				message: (
+					<>
+						무료체험기간이 종료되어 서비스이용이 제한됩니다.
+						<br />
+						유료 플랜을 구독하고, 수선신청 서비스를 계속
+						이용해보세요!
+					</>
+				),
+				disableClickBackground: true,
+				showBottomCloseButton: true,
+				closeButtonValue: '닫기',
+				buttons: (
+					<Button
+						color="black"
+						onClick={() => {
+							goToParentUrl('/payment/subscribe');
+						}}>
+						플랜 업그레이드 하기
+					</Button>
+				),
+			});
+		};
+
 		return (
 			<Button
 				onClick={() => {
 					(async () => {
 						try {
-							await installServiceInterworkMutation.mutateAsync();
-							onOpenMessageDialog({
-								title: '수선신청 관리가 연동됐습니다.',
-								message: (
-									<>
-										고객 수선신청 화면에 표시되는 고객센터
-										버튼, A/S 주의사항을 개런티 설정에서
-										입력해주세요.
-									</>
-								),
-								showBottomCloseButton: true,
-								closeButtonValue: '닫기',
-								buttons: (
-									<Button
-										color="black"
-										onClick={() => {
-											let url = '/setup/guarantee';
-											if (isAlreadySetupGuarantee) {
-												url = '/re-setup/guarantee';
-											}
-											goToParentUrlWithState(url, {
-												'interwork-repair': true,
-											});
-										}}>
-										개런티 설정으로 이동
-									</Button>
-								),
-								onCloseFunc: () => {
-									updateParentPartnershipData();
-								},
-							});
+							const res =
+								await installServiceInterworkMutation.mutateAsync();
+
+							if (res.result !== 'SUCCESS') {
+								return openPricePlanModal();
+							} else {
+								onOpenMessageDialog({
+									title: '수선신청 관리가 연동됐습니다.',
+									message: (
+										<>
+											고객 수선신청 화면에 표시되는
+											고객센터 버튼, A/S 주의사항을 개런티
+											설정에서 입력해주세요.
+										</>
+									),
+									showBottomCloseButton: true,
+									closeButtonValue: '닫기',
+									buttons: (
+										<Button
+											color="black"
+											onClick={() => {
+												let url = '/setup/guarantee';
+												if (isAlreadySetupGuarantee) {
+													url = '/re-setup/guarantee';
+												}
+												goToParentUrlWithState(url, {
+													'interwork-repair': true,
+												});
+											}}>
+											개런티 설정으로 이동
+										</Button>
+									),
+									onCloseFunc: () => {
+										updateParentPartnershipData();
+									},
+								});
+							}
 						} catch (e) {
 							onOpenError();
 						}
