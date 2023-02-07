@@ -32,7 +32,6 @@ export class TossPaymentsAPI {
 				'Content-Type': `application/json`,
 				'Accept-Encoding': 'application/json',
 				Authorization: `${AUTH_TYPE} ${base64key}`,
-				['TossPayments-Test-Code']: 'REJECT_CARD_PAYMENT',
 			},
 			responseType: 'json',
 			validateStatus: (status) => {
