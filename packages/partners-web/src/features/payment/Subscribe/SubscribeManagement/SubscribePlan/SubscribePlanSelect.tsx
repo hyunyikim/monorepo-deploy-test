@@ -165,7 +165,7 @@ const SubscribePlanSelectSelected = ({
 					fontWeight="bold"
 					color="white"
 					mr=" 2px">
-					₩{selectedPlan?.planPrice?.toLocaleString() || ''}
+					₩{selectedPlan?.displayPrice?.toLocaleString() || ''}
 				</Typography>
 				<Typography variant="caption3" color="white" mr="8px">
 					월
@@ -235,7 +235,8 @@ const SubscribePlanSelectItem = ({
 							color="white"
 							mr=" 2px">
 							{`₩${
-								(plan && plan?.planPrice?.toLocaleString()) ||
+								(plan &&
+									plan?.displayPrice?.toLocaleString()) ||
 								''
 							}`}
 						</Typography>

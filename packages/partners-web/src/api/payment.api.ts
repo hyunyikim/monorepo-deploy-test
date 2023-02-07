@@ -1,6 +1,5 @@
 import {bearerTokenInstance, nonAuthInstance} from '@/api';
 
-import {userPricePlanExample} from '@/data';
 import {
 	PaymentHistory,
 	PatchPlanRequestParam,
@@ -25,11 +24,6 @@ export const getPricePlanList = async () => {
  */
 export const getUserPricePlan = async () => {
 	return await bearerTokenInstance.get<UserPricePlan>('/payment/v1/billing');
-	// return new Promise<UserPricePlan>((resolve) => {
-	// 	setTimeout(() => {
-	// 		resolve(userPricePlanExample);
-	// 	}, 100);
-	// });
 };
 
 /**

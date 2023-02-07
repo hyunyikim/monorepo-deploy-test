@@ -1,11 +1,11 @@
 import {
 	PlanType,
 	PricePlan,
-	UserPricePlan,
 	SubscribeNoticeStatus,
 	UserPricePlanWithDate,
 	TotalSubscribeInfoPreviewData,
 	SubscribeInfoPreviewData,
+	PaymentStatus,
 } from '@/@types';
 import {
 	addMonths,
@@ -18,73 +18,6 @@ import {
 	differenceInMonths,
 } from 'date-fns';
 import {DATE_FORMAT_SEPERATOR_DOT} from './common.data';
-
-export const userPricePlanExample: UserPricePlan = {
-	// 무료
-	// pricePlan: {
-	// 	discountRate: 0,
-	// 	planType: 'MONTH',
-	// 	planLevel: 0,
-	// 	totalPrice: 0,
-	// 	discountPrice: 0,
-	// 	vat: 0,
-	// 	planName: '무료 체험',
-	// 	displayTotalPrice: 0,
-	// 	planLimit: 100,
-	// 	displayPrice: 0,
-	// 	planId: 'M-FREE-TRIAL',
-	// 	discountTotalPrice: 0,
-	// 	planTotalPrice: 0,
-	// 	planPrice: 0,
-	// },
-	// usedNftCount: 0,
-	// planStartedAt: '2023-01-02T02:10:54.461+00:00',
-	// planExpireDate: '2023-01-12T14:59:59.000+00:00',
-
-	// 유료
-	pricePlan: {
-		planType: 'YEAR',
-		discountRate: 16.6667,
-		planId: 'Y-SMALL',
-		planLevel: 60,
-		planName: '스몰 플랜',
-		planPrice: 120000,
-		planLimit: 500,
-		discountPrice: 20000,
-		discountTotalPrice: 240000,
-		displayPrice: 100000,
-		displayTotalPrice: 1200000,
-		planTotalPrice: 1440000,
-		totalPrice: 1200000,
-		vat: 120000,
-	},
-	nextPricePlan: {
-		planType: 'YEAR',
-		discountRate: 16.6667,
-		planId: 'Y-SMALL',
-		planLevel: 60,
-		planName: '스몰 플랜',
-		planPrice: 120000,
-		planLimit: 500,
-		discountPrice: 20000,
-		discountTotalPrice: 240000,
-		displayPrice: 100000,
-		displayTotalPrice: 1200000,
-		planTotalPrice: 1440000,
-		totalPrice: 1200000,
-		vat: 120000,
-	},
-	card: {
-		cardType: '체크',
-		ownerType: '개인',
-		number: '51184500****752*',
-		company: '하나',
-		companyCode: '21',
-	},
-	usedNftCount: 0,
-	planStartedAt: '2023-02-02T06:30:12.392+00:00',
-	nextPlanStartDate: '2023-03-02T06:30:12.392+00:00',
-};
 
 export const DEFAULT_PLAN_TYPE: PlanType = 'YEAR';
 
@@ -380,4 +313,35 @@ export const getSubscribePreviwData = ({
 			payApprovedAt: format(payApprovedAt, DATE_FORMAT_SEPERATOR_DOT),
 		},
 	};
+};
+
+export const getPaymentNameByPaymentStatus = (status: PaymentStatus) => {
+	if (status === 'READY') {
+		return '준비됨';
+	}
+	if (status === 'IN_PROGRESS') {
+		return '진행중';
+	}
+	if (status === 'WAITING_FOR_DEPOSIT') {
+		return '가상계좌 입금 대기 중';
+	}
+	if (status === 'DONE') {
+		return '결제 완료';
+	}
+	if (status === 'CANCELED') {
+		return '결제 취소';
+	}
+	if (status === 'PARTIAL_CANCELED') {
+		return '결제 부분취소';
+	}
+	if (status === 'ABORTED') {
+		return '결제 승인실패';
+	}
+	if (status === 'EXPIRED') {
+		return '거래 취소';
+	}
+	if (status === 'FAILED') {
+		return '결제 실패';
+	}
+	return '';
 };

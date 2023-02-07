@@ -26,6 +26,7 @@ export interface UserPricePlan {
 	nextPlanStartDate?: string; // 다음 플랜시작일자(ISO8601)
 	usedNftCount: number; // 현재 사용량
 	card?: Card; // 카드
+	paymentFailedCount?: number;
 }
 export interface Card {
 	cardType: string; // 신용, 체크, 기프트
@@ -63,7 +64,7 @@ export interface PaymentHistory {
 	startDate: string;
 	expireDate: string;
 	payPrice: number;
-	payStatus: 'SUCCESS' | 'FAIL';
+	payStatus: PaymentStatus;
 }
 
 export interface PaymentHistoryDetail extends PaymentHistory {
@@ -72,6 +73,17 @@ export interface PaymentHistoryDetail extends PaymentHistory {
 	payApprovedAt: string; // 결제 승인일자
 	totalPaidPrice: number; // 최종 결제금액
 }
+
+export type PaymentStatus =
+	| 'READY'
+	| 'IN_PROGRESS'
+	| 'WAITING_FOR_DEPOSIT'
+	| 'DONE'
+	| 'CANCELED'
+	| 'PARTIAL_CANCELED'
+	| 'ABORTED'
+	| 'EXPIRED'
+	| 'FAILED';
 
 export interface RegisterFreePlanRequestParam {
 	planMonth: number;

@@ -132,10 +132,9 @@ function PaymentReceiptList() {
 								{item.payPrice.toLocaleString()}원
 							</TableCell>
 							<TableCell>
-								{item.payStatus === 'SUCCESS' && (
+								{item.payStatus === 'DONE' ? (
 									<Chip label="결제완료" color="green" />
-								)}
-								{item.payStatus === 'FAIL' && (
+								) : (
 									<Chip label="결제실패" color="red" />
 								)}
 							</TableCell>
