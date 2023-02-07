@@ -21,7 +21,7 @@ import {
 	ControlledInputComponent,
 } from '@/components';
 import {RegisterCardRequestParam} from '@/@types';
-import {onChangeOnlyNumber} from '@/utils';
+import {onChangeOnlyNumber, updateUserPricePlanData} from '@/utils';
 import {emailSchemaValidation} from '@/utils/schema';
 import {registerCard} from '@/api/payment.api';
 import {useGlobalLoading, useMessageDialog} from '@/stores';
@@ -194,9 +194,11 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 		mutationFn: async (data: RegisterCardRequestParam) =>
 			registerCard(data),
 		onSuccess: async () => {
+			updateUserPricePlanData();
 			await queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});
+
 			// 구독변경 과정 중 넘어온 경우
 			if (afterAddPaymentCardFunc) {
 				onClose();
@@ -211,10 +213,13 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 			});
 		},
 		onError: (e) => {
-			const errorMessage = (e as AxiosError)?.response.data.message;
-			if (errorMessage === 'ALREADY_REGISTERED_BILLING') {
+			const error = (e as AxiosError)?.response;
+			if (error?.status == 400) {
+				const errorMessage = error?.data?.message;
 				setApiErrorMessage(
-					'이미 카드가 등록되어있습니다. 기존 결제 카드를 삭제하고 다시 등록해주세요.'
+					errorMessage === 'ALREADY_REGISTERED_BILLING'
+						? '이미 카드가 등록되어있습니다. 기존 결제 카드를 삭제하고 다시 등록해주세요.'
+						: errorMessage // 기타 400 에러는 토스 에러 메시지
 				);
 				return;
 			}

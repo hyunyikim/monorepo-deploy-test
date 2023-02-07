@@ -1,21 +1,24 @@
 export type SubscribeNoticeStatus =
 	| 'TRIAL'
+	| 'CHARGED'
 	| 'CHANGE_PLAN_MONTH_TO_YEAR'
 	| 'CHANGE_PLAN_YEAR_TO_MONTH'
 	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY'
+	| 'CHARGED_PLAN_WILL_END'
 	| 'CHARGED_PLAN_FINISHED';
 
 export type SubscribeLineNoticeKey =
-	| SubscribeNoticeStatus
+	| Exclude<SubscribeNoticeStatus, 'CHARGED'>
 	| 'TRIAL_ALMOST_FINISH'
 	| 'TRIAL_FINISHED'
-	| 'LACKING_GUARANTEE'
-	| 'PLAN_WILL_END';
+	| 'LACKING_GUARANTEE';
 
 export type SubscribeNoticeKey =
-	| Exclude<SubscribeNoticeStatus, 'CHARGED_PLAN_FINISHED'>
-	| 'USING_MONTH'
-	| 'CHARGED';
+	| Exclude<
+			SubscribeNoticeStatus,
+			'CHARGED_PLAN_WILL_END' | 'CHARGED_PLAN_FINISHED'
+	  >
+	| 'USING_MONTH';
 
 export interface TotalSubscribeInfoPreviewData {
 	data: SubscribeInfoPreviewData;

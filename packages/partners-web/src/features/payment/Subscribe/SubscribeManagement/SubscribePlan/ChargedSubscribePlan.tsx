@@ -1,9 +1,8 @@
 import {useState} from 'react';
-import {isAfter, isBefore} from 'date-fns';
 
 import {Stack} from '@mui/material';
 
-import {PlanType, PricePlan, UserPricePlanWithDate} from '@/@types';
+import {PlanType, PricePlan} from '@/@types';
 import {CHARGED_GROUP_PLAN, isPlanOnSubscription} from '@/data';
 import {useGetUserPricePlan, useIsUserUsedTrialPlan} from '@/stores';
 
@@ -66,6 +65,7 @@ function ChargedSubscribePlan({
 					<SquaredSwitch
 						planType={selectedPlan.planType}
 						onChangePlanType={(planType) => {
+							setSelectOpen(false);
 							onChangePlanType(planType);
 						}}
 					/>

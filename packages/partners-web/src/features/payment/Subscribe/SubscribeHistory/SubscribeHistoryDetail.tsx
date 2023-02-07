@@ -1,6 +1,6 @@
-import {useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {format, parse} from 'date-fns';
+import {format} from 'date-fns';
 
 import style from '@/assets/styles/style.module.scss';
 
@@ -8,7 +8,7 @@ import {Stack, Typography} from '@mui/material';
 
 import {useGetUserPaymentHistoryDetail} from '@/stores';
 import {TotalSubscribeInfoPreviewData} from '@/@types';
-import {DATE_FORMAT, DATE_FORMAT_SEPERATOR_DOT} from '@/data';
+import {DATE_FORMAT_SEPERATOR_DOT} from '@/data';
 
 import {IcPrinter} from '@/assets/icon';
 import Breadcrumbs from '@/features/payment/common/Breadcrumbs';
@@ -32,14 +32,14 @@ function SubscribeHistoryDetail({idx}: Props) {
 			startDate,
 			expireDate,
 			pricePlan,
-			canceledPlan,
+			canceledPricePlan,
 			payApprovedAt,
 			totalPaidPrice,
 		} = data;
 
 		const res: TotalSubscribeInfoPreviewData = {
 			data: {
-				planName: planName,
+				planName,
 				displayTotalPrice: pricePlan.displayTotalPrice,
 				planTotalPrice: pricePlan.planTotalPrice,
 				...(pricePlan.discountTotalPrice && {
@@ -58,16 +58,20 @@ function SubscribeHistoryDetail({idx}: Props) {
 					DATE_FORMAT_SEPERATOR_DOT
 				),
 			},
-			...(canceledPlan && {
+			...(canceledPricePlan && {
 				canceledData: {
-					planName: canceledPlan.planName,
-					displayTotalPrice: canceledPlan.displayTotalPrice,
-					planTotalPrice: canceledPlan.planTotalPrice,
-					...(canceledPlan.discountTotalPrice && {
-						discountTotalPrice: canceledPlan.discountTotalPrice,
+					planName: canceledPricePlan.planName,
+					displayTotalPrice: canceledPricePlan.displayTotalPrice,
+					planTotalPrice: canceledPricePlan.planTotalPrice,
+					...(canceledPricePlan.discountTotalPrice && {
+						discountTotalPrice:
+							canceledPricePlan.discountTotalPrice,
 					}),
-					totalPrice: canceledPlan.totalPrice,
-					subscribeDuration: `${startDate} - ${expireDate}`,
+					totalPrice: canceledPricePlan.totalPrice,
+					subscribeDuration: `${format(
+						new Date(startDate),
+						DATE_FORMAT_SEPERATOR_DOT
+					)} - ${expireDate}`,
 				},
 			}),
 			...(totalPaidPrice && {

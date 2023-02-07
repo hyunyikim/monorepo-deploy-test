@@ -1,4 +1,5 @@
 import React, {useMemo, useState} from 'react';
+import {useQueryClient} from '@tanstack/react-query';
 
 import {Button} from '@/components';
 
@@ -9,6 +10,7 @@ import {
 	bulkCancelGuarantee,
 	bulkDeleteGuarantee,
 } from '@/api/guarantee.api';
+import {updateUserPricePlanData} from '@/utils';
 
 import RegisterGuaranteeListProgressModal from '@/features/guarantee/List/RegisterGuaranteeListProgressModal';
 
@@ -29,6 +31,7 @@ function GuaranteeCheckboxButton({
 	onSearch,
 	isCheckedItemsExisted,
 }: Props) {
+	const queryClient = useQueryClient();
 	const totalCount = useMemo(() => checkedItems.length, [checkedItems]);
 	const [requestCount, setRequestCount] = useState(0);
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
@@ -116,6 +119,10 @@ function GuaranteeCheckboxButton({
 						nft_req_state: '2,3,4',
 					});
 				},
+			});
+			updateUserPricePlanData();
+			queryClient.invalidateQueries({
+				queryKey: ['userPricePlan'],
 			});
 		} catch (e: any) {
 			onOpenError();

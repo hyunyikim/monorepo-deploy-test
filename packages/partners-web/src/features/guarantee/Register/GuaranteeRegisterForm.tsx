@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useForm, useWatch} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useNavigate} from 'react-router-dom';
+import {useQueryClient} from '@tanstack/react-query';
 
 import {Stack} from '@mui/material';
 
@@ -20,6 +21,7 @@ import {
 	replaceToParentUrl,
 	handleChangeDataFormat,
 	sendAmplitudeLog,
+	updateUserPricePlanData,
 } from '@/utils';
 import {
 	convertProductRegisterFormData,
@@ -51,6 +53,7 @@ interface Props {
 }
 
 function GuaranteeRegisterForm({initialData}: Props) {
+	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const setGuaranteePreviewData = useGuaranteePreviewStore(
 		(state) => state.setData
@@ -423,6 +426,10 @@ function GuaranteeRegisterForm({initialData}: Props) {
 				if (registerType === 'temperary') {
 					sendAmplitudeLog('guarantee_publish_saved');
 				}
+				updateUserPricePlanData();
+				queryClient.invalidateQueries({
+					queryKey: ['userPricePlan'],
+				});
 			} catch (e: any) {
 				const message = String(e?.response?.data?.message || '');
 				const result = String(e?.response?.data?.result || '');

@@ -10,6 +10,7 @@ type RequestType =
 	| 'open_modal'
 	| 'open_child_modal'
 	| 'update_partnership_data'
+	| 'price_plan_data'
 	| 'login'
 	| 'close_child_modal';
 
@@ -126,5 +127,12 @@ export const loginToParent = (
 			isDuringInstallCafe24,
 			isTempPasswordLogin,
 		},
+	});
+};
+
+export const updateUserPricePlanData = () => {
+	sendMessageToParent({
+		type: 'price_plan_data',
+		data: null,
 	});
 };

@@ -51,14 +51,22 @@ function SubscribeManagementTab() {
 			return;
 		}
 
+		const isOnSubscription = isPlanOnSubscription({
+			startDate: userPlan?.planStartedAt,
+			endDate: userPlan?.planExpireDate,
+			isNextPlanExisted: !!userPlan?.nextPricePlan,
+		});
+
 		// 플랜 종료/무료 체험중(기본 연결제 엑스스몰 플랜 선택됨)
-		if (!userPlan || isUserUsedTrialPlan) {
+		if (!userPlan || isUserUsedTrialPlan || !isOnSubscription) {
 			const xsYearPlan = yearPlanList[0];
 			return xsYearPlan;
 		}
-
-		// 유료플랜 구독중
-		return userPlan.pricePlan;
+		return (
+			planList.find(
+				(plan) => plan.planId === userPlan.pricePlan.planId
+			) || userPlan.pricePlan // userPlan은 사용자의 개런티 개수가 반영되어서 전달 되기 때문에, planList에서 선택한 값을 사용자에게 보여줌
+		);
 	}, [userPlan, isUserUsedTrialPlan, planList, yearPlanList]);
 
 	useEffect(() => {
@@ -77,10 +85,13 @@ function SubscribeManagementTab() {
 		if (selectedPlan && selectedPlan?.planType === planType) {
 			return;
 		}
-		const initialSelectedPlan = planList?.find(
-			(plan) => plan.planType === planType
-		);
-		initialSelectedPlan && setSelectedPlan(initialSelectedPlan);
+		const newSelectedPlan =
+			planList?.find(
+				(plan) =>
+					plan.planName === selectedPlan?.planName && // 현재 planType 별로 planLevel이 다르다, 동일한 플랜이라고 판별할 수 있는 것은 현재는 플랜명
+					plan.planType === planType
+			) || planList?.find((plan) => plan.planType === planType);
+		newSelectedPlan && setSelectedPlan(newSelectedPlan);
 	};
 
 	const subscribePreviewData =
@@ -194,6 +205,10 @@ const NowSubscribedPlan = ({
 		endDate: userPlan.planExpireDate,
 		isNextPlanExisted: !!userPlan?.nextPlanStartDate,
 	});
+
+	if (!isOnSubscription) {
+		return null;
+	}
 	return (
 		<SubscribePlan
 			title={userPlan.pricePlan.planName}
@@ -201,6 +216,9 @@ const NowSubscribedPlan = ({
 			isSubscribed={true}
 			isTrial={isTrial}
 			isEnded={!isOnSubscription}
+			sx={{
+				marginBottom: '16px',
+			}}
 		/>
 	);
 };

@@ -7,6 +7,7 @@ import style from '@/assets/styles/style.module.scss';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {deleteCard} from '@/api/payment.api';
 import {useGlobalLoading, useMessageDialog} from '@/stores';
+import {updateUserPricePlanData} from '@/utils';
 
 interface Props {
 	data: UserPricePlanWithDate;
@@ -26,6 +27,7 @@ function PaymentCardDetailModal({data, open, onClose}: Props) {
 		onMutate: () => setIsLoading(true),
 		mutationFn: deleteCard,
 		onSuccess: () => {
+			updateUserPricePlanData();
 			queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});

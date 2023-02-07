@@ -21,6 +21,7 @@ import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBull
 import AddPaymentCardModal from '@/features/payment/common/AddPaymentCardModal';
 import {useChildModalOpen} from '@/utils/hooks';
 import {patchPricePlan} from '@/api/payment.api';
+import {updateUserPricePlanData} from '@/utils';
 
 interface Props {
 	selectedPlan: PricePlan;
@@ -57,6 +58,7 @@ function SubscribeCheckModal({
 		},
 		mutationFn: (data: PatchPlanRequestParam) => patchPricePlan(data),
 		onSuccess: () => {
+			updateUserPricePlanData();
 			queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});

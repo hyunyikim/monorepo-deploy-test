@@ -127,26 +127,29 @@ function SubscribeNotice({sx = {}}: Props) {
 
 		const subscribeNoticeStatus = checkSubscribeNoticeStatus(userPlan);
 		if (
+			!subscribeNoticeStatus ||
 			subscribeNoticeStatus === 'TRIAL' ||
+			subscribeNoticeStatus === 'CHARGED_PLAN_WILL_END' ||
 			subscribeNoticeStatus === 'CHARGED_PLAN_FINISHED'
 		) {
 			return SUBSCRIBE_NOTICE.TRIAL;
 		}
 
-		const {pricePlan, nextPricePlan} = userPlan as UserPricePlanWithDate;
+		const {pricePlan} = userPlan as UserPricePlanWithDate;
 
 		// 유료플랜
-		if (nextPricePlan) {
-			if (subscribeNoticeStatus === 'CHANGE_PLAN_MONTH_TO_YEAR') {
-				return SUBSCRIBE_NOTICE.CHANGE_PLAN_MONTH_TO_YEAR;
-			}
-			if (subscribeNoticeStatus === 'CHANGE_PLAN_YEAR_TO_MONTH') {
-				return SUBSCRIBE_NOTICE.CHANGE_PLAN_YEAR_TO_MONTH;
-			}
-			if (subscribeNoticeStatus === 'CHANGE_PLAN_DOWNGRADE_MONTHLY') {
-				return SUBSCRIBE_NOTICE.CHANGE_PLAN_DOWNGRADE_MONTHLY;
-			}
+		// 변경 예정
+		if (subscribeNoticeStatus === 'CHANGE_PLAN_MONTH_TO_YEAR') {
+			return SUBSCRIBE_NOTICE.CHANGE_PLAN_MONTH_TO_YEAR;
 		}
+		if (subscribeNoticeStatus === 'CHANGE_PLAN_YEAR_TO_MONTH') {
+			return SUBSCRIBE_NOTICE.CHANGE_PLAN_YEAR_TO_MONTH;
+		}
+		if (subscribeNoticeStatus === 'CHANGE_PLAN_DOWNGRADE_MONTHLY') {
+			return SUBSCRIBE_NOTICE.CHANGE_PLAN_DOWNGRADE_MONTHLY;
+		}
+
+		// 월결제 이용중
 		if (pricePlan.planType === 'MONTH') {
 			return SUBSCRIBE_NOTICE.USING_MONTH;
 		}

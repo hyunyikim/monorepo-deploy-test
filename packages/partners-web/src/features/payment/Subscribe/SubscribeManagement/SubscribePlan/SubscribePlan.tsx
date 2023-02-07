@@ -1,6 +1,7 @@
 import {useMemo} from 'react';
 
-import {Box, Stack, Typography} from '@mui/material';
+import {Box, Stack, Theme, Typography} from '@mui/material';
+import {SxProps} from '@mui/system';
 
 interface Props {
 	title: string;
@@ -10,6 +11,7 @@ interface Props {
 	isEnded?: boolean;
 	onClick?: () => void;
 	children?: React.ReactNode;
+	sx?: SxProps<Theme>;
 }
 
 function SubscribePlan({
@@ -20,23 +22,27 @@ function SubscribePlan({
 	isEnded = false,
 	onClick,
 	children,
+	sx,
 }: Props) {
 	return (
 		<>
 			<Stack
-				sx={(theme) => ({
-					minWidth: '460px',
-					padding: '20px',
-					borderRadius: '8px',
-					border: isEnded
-						? `1px solid ${theme.palette.grey[100]}`
-						: `1px solid ${theme.palette.primary.main}`,
-					color: theme.palette.grey[900],
-					'& .subscribe-chip': {
-						backgroundColor: 'primary.50',
-						color: 'primary.main',
-					},
-				})}
+				sx={[
+					(theme) => ({
+						minWidth: '460px',
+						padding: '20px',
+						borderRadius: '8px',
+						border: isEnded
+							? `1px solid ${theme.palette.grey[100]}`
+							: `1px solid ${theme.palette.primary.main}`,
+						color: theme.palette.grey[900],
+						'& .subscribe-chip': {
+							backgroundColor: 'primary.50',
+							color: 'primary.main',
+						},
+					}),
+					...(Array.isArray(sx) ? sx : [sx]),
+				]}
 				{...(onClick && {
 					onClick,
 					className: 'cursor-pointer',

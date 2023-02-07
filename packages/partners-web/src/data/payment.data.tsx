@@ -1,5 +1,4 @@
 import {
-	PaymentHistory,
 	PlanType,
 	PricePlan,
 	UserPricePlan,
@@ -16,8 +15,9 @@ import {
 	addYears,
 	endOfDay,
 	differenceInDays,
+	differenceInMonths,
 } from 'date-fns';
-import {DATE_FORMAT, DATE_FORMAT_SEPERATOR_DOT} from './common.data';
+import {DATE_FORMAT_SEPERATOR_DOT} from './common.data';
 
 export const userPricePlanExample: UserPricePlan = {
 	// 무료
@@ -137,9 +137,9 @@ export const isPlanSameLevel = (
 export const checkSubscribeNoticeStatus = (
 	userPlan?: UserPricePlanWithDate
 ): SubscribeNoticeStatus | null => {
-	// 구독취소
+	// userPlan 반드시 존재
 	if (!userPlan) {
-		return 'CHARGED_PLAN_FINISHED';
+		return null;
 	}
 	const {pricePlan, nextPricePlan} = userPlan;
 
@@ -180,7 +180,11 @@ export const checkSubscribeNoticeStatus = (
 	if (!isOnSubscription) {
 		return 'CHARGED_PLAN_FINISHED';
 	}
-	return null;
+	// 구독 취소 예정
+	if (!userPlan?.nextPricePlan) {
+		return 'CHARGED_PLAN_WILL_END';
+	}
+	return 'CHARGED';
 };
 
 // 현재 구독 중에 있는지 확인
@@ -267,11 +271,8 @@ export const getSubscribePreviwData = ({
 	// 유료플랜 구독 중
 	const pricePlan = userPlan.pricePlan;
 	const planStartedAt = userPlan.planStartedAt;
-	const nextPlanStartDate = userPlan?.nextPlanStartDate || new Date();
-	const nextPlanStartDateStr = format(
-		nextPlanStartDate,
-		DATE_FORMAT_SEPERATOR_DOT
-	);
+	const nextPlanStartDate =
+		userPlan?.nextPlanStartDate || userPlan?.planExpireDate || new Date();
 
 	// 업그레이드
 	if (isPlanUpgraded(userPlan?.pricePlan.planLevel, selectedPlan.planLevel)) {
@@ -281,12 +282,18 @@ export const getSubscribePreviwData = ({
 			isPlanTypeYear(userPlan?.pricePlan.planType) &&
 			isPlanTypeYear(selectedPlan.planType)
 		) {
+			const usedMonths =
+				differenceInMonths(new Date(), userPlan.planStartedAt) + 1;
+			const canceledPlanTotalPriceByMonth =
+				userPlan.pricePlan.displayTotalPrice / 12;
+			const canceledPrice =
+				canceledPlanTotalPriceByMonth * (12 - usedMonths);
 			return {
 				canceledData: {
 					planName: pricePlan.planName,
-					displayTotalPrice: pricePlan.displayTotalPrice,
-					planTotalPrice: pricePlan.planTotalPrice,
-					totalPrice: pricePlan.totalPrice,
+					displayTotalPrice: canceledPrice,
+					planTotalPrice: canceledPrice,
+					totalPrice: canceledPrice,
 					subscribeDuration: `${format(
 						planStartedAt,
 						DATE_FORMAT_SEPERATOR_DOT
@@ -294,10 +301,13 @@ export const getSubscribePreviwData = ({
 				},
 				data: {
 					...data,
-					subscribeDuration: `${todayStr} - ${nextPlanStartDateStr}`,
-					payApprovedAt: nextPlanStartDateStr,
+					subscribeDuration: `${todayStr} - ${format(
+						addYears(today, 1),
+						DATE_FORMAT_SEPERATOR_DOT
+					)}`,
+					payApprovedAt: todayStr,
 				},
-				totalPaidPrice: 100, // TODO: 계산 필요
+				totalPaidPrice: data.displayTotalPrice - canceledPrice,
 			};
 		}
 
@@ -309,7 +319,10 @@ export const getSubscribePreviwData = ({
 			return {
 				data: {
 					...data,
-					subscribeDuration: `${todayStr} - ${nextPlanStartDateStr}`,
+					subscribeDuration: `${todayStr} - ${format(
+						addMonths(today, 1),
+						DATE_FORMAT_SEPERATOR_DOT
+					)}`,
 					payApprovedAt: todayStr,
 				},
 			};
@@ -334,19 +347,29 @@ export const getSubscribePreviwData = ({
 	const isYearToMonth =
 		isPlanTypeYear(userPlan?.pricePlan.planType) &&
 		isPlanTypeMonth(selectedPlan.planType);
-
 	if (isMonthlyDowngrade || isYearToMonth) {
 		newPlanEndDate = addMonths(newPlanStartDate, 1);
 	}
 
+	// 연결제 다운그레이드(시도)
 	// 월결제에서 연결제로
-	if (
+	const isYearlyDowngrade =
+		isPlanTypeYear(userPlan?.pricePlan.planType) &&
+		isPlanTypeYear(selectedPlan.planType) &&
+		(isPlanDowngraded(
+			userPlan.pricePlan.planLevel,
+			selectedPlan.planLevel
+		) ||
+			isPlanSameLevel(
+				userPlan.pricePlan.planLevel,
+				selectedPlan.planLevel
+			));
+	const isMonthToYear =
 		isPlanTypeMonth(userPlan?.pricePlan.planType) &&
-		isPlanTypeYear(selectedPlan.planType)
-	) {
+		isPlanTypeYear(selectedPlan.planType);
+	if (isYearlyDowngrade || isMonthToYear) {
 		newPlanEndDate = addYears(newPlanStartDate, 1);
 	}
-
 	return {
 		data: {
 			...data,

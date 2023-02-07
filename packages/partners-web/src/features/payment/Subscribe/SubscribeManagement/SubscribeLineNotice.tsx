@@ -70,7 +70,7 @@ const LINE_NOTICE: LineNotice = {
 		color: 'primary',
 	},
 	// 플랜 종료 예정
-	PLAN_WILL_END: {
+	CHARGED_PLAN_WILL_END: {
 		content: `yyyy년 MM월 dd일 PLAN_NAME 구독이 종료됩니다.`,
 		color: 'primary',
 	},
@@ -151,6 +151,9 @@ function SubscribeLineNotice() {
 		const {planLimit} = pricePlan;
 		const subscribeStatus = checkSubscribeNoticeStatus(userPlan);
 
+		if (!subscribeStatus || subscribeStatus === 'CHARGED') {
+			return null;
+		}
 		// trial
 		if (subscribeStatus === 'TRIAL') {
 			const leftDays = getPlanLeftDays(planExpireDate as Date) as number;
@@ -188,57 +191,67 @@ function SubscribeLineNotice() {
 		}
 
 		// 유료플랜
+		// 유료플랜 종료
 		if (subscribeStatus === 'CHARGED_PLAN_FINISHED') {
 			return LINE_NOTICE.CHARGED_PLAN_FINISHED;
 		}
 
 		// 다음 플랜 예정
-		if (nextPricePlan) {
-			if (subscribeStatus === 'CHANGE_PLAN_MONTH_TO_YEAR') {
-				const lineNotice = LINE_NOTICE.CHANGE_PLAN_MONTH_TO_YEAR;
-				return {
-					...lineNotice,
-					content: replaceLineNotice(lineNotice.content, {
-						expiredDate: nextPlanStartDate,
-					}),
-				};
-			}
-			if (subscribeStatus === 'CHANGE_PLAN_YEAR_TO_MONTH') {
-				const lineNotice = LINE_NOTICE.CHANGE_PLAN_YEAR_TO_MONTH;
-				return {
-					...lineNotice,
-					content: replaceLineNotice(lineNotice.content, {
-						expiredDate: planExpireDate,
-						planName: pricePlan.planName.replace(/플랜/g, ''),
-						downgradePlanName: nextPricePlan.planName.replace(
-							/플랜/g,
-							''
-						),
-					}),
-				};
-			}
-			if (subscribeStatus === 'CHANGE_PLAN_DOWNGRADE_MONTHLY') {
-				const lineNotice = LINE_NOTICE.CHANGE_PLAN_DOWNGRADE_MONTHLY;
-				return {
-					...lineNotice,
-					content: replaceLineNotice(lineNotice.content, {
-						expiredDate: planStartedAt,
-						planName: pricePlan.planName,
-						downgradePlanName: nextPricePlan.planName,
-					}),
-				};
-			}
+		if (subscribeStatus === 'CHANGE_PLAN_MONTH_TO_YEAR') {
+			const lineNotice = LINE_NOTICE.CHANGE_PLAN_MONTH_TO_YEAR;
+			return {
+				...lineNotice,
+				content: replaceLineNotice(lineNotice.content, {
+					expiredDate: nextPlanStartDate,
+				}),
+			};
+		}
+		if (subscribeStatus === 'CHANGE_PLAN_YEAR_TO_MONTH') {
+			const lineNotice = LINE_NOTICE.CHANGE_PLAN_YEAR_TO_MONTH;
+			return {
+				...lineNotice,
+				content: replaceLineNotice(lineNotice.content, {
+					expiredDate: nextPlanStartDate,
+					planName: pricePlan.planName.replace(/플랜/g, ''),
+					downgradePlanName:
+						nextPricePlan &&
+						nextPricePlan.planName.replace(/플랜/g, ''),
+				}),
+			};
+		}
+		if (subscribeStatus === 'CHANGE_PLAN_DOWNGRADE_MONTHLY') {
+			const lineNotice = LINE_NOTICE.CHANGE_PLAN_DOWNGRADE_MONTHLY;
+			return {
+				...lineNotice,
+				content: replaceLineNotice(lineNotice.content, {
+					expiredDate: planStartedAt,
+					planName: pricePlan.planName,
+					downgradePlanName: nextPricePlan && nextPricePlan.planName,
+				}),
+			};
 		}
 
-		const upgradePlanName =
-			planList.find(
-				(plan) =>
-					plan.planLevel === pricePlan.planLevel + 1 &&
-					plan.planType === pricePlan.planType
-			)?.planName || '엔터프라이즈 플랜';
+		// 구독 취소 예정
+		if (subscribeStatus === 'CHARGED_PLAN_WILL_END') {
+			const lineNotice = LINE_NOTICE.CHARGED_PLAN_WILL_END;
+			return {
+				...lineNotice,
+				content: replaceLineNotice(lineNotice.content, {
+					expiredDate: planExpireDate,
+					planName: pricePlan.planName,
+				}),
+			};
+		}
 
 		// 개런티 부족
 		if (planLimit - usedNftCount < Math.ceil(planLimit * 0.3)) {
+			const upgradePlanName =
+				planList.find(
+					(plan) =>
+						plan.planLevel === pricePlan.planLevel + 1 &&
+						plan.planType === pricePlan.planType
+				)?.planName || '엔터프라이즈 플랜';
+
 			const lineNotice = LINE_NOTICE.LACKING_GUARANTEE;
 			return {
 				...lineNotice,
@@ -247,12 +260,6 @@ function SubscribeLineNotice() {
 				}),
 			};
 		}
-
-		// TODO: 플랜 종료 예정
-		// 구독 취소 완료 후, 아직 상품 구독중인 경우
-		// return LINE_NOTICEL.PLAN_WILL_END;
-
-		// 유료플랜 기본 메시지 -> 없음
 		return null;
 	}, [userPlan, planList]);
 
@@ -260,9 +267,6 @@ function SubscribeLineNotice() {
 		<LineNotice
 			color={lineNoticeData?.color || 'primary'}
 			content={(lineNoticeData?.content || '') as LineNoticeContent}
-			sx={{
-				marginTop: '12px',
-			}}
 		/>
 	) : (
 		<></>

@@ -68,7 +68,7 @@ export interface PaymentHistory {
 
 export interface PaymentHistoryDetail extends PaymentHistory {
 	pricePlan: PricePlan;
-	canceledPlan?: PricePlan; // 취소된 플랜
+	canceledPricePlan?: PricePlan; // 취소된 플랜
 	payApprovedAt: string; // 결제 승인일자
 	totalPaidPrice: number; // 최종 결제금액
 }

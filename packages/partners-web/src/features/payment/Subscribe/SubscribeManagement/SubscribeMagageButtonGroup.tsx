@@ -1,4 +1,6 @@
 import {useCallback, useMemo} from 'react';
+import {useQueryClient} from '@tanstack/react-query';
+
 import {Stack, Link} from '@mui/material';
 
 import {
@@ -18,6 +20,7 @@ import {patchPricePlan} from '@/api/payment.api';
 
 import {Button} from '@/components';
 import CancelSubscribe from './CancelSubscribe';
+import {updateUserPricePlanData} from '@/utils';
 
 type PaymentMessageModalKey =
 	| 'CANCEL_SUBSCRIBE'
@@ -123,16 +126,30 @@ function SubscribeMagageButtonGroup({
 	setIsAvailableSelect: (value: boolean) => void;
 	onSubscribeCheckModalOpen: () => void;
 }) {
+	const queryClient = useQueryClient();
 	const {onOpen: onOpenMessageDialog, onOpenError} = useMessageDialog();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const {data: userPlan} = useGetUserPricePlan();
+	const isOnSubscription = useMemo(
+		() =>
+			isPlanOnSubscription({
+				startDate: userPlan?.planStartedAt,
+				endDate: userPlan?.planExpireDate,
+				isNextPlanExisted: !!userPlan?.nextPricePlan,
+			}),
+		[userPlan]
+	);
 
 	const isPlanChanged = useMemo(() => {
+		if (!isOnSubscription) {
+			// 현재 구독하지 않고 있을 경우, 모든 플랜 선택 가능
+			return true;
+		}
 		if (userPlan?.pricePlan.planId !== selectedPlan?.planId) {
 			return true;
 		}
 		return false;
-	}, [userPlan, selectedPlan]);
+	}, [userPlan, selectedPlan, isOnSubscription]);
 
 	const onClickSubscribeChange = useCallback(() => {
 		if (!selectedPlan) {
@@ -143,11 +160,7 @@ function SubscribeMagageButtonGroup({
 		// 플랜 업그레이드 시
 		if (
 			!userPlan ||
-			!isPlanOnSubscription({
-				startDate: userPlan.planStartedAt,
-				endDate: userPlan?.planExpireDate,
-				isNextPlanExisted: !!userPlan?.nextPricePlan,
-			}) ||
+			!isOnSubscription ||
 			isPlanUpgraded(userPlan.pricePlan.planLevel, selectedPlan.planLevel)
 		) {
 			onSubscribeCheckModalOpen();
@@ -209,28 +222,37 @@ function SubscribeMagageButtonGroup({
 				<Button
 					variant="contained"
 					color="black"
-					onClick={async () => {
-						try {
-							setIsLoading(true);
-							await patchPricePlan({
-								planId: selectedPlan.planId,
-							});
-							onOpenMessageDialog({
-								title: '구독 플랜이 변경됐습니다.',
-								showBottomCloseButton: true,
-								closeButtonValue: '확인',
-							});
-						} catch (e) {
-							onOpenError();
-						} finally {
-							setIsLoading(false);
-						}
+					onClick={() => {
+						(async () => {
+							try {
+								setIsLoading(true);
+								await patchPricePlan({
+									planId: selectedPlan.planId,
+								});
+								onOpenMessageDialog({
+									title: '구독 플랜이 변경됐습니다.',
+									showBottomCloseButton: true,
+									closeButtonValue: '확인',
+									onCloseFunc: () => {
+										setIsAvailableSelect(false);
+									},
+								});
+								updateUserPricePlanData();
+								queryClient.invalidateQueries({
+									queryKey: ['userPricePlan'],
+								});
+							} catch (e) {
+								onOpenError();
+							} finally {
+								setIsLoading(false);
+							}
+						})();
 					}}>
 					확인
 				</Button>
 			),
 		});
-	}, [selectedPlan, userPlan]);
+	}, [selectedPlan, userPlan, isOnSubscription]);
 
 	return (
 		<Stack flexDirection="row" alignItems="center" mt="20px">
@@ -243,7 +265,9 @@ function SubscribeMagageButtonGroup({
 							marginRight: '8px',
 						}}
 						onClick={onClickSubscribeChange}>
-						구독설정 변경
+						{!isOnSubscription || isTrial
+							? '구독'
+							: '구독설정 변경'}
 					</Button>
 					<Button
 						variant="outlined"
@@ -258,9 +282,11 @@ function SubscribeMagageButtonGroup({
 					<Button
 						height={40}
 						onClick={() => setIsAvailableSelect(true)}>
-						{isTrial ? '플랜 업그레이드' : '플랜 변경하기'}
+						{!isOnSubscription || isTrial
+							? '플랜 구독하기'
+							: '플랜 변경하기'}
 					</Button>
-					{!isTrial && userPlan && <CancelSubscribe />}
+					{!isTrial && isOnSubscription && <CancelSubscribe />}
 				</>
 			)}
 		</Stack>
