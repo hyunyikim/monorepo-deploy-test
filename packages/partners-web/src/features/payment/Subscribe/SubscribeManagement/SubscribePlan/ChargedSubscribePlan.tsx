@@ -54,7 +54,7 @@ function ChargedSubscribePlan({
 	};
 
 	return (
-		<Stack rowGap="14px">
+		<Stack rowGap="14px" mb="16px">
 			<SubscribePlan
 				title={CHARGED_GROUP_PLAN.PLAN_NAME}
 				desc={CHARGED_GROUP_PLAN.PLAN_DESCRIPTION}

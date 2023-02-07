@@ -315,7 +315,7 @@ export const getSubscribePreviwData = ({
 	};
 };
 
-export const getPaymentNameByPaymentStatus = (status: PaymentStatus) => {
+export const getPaymentStatusNameByPaymentStatus = (status: PaymentStatus) => {
 	if (status === 'READY') {
 		return '준비됨';
 	}
@@ -326,10 +326,10 @@ export const getPaymentNameByPaymentStatus = (status: PaymentStatus) => {
 		return '가상계좌 입금 대기 중';
 	}
 	if (status === 'DONE') {
-		return '결제 완료';
+		return '결제완료';
 	}
 	if (status === 'CANCELED') {
-		return '결제 취소';
+		return '결제취소';
 	}
 	if (status === 'PARTIAL_CANCELED') {
 		return '결제 부분취소';
@@ -338,10 +338,10 @@ export const getPaymentNameByPaymentStatus = (status: PaymentStatus) => {
 		return '결제 승인실패';
 	}
 	if (status === 'EXPIRED') {
-		return '거래 취소';
+		return '거래취소';
 	}
 	if (status === 'FAILED') {
-		return '결제 실패';
+		return '결제실패';
 	}
 	return '';
 };

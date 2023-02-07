@@ -94,7 +94,9 @@ function PaymentCardDetailModal({data, open, onClose}: Props) {
 				</Box>
 				<Stack ml="20px">
 					<Typography variant="subtitle2" fontWeight="bold">
-						{number}
+						{new Array(4).fill(null).map((_, idx) => (
+							<>{number.slice(idx * 4, idx * 4 + 4)} </>
+						))}
 					</Typography>
 					<Typography variant="body1" color="grey.600">
 						{company}

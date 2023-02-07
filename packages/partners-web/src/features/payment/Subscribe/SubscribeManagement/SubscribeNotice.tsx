@@ -123,11 +123,10 @@ function SubscribeNotice({sx = {}}: Props) {
 	const {data: planList} = useGetPricePlanList();
 
 	const SubscribeNoticeComponent = useMemo(() => {
-		if (!planList) return;
-
 		const subscribeNoticeStatus = checkSubscribeNoticeStatus(userPlan);
+		if (!planList || !subscribeNoticeStatus) return;
+
 		if (
-			!subscribeNoticeStatus ||
 			subscribeNoticeStatus === 'TRIAL' ||
 			subscribeNoticeStatus === 'CHARGED_PLAN_WILL_END' ||
 			subscribeNoticeStatus === 'CHARGED_PLAN_FINISHED'

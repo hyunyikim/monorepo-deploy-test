@@ -34,7 +34,7 @@ function SubscribeManagement() {
 					handleChangeTab(value as string);
 					const {pathname, search} = location;
 					const {idx, ...parsed} = parse(search);
-					if (idx) {
+					if (value === 'history' && idx) {
 						navigate(
 							`${pathname}${stringify(parsed, {
 								addQueryPrefix: true,

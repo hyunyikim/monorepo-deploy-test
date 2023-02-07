@@ -48,7 +48,7 @@ function SubscribePlan({
 					className: 'cursor-pointer',
 				})}>
 				<Stack>
-					<Stack flexDirection="row" alignItems="center">
+					<Stack flexDirection="row" alignItems="center" mb="4px">
 						<Typography
 							variant="subtitle2"
 							fontWeight="bold"
@@ -62,7 +62,7 @@ function SubscribePlan({
 							/>
 						)}
 					</Stack>
-					<Typography variant="caption3">{desc}</Typography>
+					<Typography variant="caption1">{desc}</Typography>
 				</Stack>
 				{children && children}
 			</Stack>

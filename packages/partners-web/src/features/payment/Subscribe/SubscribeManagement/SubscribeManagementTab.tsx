@@ -32,7 +32,7 @@ import SubscribeCheckModal from './SubscribeCheckModal';
 import SubscribeMagageButtonGroup from './SubscribeMagageButtonGroup';
 
 function SubscribeManagementTab() {
-	const {data: planList} = useGetPricePlanList({suspense: true});
+	const {data: planList} = useGetPricePlanList({suspense: true, delay: 1000});
 	const {data: userPlan} = useGetUserPricePlan();
 	const {data: yearPlanList} = useGetPricePlanListByPlanType('YEAR');
 	const {data: isUserUsedTrialPlan} = useIsUserUsedTrialPlan();

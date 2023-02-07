@@ -37,7 +37,7 @@ const LINE_NOTICE: LineNotice = {
 	TRIAL_ALMOST_FINISH: {
 		content: [
 			'무료 체험 기간이 NN일 남았습니다. (MM월 dd일 종료)',
-			<Typography variant="caption3" fontWeight="medium">
+			<Typography variant="caption1" fontWeight="medium">
 				원활한 서비스 이용을 위해 플랜 업그레이드를 권장합니다.
 			</Typography>,
 		],

@@ -20,6 +20,7 @@ const queryClient = new QueryClient({
 		queries: {
 			retry: false,
 			refetchOnWindowFocus: false,
+			refetchInterval: 3 * 60 * 1000, // 3분마다 캐시 갱신
 		},
 	},
 });

@@ -1,17 +1,28 @@
 import {useNavigate} from 'react-router-dom';
+import {format} from 'date-fns';
+
+import {Stack, Grid, Typography, Divider} from '@mui/material';
 
 import style from '@/assets/styles/style.module.scss';
 
 import {IcPrinter, IcVircleLogo} from '@/assets/icon';
 import Breadcrumbs from '@/features/payment/common/Breadcrumbs';
-import {Stack, Grid, Typography, Divider} from '@mui/material';
+import {PaymentHistoryDetail} from '@/@types';
+import {useGetPartnershipInfo, useGetUserPaymentHistoryDetail} from '@/stores';
+import {DATE_FORMAT, getPaymentStatusNameByPaymentStatus} from '@/data';
 
 interface Props {
-	idx: number;
+	idx: string;
 }
 
 function PaymentReceiptDetail({idx}: Props) {
 	const navigate = useNavigate();
+
+	const {data} = useGetUserPaymentHistoryDetail(idx, {suspense: true});
+	const paymentHistory = data as PaymentHistoryDetail;
+	const {data: partnershipData} = useGetPartnershipInfo();
+
+	// TODO: canceledData 추가
 	return (
 		<Stack
 			sx={{
@@ -28,7 +39,7 @@ function PaymentReceiptDetail({idx}: Props) {
 							},
 						},
 					]}
-					now="Breadcrumbs"
+					now={paymentHistory.displayOrderId}
 				/>
 				<Typography
 					variant="body3"
@@ -60,8 +71,7 @@ function PaymentReceiptDetail({idx}: Props) {
 					borderRadius: '8px',
 					color: (theme) => theme.palette.grey[900],
 					padding: '20px',
-				}}
-				ref={printElementRef}>
+				}}>
 				<Stack width="100%" justifyContent="flex-start" mb="20px">
 					<IcVircleLogo color={style.vircleGrey800} />
 				</Stack>
@@ -89,7 +99,7 @@ function PaymentReceiptDetail({idx}: Props) {
 					</Grid>
 					<Grid item xs={2}>
 						<Typography variant="body3" color="grey.600">
-							브랜드명
+							{partnershipData?.brand?.name}
 						</Typography>
 					</Grid>
 					<Grid item xs={1}>
@@ -102,7 +112,7 @@ function PaymentReceiptDetail({idx}: Props) {
 					</Grid>
 					<Grid item xs={2}>
 						<Typography variant="body3" color="grey.600">
-							영수증 ID
+							{paymentHistory.displayOrderId}
 						</Typography>
 					</Grid>
 					<Grid item xs={1}>
@@ -115,7 +125,7 @@ function PaymentReceiptDetail({idx}: Props) {
 					</Grid>
 					<Grid item xs={2}>
 						<Typography variant="body3" color="grey.600">
-							종류
+							구독
 						</Typography>
 					</Grid>
 					<Grid item xs={1}>
@@ -128,7 +138,9 @@ function PaymentReceiptDetail({idx}: Props) {
 					</Grid>
 					<Grid item xs={2}>
 						<Typography variant="body3" color="grey.600">
-							결제상태
+							{getPaymentStatusNameByPaymentStatus(
+								paymentHistory.payStatus
+							)}
 						</Typography>
 					</Grid>
 					<Grid item xs={1}>
@@ -141,7 +153,10 @@ function PaymentReceiptDetail({idx}: Props) {
 					</Grid>
 					<Grid item xs={2}>
 						<Typography variant="body3" color="grey.600">
-							청구일
+							{format(
+								new Date(paymentHistory.payApprovedAt),
+								DATE_FORMAT
+							)}
 						</Typography>
 					</Grid>
 					<Divider
@@ -160,14 +175,93 @@ function PaymentReceiptDetail({idx}: Props) {
 						</Typography>
 					</Grid>
 					<Grid item xs={2} />
+					<Grid item xs={2}>
+						<Typography
+							variant="body3"
+							fontWeight="bold"
+							color="grey.600">
+							유료플랜 - {paymentHistory.pricePlan.planName}
+						</Typography>
+					</Grid>
 					<Grid item xs={1}>
-						<Typography variant="caption2" color="grey.600">
-							유료플랜 - 엑스스몰
+						<Typography
+							variant="body3"
+							fontWeight="bold"
+							color="grey.600">
+							₩
+							{(
+								paymentHistory.pricePlan.displayTotalPrice || 0
+							).toLocaleString()}
 						</Typography>
 					</Grid>
 					<Grid item xs={2}>
 						<Typography variant="caption2" color="grey.600">
-							가격
+							· 정상가
+						</Typography>
+					</Grid>
+					<Grid item xs={1}>
+						<Typography variant="caption2" color="grey.600">
+							₩
+							{(
+								paymentHistory.pricePlan.planTotalPrice || 0
+							).toLocaleString()}
+						</Typography>
+					</Grid>
+					{paymentHistory.pricePlan.discountTotalPrice && (
+						<>
+							<Grid item xs={2}>
+								<Typography variant="caption2" color="grey.600">
+									· 할인금액
+								</Typography>
+							</Grid>
+							<Grid item xs={1}>
+								<Typography variant="caption2" color="grey.600">
+									₩
+									{(
+										paymentHistory.pricePlan
+											.discountTotalPrice || 0
+									).toLocaleString()}
+								</Typography>
+							</Grid>
+						</>
+					)}
+					<Divider
+						sx={{
+							width: '100%',
+							borderColor: (theme) => theme.palette.grey[100],
+							marginY: '14px',
+						}}
+					/>
+					<Grid item xs={1}>
+						<Typography
+							variant="body3"
+							fontWeight="bold"
+							color="grey.600">
+							합계
+						</Typography>
+					</Grid>
+					<Grid item xs={2}>
+						<Typography
+							variant="body3"
+							fontWeight="bold"
+							color="grey.600">
+							₩
+							{(
+								paymentHistory.pricePlan.displayTotalPrice || 0
+							).toLocaleString()}
+						</Typography>
+					</Grid>
+					<Grid item xs={2}>
+						<Typography variant="caption2" color="grey.600">
+							부가세(10%)
+						</Typography>
+					</Grid>
+					<Grid item xs={1}>
+						<Typography variant="caption2" color="grey.600">
+							₩
+							{(
+								paymentHistory.pricePlan.vat || 0
+							).toLocaleString()}
 						</Typography>
 					</Grid>
 					<Divider
@@ -190,7 +284,7 @@ function PaymentReceiptDetail({idx}: Props) {
 							variant="body3"
 							fontWeight="bold"
 							color="grey.600">
-							480,000
+							₩{(paymentHistory.payPrice || 0).toLocaleString()}
 						</Typography>
 					</Grid>
 				</Grid>

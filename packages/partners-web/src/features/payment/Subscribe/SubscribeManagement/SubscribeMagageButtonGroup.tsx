@@ -255,7 +255,7 @@ function SubscribeMagageButtonGroup({
 	}, [selectedPlan, userPlan, isOnSubscription]);
 
 	return (
-		<Stack flexDirection="row" alignItems="center" mt="20px">
+		<Stack flexDirection="row" alignItems="center">
 			{isAvailableSelect ? (
 				<>
 					<Button

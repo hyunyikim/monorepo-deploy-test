@@ -48,81 +48,95 @@ function SubscribeHistoryList() {
 	});
 
 	return (
-		<Stack>
-			<TableInfo totalSize={totalSize} unit="건">
-				<Select
-					height={32}
-					value={filter?.sort ?? 'latest'}
-					options={sortSearchFilter}
-					onChange={(e) => {
-						handleChangeFilter({
-							sort: e.target.value,
-						});
-					}}
-					sx={{
-						minWidth: '150px',
-						marginRight: '8px',
-					}}
-				/>
-				<PageSelect
-					value={filter.pageMaxNum}
-					onChange={(value: {
-						[key: string]: any;
-						pageMaxNum: number;
-					}) => {
-						handleChangeFilter(value);
-					}}
-				/>
-			</TableInfo>
-			<Table
-				isLoading={isLoading}
-				totalSize={totalSize}
-				headcell={
-					<>
-						<HeadTableCell minWidth={52}>
-							<Checkbox disabled />
-						</HeadTableCell>
-						<HeadTableCell minWidth={120}>ID</HeadTableCell>
-						<HeadTableCell minWidth={180}>플랜</HeadTableCell>
-						<HeadTableCell minWidth={180}>구독 시작</HeadTableCell>
-						<HeadTableCell minWidth={180}>구독 종료</HeadTableCell>
-						<HeadTableCell minWidth={500}>상태</HeadTableCell>
-					</>
-				}>
-				{data?.data &&
-					data?.data.map((item) => (
-						<TableRow key={item.orderId}>
-							<TableCell>
+		data && (
+			<Stack>
+				<TableInfo totalSize={totalSize} unit="건">
+					<Select
+						height={32}
+						value={filter?.sort ?? 'latest'}
+						options={sortSearchFilter}
+						onChange={(e) => {
+							handleChangeFilter({
+								sort: e.target.value,
+							});
+						}}
+						sx={{
+							minWidth: '150px',
+							marginRight: '8px',
+						}}
+					/>
+					<PageSelect
+						value={filter.pageMaxNum}
+						onChange={(value: {
+							[key: string]: any;
+							pageMaxNum: number;
+						}) => {
+							handleChangeFilter(value);
+						}}
+					/>
+				</TableInfo>
+				<Table
+					isLoading={isLoading}
+					totalSize={totalSize}
+					headcell={
+						<>
+							<HeadTableCell width={52}>
 								<Checkbox disabled />
-							</TableCell>
-							<TableCell>
-								<Typography
-									className="underline"
-									onClick={() => {
-										goToDetailSubscribePage(item.orderId);
-									}}>
-									{item.displayOrderId}
-								</Typography>
-							</TableCell>
-							<TableCell>{item.planName}</TableCell>
-							<TableCell>
-								{format(new Date(item.startDate), DATE_FORMAT)}
-							</TableCell>
-							<TableCell>
-								{format(new Date(item.expireDate), DATE_FORMAT)}
-							</TableCell>
-							{/* TODO: 고정값 확인 */}
-							<TableCell>결제완료</TableCell>
-						</TableRow>
-					))}
-			</Table>
-			<Pagination
-				{...paginationProps}
-				onChange={(_, page) => {
-					onChangePage(_, page);
-				}}
-			/>
-		</Stack>
+							</HeadTableCell>
+							<HeadTableCell minWidth={120}>ID</HeadTableCell>
+							<HeadTableCell minWidth={180}>플랜</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								구독 시작
+							</HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								구독 종료
+							</HeadTableCell>
+							<HeadTableCell minWidth={300}>상태</HeadTableCell>
+						</>
+					}>
+					{data?.data &&
+						data?.data.map((item) => (
+							<TableRow key={item.orderId}>
+								<TableCell>
+									<Checkbox disabled />
+								</TableCell>
+								<TableCell>
+									<Typography
+										className="underline"
+										onClick={() => {
+											goToDetailSubscribePage(
+												item.orderId
+											);
+										}}>
+										{item.displayOrderId}
+									</Typography>
+								</TableCell>
+								<TableCell>{item.planName}</TableCell>
+								<TableCell>
+									{format(
+										new Date(item.startDate),
+										DATE_FORMAT
+									)}
+								</TableCell>
+								<TableCell>
+									{format(
+										new Date(item.expireDate),
+										DATE_FORMAT
+									)}
+								</TableCell>
+								{/* TODO: 고정값 확인 */}
+								<TableCell>결제완료</TableCell>
+							</TableRow>
+						))}
+				</Table>
+				<Pagination
+					{...paginationProps}
+					onChange={(_, page) => {
+						onChangePage(_, page);
+					}}
+				/>
+			</Stack>
+		)
 	);
 }
 

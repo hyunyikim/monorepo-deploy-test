@@ -46,9 +46,10 @@ function PaymentReceiptList() {
 	});
 
 	return (
-		<Stack>
-			<TableInfo totalSize={totalSize} unit="건">
-				{/* <Select
+		data && (
+			<Stack>
+				<TableInfo totalSize={totalSize} unit="건">
+					{/* <Select
 					height={32}
 					value={filter?.sort ?? 'latest'}
 					options={[
@@ -75,79 +76,85 @@ function PaymentReceiptList() {
 						marginRight: '8px',
 					}}
 				/> */}
-				<Select
-					height={32}
-					value={filter?.sort ?? 'latest'}
-					options={sortSearchFilter}
-					onChange={(e) => {
-						handleChangeFilter({
-							sort: e.target.value,
-						});
-					}}
-					sx={{
-						minWidth: '150px',
-						marginRight: '8px',
+					<Select
+						height={32}
+						value={filter?.sort ?? 'latest'}
+						options={sortSearchFilter}
+						onChange={(e) => {
+							handleChangeFilter({
+								sort: e.target.value,
+							});
+						}}
+						sx={{
+							minWidth: '150px',
+							marginRight: '8px',
+						}}
+					/>
+					<PageSelect
+						value={filter.pageMaxNum}
+						onChange={(value: {
+							[key: string]: any;
+							pageMaxNum: number;
+						}) => {
+							handleChangeFilter(value);
+						}}
+					/>
+				</TableInfo>
+				<Table
+					isLoading={isLoading}
+					totalSize={totalSize}
+					headcell={
+						<>
+							<HeadTableCell width={120}>ID</HeadTableCell>
+							<HeadTableCell minWidth={180}>종류</HeadTableCell>
+							<HeadTableCell minWidth={300}>날짜 </HeadTableCell>
+							<HeadTableCell minWidth={180}>
+								결제 금액
+							</HeadTableCell>
+							<HeadTableCell width={180}>결제 상태</HeadTableCell>
+						</>
+					}>
+					{data?.data &&
+						data?.data.map((item) => (
+							<TableRow key={item.orderId}>
+								<TableCell>
+									<Typography
+										className="underline"
+										onClick={() => {
+											goToDetailReceiptPage(item.orderId);
+										}}>
+										{item.displayOrderId}
+									</Typography>
+								</TableCell>
+								<TableCell>구독</TableCell>
+								<TableCell>
+									{/* TODO: 날짜 체크 */}
+									{format(
+										new Date(item.startDate),
+										DATE_FORMAT
+									)}
+								</TableCell>
+								<TableCell>
+									{item.payPrice.toLocaleString()}원
+								</TableCell>
+								<TableCell>
+									{item.payStatus === 'DONE' ? (
+										<Chip label="결제완료" color="green" />
+									) : (
+										<Chip label="결제실패" color="red" />
+									)}
+								</TableCell>
+							</TableRow>
+						))}
+				</Table>
+				<Pagination
+					{...paginationProps}
+					onChange={(_, page) => {
+						onChangePage(_, page);
 					}}
 				/>
-				<PageSelect
-					value={filter.pageMaxNum}
-					onChange={(value: {
-						[key: string]: any;
-						pageMaxNum: number;
-					}) => {
-						handleChangeFilter(value);
-					}}
-				/>
-			</TableInfo>
-			<Table
-				isLoading={isLoading}
-				totalSize={totalSize}
-				headcell={
-					<>
-						<HeadTableCell width={120}>ID</HeadTableCell>
-						<HeadTableCell width={180}>종류</HeadTableCell>
-						<HeadTableCell minWidth={500}>날짜 </HeadTableCell>
-						<HeadTableCell width={180}>결제 금액</HeadTableCell>
-						<HeadTableCell width={180}>결제 상태</HeadTableCell>
-					</>
-				}>
-				{data?.data &&
-					data?.data.map((item) => (
-						<TableRow key={item.orderId}>
-							<TableCell>
-								<Typography
-									className="underline"
-									onClick={() => {
-										goToDetailReceiptPage(item.orderId);
-									}}>
-									{item.displayOrderId}
-								</Typography>
-							</TableCell>
-							<TableCell>구독</TableCell>
-							<TableCell>
-								{/* TODO: 날짜 체크 */}
-								{format(new Date(item.startDate), DATE_FORMAT)}
-							</TableCell>
-							<TableCell>
-								{item.payPrice.toLocaleString()}원
-							</TableCell>
-							<TableCell>
-								{item.payStatus === 'DONE' ? (
-									<Chip label="결제완료" color="green" />
-								) : (
-									<Chip label="결제실패" color="red" />
-								)}
-							</TableCell>
-						</TableRow>
-					))}
-			</Table>
-			<Pagination
-				{...paginationProps}
-				onChange={(_, page) => {
-					onChangePage(_, page);
-				}}
-			/>
-		</Stack>
+			</Stack>
+		)
 	);
 }
 
