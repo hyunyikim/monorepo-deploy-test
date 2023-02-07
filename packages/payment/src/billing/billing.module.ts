@@ -30,6 +30,7 @@ import {
 	BillingUnregisteredHandler,
 	BillingApprovedHandler,
 	BillingPlanChangedHandler,
+	BillingDelayedHandler,
 } from './application/event';
 import {
 	PlanBillingRepository,
@@ -48,6 +49,7 @@ import {ScheduleModule} from '@nestjs/schedule';
 import {FindPaymentsHandler} from './application/query';
 import {RegularPaymentService} from './application/service/payment.service';
 import {VircleCoreApi} from './infrastructure/api-client/vircle-core.api';
+import {NotificationHandler} from './application/command/notification.handler';
 
 const infra: Provider[] = [
 	{
@@ -86,9 +88,11 @@ const app: Provider[] = [
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
 	DelayPaymentHandler,
+	NotificationHandler,
 
 	// Event Handler
 	BillingRegisteredHandler,
+	BillingDelayedHandler,
 	BillingUnregisteredHandler,
 	BillingApprovedHandler,
 	BillingPlanChangedHandler,

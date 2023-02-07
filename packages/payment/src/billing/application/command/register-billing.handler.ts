@@ -73,6 +73,16 @@ export class RegisterBillingHandler
 					...cardInfo,
 				});
 
+			// 기존 플랜이 남아 있는 경우 취소처리 (무료플랜 등)
+			const prevBilling = await this.billingRepo.findByPartnerIdx(
+				token.partnerIdx
+			);
+			if (prevBilling) {
+				prevBilling.delete();
+				await this.billingRepo.saveBilling(prevBilling);
+				prevBilling.commit();
+			}
+
 			// 빌링 생성
 			const newBilling = this.factory.create({
 				...tossBilling,
@@ -95,16 +105,6 @@ export class RegisterBillingHandler
 				)
 			);
 			await this.commandBus.execute(approveCommand);
-
-			// 기존 플랜이 남아 있는 경우 취소처리 (무료플랜 등)
-			const prevBilling = await this.billingRepo.findByPartnerIdx(
-				token.partnerIdx
-			);
-			if (prevBilling) {
-				prevBilling.delete();
-				await this.billingRepo.saveBilling(prevBilling);
-				prevBilling.commit();
-			}
 
 			// DB 저장
 			await this.billingRepo.saveBilling(newBilling);
@@ -376,15 +376,6 @@ export class UnregisterBillingHandler
 
 		// DB 저장
 		await this.billingRepo.saveBilling(billing);
-
-		// 이메일 발송
-		await this.vircleCoreApi.sendPaymentEmail({
-			partnerIdx,
-			template: 'CANCEL_PAYMENT',
-			params: {
-				planName: billingProps.pricePlan.planName,
-			},
-		});
 
 		billing.commit();
 	}

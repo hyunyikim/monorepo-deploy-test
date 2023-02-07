@@ -10,6 +10,7 @@ import {
 	BillingResumedEvent,
 	CardRegisteredEvent,
 	CardDeletedEvent,
+	BillingDelayedEvent,
 } from './event';
 import {PaymentProps} from './payment';
 import {
@@ -221,7 +222,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			this.planExpireDate = now.toISO();
 		}
 
-		const event = new BillingApprovedEvent(this.properties(), payment);
+		const event = new BillingDelayedEvent(this.properties());
 		this.apply(event);
 	}
 

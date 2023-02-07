@@ -74,17 +74,6 @@ export class ApproveBillingPaymentHandler
 			billing.approve(payment.properties());
 			await this.billingRepo.saveBilling(billing);
 
-			// 이메일 발송
-			await this.vircleCoreApi.sendPaymentEmail({
-				partnerIdx,
-				template: 'COMPLETE_PAYMENT',
-				params: {
-					planName: pricePlan.planName,
-					orderId: payload.orderId,
-					planPrice: pricePlan.planPrice,
-				},
-			});
-
 			payment.commit();
 			billing.commit();
 		} catch (e) {

@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
 import {IsNotEmpty, IsNumber, IsObject, IsString} from 'class-validator';
+import {EMAIL_TEMPLATE} from './resource';
 
 export interface FindRangePayload {
 	from?: string;
@@ -14,12 +15,7 @@ export class PaymentEmailPayload {
 
 	@IsString()
 	@IsNotEmpty()
-	template:
-		| 'COMPLETE_PAYMENT'
-		| 'FAIL_PAYMENT'
-		| 'CANCEL_PAYMENT'
-		| 'REFUND_PAYMENT'
-		| 'UPGRADE_PAYMENT';
+	template: EMAIL_TEMPLATE;
 
 	@IsObject()
 	@IsNotEmpty()

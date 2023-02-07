@@ -68,15 +68,6 @@ export class DelayPaymentHandler
 		billing.delay(payment.properties());
 		await this.billingRepo.saveBilling(billing);
 
-		// 이메일 발송
-		await this.vircleCoreApi.sendPaymentEmail({
-			partnerIdx,
-			template: 'FAIL_PAYMENT',
-			params: {
-				planName: pricePlan.planName,
-			},
-		});
-
 		payment.commit();
 		billing.commit();
 	}
