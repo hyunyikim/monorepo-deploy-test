@@ -32,7 +32,7 @@ import SubscribeCheckModal from './SubscribeCheckModal';
 import SubscribeMagageButtonGroup from './SubscribeMagageButtonGroup';
 
 function SubscribeManagementTab() {
-	const {data: planList} = useGetPricePlanList({suspense: true, delay: 1000});
+	const {data: planList} = useGetPricePlanList({suspense: true});
 	const {data: userPlan} = useGetUserPricePlan();
 	const {data: yearPlanList} = useGetPricePlanListByPlanType('YEAR');
 	const {data: isUserUsedTrialPlan} = useIsUserUsedTrialPlan();
@@ -85,12 +85,11 @@ function SubscribeManagementTab() {
 		if (selectedPlan && selectedPlan?.planType === planType) {
 			return;
 		}
-		const newSelectedPlan =
-			planList?.find(
-				(plan) =>
-					plan.planName === selectedPlan?.planName && // 현재 planType 별로 planLevel이 다르다, 동일한 플랜이라고 판별할 수 있는 것은 현재는 플랜명
-					plan.planType === planType
-			) || planList?.find((plan) => plan.planType === planType);
+		const newSelectedPlan = planList?.find(
+			(plan) =>
+				plan.planName === selectedPlan?.planName && // 현재 planType 별로 planLevel이 다르다, 동일한 플랜이라고 판별할 수 있는 것은 현재는 플랜명
+				plan.planType === planType
+		);
 		newSelectedPlan && setSelectedPlan(newSelectedPlan);
 	};
 
@@ -128,6 +127,7 @@ function SubscribeManagementTab() {
 						<>
 							<NowSubscribedPlan
 								userPlan={userPlan}
+								planList={planList}
 								isTrial={!!isUserUsedTrialPlan}
 							/>
 							<SubscribeLineNotice />
@@ -188,18 +188,22 @@ function SubscribeManagementTab() {
 
 const NowSubscribedPlan = ({
 	userPlan,
+	planList,
 	isTrial,
 }: {
 	userPlan?: UserPricePlanWithDate;
+	planList?: PricePlan[];
 	isTrial: boolean;
 }) => {
-	if (!userPlan) {
+	if (!userPlan || !planList) {
 		return <></>;
 	}
+	const usingPlanLimit =
+		planList?.find((plan) => plan.planId === userPlan?.pricePlan?.planId)
+			?.planLimit || userPlan?.pricePlan.planLimit;
 	const desc = isTrial
 		? TRIAL_PLAN.PLAN_DESCRIPTION
-		: getChargedPlanDescription(userPlan?.pricePlan.planLimit || 0);
-
+		: getChargedPlanDescription(usingPlanLimit || 0);
 	const isOnSubscription = isPlanOnSubscription({
 		startDate: userPlan.planStartedAt,
 		endDate: userPlan.planExpireDate,

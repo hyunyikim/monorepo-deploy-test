@@ -39,7 +39,7 @@ export const ENTERPRISE_PLAN = {
 };
 
 export const getChargedPlanDescription = (planLimit: number): string =>
-	`개런티 발급량 ${planLimit}개`;
+	`개런티 발급량 ${(planLimit || 0).toLocaleString()}개`;
 
 export const isPlanTypeMonth = (planType: PlanType) => {
 	return planType === 'MONTH' ? true : false;

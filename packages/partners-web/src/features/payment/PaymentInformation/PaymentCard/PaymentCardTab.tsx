@@ -79,7 +79,16 @@ function PaymentCardTab() {
 											className="underline"
 											onClick={onOpen}
 											ml="12px">
-											{card.number}
+											{new Array(4)
+												.fill(null)
+												.map((_, idx) => (
+													<>
+														{card?.number.slice(
+															idx * 4,
+															idx * 4 + 4
+														)}{' '}
+													</>
+												))}
 										</Typography>
 									</TableCell>
 									<TableCell>{card.company}</TableCell>

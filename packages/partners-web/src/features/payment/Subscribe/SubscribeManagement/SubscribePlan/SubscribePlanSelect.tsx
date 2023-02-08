@@ -1,4 +1,4 @@
-import {useCallback, useMemo} from 'react';
+import {Dispatch, SetStateAction, useCallback, useMemo} from 'react';
 
 import {Backdrop, Stack, Typography} from '@mui/material';
 
@@ -13,7 +13,7 @@ import {Button, IntroductionInquiryDialog} from '@/components';
 
 interface Props {
 	selectOpen: boolean;
-	setSelectOpen: (value: boolean) => void | null;
+	setSelectOpen: Dispatch<SetStateAction<boolean>>;
 	selectedPlan: PricePlan;
 	onChangePlan: (value: PricePlan) => void;
 }

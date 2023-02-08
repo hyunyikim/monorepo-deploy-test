@@ -51,12 +51,15 @@ function PaymentInformation() {
 					handleChange={(e, value) => {
 						handleChangeTab(value as string);
 						const {pathname, search} = location;
-						const {idx, ...parsed} = parse(search);
-						if (value === 'receipt' && idx) {
+						const {idx, mode, ...parsed} = parse(search);
+						if (idx) {
 							navigate(
-								`${pathname}${stringify(parsed, {
-									addQueryPrefix: true,
-								})}`,
+								`${pathname}${stringify(
+									{...parsed, mode: value},
+									{
+										addQueryPrefix: true,
+									}
+								)}`,
 								{
 									replace: true,
 								}

@@ -47,22 +47,27 @@ function SubscribePlan({
 					onClick,
 					className: 'cursor-pointer',
 				})}>
-				<Stack>
-					<Stack flexDirection="row" alignItems="center" mb="4px">
-						<Typography
-							variant="subtitle2"
-							fontWeight="bold"
-							mr="6px">
-							{title}
-						</Typography>
-						{isSubscribed && (
-							<IsSubscribedChip
-								isTrial={isTrial}
-								isEnded={isEnded}
-							/>
-						)}
+				<Stack
+					flexDirection="row"
+					justifyContent="space-between"
+					alignItems="center">
+					<Stack>
+						<Stack flexDirection="row" alignItems="center" mb="4px">
+							<Typography
+								variant="subtitle2"
+								fontWeight="bold"
+								mr="6px">
+								{title}
+							</Typography>
+							{isSubscribed && (
+								<IsSubscribedChip
+									isTrial={isTrial}
+									isEnded={isEnded}
+								/>
+							)}
+						</Stack>
+						<Typography variant="caption1">{desc}</Typography>
 					</Stack>
-					<Typography variant="caption1">{desc}</Typography>
 				</Stack>
 				{children && children}
 			</Stack>

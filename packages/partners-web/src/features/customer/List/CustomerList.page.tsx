@@ -16,6 +16,7 @@ import {
 	getWalletLinkChip,
 	calculatePeriod,
 	walletLinkOption,
+	isPlanOnSubscription,
 } from '@/data';
 import {
 	formatPhoneNum,
@@ -114,21 +115,17 @@ function CustomerList() {
 
 	const getCurrentPricePlanInfo = async () => {
 		try {
-			const {planExpireDate, planStartedAt, pricePlan, usedNftCount} =
+			const {planExpireDate, planStartedAt, pricePlan, nextPricePlan} =
 				await getUserPricePlan();
 
-			const originalExpireDate =
-				typeof planExpireDate === 'string'
-					? planExpireDate?.split('T')[0]
-					: '';
-			const expireDate = new Date(originalExpireDate).getTime();
-			const currentDate = new Date().getTime();
-			const isExpired = expireDate - currentDate < 0;
-			const isFreeTrial =
-				pricePlan?.planLevel === 0 &&
-				pricePlan?.planName === '무료 체험';
+			const isFreeTrial = pricePlan?.planLevel === 0;
+			const isOnSubscription = isPlanOnSubscription({
+				startDate: new Date(planStartedAt),
+				endDate: planExpireDate ? new Date(planExpireDate) : undefined,
+				isNextPlanExisted: !!nextPricePlan,
+			});
 
-			if (isExpired) {
+			if (!isOnSubscription) {
 				setIsPlanExpired(true);
 				openExpiredModal(isFreeTrial);
 			} else {

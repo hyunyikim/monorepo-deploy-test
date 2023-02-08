@@ -4,6 +4,7 @@ import {
 	getPricePlanList,
 	getUserPricePlan,
 	getPaymentHistoryDetail,
+	getPaymentHistoryList,
 } from '@/api/payment.api';
 import {PlanType, UserPricePlanWithDate} from '@/@types';
 import {isPlanOnSubscription, TRIAL_PLAN} from '@/data';
@@ -96,6 +97,21 @@ export const useIsUserUsedTrialPlan = (
 					endDate: new Date(userPlan?.planExpireDate),
 				}),
 				isNextPlanExisted: !!userPlan?.nextPricePlan,
+			}),
+	});
+};
+
+/**
+ * 유저의 가장 최신 구독 내역 1건 조회
+ */
+export const useGetUserLatestPaymentHistoryList = () => {
+	return useQuery({
+		queryKey: ['useGetUserPaymentHistoryList'],
+		queryFn: () =>
+			getPaymentHistoryList({
+				sort: 'latest',
+				currentPage: 1,
+				pageMaxNum: 1,
 			}),
 	});
 };

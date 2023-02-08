@@ -29,6 +29,7 @@ import {
 import ServiceInterworkDetailTitle from '@/features/service-interwork/Detail/common/ServiceInterworkDetailTitle';
 import ServiceInterworkDetailContent from '@/features/service-interwork/Detail/common/ServiceInterworkDetailContent';
 import {getUserPricePlan} from '@/api/payment.api';
+import {isPlanOnSubscription} from '@/data';
 
 type CurrentPlanType = {
 	isExpired: boolean;
@@ -83,22 +84,24 @@ function ServiceInterworkRepair() {
 
 	const getCurrentPricePlanInfo = async () => {
 		try {
-			const {planExpireDate, planStartedAt, pricePlan, usedNftCount} =
-				await getUserPricePlan();
+			const {
+				planExpireDate,
+				planStartedAt,
+				pricePlan,
+				nextPricePlan,
+				usedNftCount,
+			} = await getUserPricePlan();
 
-			const originalExpireDate =
-				typeof planExpireDate === 'string'
-					? planExpireDate?.split('T')[0]
-					: '';
-			const expireDate = new Date(originalExpireDate).getTime();
-			const currentDate = new Date().getTime();
+			const isOnSubscription = isPlanOnSubscription({
+				startDate: new Date(planStartedAt),
+				endDate: planExpireDate ? new Date(planExpireDate) : undefined,
+				isNextPlanExisted: !!nextPricePlan,
+			});
 
 			setCurrentPlan((pre) => ({
 				...pre,
-				isExpired: expireDate - currentDate < 0,
-				isFreeTrial:
-					pricePlan?.planLevel === 0 &&
-					pricePlan?.planName === '무료 체험',
+				isExpired: !isOnSubscription,
+				isFreeTrial: pricePlan?.planLevel === 0,
 			}));
 		} catch (error) {
 			console.log('error', error);
@@ -157,10 +160,6 @@ function ServiceInterworkRepair() {
 							try {
 								const res =
 									await installServiceInterworkMutation.mutateAsync();
-
-								// if (res.result !== 'SUCCESS') {
-								// 	return openPricePlanModal();
-								// } else {
 								onOpenMessageDialog({
 									title: '수선신청 관리가 연동됐습니다.',
 									message: (

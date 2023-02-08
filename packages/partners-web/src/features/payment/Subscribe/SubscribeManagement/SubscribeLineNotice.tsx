@@ -267,6 +267,9 @@ function SubscribeLineNotice() {
 		<LineNotice
 			color={lineNoticeData?.color || 'primary'}
 			content={(lineNoticeData?.content || '') as LineNoticeContent}
+			sx={{
+				marginBottom: '20px',
+			}}
 		/>
 	) : (
 		<></>

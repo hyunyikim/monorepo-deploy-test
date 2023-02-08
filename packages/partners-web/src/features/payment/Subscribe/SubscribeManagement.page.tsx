@@ -33,12 +33,15 @@ function SubscribeManagement() {
 				handleChange={(e, value) => {
 					handleChangeTab(value as string);
 					const {pathname, search} = location;
-					const {idx, ...parsed} = parse(search);
-					if (value === 'history' && idx) {
+					const {idx, mode, ...parsed} = parse(search);
+					if (idx) {
 						navigate(
-							`${pathname}${stringify(parsed, {
-								addQueryPrefix: true,
-							})}`,
+							`${pathname}${stringify(
+								{...parsed, mode: value},
+								{
+									addQueryPrefix: true,
+								}
+							)}`,
 							{
 								replace: true,
 							}

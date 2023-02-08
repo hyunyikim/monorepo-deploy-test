@@ -17,10 +17,10 @@ import {
 	isPlanOnSubscription,
 } from '@/data';
 import {patchPricePlan} from '@/api/payment.api';
+import {updateUserPricePlanData, openChannelTalk} from '@/utils';
 
 import {Button} from '@/components';
 import CancelSubscribe from './CancelSubscribe';
-import {updateUserPricePlanData} from '@/utils';
 
 type PaymentMessageModalKey =
 	| 'CANCEL_SUBSCRIBE'
@@ -100,7 +100,8 @@ export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
 						color: 'grey.600',
 						textDecorationColor: (theme) => theme.palette.grey[600],
 					}}
-					className="cursor-pointer">
+					className="cursor-pointer"
+					onClick={openChannelTalk}>
 					고객센터
 				</Link>
 				로 문의 주시면 버클팀에서 확인 후 이용중이시던 플랜의 구독
@@ -207,8 +208,7 @@ function SubscribeMagageButtonGroup({
 		) {
 			messageDialogData = PAYMENT_MESSAGE_MODAL.BAN_DOWNGRADE_YEAR_PLAN;
 			onOpenMessageDialog({
-				title: messageDialogData.title,
-				message: messageDialogData.message,
+				...messageDialogData,
 			});
 			return;
 		}
