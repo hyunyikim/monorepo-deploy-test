@@ -41,17 +41,14 @@ export class FindPaymentsHandler
 		data: PaymentProps[];
 	}> {
 		const {partnerIdx, params} = query;
-		const {sort, page, pageSize, startAt, endAt} = params;
+		const {status, sort, page, pageSize} = params;
 
 		const results = await this.paymentRepo.search(
 			partnerIdx,
+			status,
 			sort ?? 'DESC',
 			page ?? 1,
-			pageSize ?? 10,
-			(startAt || startAt) && {
-				startAt: startAt ? new Date(startAt) : new Date('1970-01-01'),
-				endAt: endAt ? new Date(endAt) : new Date(),
-			}
+			pageSize ?? 10
 		);
 
 		return {

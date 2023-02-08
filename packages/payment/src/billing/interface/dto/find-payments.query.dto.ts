@@ -1,15 +1,8 @@
 import {IsNumber, IsOptional, IsString} from 'class-validator';
 import {Transform} from 'class-transformer';
+import {PAYMENT_STATUS} from '../../infrastructure/api-client';
 
 export class FindPaymentsQueryDto {
-	@IsString()
-	@IsOptional()
-	readonly startAt: Date;
-
-	@IsString()
-	@IsOptional()
-	readonly endAt: Date;
-
 	@IsOptional()
 	@Transform(
 		({value}) => {
@@ -24,6 +17,11 @@ export class FindPaymentsQueryDto {
 	)
 	@IsString()
 	readonly sort: 'ASC' | 'DESC';
+
+	@IsOptional()
+	@Transform(({value}) => PAYMENT_STATUS[value], {toClassOnly: true})
+	@IsString()
+	readonly status: PAYMENT_STATUS;
 
 	@IsNumber()
 	@IsOptional()

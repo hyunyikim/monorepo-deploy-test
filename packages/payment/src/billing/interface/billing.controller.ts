@@ -89,7 +89,9 @@ class PaymentSummaryInterface {
 	readonly displayOrderId: string;
 	readonly orderId: string;
 	readonly planName: string;
+	readonly payTotalPrice: number;
 	readonly payPrice: number;
+	readonly payVat: number;
 	readonly payStatus: PAYMENT_STATUS;
 	readonly startDate: string;
 	readonly expireDate: string;
@@ -99,7 +101,9 @@ class PaymentSummaryInterface {
 		this.displayOrderId = tempOrderId[tempOrderId.length - 1];
 		this.orderId = payment.orderId;
 		this.planName = payment.pricePlan.planName;
-		this.payPrice = payment.totalAmount;
+		this.payTotalPrice = payment.totalAmount;
+		this.payPrice = payment.suppliedAmount;
+		this.payVat = payment.vat;
 		this.payStatus = payment.status; // TODO: 결제 실패건 처리 시 변경
 		this.startDate = DateTime.fromISO(payment.approvedAt).toISO();
 		this.expireDate = payment.expiredAt
@@ -244,7 +248,7 @@ export class BillingController {
 		@GetToken() token: TokenInfo
 	) {
 		// 구독 삭제 커맨드 실행
-		const command = new DeleteCardCommand(token);
+		const command = new DeleteCardCommand(token.partnerIdx);
 		await this.commandBus.execute(command);
 	}
 
@@ -263,8 +267,10 @@ export class BillingController {
 		const {partnerIdx} = token;
 
 		// 구독 조회
-		// TODO: 유효한 구독에 대한 결제건만 가져오는 쿼리로 수정
-		const query = new FindPaymentsQuery(partnerIdx, params);
+		const query = new FindPaymentsQuery(partnerIdx, {
+			...params,
+			status: PAYMENT_STATUS.DONE,
+		});
 		const results = await this.queryBus.execute<
 			FindPaymentsQuery,
 			{
@@ -387,10 +393,7 @@ export class BillingController {
 		>(query);
 
 		// 구독 취소 커맨드 실행
-		const command = new UnregisterBillingCommand(
-			billingProps.customerKey,
-			token.partnerIdx
-		);
+		const command = new UnregisterBillingCommand(billingProps.customerKey);
 		await this.commandBus.execute(command);
 	}
 

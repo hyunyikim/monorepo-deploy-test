@@ -6,10 +6,14 @@ import {RegularPaymentService} from '../service/payment.service';
 import {
 	BillingApprovedEvent,
 	BillingDelayedEvent,
+	BillingDeletedEvent,
+	BillingRegisteredEvent,
 	BillingUnregisteredEvent,
+	CardDeletedEvent,
+	CardRegisteredEvent,
+	PlanChangedEvent,
 } from '../../domain/event';
 import {VircleCoreApi} from '../../infrastructure/api-client/vircle-core.api';
-import {EMAIL_TEMPLATE} from 'src/billing/infrastructure/api-client';
 import {NotificationCommand} from '../command/notification.command';
 
 @Injectable()
@@ -20,6 +24,66 @@ export class BillingSaga {
 		@Inject(VircleCoreApi)
 		private readonly vircleCoreApi: VircleCoreApi
 	) {}
+
+	/**
+	 * 신규 구독 신청 이벤트 발생 시
+	 * @param events$
+	 */
+	@Saga()
+	billingRegistered = (events$: Observable<any>): Observable<ICommand> => {
+		return events$.pipe(
+			ofType(BillingRegisteredEvent),
+			map(
+				(e) =>
+					new NotificationCommand(BillingRegisteredEvent, e.billing)
+			)
+		);
+	};
+
+	/**
+	 * 신규 구독 신청 이벤트 발생 시
+	 * @param events$
+	 */
+	@Saga()
+	billingChanged = (events$: Observable<any>): Observable<ICommand> => {
+		return events$.pipe(
+			ofType(PlanChangedEvent),
+			map(
+				(e) =>
+					new NotificationCommand(
+						PlanChangedEvent,
+						e.billing,
+						undefined,
+						e.prevPlan,
+						e.scheduledDate
+					)
+			)
+		);
+	};
+
+	/**
+	 * 카드 등록 이벤트 발생 시
+	 * @param events$
+	 */
+	@Saga()
+	cardRegistered = (events$: Observable<any>): Observable<ICommand> => {
+		return events$.pipe(
+			ofType(CardRegisteredEvent),
+			map((e) => new NotificationCommand(CardRegisteredEvent, e.billing))
+		);
+	};
+
+	/**
+	 * 카드 삭제 이벤트 발생 시
+	 * @param events$
+	 */
+	@Saga()
+	cardDeleted = (events$: Observable<any>): Observable<ICommand> => {
+		return events$.pipe(
+			ofType(CardDeletedEvent),
+			map((e) => new NotificationCommand(CardDeletedEvent, e.billing))
+		);
+	};
 
 	/**
 	 * 정기결제 승인완료 이벤트 발생 시
@@ -33,7 +97,7 @@ export class BillingSaga {
 			map(
 				(e) =>
 					new NotificationCommand(
-						EMAIL_TEMPLATE.COMPLETE_PAYMENT,
+						BillingApprovedEvent,
 						e.billing,
 						e.payment
 					)
@@ -52,10 +116,7 @@ export class BillingSaga {
 			filter((e) => !!e.billing.orderId),
 			map(
 				(e) =>
-					new NotificationCommand(
-						EMAIL_TEMPLATE.CANCEL_PAYMENT,
-						e.billing
-					)
+					new NotificationCommand(BillingUnregisteredEvent, e.billing)
 			)
 		);
 	};
@@ -72,9 +133,27 @@ export class BillingSaga {
 			map(
 				(e) =>
 					new NotificationCommand(
-						EMAIL_TEMPLATE.FAIL_PAYMENT,
-						e.billing
+						BillingDelayedEvent,
+						e.billing,
+						e.payment
 					)
+			)
+		);
+	};
+
+	/**
+	 * 정기결제 삭제 이벤트 발생 시
+	 * @param events$
+	 */
+	@Saga()
+	billingDeleted = (events$: Observable<any>): Observable<ICommand> => {
+		return events$.pipe(
+			ofType(BillingDeletedEvent),
+			filter((e) => !!e.billing.orderId),
+			map(
+				(e) =>
+					!e.isBillingChanged &&
+					new NotificationCommand(BillingDeletedEvent, e.billing)
 			)
 		);
 	};

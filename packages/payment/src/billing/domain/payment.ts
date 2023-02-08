@@ -12,6 +12,7 @@ export type PaymentProps = Omit<TossPayment, 'version'> & {
 	pricePlan: PricePlanProps;
 	canceledPricePlan?: PricePlanProps;
 	expiredAt?: string;
+	failMessage?: string;
 };
 
 /**
@@ -34,6 +35,7 @@ export class PlanPayment extends AggregateRoot implements Payment {
 	private readonly pricePlan: PricePlanProps;
 	private readonly canceledPricePlan?: PricePlanProps;
 	private expiredAt?: string;
+	private failMessage?: string;
 
 	constructor(private props: PaymentProps) {
 		super();
@@ -47,6 +49,7 @@ export class PlanPayment extends AggregateRoot implements Payment {
 			pricePlan: this.pricePlan,
 			canceledPricePlan: this.canceledPricePlan,
 			expiredAt: this.expiredAt,
+			failMessage: this.failMessage,
 		};
 	}
 

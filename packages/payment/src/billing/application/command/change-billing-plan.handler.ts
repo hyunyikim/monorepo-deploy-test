@@ -116,11 +116,22 @@ export class ChangeBillingPlanHandler
 						).months
 					) || 1;
 
+				// 개월수로 계산 시 올림으로 인해 최대 13개월로 계산될 수 있음을 방지
+				const remainMonths: number =
+					usedMonths >= 12 ? 0 : 12 - usedMonths;
+
+				// 취소된 금액 (총결제금액(12개월, 부가세포함) * 잔여개월수/12)
+				const canceledPrice: number =
+					currentPlan.payPrice * (remainMonths / 12);
+
 				if (usedMonths > 0) {
 					// 취소할 플랜
 					cancelPlan = new PricePlan({
 						...currentPlan,
 						usedMonths,
+						canceledPrice,
+						startedAt: billingProps.lastPaymentAt,
+						finishedAt: DateTime.now().toISO(),
 					} as PricePlanProps);
 				}
 			}
@@ -132,15 +143,9 @@ export class ChangeBillingPlanHandler
 			) {
 				// 사용량 조회
 				const payload = {
-					from: DateTime.fromISO(
-						billingProps.lastPaymentAt ||
-							billingProps.authenticatedAt
-					).toISODate(),
-					to: billingProps.planExpireDate
-						? DateTime.fromISO(
-								billingProps.planExpireDate
-						  ).toISODate()
-						: undefined,
+					from: DateTime.fromISO(billingProps.lastPaymentAt!)
+						.toISO()
+						.substring(0, 19),
 				};
 				const {total} = await this.vircleCoreApi.getUsedGuaranteeCount(
 					token.token,
@@ -179,7 +184,8 @@ export class ChangeBillingPlanHandler
 					this.paymentService.generatePaymentPayload(
 						token.partnerIdx,
 						billing.properties().customerKey,
-						newPlan
+						newPlan,
+						cancelPlan
 					),
 					cancelPlan
 				);

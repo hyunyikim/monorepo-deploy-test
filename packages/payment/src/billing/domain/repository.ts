@@ -1,6 +1,7 @@
 import {Payment} from './payment';
 import {Billing} from './billing';
 import {PricePlanProps} from './pricePlan';
+import {PAYMENT_STATUS} from '../infrastructure/api-client';
 
 export interface PaymentRepository {
 	savePayment: (payment: Payment) => Promise<void>;
@@ -9,10 +10,10 @@ export interface PaymentRepository {
 	findByOrderId: (id: string) => Promise<Payment | null>;
 	search: (
 		partnerIdx: number,
+		status: PAYMENT_STATUS,
 		sort: 'ASC' | 'DESC',
 		page: number,
-		pageSize: number,
-		range?: {startAt: Date; endAt: Date}
+		pageSize: number
 	) => Promise<{
 		total: number;
 		data: Payment[];

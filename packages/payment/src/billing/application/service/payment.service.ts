@@ -97,12 +97,15 @@ export class RegularPaymentService {
 		// 결제 금액 (부가세 적용)
 		let payPrice = pricePlan.payPrice;
 
-		// 취소할 금액이 있을 경우
+		// 취소할 금액이 있을 경우 (마이너스 결제 방지)
 		if (canceledPricePlan) {
-			payPrice -= canceledPricePlan.usedMonths
-				? (canceledPricePlan.totalPrice + canceledPricePlan.vat) *
-				  ((12 - canceledPricePlan.usedMonths) / 12)
-				: 0;
+			const canceledPrice = Number(canceledPricePlan.canceledPrice || 0);
+			payPrice -=
+				canceledPrice > payPrice
+					? payPrice
+					: canceledPrice > 0
+					? canceledPrice
+					: 0;
 		}
 
 		const orderId = [
@@ -135,7 +138,11 @@ export class RegularPaymentService {
 		if (!card) return false;
 
 		// 다음 결제 예정일자 또는 결제예정 금액이 없는 경우
-		if (!nextPaymentDate || !nextPricePlan || !nextPricePlan.totalPrice) {
+		if (
+			!nextPaymentDate ||
+			!nextPricePlan ||
+			!nextPricePlan.displayTotalPrice
+		) {
 			return false;
 		}
 

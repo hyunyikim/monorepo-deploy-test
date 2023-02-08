@@ -41,11 +41,11 @@ export class RegisterCardCommand implements ICommand {
 }
 
 export class DeleteCardCommand implements ICommand {
-	constructor(readonly token: TokenInfo) {}
+	constructor(readonly partnerIdx: number) {}
 }
 
 export class UnregisterBillingCommand implements ICommand {
-	constructor(readonly customerKey: string, readonly partnerIdx: number) {}
+	constructor(readonly customerKey: string) {}
 }
 
 export class DeleteBillingCommand implements ICommand {

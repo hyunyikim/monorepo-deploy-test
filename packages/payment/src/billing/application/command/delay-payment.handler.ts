@@ -38,7 +38,7 @@ export class DelayPaymentHandler
 	) {}
 
 	async execute(command: DelayPaymentCommand): Promise<void> {
-		const {partnerIdx, billing, orderId, payAmount} = command;
+		const {partnerIdx, billing, orderId, payAmount, failMessage} = command;
 
 		const pricePlan = billing.properties().pricePlan;
 
@@ -61,6 +61,7 @@ export class DelayPaymentHandler
 			...failedPayment,
 			partnerIdx,
 			pricePlan,
+			failMessage,
 		});
 		await this.paymentRepo.savePayment(payment);
 

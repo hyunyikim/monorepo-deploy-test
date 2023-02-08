@@ -13,7 +13,6 @@ export interface PricePlanProps {
 	discountRate: number;
 	discountPrice: number;
 	discountTotalPrice: number;
-	totalPrice: number;
 	vat: number;
 	payPrice: number;
 	planLimit: number;
@@ -21,6 +20,9 @@ export interface PricePlanProps {
 	planLevel: number;
 	activated: boolean;
 	usedMonths?: number;
+	canceledPrice?: number;
+	startedAt?: string;
+	finishedAt?: string;
 }
 
 /**
@@ -36,7 +38,6 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 	discountRate: number;
 	discountPrice: number;
 	discountTotalPrice: number;
-	totalPrice: number;
 	vat: number;
 	payPrice: number;
 	planLimit: number;
@@ -69,10 +70,9 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 			: 0;
 		this.discountTotalPrice = this.discountPrice * months; // 할인금액 * 개월
 		this.displayPrice = Math.round(this.planPrice - this.discountPrice); // 표시금액 = 정상가 - 할인금액
-		this.displayTotalPrice = this.displayPrice * months; // 표시금액 * 개월
+		this.displayTotalPrice = this.displayPrice * months; // 최종 금액 = (정상가 - 할인금액) * 개월;
 		this.planTotalPrice = this.planPrice * months; // 정상가 * 개월
-		this.totalPrice = this.displayPrice * months; // 최종 금액 = (정상가 - 할인금액) * 개월;
-		this.vat = this.totalPrice * 0.1; // 부가세 = 최종 금액 * 0.1
-		this.payPrice = this.totalPrice + this.vat;
+		this.vat = this.displayTotalPrice * 0.1; // 부가세 = 최종 금액 * 0.1
+		this.payPrice = this.displayTotalPrice + this.vat;
 	}
 }

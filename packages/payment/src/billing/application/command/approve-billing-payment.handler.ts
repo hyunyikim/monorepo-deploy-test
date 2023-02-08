@@ -76,19 +76,27 @@ export class ApproveBillingPaymentHandler
 
 			payment.commit();
 			billing.commit();
-		} catch (e) {
+		} catch (error) {
+			const message: string =
+				error instanceof Error
+					? error.message
+					: error && typeof error === 'object'
+					? JSON.stringify(error)
+					: String(error);
+
 			if (useDelay) {
 				// 결제 연장 신청
 				const delayCommand = new DelayPaymentCommand(
 					partnerIdx,
 					billing,
 					payload.orderId,
-					payload.amount
+					payload.amount,
+					message
 				);
 				await this.commandBus.execute(delayCommand);
 			}
 
-			throw e;
+			throw error;
 		}
 	}
 }

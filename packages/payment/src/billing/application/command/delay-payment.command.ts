@@ -6,6 +6,7 @@ export class DelayPaymentCommand implements ICommand {
 		readonly partnerIdx: number,
 		readonly billing: Billing,
 		readonly orderId: string,
-		readonly payAmount: number
+		readonly payAmount: number,
+		readonly failMessage: string
 	) {}
 }

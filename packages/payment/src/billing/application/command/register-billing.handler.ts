@@ -78,7 +78,7 @@ export class RegisterBillingHandler
 				token.partnerIdx
 			);
 			if (prevBilling) {
-				prevBilling.delete();
+				prevBilling.delete(true);
 				await this.billingRepo.saveBilling(prevBilling);
 				prevBilling.commit();
 			}
@@ -171,7 +171,7 @@ export class RegisterFreeBillingHandler
 		// 빌링 생성
 		const billingProps = {
 			billingKey,
-			partnerIdx,
+			partnerIdx: partnerIdx,
 			pricePlan: freePlan,
 			authenticatedAt: DateTime.now().toISO(),
 			planExpireDate: `${DateTime.now()
@@ -266,7 +266,7 @@ export class RegisterCardHandler
 
 		// 기존 빌링 삭제처리
 		if (prevBilling) {
-			prevBilling.delete();
+			prevBilling.delete(true);
 			await this.billingRepo.saveBilling(prevBilling);
 			prevBilling.commit();
 		}
@@ -288,12 +288,10 @@ export class DeleteCardHandler
 	) {}
 
 	async execute(command: DeleteCardCommand): Promise<void> {
-		const {token} = command;
+		const {partnerIdx} = command;
 
 		// 빌링 조회
-		const prevBilling = await this.billingRepo.findByPartnerIdx(
-			token.partnerIdx
-		);
+		const prevBilling = await this.billingRepo.findByPartnerIdx(partnerIdx);
 		if (!prevBilling) {
 			throw new NotFoundException('NOT_FOUND_BILLING_RESOURCE');
 		}
@@ -306,14 +304,14 @@ export class DeleteCardHandler
 		// 키 생성
 		const billingKey = [
 			'FREE_BILLING_KEY',
-			token.partnerIdx.toString(),
+			partnerIdx.toString(),
 			DateTime.now().valueOf(),
 		].join('_');
 
 		// 빌링 생성 (기존 구독 정보는 유지)
 		const newBillingProps = {
 			billingKey,
-			partnerIdx: token.partnerIdx,
+			partnerIdx: partnerIdx,
 			pricePlan: prevBillingProps.pricePlan,
 			authenticatedAt: DateTime.now().toISO(),
 			orderId: prevBillingProps.orderId,
@@ -336,7 +334,7 @@ export class DeleteCardHandler
 
 		// 기존 빌링 삭제처리
 		if (prevBilling) {
-			prevBilling.delete();
+			prevBilling.delete(true);
 			await this.billingRepo.saveBilling(prevBilling);
 			prevBilling.commit();
 		}
@@ -358,7 +356,7 @@ export class UnregisterBillingHandler
 	) {}
 
 	async execute(command: UnregisterBillingCommand): Promise<void> {
-		const {customerKey, partnerIdx} = command;
+		const {customerKey} = command;
 
 		// 빌링 조회
 		const billing = await this.billingRepo.findByCustomerKey(customerKey);

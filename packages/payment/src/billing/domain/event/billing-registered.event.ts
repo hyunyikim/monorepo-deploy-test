@@ -10,7 +10,10 @@ export class BillingUnregisteredEvent implements IEvent {
 }
 
 export class BillingDeletedEvent implements IEvent {
-	constructor(public readonly billing: BillingProps) {}
+	constructor(
+		public readonly billing: BillingProps,
+		public readonly isBillingChanged: boolean
+	) {}
 }
 
 export class CardRegisteredEvent implements IEvent {

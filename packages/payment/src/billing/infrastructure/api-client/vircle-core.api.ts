@@ -19,7 +19,21 @@ export class PaymentEmailPayload {
 
 	@IsObject()
 	@IsNotEmpty()
-	params: Record<string, string | number>;
+	params: Record<string, string>;
+}
+
+export class PaymentSlackPayload {
+	@IsNumber()
+	@IsNotEmpty()
+	partnerIdx: number;
+
+	@IsString()
+	@IsNotEmpty()
+	title: string;
+
+	@IsObject()
+	@IsNotEmpty()
+	params: Record<string, string>;
 }
 
 @Injectable()
@@ -41,21 +55,20 @@ export class VircleCoreApi {
 		token: string,
 		payload: FindRangePayload
 	): Promise<any> {
+		const queryString = Object.entries(payload)
+			.map((q) => q.join('='))
+			.join('&');
+
 		const {data} = await this.httpAgent.get<{
 			total: number;
 			confirmed: number;
 			completed: number;
 			canceled: number;
-		}>(
-			`v1/admin/nft/used?${Object.entries(payload)
-				.map((q) => q.join('='))
-				.join('&')}`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			}
-		);
+		}>(`v1/admin/nft/used?${queryString}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 		return data;
 	}
 
@@ -65,6 +78,18 @@ export class VircleCoreApi {
 	 */
 	async sendPaymentEmail(body: PaymentEmailPayload): Promise<any> {
 		const {data} = await this.httpAgent.post(`v1/common/mail/send`, body);
+		return data;
+	}
+
+	/**
+	 * 슬랙 메시지 발송
+	 * @param body
+	 */
+	async sendPaymentSlack(body: PaymentSlackPayload): Promise<any> {
+		const {data} = await this.httpAgent.post(
+			`v1/common/slack/send/payment`,
+			body
+		);
 		return data;
 	}
 }

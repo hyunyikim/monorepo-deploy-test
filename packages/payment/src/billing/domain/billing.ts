@@ -1,7 +1,6 @@
 import {AggregateRoot} from '@nestjs/cqrs';
 import {
 	BillingApprovedEvent,
-	BillingApproveFailedEvent,
 	BillingRegisteredEvent,
 	BillingUnregisteredEvent,
 	BillingDeletedEvent,
@@ -29,7 +28,7 @@ export interface Billing {
 	unregister: () => void;
 	registerCard: () => void;
 	deleteCard: () => void;
-	delete: () => void;
+	delete: (isBillingChanged?: boolean) => void;
 	isDeleted: boolean;
 	approve: (payment: PaymentProps) => void;
 	delay: (payment: PaymentProps) => void;
@@ -167,12 +166,15 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	/**
 	 * 구독 삭제
 	 */
-	delete(): void {
+	delete(isBillingChanged = false): void {
 		this.deletedAt = DateTime.now().toISO();
 		this.nextPricePlan = undefined;
 		this.nextPaymentDate = undefined;
 
-		const event = new BillingDeletedEvent(this.properties());
+		const event = new BillingDeletedEvent(
+			this.properties(),
+			isBillingChanged
+		);
 		this.apply(event);
 	}
 
@@ -222,7 +224,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			this.planExpireDate = now.toISO();
 		}
 
-		const event = new BillingDelayedEvent(this.properties());
+		const event = new BillingDelayedEvent(this.properties(), payment);
 		this.apply(event);
 	}
 
@@ -239,6 +241,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		scheduledDate?: string,
 		canceledPricePlan?: PricePlanProps
 	): void {
+		const prevPlan = this.props.pricePlan;
 		// 예약이 아닐경우 현재 플랜까지 즉시 신규플랜으로 변경
 		if (!scheduledDate) {
 			this.props.pricePlan = {
@@ -257,7 +260,11 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.planExpireDate = undefined;
 		this.paymentFailedCount = undefined;
 
-		const event = new PlanChangedEvent(this.properties(), !!scheduledDate);
+		const event = new PlanChangedEvent(
+			this.properties(),
+			prevPlan,
+			scheduledDate
+		);
 		this.apply(event);
 	}
 

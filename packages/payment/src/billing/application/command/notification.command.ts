@@ -1,11 +1,12 @@
-import {ICommand} from '@nestjs/cqrs';
-import {BillingProps, PaymentProps} from '../../domain';
-import {EMAIL_TEMPLATE} from '../../infrastructure/api-client';
+import {ICommand, IEvent} from '@nestjs/cqrs';
+import {BillingProps, PaymentProps, PricePlanProps} from '../../domain';
 
 export class NotificationCommand implements ICommand {
 	constructor(
-		readonly template: EMAIL_TEMPLATE,
+		readonly event: IEvent,
 		readonly billing: BillingProps,
-		readonly payment?: PaymentProps
+		readonly payment?: PaymentProps,
+		readonly plan?: PricePlanProps,
+		readonly date?: string
 	) {}
 }
