@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {debounce, throttle} from 'lodash';
+import {debounce} from 'lodash';
 import {useLoginStore} from '@/stores';
 import {goToParentUrl, sendAmplitudeLog} from '@/utils';
-// import Dialog from '@/components/common/Dialog';
 import {Dialog} from '@mui/material';
 
 // import img
@@ -19,11 +18,10 @@ import {
 	closeBtn2x,
 	blackCloseBtn,
 	blackCloseBtn2x,
-} from '@/assets/images/index';
-import {IcClose} from '@/assets/icon/index';
+} from '@/assets/images/homepage/index';
 
 interface openEmailModalProps {
-	openEmailModal(): void;
+	openEmailModal?(): void;
 	bgColor?: 'white' | 'black';
 }
 
@@ -46,27 +44,32 @@ function HomepageHeader({
 	};
 
 	const goToPage = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const path: string = e.target.dataset.path;
+		const path: string | undefined = e.target.dataset.path;
 
 		switch (path) {
 			case 'auth/login':
 				sendAmplitudeLog('homepage_login_click', {
-					button_title: '로그인 클릭',
+					button_title: '로그인 화면으로 이동',
 				});
 				break;
 			case 'auth/signup':
 				sendAmplitudeLog('homepage_signup_click', {
-					button_title: '무료로 가입하기 클릭',
+					button_title: '회원가입으로 이동',
 				});
 				break;
 			case 'pricing':
 				sendAmplitudeLog('homepage_pricing_click', {
-					button_title: '가격안내 클릭',
+					button_title: '가격안내 화면으로 이동',
 				});
 				break;
 			case 'dashboard':
 				sendAmplitudeLog('homepage_dashboard_click', {
 					button_title: '대시보드로 이동하기 클릭',
+				});
+				break;
+			case 'inquiry':
+				sendAmplitudeLog('homepage_dashboard_click', {
+					button_title: '도입문의 페이지 이동',
 				});
 				break;
 
@@ -140,14 +143,13 @@ function HomepageHeader({
 								className="header_list"
 								onClick={() => {
 									sendAmplitudeLog('homepage_blog_click', {
-										button_title: '블로그 클릭',
+										button_title: '네이버 블로그로 이동',
 									});
 								}}>
 								<a
 									href="https://blog.naver.com/vircle_"
 									target="_blank"
-									rel="noreferrer" /* className='faq_link' */
-								>
+									rel="noreferrer">
 									블로그
 								</a>
 							</li>
@@ -155,14 +157,14 @@ function HomepageHeader({
 								className="header_list"
 								onClick={() => {
 									sendAmplitudeLog('homepage_team_click', {
-										button_title: '버클팀 클릭',
+										button_title:
+											'버클팀노션 화면으로 이동',
 									});
 								}}>
 								<a
 									href="https://guide.vircle.co.kr/team"
 									target="_blank"
-									rel="noreferrer" /* className='faq_link' */
-								>
+									rel="noreferrer">
 									버클팀
 								</a>
 							</li>
@@ -176,15 +178,8 @@ function HomepageHeader({
 
 							<li
 								className="header_list"
-								onClick={() => {
-									sendAmplitudeLog(
-										'homepage_introduction_click',
-										{
-											button_title: '도입문의 클릭',
-										}
-									);
-									openEmailModal();
-								}}>
+								data-path="inquiry"
+								onClick={goToPage}>
 								도입문의
 							</li>
 						</ul>

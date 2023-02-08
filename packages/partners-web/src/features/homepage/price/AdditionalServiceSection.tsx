@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
-import {imgBeta, imgScissorsInGreenBox} from '@/assets/images/index';
-import {goToParentUrl} from '@/utils';
+import {imgBeta, imgScissorsInGreenBox} from '@/assets/images/homepage/index';
+import {goToParentUrl, sendAmplitudeLog} from '@/utils';
 
 const AdditionalServiceContainer = styled('section')`
 	padding: 160px 0px;
@@ -185,6 +185,13 @@ const GreenBoxStyle = styled('div')`
 const TextGridStyle = styled('div')`
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
+	p {
+		font-weight: 500;
+		font-size: 18px;
+		line-height: 18px;
+	}
+	/* white-space: nowrap; */
 
 	@media (max-width: 820px) {
 		flex-direction: column;
@@ -193,7 +200,12 @@ const TextGridStyle = styled('div')`
 
 function AdditionalServiceSection() {
 	const goToSignup = () => {
-		goToParentUrl('/auth/signup');
+		sendAmplitudeLog('homepage_pricing_start_trial_mid_click', {
+			button_title: '무료 체험 시작하기 클릭',
+		});
+		setTimeout(() => {
+			goToParentUrl('/auth/signup');
+		}, 300);
 	};
 	return (
 		<AdditionalServiceContainer>

@@ -81,7 +81,8 @@ function InputComponent({
 					fontSize={13}
 					fontWeight={500}
 					color={'red.main'}
-					lineHeight={'13px'}>
+					lineHeight={'13px'}
+					sx={{width: '100%'}}>
 					{error.message}
 				</Typography>
 			)}

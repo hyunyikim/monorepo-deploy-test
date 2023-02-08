@@ -43,7 +43,7 @@ import {
 	circleLogos2x,
 	plusIcon,
 	plusIcon2x,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
 
 import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 

@@ -6,7 +6,7 @@ import {
 	endingTitle2x,
 	endingTitleMobile,
 	endingTitleMobile2x,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
 import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 
 // import '../../assets/scss/partnersHomepage.scss';

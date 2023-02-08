@@ -59,6 +59,13 @@ export const introductionInquirySchemaShape = yup.object().shape({
 	isAgree: termSchemaValidation,
 });
 
+/* 리드페이지에서 인풋 스키마 */
+export const inquiryInputSchema = yup.object().shape({
+	companyName: yup.string().required('회사명을 입력해주세요.'),
+	name: yup.string().required('담당자 이름을 적어주세요'),
+	phoneNum: phoneNumberSchemaValidation,
+});
+
 // 프로필 설정 수정정보
 export const profileSettingSchemaShape = yup.object().shape({
 	companyName: yup.string().required('회사명을 입력해주세요.'),

@@ -6,7 +6,7 @@ import {
 	mainService2,
 	mainService3,
 	mainService4,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
 
 const MainServiceContainer = styled('section')`
 	padding: 120px 0px 60px;

@@ -13,7 +13,7 @@ import {
 	mobileColumnBg,
 	phoneFrameMobile,
 	headphone,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
 
 import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 
@@ -30,6 +30,14 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 		});
 
 		goToParentUrl(`/auth/signup`);
+	};
+
+	const goToInquiry = () => {
+		sendAmplitudeLog('homepage_introductiontop_click', {
+			button_title: '도입문의 클릭',
+		});
+
+		goToParentUrl(`/inquiry`);
 	};
 
 	return (
@@ -255,7 +263,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 																			'도입 문의하기',
 																	}
 																);
-																openEmailModal();
+																goToInquiry();
 															}}>
 															도입 문의하기
 														</button>
@@ -340,7 +348,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 												/>
 												<button
 													className="btn_intro white"
-													onClick={openEmailModal}>
+													onClick={goToInquiry}>
 													도입 문의하기
 												</button>
 											</div>

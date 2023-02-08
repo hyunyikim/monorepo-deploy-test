@@ -8,6 +8,7 @@ const PartnersHomepage = lazy(
 	() => import('@/features/homepage/PartnersHomepage.page')
 );
 const AboutPrice = lazy(() => import('@/features/homepage/AboutPrice.page'));
+const Inquiry = lazy(() => import('@/features/homepage/Inquiry.page'));
 const SignIn = lazy(() => import('@/features/auth/signin/SignIn.page'));
 const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const EmailVerificationFail = lazy(
@@ -53,6 +54,10 @@ const publicRoutes: RouteObject[] = [
 			{
 				path: '/pricing/v2',
 				element: <AboutPrice />,
+			},
+			{
+				path: '/inquiry/v2',
+				element: <Inquiry />,
 			},
 		],
 	},
