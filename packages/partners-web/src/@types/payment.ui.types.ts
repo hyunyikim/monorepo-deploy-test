@@ -31,7 +31,6 @@ export interface SubscribeInfoPreviewData {
 	displayTotalPrice: number; // 표기가격
 	planTotalPrice: number; // 정상가
 	discountTotalPrice?: number; // 할인가(연결제만 표기)
-	totalPrice: number; // 구독료
 	subscribeDuration: string; // 구독 기간
 	payApprovedAt?: string; // 결제일
 }

@@ -6,6 +6,7 @@ import {Stack, Link} from '@mui/material';
 import {
 	useGetUserPricePlan,
 	useGlobalLoading,
+	useIsPlanOnSubscription,
 	useMessageDialog,
 } from '@/stores';
 import {OnOpenParamType, PricePlan} from '@/@types';
@@ -14,7 +15,6 @@ import {
 	isPlanTypeYear,
 	isPlanUpgraded,
 	isPlanDowngraded,
-	isPlanOnSubscription,
 } from '@/data';
 import {patchPricePlan} from '@/api/payment.api';
 import {updateUserPricePlanData, openChannelTalk} from '@/utils';
@@ -131,15 +131,7 @@ function SubscribeMagageButtonGroup({
 	const {onOpen: onOpenMessageDialog, onOpenError} = useMessageDialog();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const {data: userPlan} = useGetUserPricePlan();
-	const isOnSubscription = useMemo(
-		() =>
-			isPlanOnSubscription({
-				startDate: userPlan?.planStartedAt,
-				endDate: userPlan?.planExpireDate,
-				isNextPlanExisted: !!userPlan?.nextPricePlan,
-			}),
-		[userPlan]
-	);
+	const {data: isOnSubscription} = useIsPlanOnSubscription();
 
 	const isPlanChanged = useMemo(() => {
 		if (!isOnSubscription) {
@@ -159,10 +151,17 @@ function SubscribeMagageButtonGroup({
 
 		// 기존 구독 종료
 		// 플랜 업그레이드 시
+		// 1. 동일한 플랜타입에서 업그레이드
+		// 2. 무료플랜에서 업그레이드
 		if (
 			!userPlan ||
 			!isOnSubscription ||
-			isPlanUpgraded(userPlan.pricePlan.planLevel, selectedPlan.planLevel)
+			(isPlanUpgraded(
+				userPlan.pricePlan.planLevel,
+				selectedPlan.planLevel
+			) &&
+				(userPlan.pricePlan.planType === selectedPlan.planType ||
+					isTrial))
 		) {
 			onSubscribeCheckModalOpen();
 			return;
@@ -176,6 +175,7 @@ function SubscribeMagageButtonGroup({
 		) {
 			messageDialogData = PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_MONTH_TO_YEAR;
 		}
+
 		// 연결제에서 월결제로
 		if (
 			isPlanTypeYear(userPlan.pricePlan.planType) &&
@@ -252,7 +252,7 @@ function SubscribeMagageButtonGroup({
 				</Button>
 			),
 		});
-	}, [selectedPlan, userPlan, isOnSubscription]);
+	}, [selectedPlan, userPlan, isTrial, isOnSubscription]);
 
 	return (
 		<Stack flexDirection="row" alignItems="center">

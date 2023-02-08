@@ -50,7 +50,7 @@ const LINE_NOTICE: LineNotice = {
 	// 유료플랜
 	// 유료플랜 이용 중 사용 가능한 개런티 일정범위 미만일 때
 	LACKING_GUARANTEE: {
-		content: `UPGRADE_PLAN_NAME으로 업그레이드를 권장합니다. 발급량 초과시 서비스 사용이 제한됩니다.`,
+		content: `UPGRADE_PLAN_NAME 플랜으로 업그레이드를 권장합니다. 발급량 초과시 서비스 사용이 제한됩니다.`,
 		color: 'green',
 	},
 	// 플랜 변경될 예정일 때 (월결제 -> 연결제)
@@ -66,12 +66,12 @@ const LINE_NOTICE: LineNotice = {
 	},
 	// 플랜 변경될 예정일 때 (월결제, 다운그레이드)
 	CHANGE_PLAN_DOWNGRADE_MONTHLY: {
-		content: `yyyy년 MM월 dd일 PLAN_NAME 구독이 종료 되며, DOWNGRADE_PLAN_NAME으로 변경됩니다.`,
+		content: `yyyy년 MM월 dd일 PLAN_NAME 플랜 구독이 종료 되며, DOWNGRADE_PLAN_NAME 플랜으로 변경됩니다.`,
 		color: 'primary',
 	},
 	// 플랜 종료 예정
 	CHARGED_PLAN_WILL_END: {
-		content: `yyyy년 MM월 dd일 PLAN_NAME 구독이 종료됩니다.`,
+		content: `yyyy년 MM월 dd일 PLAN_NAME 플랜 구독이 종료됩니다.`,
 		color: 'primary',
 	},
 	// 유료 플랜 종료
@@ -224,7 +224,7 @@ function SubscribeLineNotice() {
 			return {
 				...lineNotice,
 				content: replaceLineNotice(lineNotice.content, {
-					expiredDate: planStartedAt,
+					expiredDate: nextPlanStartDate,
 					planName: pricePlan.planName,
 					downgradePlanName: nextPricePlan && nextPricePlan.planName,
 				}),

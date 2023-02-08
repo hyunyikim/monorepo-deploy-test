@@ -6,7 +6,7 @@ import {SxProps} from '@mui/system';
 interface Props {
 	title: string;
 	desc: string;
-	isSubscribed?: boolean;
+	showSubscribedChip?: boolean;
 	isTrial: boolean;
 	isEnded?: boolean;
 	onClick?: () => void;
@@ -17,7 +17,7 @@ interface Props {
 function SubscribePlan({
 	title,
 	desc,
-	isSubscribed = false,
+	showSubscribedChip = false,
 	isTrial,
 	isEnded = false,
 	onClick,
@@ -59,7 +59,7 @@ function SubscribePlan({
 								mr="6px">
 								{title}
 							</Typography>
-							{isSubscribed && (
+							{showSubscribedChip && (
 								<IsSubscribedChip
 									isTrial={isTrial}
 									isEnded={isEnded}

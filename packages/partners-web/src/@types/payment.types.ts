@@ -10,7 +10,6 @@ export interface PricePlan {
 	discountRate: number; // 할인율(%)
 	discountPrice: number; // 할인금액
 	discountTotalPrice: number; // 할인금액 * 개월수
-	totalPrice: number; // 최종 금액
 	vat: number; // 부가세
 	planLimit: number; // 기간내 발급 가능수량
 	planType: PlanType;

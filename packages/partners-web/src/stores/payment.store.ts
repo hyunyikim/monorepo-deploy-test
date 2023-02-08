@@ -75,7 +75,7 @@ export const useGetUserPricePlan = (
 };
 
 /**
- * 유저가 유료플랜 구독 하고 있는지 여부
+ * 무료플랜 사용 여부
  */
 export const useIsUserUsedTrialPlan = (
 	{
@@ -90,12 +90,27 @@ export const useIsUserUsedTrialPlan = (
 		suspense,
 		refetchOnMount: false,
 		select: (userPlan) =>
-			userPlan.pricePlan.planLevel === TRIAL_PLAN.PLAN_LEVEL &&
+			userPlan.pricePlan.planLevel === TRIAL_PLAN.PLAN_LEVEL,
+	});
+};
+
+/**
+ * 현재 플랜 구독 여부
+ */
+export const useIsPlanOnSubscription = () => {
+	return useQuery({
+		queryKey: ['userPricePlan'],
+		queryFn: getUserPricePlan,
+		refetchOnMount: false,
+		select: (userPlan) =>
+			userPlan &&
 			isPlanOnSubscription({
-				startDate: new Date(userPlan.planStartedAt),
-				...(userPlan?.planExpireDate && {
-					endDate: new Date(userPlan?.planExpireDate),
-				}),
+				startDate: userPlan?.planStartedAt
+					? new Date(userPlan.planStartedAt)
+					: undefined,
+				endDate: userPlan?.planExpireDate
+					? new Date(userPlan.planExpireDate)
+					: undefined,
 				isNextPlanExisted: !!userPlan?.nextPricePlan,
 			}),
 	});

@@ -3,8 +3,8 @@ import {useState} from 'react';
 import {Stack} from '@mui/material';
 
 import {PlanType, PricePlan} from '@/@types';
-import {CHARGED_GROUP_PLAN, isPlanOnSubscription} from '@/data';
-import {useGetUserPricePlan, useIsUserUsedTrialPlan} from '@/stores';
+import {CHARGED_GROUP_PLAN} from '@/data';
+import {useIsPlanOnSubscription, useIsUserUsedTrialPlan} from '@/stores';
 
 import SubscribePlanSelect from './SubscribePlanSelect';
 import SubscribePlan from './SubscribePlan';
@@ -21,7 +21,8 @@ function ChargedSubscribePlan({
 	onChangePlan,
 	onChangePlanType,
 }: Props) {
-	const {data: isUserUsedTrialPlan} = useIsUserUsedTrialPlan();
+	const {data: isTrial} = useIsUserUsedTrialPlan();
+	const {data: isOnSubscription} = useIsPlanOnSubscription();
 	const [selectOpen, setSelectOpen] = useState(false);
 
 	return (
@@ -29,8 +30,8 @@ function ChargedSubscribePlan({
 			<SubscribePlan
 				title={CHARGED_GROUP_PLAN.PLAN_NAME}
 				desc={CHARGED_GROUP_PLAN.PLAN_DESCRIPTION}
-				isSubscribed={!isUserUsedTrialPlan}
-				isTrial={false}
+				showSubscribedChip={!isTrial && isOnSubscription}
+				isTrial={!!isTrial}
 				isEnded={false}>
 				<Stack alignItems="flex-end" mt="30px" mb="16px">
 					<SquaredSwitch

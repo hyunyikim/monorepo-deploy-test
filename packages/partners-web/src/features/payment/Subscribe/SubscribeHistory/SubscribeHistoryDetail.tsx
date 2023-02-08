@@ -45,7 +45,6 @@ function SubscribeHistoryDetail({idx}: Props) {
 				...(pricePlan.discountTotalPrice && {
 					discountTotalPrice: pricePlan.discountTotalPrice,
 				}),
-				totalPrice: pricePlan.totalPrice,
 				subscribeDuration: `${format(
 					new Date(startDate),
 					DATE_FORMAT_SEPERATOR_DOT
@@ -67,7 +66,6 @@ function SubscribeHistoryDetail({idx}: Props) {
 						discountTotalPrice:
 							canceledPricePlan.discountTotalPrice,
 					}),
-					totalPrice: canceledPricePlan.totalPrice,
 					subscribeDuration: `${format(
 						new Date(startDate),
 						DATE_FORMAT_SEPERATOR_DOT

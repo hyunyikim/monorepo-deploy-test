@@ -158,11 +158,11 @@ export const getPlanLeftDays = (endDate: Date) => {
 export const getSubscribePreviwData = ({
 	selectedPlan,
 	userPlan,
-	isUserUsedTrialPlan,
+	isTrial,
 }: {
 	selectedPlan: PricePlan;
 	userPlan?: UserPricePlanWithDate;
-	isUserUsedTrialPlan: boolean;
+	isTrial: boolean;
 }): TotalSubscribeInfoPreviewData => {
 	const isOnSubscription = isPlanOnSubscription({
 		startDate: userPlan?.planStartedAt,
@@ -175,7 +175,6 @@ export const getSubscribePreviwData = ({
 		displayTotalPrice: selectedPlan.displayTotalPrice,
 		planTotalPrice: selectedPlan.planTotalPrice,
 		discountTotalPrice: selectedPlan.discountTotalPrice,
-		totalPrice: selectedPlan.totalPrice,
 	};
 	const today = new Date();
 	const todayStr = format(today, DATE_FORMAT_SEPERATOR_DOT);
@@ -188,7 +187,7 @@ export const getSubscribePreviwData = ({
 
 	// 무료플랜이거나
 	// 구독 종료된 경우
-	if (isUserUsedTrialPlan || !isOnSubscription || !userPlan) {
+	if (isTrial || !isOnSubscription || !userPlan) {
 		return {
 			data: {
 				...data,
@@ -226,7 +225,6 @@ export const getSubscribePreviwData = ({
 					planName: pricePlan.planName,
 					displayTotalPrice: canceledPrice,
 					planTotalPrice: canceledPrice,
-					totalPrice: canceledPrice,
 					subscribeDuration: `${format(
 						planStartedAt,
 						DATE_FORMAT_SEPERATOR_DOT
