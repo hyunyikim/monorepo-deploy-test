@@ -23,14 +23,16 @@ export type SubscribeNoticeKey =
 export interface TotalSubscribeInfoPreviewData {
 	data: SubscribeInfoPreviewData;
 	canceledData?: SubscribeInfoPreviewData;
-	totalPaidPrice?: number;
+	finalTotalPrice?: number;
 }
 
 export interface SubscribeInfoPreviewData {
 	planName: string;
 	displayTotalPrice: number; // 표기가격
-	planTotalPrice: number; // 정상가
+	planTotalPrice?: number; // 정상가
+	totalPrice: number; // 최종 합계
 	discountTotalPrice?: number; // 할인가(연결제만 표기)
 	subscribeDuration: string; // 구독 기간
 	payApprovedAt?: string; // 결제일
+	usedPayPrice?: string; // 사용금액
 }

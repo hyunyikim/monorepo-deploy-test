@@ -9,7 +9,7 @@ import {IcPrinter, IcVircleLogo} from '@/assets/icon';
 import Breadcrumbs from '@/features/payment/common/Breadcrumbs';
 import {PaymentHistoryDetail} from '@/@types';
 import {useGetPartnershipInfo, useGetUserPaymentHistoryDetail} from '@/stores';
-import {DATE_FORMAT, getPaymentStatusNameByPaymentStatus} from '@/data';
+import {DATE_FORMAT} from '@/data';
 
 interface Props {
 	idx: string;
@@ -22,7 +22,6 @@ function PaymentReceiptDetail({idx}: Props) {
 	const paymentHistory = data as PaymentHistoryDetail;
 	const {data: partnershipData} = useGetPartnershipInfo();
 
-	// TODO: canceledData 추가
 	return (
 		<Stack
 			sx={{
@@ -89,19 +88,23 @@ function PaymentReceiptDetail({idx}: Props) {
 							justifyContent: 'flex-end',
 						},
 					}}>
-					<Grid item xs={1}>
-						<Typography
-							variant="body3"
-							fontWeight="bold"
-							color="grey.600">
-							브랜드명
-						</Typography>
-					</Grid>
-					<Grid item xs={2}>
-						<Typography variant="body3" color="grey.600">
-							{partnershipData?.brand?.name}
-						</Typography>
-					</Grid>
+					{partnershipData?.brand?.name && (
+						<>
+							<Grid item xs={1}>
+								<Typography
+									variant="body3"
+									fontWeight="bold"
+									color="grey.600">
+									브랜드명
+								</Typography>
+							</Grid>
+							<Grid item xs={2}>
+								<Typography variant="body3" color="grey.600">
+									{partnershipData?.brand?.name}
+								</Typography>
+							</Grid>
+						</>
+					)}
 					<Grid item xs={1}>
 						<Typography
 							variant="body3"
@@ -138,9 +141,9 @@ function PaymentReceiptDetail({idx}: Props) {
 					</Grid>
 					<Grid item xs={2}>
 						<Typography variant="body3" color="grey.600">
-							{getPaymentStatusNameByPaymentStatus(
-								paymentHistory.payStatus
-							)}
+							{paymentHistory.payStatus === 'DONE'
+								? '결제완료'
+								: '결제실패'}
 						</Typography>
 					</Grid>
 					<Grid item xs={1}>
@@ -225,6 +228,48 @@ function PaymentReceiptDetail({idx}: Props) {
 							</Grid>
 						</>
 					)}
+					{paymentHistory?.canceledPricePlan && (
+						<>
+							<Divider
+								sx={{
+									width: '100%',
+									borderColor: (theme) =>
+										theme.palette.grey[100],
+									marginY: '14px',
+								}}
+							/>
+							<Grid item xs={2}>
+								<Typography
+									variant="body3"
+									fontWeight="bold"
+									color="grey.600">
+									유료플랜 -{' '}
+									{
+										paymentHistory?.canceledPricePlan
+											?.planName
+									}
+								</Typography>
+								<Typography
+									variant="caption2"
+									color="primary.main"
+									ml="4px">
+									환불
+								</Typography>
+							</Grid>
+							<Grid item xs={1}>
+								<Typography
+									variant="body3"
+									fontWeight="bold"
+									color="primary.main">
+									₩
+									{(
+										(paymentHistory.canceledPricePlan
+											.canceledPrice || 0) / 1.1
+									).toLocaleString()}
+								</Typography>
+							</Grid>
+						</>
+					)}
 					<Divider
 						sx={{
 							width: '100%',
@@ -237,7 +282,7 @@ function PaymentReceiptDetail({idx}: Props) {
 							variant="body3"
 							fontWeight="bold"
 							color="grey.600">
-							합계
+							결제금액
 						</Typography>
 					</Grid>
 					<Grid item xs={2}>
@@ -245,10 +290,7 @@ function PaymentReceiptDetail({idx}: Props) {
 							variant="body3"
 							fontWeight="bold"
 							color="grey.600">
-							₩
-							{(
-								paymentHistory.pricePlan.displayTotalPrice || 0
-							).toLocaleString()}
+							₩{(paymentHistory.payPrice || 0).toLocaleString()}
 						</Typography>
 					</Grid>
 					<Grid item xs={2}>
@@ -258,12 +300,10 @@ function PaymentReceiptDetail({idx}: Props) {
 					</Grid>
 					<Grid item xs={1}>
 						<Typography variant="caption2" color="grey.600">
-							₩
-							{(
-								paymentHistory.pricePlan.vat || 0
-							).toLocaleString()}
+							₩{(paymentHistory.payVat || 0).toLocaleString()}
 						</Typography>
 					</Grid>
+
 					<Divider
 						sx={{
 							width: '100%',
@@ -284,7 +324,10 @@ function PaymentReceiptDetail({idx}: Props) {
 							variant="body3"
 							fontWeight="bold"
 							color="grey.600">
-							₩{(paymentHistory.payPrice || 0).toLocaleString()}
+							₩
+							{(
+								paymentHistory.payTotalPrice || 0
+							).toLocaleString()}
 						</Typography>
 					</Grid>
 				</Grid>

@@ -12,7 +12,11 @@ import {
 	Chip,
 	Select,
 } from '@/components';
-import {ListRequestParam, ListResponseV2, PaymentHistory} from '@/@types';
+import {
+	ListResponseV2,
+	PaymentHistory,
+	PaymentReceiptHistoryRequestParam,
+} from '@/@types';
 import {useList} from '@/utils/hooks';
 import {getPaymentReciptList} from '@/api/payment.api';
 import {DATE_FORMAT, defaultPageSize, sortSearchFilter} from '@/data';
@@ -34,13 +38,14 @@ function PaymentReceiptList() {
 		handleChangeFilter,
 	} = useList<
 		ListResponseV2<PaymentHistory[]>,
-		Pick<ListRequestParam, 'sort' | 'currentPage' | 'pageMaxNum'>
+		PaymentReceiptHistoryRequestParam
 	>({
 		apiFunc: getPaymentReciptList,
 		initialFilter: {
 			sort: 'latest',
 			currentPage: 1,
 			pageMaxNum: defaultPageSize,
+			status: '',
 		},
 		isQueryChange: false,
 	});
@@ -49,33 +54,33 @@ function PaymentReceiptList() {
 		data && (
 			<Stack>
 				<TableInfo totalSize={totalSize} unit="건">
-					{/* <Select
-					height={32}
-					value={filter?.sort ?? 'latest'}
-					options={[
-						{
-							label: '전체',
-							value: '',
-						},
-						{
-							label: '결제완료',
-							value: 'SUCCESS',
-						},
-						{
-							label: '결제실패',
-							value: 'FAIL',
-						},
-					]}
-					onChange={(e) => {
-						handleChangeFilter({
-							sort: e.target.value,
-						});
-					}}
-					sx={{
-						minWidth: '150px',
-						marginRight: '8px',
-					}}
-				/> */}
+					<Select
+						height={32}
+						value={filter?.status || ''}
+						options={[
+							{
+								label: '전체',
+								value: '',
+							},
+							{
+								label: '결제완료',
+								value: 'DONE',
+							},
+							{
+								label: '결제실패',
+								value: 'FAILED',
+							},
+						]}
+						onChange={(e) => {
+							handleChangeFilter({
+								status: e.target.value,
+							});
+						}}
+						sx={{
+							minWidth: '150px',
+							marginRight: '8px',
+						}}
+					/>
 					<Select
 						height={32}
 						value={filter?.sort ?? 'latest'}
@@ -126,14 +131,14 @@ function PaymentReceiptList() {
 								</TableCell>
 								<TableCell>구독</TableCell>
 								<TableCell>
-									{/* TODO: 날짜 체크 */}
 									{format(
 										new Date(item.startDate),
 										DATE_FORMAT
 									)}
 								</TableCell>
 								<TableCell>
-									{item.payPrice.toLocaleString()}원
+									{(item.payTotalPrice || 0).toLocaleString()}
+									원
 								</TableCell>
 								<TableCell>
 									{item.payStatus === 'DONE' ? (

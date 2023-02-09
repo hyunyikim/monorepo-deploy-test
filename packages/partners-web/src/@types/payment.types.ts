@@ -1,3 +1,5 @@
+import {ListRequestParam} from './list.types';
+
 export type PlanType = 'MONTH' | 'YEAR';
 
 export interface PricePlan {
@@ -62,15 +64,23 @@ export interface PaymentHistory {
 	planName: string;
 	startDate: string;
 	expireDate: string;
-	payPrice: number;
+	payPrice: number; // 결제금액
+	payVat: number; // 부가세
+	payTotalPrice: number; // 총 결제금액(결제금액 + 부가세)
 	payStatus: PaymentStatus;
 }
 
 export interface PaymentHistoryDetail extends PaymentHistory {
 	pricePlan: PricePlan;
-	canceledPricePlan?: PricePlan; // 취소된 플랜
+	canceledPricePlan?: PricePlan & {
+		startedAt: string;
+		finishedAt: string;
+		canceledPrice: number; // 취소금액(부가세 포함)
+		payPrice: number;
+		usedMonths: number;
+	}; // 취소된 플랜
 	payApprovedAt: string; // 결제 승인일자
-	totalPaidPrice: number; // 최종 결제금액
+	payTotalPrice: number; // 최종 결제금액
 }
 
 export type PaymentStatus =
@@ -88,3 +98,10 @@ export interface RegisterFreePlanRequestParam {
 	planMonth: number;
 	planLimit: number;
 }
+
+export type PaymentReceiptHistoryRequestParam = Pick<
+	ListRequestParam,
+	'sort' | 'currentPage' | 'pageMaxNum'
+> & {
+	status: '' | 'DONE' | 'FAILED';
+};

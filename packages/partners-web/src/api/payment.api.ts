@@ -10,6 +10,7 @@ import {
 	ListRequestParam,
 	ListResponseV2,
 	RegisterFreePlanRequestParam,
+	PaymentReceiptHistoryRequestParam,
 } from '@/@types';
 
 /**
@@ -69,20 +70,21 @@ export const getPaymentHistoryList = async (
 	);
 };
 
-// TODO: 결제상태 조건에 추가 되어야 함
 /**
  * 결제 내역 목록 조회
  */
 export const getPaymentReciptList = async (
-	params: Pick<ListRequestParam, 'sort' | 'currentPage' | 'pageMaxNum'>
+	params: PaymentReceiptHistoryRequestParam
 ) => {
+	const {sort, currentPage, pageMaxNum, ...rest} = params;
 	return await bearerTokenInstance.get<ListResponseV2<PaymentHistory[]>>(
 		'/payment/v1/billing/receipt',
 		{
 			params: {
-				sort: params.sort,
-				page: params.currentPage,
-				pageSize: params.pageMaxNum,
+				sort: sort,
+				page: currentPage,
+				pageSize: pageMaxNum,
+				...rest,
 			},
 		}
 	);

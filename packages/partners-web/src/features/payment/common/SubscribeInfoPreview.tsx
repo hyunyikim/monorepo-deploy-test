@@ -40,8 +40,8 @@ function SubscribeInfoPreview({data, sx = []}: Props) {
 				data={data?.data}
 				totalMark={data?.canceledData && 'Ⓑ'}
 			/>
-			{data?.totalPaidPrice && (
-				<TotalPrice totalPaidPrice={data?.totalPaidPrice || 0} />
+			{data?.finalTotalPrice && (
+				<TotalPrice value={data?.finalTotalPrice || 0} />
 			)}
 		</Stack>
 	);
@@ -95,19 +95,26 @@ const SubscribeInfoPreviewItem = ({
 						₩{(data?.displayTotalPrice || 0).toLocaleString()}
 					</Typography>
 				</Grid>
-				<Grid item xs={1}>
-					<Typography
-						variant="caption1"
-						color="grey.600"
-						className="list-dot">
-						정상가
-					</Typography>
-				</Grid>
-				<Grid item xs={2}>
-					<Typography fontSize={13} fontWeight={400} color="grey.600">
-						₩{(data?.planTotalPrice || 0).toLocaleString()}
-					</Typography>
-				</Grid>
+				{data?.planTotalPrice && (
+					<>
+						<Grid item xs={1}>
+							<Typography
+								variant="caption1"
+								color="grey.600"
+								className="list-dot">
+								정상가
+							</Typography>
+						</Grid>
+						<Grid item xs={2}>
+							<Typography
+								fontSize={13}
+								fontWeight={400}
+								color="grey.600">
+								₩{(data?.planTotalPrice || 0).toLocaleString()}
+							</Typography>
+						</Grid>
+					</>
+				)}
 				{!!data?.discountTotalPrice && (
 					<>
 						<Grid item xs={1}>
@@ -127,6 +134,26 @@ const SubscribeInfoPreviewItem = ({
 								{(
 									data?.discountTotalPrice || 0
 								).toLocaleString()}
+							</Typography>
+						</Grid>
+					</>
+				)}
+				{data?.usedPayPrice && (
+					<>
+						<Grid item xs={1}>
+							<Typography
+								variant="caption1"
+								color="grey.600"
+								className="list-dot">
+								사용금액
+							</Typography>
+						</Grid>
+						<Grid item xs={2}>
+							<Typography
+								fontSize={13}
+								fontWeight={400}
+								color="grey.600">
+								{data?.usedPayPrice}
 							</Typography>
 						</Grid>
 					</>
@@ -174,7 +201,7 @@ const SubscribeInfoPreviewItem = ({
 	);
 };
 
-const TotalPrice = ({totalPaidPrice}: {totalPaidPrice: number}) => {
+const TotalPrice = ({value}: {value: number}) => {
 	return (
 		<Stack
 			flexDirection="row"
@@ -194,7 +221,7 @@ const TotalPrice = ({totalPaidPrice}: {totalPaidPrice: number}) => {
 				</Typography>
 			</Stack>
 			<Typography variant="body3" fontWeight="bold" color="primary.main">
-				₩{(totalPaidPrice || 0).toLocaleString()}
+				₩{(value || 0).toLocaleString()}
 			</Typography>
 		</Stack>
 	);

@@ -124,7 +124,6 @@ function SubscribeHistoryList() {
 										DATE_FORMAT
 									)}
 								</TableCell>
-								{/* TODO: 고정값 확인 */}
 								<TableCell>결제완료</TableCell>
 							</TableRow>
 						))}

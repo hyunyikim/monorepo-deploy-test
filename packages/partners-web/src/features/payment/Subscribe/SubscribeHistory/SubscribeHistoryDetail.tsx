@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {format} from 'date-fns';
 
@@ -34,7 +34,7 @@ function SubscribeHistoryDetail({idx}: Props) {
 			pricePlan,
 			canceledPricePlan,
 			payApprovedAt,
-			totalPaidPrice,
+			payPrice,
 		} = data;
 
 		const res: TotalSubscribeInfoPreviewData = {
@@ -56,24 +56,27 @@ function SubscribeHistoryDetail({idx}: Props) {
 					new Date(payApprovedAt),
 					DATE_FORMAT_SEPERATOR_DOT
 				),
+				totalPrice: pricePlan.displayTotalPrice,
 			},
 			...(canceledPricePlan && {
 				canceledData: {
 					planName: canceledPricePlan.planName,
 					displayTotalPrice: canceledPricePlan.displayTotalPrice,
-					planTotalPrice: canceledPricePlan.planTotalPrice,
-					...(canceledPricePlan.discountTotalPrice && {
-						discountTotalPrice:
-							canceledPricePlan.discountTotalPrice,
-					}),
 					subscribeDuration: `${format(
-						new Date(startDate),
+						new Date(canceledPricePlan.startedAt),
 						DATE_FORMAT_SEPERATOR_DOT
-					)} - ${expireDate}`,
+					)} - ${format(
+						new Date(canceledPricePlan.finishedAt),
+						DATE_FORMAT_SEPERATOR_DOT
+					)}`,
+					usedPayPrice: `₩${(
+						canceledPricePlan.displayPrice || 0
+					).toLocaleString()} X ${canceledPricePlan.usedMonths}개월`,
+					totalPrice: (canceledPricePlan?.canceledPrice || 0) / 1.1,
 				},
 			}),
-			...(totalPaidPrice && {
-				totalPaidPrice,
+			...(payPrice && {
+				finalTotalPrice: payPrice,
 			}),
 		};
 		return res;
@@ -124,13 +127,7 @@ function SubscribeHistoryDetail({idx}: Props) {
 					}}
 				/>
 			)}
-			<SubscribeNoticeBullet
-				data={[
-					'업그레이드 시 기존 개런티 발급량이 남아 있다면 업그레이드한 플랜에 함께 적용됩니다.',
-					'환불은 카드취소가 불가능할 경우 고객센터를 통해 문의 주시면 사용일수를 계산해 지정계좌로 입금 해드립니다.',
-					'연결제 이용중 플랜의 구독을 취소하거나 다운그레이드 할 경우에는 위약금 규정에 따라 위약금을 공제 후 차액을 환불 해드립니다.',
-				]}
-			/>
+			<SubscribeNoticeBullet />
 		</Stack>
 	);
 }

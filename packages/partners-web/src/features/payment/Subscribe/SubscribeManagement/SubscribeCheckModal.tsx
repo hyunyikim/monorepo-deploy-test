@@ -58,6 +58,7 @@ function SubscribeCheckModal({
 		},
 		mutationFn: (data: PatchPlanRequestParam) => patchPricePlan(data),
 		onSuccess: () => {
+			onClose();
 			updateUserPricePlanData();
 			queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
@@ -66,11 +67,11 @@ function SubscribeCheckModal({
 				title: '구독 플랜이 변경됐습니다.',
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
-				onCloseFunc: onClose,
 			});
 			setIsAvailableSelect(false);
 		},
 		onError: (e) => {
+			// TODO: 결제 실패 에러 메시지 표기
 			onOpenError();
 		},
 		onSettled: () => {

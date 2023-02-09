@@ -169,12 +169,13 @@ export const getSubscribePreviwData = ({
 		endDate: userPlan?.planExpireDate,
 		isNextPlanExisted: !!userPlan?.nextPricePlan,
 	});
+
 	const data: SubscribeInfoPreviewData = {
 		planName: selectedPlan.planName,
 		subscribeDuration: '',
 		displayTotalPrice: selectedPlan.displayTotalPrice,
-		planTotalPrice: selectedPlan.planTotalPrice,
 		discountTotalPrice: selectedPlan.discountTotalPrice,
+		totalPrice: selectedPlan.displayTotalPrice,
 	};
 	const today = new Date();
 	const todayStr = format(today, DATE_FORMAT_SEPERATOR_DOT);
@@ -223,12 +224,15 @@ export const getSubscribePreviwData = ({
 			return {
 				canceledData: {
 					planName: pricePlan.planName,
-					displayTotalPrice: canceledPrice,
-					planTotalPrice: canceledPrice,
+					displayTotalPrice: pricePlan.displayTotalPrice,
 					subscribeDuration: `${format(
 						planStartedAt,
 						DATE_FORMAT_SEPERATOR_DOT
 					)} - ${todayStr}`,
+					usedPayPrice: `₩${(
+						canceledPlanTotalPriceByMonth || 0
+					).toLocaleString()} X ${usedMonths}개월`,
+					totalPrice: canceledPrice,
 				},
 				data: {
 					...data,
@@ -236,9 +240,10 @@ export const getSubscribePreviwData = ({
 						addYears(today, 1),
 						DATE_FORMAT_SEPERATOR_DOT
 					)}`,
+					totalPrice: data?.displayTotalPrice,
 					payApprovedAt: todayStr,
 				},
-				totalPaidPrice: data.displayTotalPrice - canceledPrice,
+				finalTotalPrice: data.displayTotalPrice - canceledPrice,
 			};
 		}
 
@@ -311,35 +316,4 @@ export const getSubscribePreviwData = ({
 			payApprovedAt: format(payApprovedAt, DATE_FORMAT_SEPERATOR_DOT),
 		},
 	};
-};
-
-export const getPaymentStatusNameByPaymentStatus = (status: PaymentStatus) => {
-	if (status === 'READY') {
-		return '준비됨';
-	}
-	if (status === 'IN_PROGRESS') {
-		return '진행중';
-	}
-	if (status === 'WAITING_FOR_DEPOSIT') {
-		return '가상계좌 입금 대기 중';
-	}
-	if (status === 'DONE') {
-		return '결제완료';
-	}
-	if (status === 'CANCELED') {
-		return '결제취소';
-	}
-	if (status === 'PARTIAL_CANCELED') {
-		return '결제 부분취소';
-	}
-	if (status === 'ABORTED') {
-		return '결제 승인실패';
-	}
-	if (status === 'EXPIRED') {
-		return '거래취소';
-	}
-	if (status === 'FAILED') {
-		return '결제실패';
-	}
-	return '';
 };
