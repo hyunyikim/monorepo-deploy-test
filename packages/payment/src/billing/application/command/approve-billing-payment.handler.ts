@@ -58,6 +58,7 @@ export class ApproveBillingPaymentHandler
 				if (lastPayment) {
 					lastPayment.expire();
 					await this.paymentRepo.savePayment(lastPayment);
+					lastPayment.commit();
 				}
 			}
 

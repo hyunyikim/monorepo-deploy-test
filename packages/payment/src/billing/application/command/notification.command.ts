@@ -6,7 +6,7 @@ export class NotificationCommand implements ICommand {
 		readonly event: IEvent,
 		readonly billing: BillingProps,
 		readonly payment?: PaymentProps,
-		readonly plan?: PricePlanProps,
+		readonly prevPlan?: PricePlanProps,
 		readonly date?: string
 	) {}
 }

@@ -33,7 +33,7 @@ export class NotificationHandler
 	) {}
 
 	async execute(command: NotificationCommand): Promise<void> {
-		const {billing, event, payment, plan, date} = command;
+		const {billing, event, payment, prevPlan, date} = command;
 
 		const detailPlanName = `${billing.pricePlan.planName} (${
 			billing.pricePlan.planType === 'YEAR' ? '연 결제' : '월 결제'
@@ -56,7 +56,7 @@ export class NotificationHandler
 
 			case PlanChangedEvent:
 				const isUpgrade =
-					plan!.planLevel < billing.nextPricePlan!.planLevel;
+					prevPlan!.planLevel < billing.nextPricePlan!.planLevel;
 
 				slackPayload = {
 					partnerIdx: billing.partnerIdx,
@@ -64,8 +64,10 @@ export class NotificationHandler
 						isUpgrade ? 'up' : 'down'
 					}:`,
 					params: {
-						이전플랜명: `${plan!.planName} (${
-							plan!.planType === 'YEAR' ? '연 결제' : '월 결제'
+						이전플랜명: `${prevPlan!.planName} (${
+							prevPlan!.planType === 'YEAR'
+								? '연 결제'
+								: '월 결제'
 						})`,
 						신규플랜명: `${billing.nextPricePlan!.planName} (${
 							billing.nextPricePlan!.planType === 'YEAR'
@@ -80,16 +82,19 @@ export class NotificationHandler
 				break;
 
 			case BillingApprovedEvent:
+				if (!payment) {
+					break;
+				}
 				mailPayload = {
-					partnerIdx: billing.partnerIdx,
+					partnerIdx: payment.partnerIdx,
 					template: EMAIL_TEMPLATE.COMPLETE_PAYMENT,
 					params: {
-						planName: billing.pricePlan.planName,
+						planName: payment.pricePlan.planName,
 						orderId:
-							billing.orderId!.split('_')[
-								billing.orderId!.split('_').length - 1
+							payment.orderId.split('_')[
+								payment.orderId.split('_').length - 1
 							],
-						payAmount: String(payment?.totalAmount || 0),
+						payAmount: String(payment.totalAmount || 0),
 					},
 				};
 				break;
@@ -105,7 +110,7 @@ export class NotificationHandler
 
 				slackPayload = {
 					partnerIdx: billing.partnerIdx,
-					title: ':moneybag: 정기구독 취소 :x:',
+					title: ':moneybag: 정기구독 취소 :no_entry:',
 					params: {
 						플랜명: detailPlanName,
 					},
@@ -125,7 +130,7 @@ export class NotificationHandler
 			case CardDeletedEvent:
 				slackPayload = {
 					partnerIdx: billing.partnerIdx,
-					title: ':moneybag: 정기구독 카드 삭제 :credit_card:',
+					title: ':moneybag: 정기구독 카드 삭제 :no_entry_sign:',
 					params: {
 						플랜명: detailPlanName,
 					},
@@ -133,6 +138,9 @@ export class NotificationHandler
 				break;
 
 			case BillingDelayedEvent:
+				if (!payment) {
+					break;
+				}
 				mailPayload = {
 					partnerIdx: billing.partnerIdx,
 					template: EMAIL_TEMPLATE.FAIL_PAYMENT,
@@ -151,9 +159,9 @@ export class NotificationHandler
 					}`,
 					params: {
 						플랜명: detailPlanName,
-						구독료: `${billing.pricePlan.displayTotalPrice.toLocaleString()}원`,
+						결제금액: `${payment.totalAmount.toLocaleString()}원`,
 						실패회수: String(failCount),
-						실패사유: payment!.failMessage ?? '',
+						실패사유: payment.failMessage ?? '',
 					},
 				};
 				break;
@@ -161,7 +169,7 @@ export class NotificationHandler
 			case BillingDeletedEvent:
 				slackPayload = {
 					partnerIdx: billing.partnerIdx,
-					title: ':moneybag: 정기구독 삭제 :x::x:',
+					title: ':moneybag: 정기구독 삭제 :x:',
 					params: {
 						플랜명: detailPlanName,
 					},
