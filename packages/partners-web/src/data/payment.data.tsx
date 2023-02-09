@@ -5,7 +5,6 @@ import {
 	UserPricePlanWithDate,
 	TotalSubscribeInfoPreviewData,
 	SubscribeInfoPreviewData,
-	PaymentStatus,
 } from '@/@types';
 import {
 	addMonths,

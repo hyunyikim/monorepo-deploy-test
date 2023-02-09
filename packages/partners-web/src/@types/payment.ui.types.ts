@@ -14,10 +14,7 @@ export type SubscribeLineNoticeKey =
 	| 'LACKING_GUARANTEE';
 
 export type SubscribeNoticeKey =
-	| Exclude<
-			SubscribeNoticeStatus,
-			'CHARGED_PLAN_WILL_END' | 'CHARGED_PLAN_FINISHED'
-	  >
+	| Exclude<SubscribeNoticeStatus, 'CHARGED_PLAN_WILL_END'>
 	| 'USING_MONTH';
 
 export interface TotalSubscribeInfoPreviewData {

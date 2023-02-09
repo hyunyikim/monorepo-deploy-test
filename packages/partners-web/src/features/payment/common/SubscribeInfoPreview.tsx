@@ -5,9 +5,11 @@ import {
 	TotalSubscribeInfoPreviewData,
 	SubscribeInfoPreviewData,
 } from '@/@types';
+import {IcDoc} from '@/assets/icon';
+import style from '@/assets/styles/style.module.scss';
 
 interface Props {
-	data: TotalSubscribeInfoPreviewData;
+	data: TotalSubscribeInfoPreviewData | null;
 	sx?: SxProps;
 }
 
@@ -28,20 +30,32 @@ function SubscribeInfoPreview({data, sx = []}: Props) {
 			flexDirection="column"
 			gap="12px"
 			sx={[...(Array.isArray(sx) ? sx : [sx])]}>
-			{data?.canceledData && (
-				<SubscribeInfoPreviewItem
-					subscribeType="cancel"
-					data={data.canceledData}
-					totalMark={data?.canceledData && 'Ⓐ'}
-				/>
-			)}
-			<SubscribeInfoPreviewItem
-				subscribeType="new"
-				data={data?.data}
-				totalMark={data?.canceledData && 'Ⓑ'}
-			/>
-			{data?.finalTotalPrice && (
-				<TotalPrice value={data?.finalTotalPrice || 0} />
+			{data ? (
+				<>
+					{data?.canceledData && (
+						<SubscribeInfoPreviewItem
+							subscribeType="cancel"
+							data={data.canceledData}
+							totalMark={data?.canceledData && 'Ⓐ'}
+						/>
+					)}
+					<SubscribeInfoPreviewItem
+						subscribeType="new"
+						data={data?.data}
+						totalMark={data?.canceledData && 'Ⓑ'}
+					/>
+					{data?.finalTotalPrice && (
+						<TotalPrice value={data?.finalTotalPrice || 0} />
+					)}
+				</>
+			) : (
+				// 선택되지 않았을 경우
+				<Stack className="flex-center" sx={[previewStyle]}>
+					<IcDoc width={24} height={24} color={style.vircleGrey300} />
+					<Typography variant="caption1" color="grey.300" mt="8px">
+						설정을 변경하면 구독 내용을 볼 수 있어요
+					</Typography>
+				</Stack>
 			)}
 		</Stack>
 	);

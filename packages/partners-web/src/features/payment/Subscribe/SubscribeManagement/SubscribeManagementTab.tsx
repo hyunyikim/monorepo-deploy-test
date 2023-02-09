@@ -89,7 +89,10 @@ function SubscribeManagementTab() {
 
 	const subscribePreviewData =
 		useMemo<TotalSubscribeInfoPreviewData | null>(() => {
-			if (!selectedPlan) {
+			if (
+				!selectedPlan ||
+				selectedPlan?.planId === userPlan?.pricePlan.planId // 동일한 플랜 선택시
+			) {
 				return null;
 			}
 			return getSubscribePreviwData({
@@ -148,11 +151,7 @@ function SubscribeManagementTab() {
 					}}>
 					{isAvailableSelect ? (
 						<>
-							{subscribePreviewData && (
-								<SubscribeInfoPreview
-									data={subscribePreviewData}
-								/>
-							)}
+							<SubscribeInfoPreview data={subscribePreviewData} />
 							<SubscribeNoticeBullet
 								{...(!isTrial && {
 									data: [
