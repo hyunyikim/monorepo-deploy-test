@@ -131,7 +131,6 @@ const useList = <
 		},
 		[isQueryChange, params, navigate, pathname]
 	);
-
 	const handleSearch = (newParam?: F) => {
 		const sortedParsedSearch = sortObjectByKey(params);
 		const param = {
@@ -139,18 +138,17 @@ const useList = <
 			...(newParam && newParam),
 		};
 		const sortedParam = sortObjectByKey(param);
-
 		const paramChanged =
 			JSON.stringify(sortedParsedSearch) !== JSON.stringify(sortedParam);
 
 		// 신규 파라미터라면, query string 변경
 		if (paramChanged) {
-			handleChangeFilter(params);
+			handleChangeFilter(param);
 			return;
 		}
 
 		// 동일한 파라미터라면, 데이터 재호출
-		handleLoadData(params);
+		handleLoadData(param);
 	};
 
 	const handleReset = useCallback(() => {
