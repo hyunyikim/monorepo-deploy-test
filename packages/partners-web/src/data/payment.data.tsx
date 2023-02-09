@@ -173,8 +173,9 @@ export const getSubscribePreviwData = ({
 	const data: SubscribeInfoPreviewData = {
 		planName: selectedPlan.planName,
 		subscribeDuration: '',
-		displayTotalPrice: selectedPlan.displayTotalPrice,
+		planTotalPrice: selectedPlan.planTotalPrice,
 		discountTotalPrice: selectedPlan.discountTotalPrice,
+		displayTotalPrice: selectedPlan.displayTotalPrice,
 		totalPrice: selectedPlan.displayTotalPrice,
 	};
 	const today = new Date();
@@ -218,7 +219,7 @@ export const getSubscribePreviwData = ({
 			const usedMonths =
 				differenceInMonths(new Date(), userPlan.planStartedAt) + 1;
 			const canceledPlanTotalPriceByMonth =
-				userPlan.pricePlan.displayTotalPrice / 12;
+				userPlan.pricePlan.displayPrice;
 			const canceledPrice =
 				canceledPlanTotalPriceByMonth * (12 - usedMonths);
 			return {

@@ -75,7 +75,7 @@ function SubscribeHistoryDetail({idx}: Props) {
 					totalPrice: (canceledPricePlan?.canceledPrice || 0) / 1.1,
 				},
 			}),
-			...(payPrice && {
+			...(canceledPricePlan && {
 				finalTotalPrice: payPrice,
 			}),
 		};
@@ -128,6 +128,7 @@ function SubscribeHistoryDetail({idx}: Props) {
 				/>
 			)}
 			<SubscribeNoticeBullet />
+			{/* TODO: detail 표기ㄴ */}
 		</Stack>
 	);
 }

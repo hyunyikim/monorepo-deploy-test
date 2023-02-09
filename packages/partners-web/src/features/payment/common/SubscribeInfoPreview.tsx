@@ -176,7 +176,7 @@ const SubscribeInfoPreviewItem = ({
 				</Grid>
 				<Grid item xs={2}>
 					<Typography variant="body3" fontWeight="bold">
-						₩{(data?.displayTotalPrice || 0).toLocaleString()}
+						₩{(data?.totalPrice || 0).toLocaleString()}
 					</Typography>
 				</Grid>
 				{data?.payApprovedAt && (
