@@ -3,15 +3,18 @@ import {useQueryClient} from '@tanstack/react-query';
 
 import {Button} from '@/components';
 
-import {useGlobalLoading, useMessageDialog} from '@/stores';
+import {
+	useGlobalLoading,
+	useMessageDialog,
+	useGetUserPricePlan,
+} from '@/stores';
 import {useChildModalOpen} from '@/utils/hooks';
 import {
 	bulkRegisterGuarantee,
 	bulkCancelGuarantee,
 	bulkDeleteGuarantee,
 } from '@/api/guarantee.api';
-import {updateUserPricePlanData} from '@/utils';
-
+import {updateUserPricePlanData, goToParentUrl} from '@/utils';
 import RegisterGuaranteeListProgressModal from '@/features/guarantee/List/RegisterGuaranteeListProgressModal';
 
 interface Props {
@@ -44,6 +47,8 @@ function GuaranteeCheckboxButton({
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
+
+	const {data: userPlan} = useGetUserPricePlan();
 
 	const handleRegisterGuaranteeList = async (checkedItems: number[]) => {
 		setIsLoading(true, false);
@@ -189,6 +194,75 @@ function GuaranteeCheckboxButton({
 		return null;
 	}
 
+	const currentGuaranteeBalance =
+		userPlan && userPlan?.pricePlan.planLimit - userPlan?.usedNftCount;
+	const isFreeTrial = userPlan?.pricePlan.planLevel === 0;
+	const currentDate = new Date().getTime();
+	const expireDate = userPlan?.planExpireDate
+		? new Date(userPlan?.planExpireDate).getTime()
+		: null;
+	const modalConfirmButton = (_text: string) => {
+		return (
+			<Button
+				color="black"
+				onClick={() => {
+					goToParentUrl('/b2b/payment/subscribe');
+				}}>
+				{_text}
+			</Button>
+		);
+	};
+
+	const freeTrialExpiredModal = () => {
+		return onOpenMessageDialog({
+			title: '무료체험 기간 종료로 서비스 이용이 제한됩니다.',
+			message: (
+				<>
+					무료체험 기간이 종료되어 서비스 이용이 제한됩니다.
+					<br />
+					유료 플랜으로 업그레이드 후 버클을 계속 이용해보세요.
+				</>
+			),
+			showBottomCloseButton: true,
+			closeButtonValue: '닫기',
+			disableClickBackground: true,
+			buttons: modalConfirmButton('플랜 업그레이드 하기'),
+		});
+	};
+
+	const expiredPricePlanModal = () => {
+		return onOpenMessageDialog({
+			title: '플랜 구독하고 개런티를 발급해보세요!',
+			showBottomCloseButton: true,
+			closeButtonValue: '닫기',
+			disableClickBackground: true,
+			buttons: modalConfirmButton('구독'),
+		});
+	};
+
+	const notEnoughGuaranteeBalanceModal = () => {
+		if (userPlan) {
+			return onOpenMessageDialog({
+				title: '개런티 발급량이 부족합니다.',
+				message: (
+					<>
+						현재 잔여 개런티 발급량은{' '}
+						{userPlan?.pricePlan?.planLimit -
+							userPlan?.usedNftCount}
+						개입니다.
+						<br />
+						플랜 업그레이드하고 {totalCount}개의 개런티를 모두
+						발급해보세요.
+					</>
+				),
+				showBottomCloseButton: true,
+				closeButtonValue: '닫기',
+				disableClickBackground: true,
+				buttons: modalConfirmButton('플랜 업그레이드 하기'),
+			});
+		}
+	};
+
 	return (
 		<>
 			<RegisterGuaranteeListProgressModal
@@ -240,6 +314,25 @@ function GuaranteeCheckboxButton({
 							color="black"
 							height={32}
 							onClick={() => {
+								if (expireDate) {
+									if (expireDate - currentDate < 0) {
+										if (isFreeTrial) {
+											/* 무료체험이 만료되었을때 */
+											return freeTrialExpiredModal();
+										} else {
+											/* 유로플랜이 만료되었을때 */
+											return expiredPricePlanModal();
+										}
+									}
+								}
+
+								/* 개런티 잔여량보다 발급하려는 수가 더 많을때 */
+								if (currentGuaranteeBalance) {
+									if (totalCount > currentGuaranteeBalance) {
+										return notEnoughGuaranteeBalanceModal();
+									}
+								}
+
 								if (
 									!isCheckedItemsExisted(
 										'발급할 개런티를 선택해주세요.'
@@ -247,6 +340,7 @@ function GuaranteeCheckboxButton({
 								) {
 									return;
 								}
+
 								onOpenMessageDialog({
 									title: '선택한 개런티를 발급하시겠습니까?',
 									showBottomCloseButton: true,

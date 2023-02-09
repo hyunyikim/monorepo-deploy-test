@@ -47,6 +47,7 @@ import {Button, InputWithLabel, BottomNavigation} from '@/components';
 import GuaranteeRegisterProduct from '@/features/guarantee/Register/GuaranteeRegisterProduct';
 import GuaranteeRegisterNewProductModal from '@/features/guarantee/Register/GuaranteeRegisterNewProductModal';
 import GuaranteeRegisterSelectProductModal from '@/features/guarantee/Register/GuaranteeRegisterSelectProductModal';
+import {useGetUserPricePlan} from '@/stores';
 
 interface Props {
 	initialData: GauranteeDetailResponse | null;
@@ -59,6 +60,7 @@ function GuaranteeRegisterForm({initialData}: Props) {
 		(state) => state.setData
 	);
 
+	const {data: userPlan} = useGetUserPricePlan();
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
@@ -202,6 +204,83 @@ function GuaranteeRegisterForm({initialData}: Props) {
 	const onSubmit = (
 		data: GuaranteeRegisterFormData | GuaranteeRegisterProductFormData
 	) => {
+		const isFreeTrial = userPlan?.pricePlan.planLevel === 0;
+		const currentDate = new Date().getTime();
+		const expireDate = userPlan?.planExpireDate
+			? new Date(userPlan?.planExpireDate).getTime()
+			: null;
+		const usedAllCredit =
+			userPlan &&
+			userPlan?.pricePlan.planLimit - userPlan?.usedNftCount <= 0;
+
+		if (expireDate) {
+			// 무료 플랜이 만료되었을때
+			if (expireDate - currentDate < 0) {
+				if (isFreeTrial) {
+					return onOpenMessageDialog({
+						title: '무료체험 기간 종료로 서비스 이용이 제한됩니다.',
+						message: (
+							<>
+								무료체험 기간이 종료되어 서비스 이용이
+								제한됩니다.
+								<br />
+								유료 플랜으로 업그레이드 후 버클을 계속
+								이용해보세요.
+							</>
+						),
+						showBottomCloseButton: true,
+						closeButtonValue: '닫기',
+						disableClickBackground: true,
+						buttons: (
+							<Button
+								color="black"
+								onClick={() => {
+									goToParentUrl('/b2b/payment/subscribe');
+								}}>
+								플랜 업그레이드 하기
+							</Button>
+						),
+					});
+				} else {
+					return onOpenMessageDialog({
+						title: '플랜 구독하고 개런티를 발급해보세요!',
+						showBottomCloseButton: true,
+						closeButtonValue: '닫기',
+						disableClickBackground: true,
+						buttons: (
+							<Button
+								color="black"
+								onClick={() => {
+									goToParentUrl('/b2b/payment/subscribe');
+								}}>
+								구독
+							</Button>
+						),
+					});
+				}
+			}
+		}
+
+		if (usedAllCredit) {
+			return onOpenMessageDialog({
+				title: '개런티 발급량이 모두 소진 되었습니다.',
+				message:
+					'나에게 맞는 플랜으로 업그레이드 후 개런티를 계속 발급해보세요.',
+				showBottomCloseButton: true,
+				closeButtonValue: '닫기',
+				disableClickBackground: true,
+				buttons: (
+					<Button
+						color="black"
+						onClick={() => {
+							goToParentUrl('/b2b/payment/subscribe');
+						}}>
+						플랜 업그레이드 하기
+					</Button>
+				),
+			});
+		}
+
 		if (!products || products?.length < 1) {
 			onOpenMessageDialog({
 				title: '상품을 입력해주세요.',
