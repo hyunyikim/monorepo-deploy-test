@@ -210,7 +210,7 @@ function PaymentReceiptDetail({idx}: Props) {
 							).toLocaleString()}
 						</Typography>
 					</Grid>
-					{paymentHistory.pricePlan.discountTotalPrice && (
+					{!!paymentHistory?.pricePlan?.discountTotalPrice && (
 						<>
 							<Grid item xs={2}>
 								<Typography variant="caption2" color="grey.600">

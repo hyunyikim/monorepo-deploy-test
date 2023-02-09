@@ -152,13 +152,7 @@ function SubscribeManagementTab() {
 					{isAvailableSelect ? (
 						<>
 							<SubscribeInfoPreview data={subscribePreviewData} />
-							<SubscribeNoticeBullet
-								{...(!isTrial && {
-									data: [
-										'월결제 이용중 연결제로 변경 할 경우에는 월결제가 끝나는 다음달부터 연결제가 진행됩니다.',
-									],
-								})}
-							/>
+							<SubscribeNoticeBullet />
 						</>
 					) : (
 						<SubscribeNotice />
