@@ -327,7 +327,9 @@ function GuaranteeCheckboxButton({
 								}
 
 								/* 개런티 잔여량보다 발급하려는 수가 더 많을때 */
-								if (currentGuaranteeBalance) {
+								if (
+									typeof currentGuaranteeBalance === 'number'
+								) {
 									if (totalCount > currentGuaranteeBalance) {
 										return notEnoughGuaranteeBalanceModal();
 									}
