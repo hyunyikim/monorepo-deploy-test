@@ -136,7 +136,9 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	unregister(): void {
 		this.nextPricePlan = undefined;
 		this.nextPaymentDate = undefined;
-		this.planExpireDate = DateTime.fromISO(this.lastPaymentAt!)
+		this.planExpireDate = DateTime.fromISO(
+			this.props.lastPaymentAt || this.props.authenticatedAt
+		)
 			.plus({
 				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
 				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,

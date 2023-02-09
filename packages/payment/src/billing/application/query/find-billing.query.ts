@@ -37,19 +37,26 @@ export class FindBillingByPartnerTokenHandler
 
 		const usedMonths: number =
 			Math.ceil(
-				-DateTime.fromISO(billingProps.lastPaymentAt!).diffNow('months')
-					.months
+				-DateTime.fromISO(
+					billingProps.lastPaymentAt || billingProps.authenticatedAt
+				).diffNow('months').months
 			) || 1;
 
 		// 연결제일 경우 오늘일자가 포함된 1개월치만 검색되도록
 		const startDate: string =
 			usedMonths > 1
-				? DateTime.fromISO(billingProps.lastPaymentAt!)
+				? DateTime.fromISO(
+						billingProps.lastPaymentAt ||
+							billingProps.authenticatedAt
+				  )
 						.plus({
 							months: usedMonths - 1,
 						})
 						.toISO()
-				: DateTime.fromISO(billingProps.lastPaymentAt!).toISO();
+				: DateTime.fromISO(
+						billingProps.lastPaymentAt ||
+							billingProps.authenticatedAt
+				  ).toISO();
 
 		// 사용량 조회
 		const payload = {

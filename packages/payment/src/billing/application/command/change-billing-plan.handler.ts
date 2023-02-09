@@ -111,9 +111,10 @@ export class ChangeBillingPlanHandler
 				// 사용한 개월수 = 플랜 시작일(직전 결제일) 부터 현재까지 개월 수
 				const usedMonths: number =
 					Math.ceil(
-						-DateTime.fromISO(billingProps.lastPaymentAt!).diffNow(
-							'months'
-						).months
+						-DateTime.fromISO(
+							billingProps.lastPaymentAt ||
+								billingProps.authenticatedAt
+						).diffNow('months').months
 					) || 1;
 
 				// 개월수로 계산 시 올림으로 인해 최대 13개월로 계산될 수 있음을 방지
@@ -143,7 +144,10 @@ export class ChangeBillingPlanHandler
 			) {
 				// 사용량 조회
 				const payload = {
-					from: DateTime.fromISO(billingProps.lastPaymentAt!)
+					from: DateTime.fromISO(
+						billingProps.lastPaymentAt ||
+							billingProps.authenticatedAt
+					)
 						.toISO()
 						.substring(0, 19),
 				};
