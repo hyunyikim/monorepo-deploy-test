@@ -5,17 +5,19 @@ import {useMemo} from 'react';
 const defaultData = ['VAT(10%)가 별도 추가됩니다.'];
 
 interface Props {
+	useDefaultData?: boolean;
 	data?: string[];
 	sx?: SxProps<Theme>;
 }
 
-function SubscribeNoticeBullet({data, sx = {}}: Props) {
+function SubscribeNoticeBullet({useDefaultData = true, data, sx = {}}: Props) {
 	const dataList = useMemo(() => {
+		const filteredDefaultData = useDefaultData ? defaultData : [];
 		if (data) {
-			return [...defaultData, ...data];
+			return [...filteredDefaultData, ...data];
 		}
-		return defaultData;
-	}, [data]);
+		return filteredDefaultData;
+	}, [useDefaultData, data]);
 
 	return (
 		<List

@@ -374,7 +374,7 @@ function SignUpForm({
 							button_title: '회원가입 완료',
 						});
 					}}>
-					지금 무료로 시작하기
+					30일 무료 체험 시작하기
 				</Button>
 			</Stack>
 		</form>

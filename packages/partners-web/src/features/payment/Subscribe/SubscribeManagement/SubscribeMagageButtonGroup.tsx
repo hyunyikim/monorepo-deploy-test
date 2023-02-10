@@ -24,7 +24,6 @@ import {Button} from '@/components';
 import CancelSubscribe from './CancelSubscribe';
 
 type PaymentMessageModalKey =
-	| 'CANCEL_SUBSCRIBE'
 	| 'CHANGE_PLAN_YEAR_TO_MONTH'
 	| 'CHANGE_PLAN_MONTH_TO_YEAR'
 	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY'
@@ -41,12 +40,6 @@ const onClickChangePlanGuide = () => {
 };
 
 export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
-	CANCEL_SUBSCRIBE: {
-		title: '정말 구독을 취소하시겠어요?',
-		message: `지금 구독 취소하시면 yyyy년 M월 YY일까지 이용 가능하고, 그 이후부터 개런티 발급이 제한됩니다. 계속 하시겠어요?`,
-		showBottomCloseButton: true,
-		closeButtonValue: '취소',
-	},
 	CHANGE_PLAN_YEAR_TO_MONTH: {
 		title: '연결제를 월결제로 변경하시나요?',
 		message: (

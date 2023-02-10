@@ -26,7 +26,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 
 	const goToSignup = () => {
 		sendAmplitudeLog('homepage_signuptop_click', {
-			button_title: '지금 무료로 시작하기',
+			button_title: '30일 무료 체험 시작하기',
 		});
 
 		goToParentUrl(`/auth/signup`);
@@ -250,7 +250,8 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 															onClick={
 																goToSignup
 															}>
-															지금 무료로 시작하기
+															30일 무료 체험
+															시작하기
 														</button>
 
 														<button
@@ -336,7 +337,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 											<button
 												className="btn_intro blue"
 												onClick={goToSignup}>
-												지금 무료로 시작하기
+												30일 무료 체험 시작하기
 											</button>
 
 											<div className="btn_box">

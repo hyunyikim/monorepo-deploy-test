@@ -26,7 +26,7 @@ function CancelSubscribe({}) {
 	const nextPlanStartDate = userPlan?.nextPlanStartDate;
 	const dialogMessage =
 		nextPlanStartDate &&
-		`지금 구독 취소하시면 yyyy년 MM월 dd일까지 이용 가능하고, 그 이후부터 개런티 발급이 제한됩니다. 계속 하시겠어요?`
+		`지금 구독 취소하시면 yyyy년 MM월 dd일까지 이용 가능하고, 그 이후부터 서비스 이용이 일부 제한됩니다. 계속 하시겠어요?`
 			.replace(/yyyy/g, format(nextPlanStartDate, 'yyyy'))
 			.replace(/MM/g, format(nextPlanStartDate, 'M'))
 			.replace(/dd/g, format(nextPlanStartDate, 'd'));
