@@ -1,10 +1,24 @@
 import {Injectable} from '@nestjs/common';
 import Axios, {AxiosInstance} from 'axios';
-import {IsNotEmpty, IsNumber, IsObject, IsString} from 'class-validator';
+import {Transform} from 'class-transformer';
+import {
+	IsNotEmpty,
+	IsNumber,
+	IsObject,
+	IsOptional,
+	IsString,
+} from 'class-validator';
 import {EMAIL_TEMPLATE} from './resource';
 
-export interface FindRangePayload {
+export class FindRangePayload {
+	@IsString()
+	@IsOptional()
+	@Transform(({value}) => encodeURIComponent(String(value ?? '')))
 	from?: string;
+
+	@IsString()
+	@IsOptional()
+	@Transform(({value}) => encodeURIComponent(String(value ?? '')))
 	to?: string;
 }
 

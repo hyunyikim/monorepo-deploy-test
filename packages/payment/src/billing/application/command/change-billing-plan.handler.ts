@@ -179,9 +179,6 @@ export class ChangeBillingPlanHandler
 
 		// 결제 요청
 		try {
-			// 구독정보 변경
-			billing.changePlan(newPlan, remainLimit, scheduledDate, cancelPlan);
-
 			if (!scheduledDate) {
 				// 즉시 결제 요청
 				const approveCommand = new ApproveBillingPaymentCommand(
@@ -198,6 +195,9 @@ export class ChangeBillingPlanHandler
 				);
 				await this.commandBus.execute(approveCommand);
 			}
+
+			// 구독정보 변경
+			billing.changePlan(newPlan, remainLimit, scheduledDate, cancelPlan);
 
 			// DB 저장
 			await this.billingRepo.saveBilling(billing);
