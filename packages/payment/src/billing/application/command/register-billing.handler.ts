@@ -88,6 +88,7 @@ export class RegisterBillingHandler
 				...tossBilling,
 				partnerIdx: token.partnerIdx,
 				pricePlan,
+				paymentEmail: cardInfo.customerEmail,
 			});
 
 			// 구독 신청
@@ -252,6 +253,7 @@ export class RegisterCardHandler
 			}),
 			partnerIdx: token.partnerIdx,
 			pricePlan: prevBillingProps?.pricePlan || new PricePlan(),
+			paymentEmail: cardInfo.customerEmail,
 		};
 
 		const newBilling = this.factory.create(newBillingProps);

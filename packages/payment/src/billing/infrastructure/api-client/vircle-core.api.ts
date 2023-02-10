@@ -34,6 +34,10 @@ export class PaymentEmailPayload {
 	@IsObject()
 	@IsNotEmpty()
 	params: Record<string, string>;
+
+	@IsString()
+	@IsOptional()
+	email?: string;
 }
 
 export class PaymentSlackPayload {

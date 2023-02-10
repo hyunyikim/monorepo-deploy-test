@@ -61,6 +61,7 @@ export type BillingProps = TossBilling & {
 	nextPricePlan?: PricePlanProps;
 	canceledPricePlan?: PricePlanProps;
 	usedNftCount?: number;
+	paymentEmail?: string;
 };
 
 /**
@@ -81,6 +82,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	private nextPricePlan?: PricePlanProps;
 	private canceledPricePlan?: PricePlanProps;
 	private readonly usedNftCount?: number;
+	private readonly paymentEmail?: string;
 
 	constructor(private props: BillingProps) {
 		super();
@@ -98,6 +100,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.nextPricePlan = props?.nextPricePlan;
 		this.canceledPricePlan = props?.canceledPricePlan;
 		this.usedNftCount = props?.usedNftCount;
+		this.paymentEmail = props?.paymentEmail;
 	}
 
 	properties(): BillingProps {
@@ -119,6 +122,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				: undefined,
 			canceledPricePlan: this.canceledPricePlan,
 			usedNftCount: this.usedNftCount,
+			paymentEmail: this.paymentEmail,
 		};
 	}
 

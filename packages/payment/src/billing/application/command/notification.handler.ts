@@ -86,6 +86,7 @@ export class NotificationHandler
 					break;
 				}
 				mailPayload = {
+					email: billing.paymentEmail,
 					partnerIdx: payment.partnerIdx,
 					template: EMAIL_TEMPLATE.COMPLETE_PAYMENT,
 					params: {
@@ -101,6 +102,7 @@ export class NotificationHandler
 
 			case BillingUnregisteredEvent:
 				mailPayload = {
+					email: billing.paymentEmail,
 					partnerIdx: billing.partnerIdx,
 					template: EMAIL_TEMPLATE.CANCEL_PAYMENT,
 					params: {
@@ -142,6 +144,7 @@ export class NotificationHandler
 					break;
 				}
 				mailPayload = {
+					email: billing.paymentEmail,
 					partnerIdx: billing.partnerIdx,
 					template: EMAIL_TEMPLATE.FAIL_PAYMENT,
 					params: {
