@@ -144,7 +144,7 @@ function ServiceInterworkRepair() {
 						onClick={() => {
 							goToParentUrl('/b2b/payment/subscribe');
 						}}>
-						플랜 업그레이드 하기
+						플랜 업그레이드
 					</Button>
 				),
 			});

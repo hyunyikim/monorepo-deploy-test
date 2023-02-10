@@ -226,7 +226,7 @@ function GuaranteeCheckboxButton({
 			showBottomCloseButton: true,
 			closeButtonValue: '닫기',
 			disableClickBackground: true,
-			buttons: modalConfirmButton('플랜 업그레이드 하기'),
+			buttons: modalConfirmButton('플랜 업그레이드'),
 		});
 	};
 
@@ -258,7 +258,7 @@ function GuaranteeCheckboxButton({
 				showBottomCloseButton: true,
 				closeButtonValue: '닫기',
 				disableClickBackground: true,
-				buttons: modalConfirmButton('플랜 업그레이드 하기'),
+				buttons: modalConfirmButton('플랜 업그레이드'),
 			});
 		}
 	};

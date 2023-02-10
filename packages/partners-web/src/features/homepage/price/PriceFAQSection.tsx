@@ -406,7 +406,7 @@ function PriceFAQSection() {
 						다른 궁금한 점이 있는 경우,{' '}
 					</TextWithCommaStyle>
 					<a
-						href="https://mation.notion.site/7a397a6aac6f4955b0be326c4f162f54"
+						href="https://guide.vircle.co.kr/subscription"
 						target="_blank"
 						rel="noreferrer">
 						<button

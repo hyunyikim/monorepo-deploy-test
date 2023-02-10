@@ -15,7 +15,7 @@ import {Stack} from '@mui/material';
 import AtagComponent from '@/components/atoms/AtagComponent';
 
 type ButtonActiveProps = {
-	activate: boolean;
+	activate?: boolean;
 };
 
 const InquiryFormContainerStyle = styled('section')`
@@ -264,6 +264,8 @@ function InquiryForm() {
 		watch,
 		getValues,
 		formState: {errors},
+		setError,
+		setValue,
 	} = useForm<FieldValues>({
 		resolver: yupResolver(inquiryInputSchema),
 		mode: 'onSubmit',
@@ -284,6 +286,9 @@ function InquiryForm() {
 			button_title: '도입문의 bottom 버튼 클릭',
 		});
 
+		/* TODO: 필수 체크 박스 선택 안하면 에러 문구 띄우기 */
+		// setError()
+
 		try {
 			const slackRes = await sendSlack({
 				type: 'operation',
@@ -299,6 +304,11 @@ function InquiryForm() {
 			});
 
 			if (slackRes) {
+				/* TODO: 인풋값 디폴트로 변경 */
+				setValue('companyName', '');
+				setValue('name', '');
+				setValue('phoneNum', '');
+
 				onOpen({
 					title: '도입문의가 완료되었습니다.',
 					message:
@@ -458,7 +468,12 @@ function InquiryForm() {
 					</CheckboxSectionStyle>
 
 					<InquiryButtonWrapStyle
-						activate={checkboxState.agreePersonalInfo}>
+						activate={
+							checkboxState.agreePersonalInfo &&
+							watch().companyName &&
+							watch().name &&
+							watch().phoneNum
+						}>
 						<button
 							type="submit"
 							disabled={!checkboxState.agreePersonalInfo}>

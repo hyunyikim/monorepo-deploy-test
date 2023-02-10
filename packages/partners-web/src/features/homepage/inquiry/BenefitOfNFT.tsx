@@ -19,7 +19,7 @@ const BenefitContainerStyle = styled('section')`
 		background-color: transparent;
 	}
 	@media (max-width: 480px) {
-		padding: 137px 22.5px 25px;
+		padding: 100px 22.5px 25px;
 	}
 `;
 
@@ -199,7 +199,7 @@ const DigitalGuaranteeProsBoxStyle = styled('div')`
 			margin: auto;
 
 			p {
-				font-size: 20px;
+				font-size: 16px;
 			}
 
 			img {

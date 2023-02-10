@@ -12,6 +12,10 @@ import {
 
 const InquiryContainerStyle = styled('section')`
 	padding-top: 102px;
+
+	@media (max-width: 480px) {
+		padding-top: 60px;
+	}
 `;
 
 const InquiryWrapStyle = styled('div')`
@@ -54,7 +58,8 @@ const MainTextAreaStyle = styled('div')`
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 162px;
+	top: 122px;
+	/* top: 162px; */
 	z-index: 3;
 	h3 {
 		font-weight: 300;
@@ -112,7 +117,7 @@ const VideoWrapStyle = styled('div')`
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 102px;
+	top: 60px;
 	z-index: 2;
 
 	video {

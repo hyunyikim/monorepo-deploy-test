@@ -34,6 +34,7 @@ import {
 import {SignUpRequestFormData} from '@/@types';
 import {useNavigate} from 'react-router-dom';
 import {useMessageDialog} from '@/stores';
+import AtagComponent from '@/components/atoms/AtagComponent';
 
 const inputList = [
 	{
@@ -316,35 +317,25 @@ function SignUpForm({
 										}
 										label={
 											<Box color="grey.600">
-												<Box
-													display="inline-block"
-													color="primary.main"
-													fontWeight={600}
-													className="underline cursor-pointer"
-													onClick={(e) => {
-														e.preventDefault();
-														onSetAgreementType(
-															'policy'
-														);
-														onOpenModal();
-													}}>
-													서비스 이용약관
-												</Box>
+												<AtagComponent url="https://guide.vircle.co.kr/policy/agreement_230213">
+													<Box
+														display="inline-block"
+														color="primary.main"
+														fontWeight={600}
+														className="underline cursor-pointer">
+														서비스 이용약관
+													</Box>
+												</AtagComponent>
 												과{' '}
-												<Box
-													display="inline-block"
-													color="primary.main"
-													fontWeight={600}
-													className="underline cursor-pointer"
-													onClick={(e) => {
-														e.preventDefault();
-														onSetAgreementType(
-															'privacy'
-														);
-														onOpenModal();
-													}}>
-													개인정보 수집 및 이용
-												</Box>
+												<AtagComponent url="https://guide.vircle.co.kr/policy/terms_230213">
+													<Box
+														display="inline-block"
+														color="primary.main"
+														fontWeight={600}
+														className="underline cursor-pointer">
+														개인정보 수집 및 이용
+													</Box>
+												</AtagComponent>
 												에 동의합니다.
 											</Box>
 										}
