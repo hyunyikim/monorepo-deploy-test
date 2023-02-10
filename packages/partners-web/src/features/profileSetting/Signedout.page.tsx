@@ -118,7 +118,7 @@ function Signedout() {
 		}
 	}, [partnershipData]);
 
-	return (
+	return partnershipData && partnershipData.isLeaved === 'Y' ? (
 		<Stack
 			sx={{
 				gap: '40px',
@@ -239,6 +239,8 @@ function Signedout() {
 				</Stack>
 			</form>
 		</Stack>
+	) : (
+		<></>
 	);
 }
 
