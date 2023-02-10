@@ -58,8 +58,7 @@ const MainTextAreaStyle = styled('div')`
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 122px;
-	/* top: 162px; */
+	top: 162px;
 	z-index: 3;
 	h3 {
 		font-weight: 300;
@@ -94,7 +93,7 @@ const MainTextAreaStyle = styled('div')`
 	}
 
 	@media (max-width: 480px) {
-		top: 165px;
+		top: 122px;
 		h3 {
 			font-size: 20px;
 		}
