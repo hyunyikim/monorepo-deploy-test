@@ -286,9 +286,6 @@ function InquiryForm() {
 			button_title: '도입문의 bottom 버튼 클릭',
 		});
 
-		/* TODO: 필수 체크 박스 선택 안하면 에러 문구 띄우기 */
-		// setError()
-
 		try {
 			const slackRes = await sendSlack({
 				type: 'operation',
@@ -304,7 +301,6 @@ function InquiryForm() {
 			});
 
 			if (slackRes) {
-				/* TODO: 인풋값 디폴트로 변경 */
 				setValue('companyName', '');
 				setValue('name', '');
 				setValue('phoneNum', '');
@@ -472,7 +468,7 @@ function InquiryForm() {
 							checkboxState.agreePersonalInfo &&
 							watch().companyName &&
 							watch().name &&
-							watch().phoneNum
+							watch().phoneNum?.length === 13
 						}>
 						<button
 							type="submit"

@@ -117,7 +117,7 @@ const VideoWrapStyle = styled('div')`
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 60px;
+	top: 102px;
 	z-index: 2;
 
 	video {
@@ -128,6 +128,7 @@ const VideoWrapStyle = styled('div')`
 	}
 
 	@media (max-width: 480px) {
+		top: 60px;
 		video {
 			height: 642px;
 		}

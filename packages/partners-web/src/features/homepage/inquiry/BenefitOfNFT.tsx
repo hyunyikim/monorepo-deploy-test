@@ -193,7 +193,7 @@ const DigitalGuaranteeProsBoxStyle = styled('div')`
 
 		div {
 			max-width: 300px;
-			height: 68px;
+			height: 60px;
 			padding: 0;
 			width: 300px;
 			margin: auto;
