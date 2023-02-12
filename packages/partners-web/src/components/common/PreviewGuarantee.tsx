@@ -146,6 +146,16 @@ const TitleTextStyle = styled.h4<TitleTextProps>`
 	margin-bottom: ${(props) => (props.mb ? props.mb : '0px')};
 `;
 
+const TitleTextStyleWithMargin = styled.h4`
+	margin: 0;
+	margin-bottom: 11px;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 19px;
+	color: #ffffff;
+	max-width: 120px;
+`;
+
 const LinkTextStyle = styled.h4`
 	margin: 0;
 	font-weight: 700;
@@ -297,7 +307,7 @@ function GreyBoxComponent({title, desc, amplitudeInfo}: GreyBoxProps) {
 						</DescTextStyle>
 					))
 				) : (
-					<DescTextStyle>{desc}</DescTextStyle>
+					<DescTextStyle className="desc-text">{desc}</DescTextStyle>
 				)}
 			</HiddenBoxStyle>
 		</GreyInfoBoxStyle>
@@ -554,9 +564,9 @@ function PreviewGuarantee({
 									backgroundColor: 'grey.700',
 									borderRadius: '8px',
 								}}>
-								<TitleTextStyle mb={'11px'}>
+								<TitleTextStyleWithMargin>
 									보증기간
-								</TitleTextStyle>
+								</TitleTextStyleWithMargin>
 								{values?.warrantyDate ? (
 									textLineChangeHelper(
 										values?.warrantyDate
