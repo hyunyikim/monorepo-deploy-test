@@ -10,6 +10,7 @@ import {
 	CustomField,
 	InputType,
 } from '@/@types';
+import {linkFormChecker} from '@/utils';
 
 export const productListSearchTypes: Options<ProductListRequestSearchType> = [
 	{value: 'all', label: '전체'},
@@ -222,11 +223,7 @@ export const convertProductRegisterFormData = (
 			return;
 		}
 		if (customFields?.includes(key)) {
-			const urlCheck = RegExp(
-				/^([a-zA-Z0-9]+([-.]{1}[a-zA-Z0-9]+)*\.)([a-zA-Z]{2,6})(:[0-9]+)?(\/\S*)?/
-			);
-
-			if (urlCheck.test(String(value))) {
+			if (linkFormChecker(String(value))) {
 				/* 개런티 커스텀 필드에서 url형식이 들어올때 (https가 안붙으면 붙여주기) */
 				customFieldObj[key] = String(`https://${String(value)}`);
 			} else {
@@ -265,11 +262,8 @@ export const getProductCustomFieldValue = (
 	Object.keys(data).forEach((key: string) => {
 		if (customFields?.includes(key)) {
 			const value = data[key as keyof ProductRegisterFormData] || '';
-			const urlCheck = RegExp(
-				/^([a-zA-Z0-9]+([-.]{1}[a-zA-Z0-9]+)*\.)([a-zA-Z]{2,6})(:[0-9]+)?(\/\S*)?/
-			);
 
-			if (urlCheck.test(String(value))) {
+			if (linkFormChecker(String(value))) {
 				/* 개런티 커스텀 필드에서 url형식이 들어올때 (https가 안붙으면 붙여주기) */
 				customFieldObj[key] = String(`https://${String(value)}`);
 			} else {

@@ -1,19 +1,87 @@
+import {useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {format} from 'date-fns';
 
 import style from '@/assets/styles/style.module.scss';
 
 import {Stack, Typography} from '@mui/material';
+
+import {useGetUserPaymentHistoryDetail} from '@/stores';
+import {TotalSubscribeInfoPreviewData} from '@/@types';
+import {DATE_FORMAT_SEPERATOR_DOT} from '@/data';
+
 import {IcPrinter} from '@/assets/icon';
 import Breadcrumbs from '@/features/payment/common/Breadcrumbs';
 import SubscribeInfoPreview from '@/features/payment/common/SubscribeInfoPreview';
-import SubscribeNoticeBullet from '../../common/SubscribeNoticeBullet';
+import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBullet';
 
 interface Props {
-	idx: number;
+	idx: string;
 }
 
 function SubscribeHistoryDetail({idx}: Props) {
 	const navigate = useNavigate();
+	const {data} = useGetUserPaymentHistoryDetail(idx);
+
+	const previewData = useMemo<TotalSubscribeInfoPreviewData | null>(() => {
+		if (!data) {
+			return null;
+		}
+		const {
+			planName,
+			startDate,
+			expireDate,
+			pricePlan,
+			canceledPricePlan,
+			payApprovedAt,
+			payPrice,
+		} = data;
+
+		const res: TotalSubscribeInfoPreviewData = {
+			data: {
+				planName,
+				displayTotalPrice: pricePlan.displayTotalPrice,
+				planTotalPrice: pricePlan.planTotalPrice,
+				...(pricePlan.discountTotalPrice && {
+					discountTotalPrice: pricePlan.discountTotalPrice,
+				}),
+				subscribeDuration: `${format(
+					new Date(startDate),
+					DATE_FORMAT_SEPERATOR_DOT
+				)} - ${format(
+					new Date(expireDate),
+					DATE_FORMAT_SEPERATOR_DOT
+				)}`,
+				payApprovedAt: format(
+					new Date(payApprovedAt),
+					DATE_FORMAT_SEPERATOR_DOT
+				),
+				totalPrice: pricePlan.displayTotalPrice,
+			},
+			...(canceledPricePlan && {
+				canceledData: {
+					planName: canceledPricePlan.planName,
+					displayTotalPrice: canceledPricePlan.displayTotalPrice,
+					subscribeDuration: `${format(
+						new Date(canceledPricePlan.startedAt),
+						DATE_FORMAT_SEPERATOR_DOT
+					)} - ${format(
+						new Date(canceledPricePlan.finishedAt),
+						DATE_FORMAT_SEPERATOR_DOT
+					)}`,
+					usedPayPrice: `₩${(
+						canceledPricePlan.displayPrice || 0
+					).toLocaleString()} X ${canceledPricePlan.usedMonths}개월`,
+					totalPrice: (canceledPricePlan?.canceledPrice || 0) / 1.1,
+				},
+			}),
+			...(canceledPricePlan && {
+				finalTotalPrice: payPrice,
+			}),
+		};
+		return res;
+	}, [data]);
+
 	return (
 		<Stack
 			sx={{
@@ -30,7 +98,7 @@ function SubscribeHistoryDetail({idx}: Props) {
 							},
 						},
 					]}
-					now="Breadcrumbs"
+					now={data?.displayOrderId || ''}
 				/>
 				<Typography
 					variant="body3"
@@ -51,18 +119,15 @@ function SubscribeHistoryDetail({idx}: Props) {
 					인쇄
 				</Typography>
 			</Stack>
-			<SubscribeInfoPreview
-				sx={{
-					maxWidth: 'none',
-				}}
-			/>
-			<SubscribeNoticeBullet
-				data={[
-					'업그레이드 시 기존 개런티 발급량이 남아 있다면 업그레이드한 플랜에 함께 적용됩니다.',
-					'환불은 카드취소가 불가능할 경우 고객센터를 통해 문의 주시면 사용일수를 계산해 지정계좌로 입금 해드립니다.',
-					'연결제 이용중 플랜의 구독을 취소하거나 다운그레이드 할 경우에는 위약금 규정에 따라 위약금을 공제 후 차액을 환불 해드립니다.',
-				]}
-			/>
+			{previewData && (
+				<SubscribeInfoPreview
+					data={previewData}
+					sx={{
+						maxWidth: 'none',
+					}}
+				/>
+			)}
+			<SubscribeNoticeBullet />
 		</Stack>
 	);
 }

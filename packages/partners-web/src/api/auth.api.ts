@@ -1,6 +1,7 @@
 import {
 	SignInRequestRequestParam,
 	SignInResponse,
+	SignoutType,
 	SignUpResponse,
 } from '@/@types';
 import {nonAuthInstance, instance} from '@/api';
@@ -78,4 +79,19 @@ export const changePassword = async (params: {
 // 프로필 설정 - 기본정보 수정
 export const changeProfileInfo = async (params: FormData) => {
 	return await instance.patch('/v1/admin/partnerships', params);
+};
+
+/* 회원탈퇴 요청 */
+export const requestSignout = async (params: SignoutType) => {
+	return await instance.patch('/v1/admin/partnerships/withdraw', params);
+};
+
+/* 회원탈퇴 철회 요청 */
+export const cancleRequestSignout = async (
+	params: Pick<SignoutType, 'password'>
+) => {
+	return await instance.patch(
+		'v1/admin/partnerships/withdraw/cancel',
+		params
+	);
 };

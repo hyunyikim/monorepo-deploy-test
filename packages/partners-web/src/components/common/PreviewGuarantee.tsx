@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState, useEffect} from 'react';
 import styled from '@emotion/styled';
 import {Typography, Grid, Box} from '@mui/material';
 
@@ -12,9 +12,14 @@ import {useGetPartnershipInfo} from '@/stores';
 import {IcWarningTriangle} from '@/assets/icon';
 import AtagComponent from '../atoms/AtagComponent';
 import {textLineChangeHelper} from '@/utils/common.util';
+import {sendAmplitudeLog} from '@/utils';
+import {amplitudeType} from '@/@types';
 
 type LogoProps = {
 	logo: string | undefined;
+};
+type TitleTextProps = {
+	mb?: string;
 };
 
 const CARD_WIDTH = '166px';
@@ -131,13 +136,14 @@ const GreyInfoBoxStyle = styled.div`
 	border-radius: 5px;
 `;
 
-const TitleTextStyle = styled.h4`
+const TitleTextStyle = styled.h4<TitleTextProps>`
 	margin: 0;
 	font-weight: 700;
 	font-size: 14px;
 	line-height: 19px;
 	color: #ffffff;
 	max-width: 120px;
+	margin-bottom: ${(props) => (props.mb ? props.mb : '0px')};
 `;
 
 const TitleTextStyleWithMargin = styled.h4`
@@ -252,14 +258,20 @@ type ValueTypes = {
 interface GreyBoxProps {
 	title: string;
 	desc: string;
+	amplitudeInfo?: amplitudeType;
+}
+interface GreyBoxAmplitudeProps {
+	as: amplitudeType;
+	return: amplitudeType;
 }
 
 interface PreviewProps {
 	values: ValueTypes;
 	serviceCenterHandler?: () => void;
+	greyBoxAmplitude?: GreyBoxAmplitudeProps;
 }
 
-function GreyBoxComponent({title, desc}: GreyBoxProps) {
+function GreyBoxComponent({title, desc, amplitudeInfo}: GreyBoxProps) {
 	const [open, setOpen] = useState(false);
 	return (
 		<GreyInfoBoxStyle
@@ -275,6 +287,12 @@ function GreyBoxComponent({title, desc}: GreyBoxProps) {
 				<UnRollButtonStyle
 					src={greyArrowButton}
 					onClick={() => {
+						if (amplitudeInfo) {
+							sendAmplitudeLog(amplitudeInfo.eventName, {
+								[amplitudeInfo.eventPropertyKey]:
+									amplitudeInfo.eventPropertyValue,
+							});
+						}
 						setOpen((prev) => !prev);
 					}}
 					open={open}
@@ -332,7 +350,11 @@ const InvalidCard = () => {
 const productImageRatio = 0.252;
 const productBoxRatio = 0.252;
 
-function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
+function PreviewGuarantee({
+	values,
+	serviceCenterHandler,
+	greyBoxAmplitude,
+}: PreviewProps) {
 	const {previewImage} = values;
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const b2bType = useMemo(() => partnershipData?.b2bType, [partnershipData]);
@@ -537,7 +559,6 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 							<Grid
 								container
 								flexDirection="column"
-								// gap="11px"
 								sx={{
 									padding: '14px 16px 14px 18px',
 									backgroundColor: 'grey.700',
@@ -570,6 +591,9 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									? values?.returnInfo
 									: '예시 : 교환/환불이 불가능한 경우 개별 주문 제작의 경우, 주문 취소 및 환불이 불가합니다. 사전에 안내된 생산완료 예정일 기준 3주전에는 모델 및 색상변경이 불가합니다. 본 제품의 하자가 아닌 가구 소재의 특성에 대한 변심은 교환/환불이 불가합니다.'
 							}
+							amplitudeInfo={
+								greyBoxAmplitude && greyBoxAmplitude.return
+							}
 							key={'returnInfo'}
 						/>
 						<GreyBoxComponent
@@ -578,6 +602,9 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								values?.afterServiceInfo
 									? values?.afterServiceInfo
 									: '제품 하자 관련 무상 A/S 기간은 제품별로 상이합니다.'
+							}
+							amplitudeInfo={
+								greyBoxAmplitude && greyBoxAmplitude.as
 							}
 							key={'afterServiceInfo'}
 						/>
@@ -637,6 +664,7 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 									</Grid>
 								);
 							})} */}
+
 						{values?.nftCustomField &&
 							values?.nftCustomField.map((el: string) => (
 								<Grid
@@ -749,7 +777,6 @@ function PreviewGuarantee({values, serviceCenterHandler}: PreviewProps) {
 								) : (
 									<DescTextStyle>{'-'}</DescTextStyle>
 								)}
-								{/* {values?.authInfo || '-'} */}
 							</TitleTextStyle>
 						</Grid>
 						<ServiceCenterButtonStyle
@@ -821,8 +848,29 @@ export function ExamplePreviewGuarantee() {
 
 	const changeExample = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const targetIdx = e.target.dataset.tabidx;
+
+		if (
+			guaranteeSample[Number(targetIdx)] &&
+			guaranteeSample[Number(targetIdx)].name
+		) {
+			sendAmplitudeLog(
+				`guaranteesetting_example_popup_category_${String(
+					guaranteeSample[Number(targetIdx)].name
+				)}`,
+				{
+					pv_title: '브랜드 개런티 예시보기 팝업노출',
+				}
+			);
+		}
+
 		setExampleIdx(Number(targetIdx));
 	};
+
+	useEffect(() => {
+		sendAmplitudeLog('guaranteesetting_example_popupview', {
+			pv_title: '브랜드 개런티 예시보기 팝업노출',
+		});
+	}, []);
 
 	return (
 		<>

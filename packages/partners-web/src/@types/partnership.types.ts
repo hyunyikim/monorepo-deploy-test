@@ -25,6 +25,7 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	customerCenterUrl: string | null;
 	klipWalletAddress: string;
 	leavedAt: string | null;
+	isLeaved: YNType;
 	authKey: string;
 	mainYN: YNType;
 	category: number[];
@@ -69,6 +70,8 @@ export interface PartnershipInfoResponse extends PartnershipViewMenuYN {
 	passwordChangedAt: string;
 	brand: BrandType | null;
 	nftCustomFields: string[] | [];
+	/* FIXME: ServiceInterworkRepair.page.tsx에서 result 값때매 추가했는데, 왠지 수정해야할거 같은 느낌!! */
+	result?: string;
 }
 
 export type BrandType = {

@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
+import {greyArrow2x, greyArrow} from '@/assets/images/homepage/index';
 import {
-	greyArrow2x,
-	greyArrow,
 	imgEndingBg2x,
 	imgMobileEndingBg2x,
 	imgEndingTitle,
 	imgEndingTitle2x,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
+
 import {sendAmplitudeLog, goToParentUrl} from '@/utils';
 
 type IsOpenProps = {
@@ -140,6 +140,7 @@ const FAQListTitleBoxStyle = styled('div')`
 `;
 
 const GreyArrowStyle = styled('img')<IsOpenProps>`
+	pointer-events: none;
 	transition: all 250ms ease-in-out;
 	transform: ${({isOpen}) => (isOpen ? 'rotate(0deg)' : 'rotate(180deg)')};
 
@@ -193,6 +194,17 @@ const GuideDocsTextStyle = styled('div')`
 
 		text-decoration-line: underline;
 		color: #526eff;
+
+		button {
+			font-weight: 700;
+			font-size: 24px;
+			line-height: 20px;
+
+			text-decoration-line: underline;
+			color: #526eff;
+			border: 0;
+			background-color: transparent;
+		}
 	}
 
 	@media (max-width: 820px) {
@@ -331,16 +343,21 @@ function PriceFAQSection() {
 
 	const screenWidth = window.innerWidth;
 	const goToSignup = () => {
-		sendAmplitudeLog(`homepage_price_signupbottom_click`, {
-			button_title: `무료로 시작하기`,
+		sendAmplitudeLog(`homepage_pricing_start_trial_bot_click`, {
+			button_title: `최하단 무료로 시작하기 클릭`,
 		});
 
-		goToParentUrl(`/auth/signup`);
+		setTimeout(() => {
+			goToParentUrl(`/auth/signup`);
+		}, 400);
 	};
 
 	const openContent = (e: React.MouseEvent<HTMLElement>) => {
-		// const targetElement = e.target;
-		const targetIdx = e.target.dataset.idx;
+		const targetIdx: string = e.target.dataset?.idx;
+
+		sendAmplitudeLog(`homepage_pricing_questions${targetIdx}_click`, {
+			button_title: '드롭다운 펼침',
+		});
 
 		if (typeof targetIdx === 'string') {
 			if (targetIdx === faqState) {
@@ -389,10 +406,18 @@ function PriceFAQSection() {
 						다른 궁금한 점이 있는 경우,{' '}
 					</TextWithCommaStyle>
 					<a
-						href="https://mation.notion.site/7a397a6aac6f4955b0be326c4f162f54"
+						href="https://guide.vircle.co.kr/subscription"
 						target="_blank"
 						rel="noreferrer">
-						가이드 문서
+						<button
+							onClick={() => {
+								sendAmplitudeLog(
+									'homepage_pricing_guide_click',
+									{button_title: '가이드 문서 클릭'}
+								);
+							}}>
+							가이드 문서
+						</button>
 					</a>
 					를 확인하시거나 채팅으로 문의해주세요.
 				</GuideDocsTextStyle>

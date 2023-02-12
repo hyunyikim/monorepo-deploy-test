@@ -8,3 +8,10 @@ export class BillingApprovedEvent implements IEvent {
 		public readonly payment: PaymentProps
 	) {}
 }
+
+export class BillingApproveFailedEvent implements IEvent {
+	constructor(
+		public readonly billing: BillingProps,
+		public readonly payment: PaymentProps
+	) {}
+}

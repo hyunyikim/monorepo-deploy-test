@@ -1,15 +1,52 @@
-import {Stack, Typography} from '@mui/material';
+import {Box, Stack, Typography} from '@mui/material';
 
 import {Button, Dialog} from '@/components';
-import {LogoVisa, LogoVisa2x} from '@/assets/images/payment-network';
+import {Card, UserPricePlanWithDate} from '@/@types';
+import {IcAtm} from '@/assets/icon';
+import style from '@/assets/styles/style.module.scss';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {deleteCard} from '@/api/payment.api';
+import {useGlobalLoading, useMessageDialog} from '@/stores';
+import {updateUserPricePlanData} from '@/utils';
 
 interface Props {
-	data: any;
+	data: UserPricePlanWithDate;
 	open: boolean;
 	onClose: () => void;
 }
 
 function PaymentCardDetailModal({data, open, onClose}: Props) {
+	const card = data.card;
+	const {cardType, ownerType, number, company, companyCode} = card as Card;
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
+	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
+	const queryClient = useQueryClient();
+
+	const deleteCardMutation = useMutation({
+		onMutate: () => setIsLoading(true),
+		mutationFn: deleteCard,
+		onSuccess: () => {
+			updateUserPricePlanData();
+			queryClient.invalidateQueries({
+				queryKey: ['userPricePlan'],
+			});
+			onMessageDialogOpen({
+				title: '결제 카드가 삭제됐습니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+			});
+		},
+		onError: onOpenError,
+		onSettled: () => setIsLoading(false),
+	});
+
+	const onDeleteCard = async () => {
+		const customerKey = data?.customerKey;
+		if (!customerKey) return;
+		await deleteCardMutation.mutateAsync(customerKey);
+	};
+
 	return (
 		<Dialog
 			TitleComponent={
@@ -31,7 +68,11 @@ function PaymentCardDetailModal({data, open, onClose}: Props) {
 						width: '100%',
 						gap: '8px',
 					}}>
-					<Button variant="outlined" color="grey-100" height={40}>
+					<Button
+						variant="outlined"
+						color="grey-100"
+						height={40}
+						onClick={onDeleteCard}>
 						삭제
 					</Button>
 					<Button color="black" height={40} onClick={onClose}>
@@ -40,19 +81,28 @@ function PaymentCardDetailModal({data, open, onClose}: Props) {
 				</Stack>
 			}>
 			<Stack flexDirection="row" alignItems="center" pb="30px">
-				<img
-					src={LogoVisa}
-					srcSet={`${LogoVisa} 1x, ${LogoVisa2x} 2x`}
-				/>
+				<Box
+					className="flex-center"
+					sx={{
+						width: '94px',
+						height: '94px',
+						borderRadius: '50%',
+						border: (theme) =>
+							`1px solid ${theme.palette.grey[100]}`,
+					}}>
+					<IcAtm width={40} height={40} color={style.vircleBlue500} />
+				</Box>
 				<Stack ml="20px">
 					<Typography variant="subtitle2" fontWeight="bold">
-						Visa **** 1234
+						{new Array(4).fill(null).map((_, idx) => (
+							<>{number.slice(idx * 4, idx * 4 + 4)} </>
+						))}
 					</Typography>
 					<Typography variant="body1" color="grey.600">
-						**/****
+						{company}
 					</Typography>
 					<Typography variant="body1" color="grey.600">
-						일반 결제(Toss)
+						{cardType}카드({ownerType})
 					</Typography>
 				</Stack>
 			</Stack>

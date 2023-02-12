@@ -1,5 +1,5 @@
 import React from 'react';
-import {greyArrow2x, greyArrow} from '@/assets/images/index';
+import {greyArrow2x, greyArrow} from '@/assets/images/homepage/index';
 
 import {sendAmplitudeLog} from '@/utils';
 function FAQSection() {

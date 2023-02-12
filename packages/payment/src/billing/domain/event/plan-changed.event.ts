@@ -1,14 +1,11 @@
 import {IEvent} from '@nestjs/cqrs';
 import {BillingProps} from '../billing';
+import {PricePlanProps} from '../pricePlan';
 
 export class PlanChangedEvent implements IEvent {
 	constructor(
 		public readonly billing: BillingProps,
-
-		/**
-		 * offset > 0 = UPGRADE
-		 * offset < 0 = DOWNGRADE
-		 */
-		public readonly offset: number
+		readonly prevPlan: PricePlanProps,
+		readonly scheduledDate?: string
 	) {}
 }

@@ -4,6 +4,7 @@ import {EventsHandler, IEventHandler} from '@nestjs/cqrs';
 import {
 	BillingRegisteredEvent,
 	BillingUnregisteredEvent,
+	BillingDeletedEvent,
 } from '../../domain/event';
 
 @EventsHandler(BillingRegisteredEvent)
@@ -26,6 +27,18 @@ export class BillingUnregisteredHandler
 
 	async handle(event: BillingUnregisteredEvent) {
 		this.logger.log('Billing Unregistered', event);
+		return Promise.resolve(undefined);
+	}
+}
+
+@EventsHandler(BillingDeletedEvent)
+export class BillingDeletedHandler
+	implements IEventHandler<BillingDeletedEvent>
+{
+	constructor(@Inject(Logger) private readonly logger: Logger) {}
+
+	async handle(event: BillingDeletedEvent) {
+		this.logger.log('Billing Deleted', event);
 		return Promise.resolve(undefined);
 	}
 }

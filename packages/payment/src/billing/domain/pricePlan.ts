@@ -13,12 +13,16 @@ export interface PricePlanProps {
 	discountRate: number;
 	discountPrice: number;
 	discountTotalPrice: number;
-	totalPrice: number;
 	vat: number;
+	payPrice: number;
 	planLimit: number;
 	planType: 'DAY' | 'MONTH' | 'YEAR';
 	planLevel: number;
 	activated: boolean;
+	usedMonths?: number;
+	canceledPrice?: number;
+	startedAt?: string;
+	finishedAt?: string;
 }
 
 /**
@@ -34,16 +38,24 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 	discountRate: number;
 	discountPrice: number;
 	discountTotalPrice: number;
-	totalPrice: number;
 	vat: number;
+	payPrice: number;
 	planLimit: number;
 	planType: 'DAY' | 'MONTH' | 'YEAR';
 	planLevel: number;
 	activated: boolean;
+	usedMonths?: number;
 
-	constructor(props: PricePlanProps) {
+	constructor(props?: PricePlanProps) {
 		super();
 		Object.assign(this, props);
+
+		if (!props) {
+			this.planPrice = 0;
+			this.discountRate = 0;
+			this.planLimit = 0;
+			this.planLevel = 0;
+		}
 
 		this.calculateTotalAmount();
 	}
@@ -52,15 +64,15 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 	 * 최종 결제 금액 계산
 	 */
 	calculateTotalAmount() {
-		const count: number = this.planType === 'YEAR' ? 12 : 1; // 수량(개월수)
+		const months = this.usedMonths || this.planType === 'YEAR' ? 12 : 1; // 수량(개월수)
 		this.discountPrice = this.discountRate
 			? Math.round(this.planPrice * (this.discountRate / 100)) // 할인금액
 			: 0;
-		this.discountTotalPrice = this.discountPrice * count; // 할인금액 * 개월
+		this.discountTotalPrice = this.discountPrice * months; // 할인금액 * 개월
 		this.displayPrice = Math.round(this.planPrice - this.discountPrice); // 표시금액 = 정상가 - 할인금액
-		this.displayTotalPrice = this.displayPrice * count; // 표시금액 * 개월
-		this.planTotalPrice = this.planPrice * count; // 정상가 * 개월
-		this.totalPrice = this.displayPrice * count; // 최종 금액 = (정상가 - 할인금액) * 개월;
-		this.vat = this.totalPrice * 0.1; // 부가세 = 최종 금액 * 0.1
+		this.displayTotalPrice = this.displayPrice * months; // 최종 금액 = (정상가 - 할인금액) * 개월;
+		this.planTotalPrice = this.planPrice * months; // 정상가 * 개월
+		this.vat = this.displayTotalPrice * 0.1; // 부가세 = 최종 금액 * 0.1
+		this.payPrice = this.displayTotalPrice + this.vat;
 	}
 }

@@ -34,7 +34,7 @@ import {
 	users2x,
 	usersMobile,
 	usersMobile2x,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
 
 function GuaranteeDescSection() {
 	const screenWidth = window.innerWidth;

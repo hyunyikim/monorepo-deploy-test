@@ -8,8 +8,8 @@ import {Breadcrumbs, DetailInfoCard} from '@/components';
 import DetailInfoColumn from '@/features/common/DetailInfoColumn';
 import ProductImage from '@/features/product/common/ProductImage';
 import {IcPencil, IcWallet, IcCalendar, IcReceipt} from '@/assets/icon';
-
 import style from '@/assets/styles/style.module.scss';
+import AtagComponent from '@/components/atoms/AtagComponent';
 
 interface Props {
 	data: ProductDetailResponse;
@@ -140,17 +140,63 @@ function ProductDetailInfo({data}: Props) {
 					)}
 					{data?.customField &&
 						Object.keys(data?.customField)?.length > 0 &&
-						Object.keys(data?.customField).map((key) => (
-							<DetailInfoColumn
-								key={key}
-								title={key}
-								value={
-									(data?.customField &&
-										data?.customField[key]) ||
-									'-'
-								}
-							/>
-						))}
+						Object.keys(data?.customField).map(
+							(key) =>
+								typeof data?.customField[key] === 'string' &&
+								data?.customField[key].includes('http') ? (
+									<AtagComponent url={data?.customField[key]}>
+										<DetailInfoColumn
+											key={key}
+											title={key}
+											value={
+												(data?.customField &&
+													data?.customField[key]) ||
+												'-'
+											}
+											isLink={true}
+										/>
+									</AtagComponent>
+								) : (
+									<DetailInfoColumn
+										key={key}
+										title={key}
+										value={
+											(data?.customField &&
+												data?.customField[key]) ||
+											'-'
+										}
+									/>
+								)
+
+							// {customFields.map((item) =>
+							// 	item[1].includes('http') ? (
+							// 		<AtagComponent url={item[1]}>
+							// 			<DetailInfoColumn
+							// 				key={item[0]}
+							// 				title={item[0]}
+							// 				value={item[1] || '-'}
+							// 				isLink={true}
+							// 			/>
+							// 		</AtagComponent>
+							// 	) : (
+							// 		<DetailInfoColumn
+							// 			key={item[0]}
+							// 			title={item[0]}
+							// 			value={item[1] || '-'}
+							// 		/>
+							// 	)
+							// )}
+
+							// <DetailInfoColumn
+							// 	key={key}
+							// 	title={key}
+							// 	value={
+							// 		(data?.customField &&
+							// 			data?.customField[key]) ||
+							// 		'-'
+							// 	}
+							// />
+						)}
 				</Stack>
 				<DetailInfoColumn title="보증기간" value={data?.warranty} />
 			</Stack>

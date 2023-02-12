@@ -70,3 +70,58 @@ jobs:
                     --document-name "AWS-RunShellScript" \
                     --targets '[{"Key":"InstanceIds","Values":["i-0db464460d9597593"]}]' \
                     --parameters '{"commands":[ "#!/bin/bash","cd ~/vircle/packages/payment", "bash ./script/start.dev.sh"]}'
+
+    deploy_on_stage:
+      if: ${{ github.ref_name == 'stage' && github.event_name == 'push'  }}
+      runs-on: ubuntu-20.04
+      defaults:
+        run:
+          shell: bash
+          working-directory: ./packages/payment
+      steps:
+        - name: git Checkout
+          uses: actions/checkout@v3
+
+        - name: node 환경 설정
+          uses: actions/setup-node@v3
+          with:
+            node-version: 16
+
+        - name: 의존성 체크
+          run: yarn
+
+        - name: build 하기
+          run: yarn build
+
+        - name: bundle 하기
+          run: yarn bundle:prod
+
+        - name: copy appspec & shell files
+          run: |
+            cp appspec.yml bundle/appspec.yml
+            cp -r script/deploy_stage bundle/script
+
+        - name: aws 세팅
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ap-northeast-2
+
+        - name: aws s3 업로드
+          run: |
+            aws deploy push \
+              --application-name vircle \
+              --description "git hash ${{ github.sha }}" \
+              --no-ignore-hidden-files \
+              --s3-location s3://deploy.vircle/payment/stage.zip \
+              --source ./bundle
+
+        - name: aws codedeploy create-deployment
+          run: |
+            aws deploy create-deployment \
+              --application-name vircle \
+              --deployment-config-name CodeDeployDefault.OneAtATime \
+              --deployment-group-name vircle-stage-payment-DG \
+              --s3-location bucket=deploy.vircle,bundleType=zip,key=payment/stage.zip \
+              --file-exists-behavior=OVERWRITE

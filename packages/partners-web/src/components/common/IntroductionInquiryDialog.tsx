@@ -119,7 +119,7 @@ function IntroductionInquiryDialog({open, onClose, target}: Props) {
 		try {
 			await sendSlack({
 				type: target === 'new' ? 'operation' : 'cooperator',
-				title: '파트너스 도입문의',
+				title: '도입문의',
 				data: {
 					담당자: data.name,
 					이메일: data.email,

@@ -1,8 +1,8 @@
-import {useMemo} from 'react';
+import {Suspense, useMemo} from 'react';
 import {parse} from 'qs';
 import {useLocation} from 'react-router-dom';
 
-import {Stack} from '@mui/material';
+import {Skeleton, Stack} from '@mui/material';
 
 import SubscribeHistoryList from './SubscribeHistoryList';
 import SubscribeHistoryDetail from './SubscribeHistoryDetail';
@@ -19,7 +19,21 @@ function SubscribeHistoryTab() {
 	return (
 		<Stack flexDirection="column">
 			{idx ? (
-				<SubscribeHistoryDetail idx={Number(idx)} />
+				<Suspense
+					fallback={
+						<Skeleton
+							variant="rectangular"
+							width="346px"
+							height="426px"
+							sx={{
+								margin: 'auto',
+								marginTop: '40px',
+								borderRadius: '8px',
+							}}
+						/>
+					}>
+					<SubscribeHistoryDetail idx={idx as string} />
+				</Suspense>
 			) : (
 				<SubscribeHistoryList />
 			)}

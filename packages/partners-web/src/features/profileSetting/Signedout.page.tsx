@@ -12,6 +12,7 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
+import {cancleRequestSignout} from '@/api/auth.api';
 
 function Signedout() {
 	const {
@@ -58,33 +59,22 @@ function Signedout() {
 		'직접입력',
 	];
 
-	const onSubmit = () => {
-		const values = getValues();
+	const onSubmit = async () => {
+		const {password} = getValues();
 
-		/* TODO: 
-            1. 탈퇴철회하기 눌렀을때, 비밀번호 체크  
-            setError('password', {
-				message: '비밀번호를 다시 입력해주세요.',
+		try {
+			const cancelSignoutRes = await cancleRequestSignout({password});
+			if (cancelSignoutRes && cancelSignoutRes.result === 'SUCCESS') {
+				openCancelSignouConfirmModal();
+			}
+		} catch (e) {
+			setError('password', {
+				message: String(e.response.data.message),
 			});
-        */
-		openCancelSignouConfirmModal();
-	};
-
-	const submitSignoutData = async () => {
-		const values = getValues();
-		closeMessageModal();
-		// updateParentPartnershipData();
-	};
-
-	const confirmCancleSignoutHandler = () => {
-		goToParentUrl('/dashboard');
-		setTimeout(() => {
-			updateParentPartnershipData();
-		}, 300);
+		}
 	};
 
 	const openCancelSignouConfirmModal = () => {
-		/* TODO: 확인버튼 누르면 파트너쉽데이터 업데이트 추가하기 */
 		onOpenMessageDialog({
 			title: '버클 탈퇴 요청이 철회되었습니다.',
 			message:
@@ -94,6 +84,13 @@ function Signedout() {
 			disableClickBackground: true,
 			onCloseFunc: confirmCancleSignoutHandler,
 		});
+	};
+
+	const confirmCancleSignoutHandler = () => {
+		updateParentPartnershipData();
+		// setTimeout(() => {
+		// 	goToParentUrl('/dashboard');
+		// }, 300);
 	};
 
 	const cancelButtonActivator = () => {
@@ -110,7 +107,18 @@ function Signedout() {
 		// console.log('watch', watch());
 	}, [watch()]);
 
-	return (
+	useEffect(() => {
+		if (partnershipData) {
+			const hasLeft = partnershipData.isLeaved;
+
+			if (hasLeft === 'N') {
+				goToParentUrl('/dashboard');
+				return;
+			}
+		}
+	}, [partnershipData]);
+
+	return partnershipData && partnershipData.isLeaved === 'Y' ? (
 		<Stack
 			sx={{
 				gap: '40px',
@@ -231,6 +239,8 @@ function Signedout() {
 				</Stack>
 			</form>
 		</Stack>
+	) : (
+		<></>
 	);
 }
 

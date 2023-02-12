@@ -7,7 +7,7 @@
 		"build:dev": "env-cmd -f .env.development webpack --mode production",
 		"build:stage": "env-cmd -f .env.stage webpack --mode production",
 		"build:prod": "env-cmd -f .env.production webpack --mode production",
-		"dev": "env-cmd -f .env.development webpack serve --mode development --open --hot",
+		"dev": "env-cmd -f .env.development webpack serve --mode development --hot",
 		"release": "standard-version"
 	},
 	"dependencies": {
@@ -37,6 +37,7 @@
 		"react-apexcharts": "^1.4.0",
 		"react-dom": "^18.2.0",
 		"react-easy-crop": "^4.6.2",
+		"react-error-boundary": "^3.1.4",
 		"react-gsap": "^3.2.1",
 		"react-hook-form": "^7.36.0",
 		"react-lottie": "^1.2.3",

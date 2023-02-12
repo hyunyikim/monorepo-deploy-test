@@ -2,7 +2,7 @@ import React, {useState, useEffect, useMemo} from 'react';
 
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
-import {formatCommaNum, goToParentUrl} from '@/utils';
+import {formatCommaNum, goToParentUrl, sendAmplitudeLog} from '@/utils';
 import {
 	imgBlueCheckTick,
 	imgBlueCheckTick2x,
@@ -12,7 +12,7 @@ import {
 	imgDefaultCheckTick2x,
 	imgHeadPhone,
 	imgHeadPhone2x,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
 import {useModalStore} from '@/stores';
 import {getPricePlanList} from '@/api/payment.api';
 import {PricePlan, PlanType} from '@/@types';
@@ -666,10 +666,20 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 		setPriceClickState(_idx);
 	};
 	const goToSignup = () => {
+		sendAmplitudeLog('homepage_pricing_start_trial_top_click', {
+			button_title: '무료 체험 시작하기 클릭',
+		});
 		goToParentUrl('/auth/signup');
 	};
-	const openIntroductionInquiryModal = () => {
-		openEmailModal();
+	const openIntroductionInquiryModal = (_location: string) => {
+		if (_location) {
+			sendAmplitudeLog(`homepage_pricing_inquiry${_location}_click`, {
+				button_title: '도입문의 버튼 클릭',
+			});
+			setTimeout(() => {
+				goToParentUrl('/inquiry');
+			}, 200);
+		}
 	};
 	const openPlanInfoModal = () => {
 		setModal({
@@ -746,7 +756,8 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 							30일 무료 체험 시작하기
 						</GradientButton>
 
-						<CapsuleButton onClick={openIntroductionInquiryModal}>
+						<CapsuleButton
+							onClick={() => openIntroductionInquiryModal('top')}>
 							도입 문의하기
 						</CapsuleButton>
 					</ButtonBoxStyle>
@@ -815,7 +826,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 
 						<PricePlanBoxStyle
 							mainColor="blue"
-							onClick={openIntroductionInquiryModal}>
+							onClick={() => openIntroductionInquiryModal('mid')}>
 							<img
 								src={imgBlueCheckTick}
 								srcSet={`${imgBlueCheckTick} 1x, ${imgBlueCheckTick2x} 2x`}

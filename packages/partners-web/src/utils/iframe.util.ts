@@ -10,8 +10,10 @@ type RequestType =
 	| 'open_modal'
 	| 'open_child_modal'
 	| 'update_partnership_data'
+	| 'price_plan_data'
 	| 'login'
-	| 'close_child_modal';
+	| 'close_child_modal'
+	| 'open_channel_talk';
 
 export const sendMessageToParent = (data: {type: RequestType; data: any}) => {
 	window.parent.postMessage(data, '*');
@@ -126,5 +128,19 @@ export const loginToParent = (
 			isDuringInstallCafe24,
 			isTempPasswordLogin,
 		},
+	});
+};
+
+export const updateUserPricePlanData = () => {
+	sendMessageToParent({
+		type: 'price_plan_data',
+		data: null,
+	});
+};
+
+export const openChannelTalk = () => {
+	sendMessageToParent({
+		type: 'open_channel_talk',
+		data: null,
 	});
 };

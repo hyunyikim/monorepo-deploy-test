@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {Stack, Typography} from '@mui/material';
@@ -12,7 +12,11 @@ import {
 	installServiceInterwork,
 	uninstallServiceInterwork,
 } from '@/api/service-interwork.api';
-import {goToParentUrlWithState, updateParentPartnershipData} from '@/utils';
+import {
+	goToParentUrlWithState,
+	updateParentPartnershipData,
+	goToParentUrl,
+} from '@/utils';
 
 import {Button} from '@/components';
 import {
@@ -24,12 +28,23 @@ import {
 
 import ServiceInterworkDetailTitle from '@/features/service-interwork/Detail/common/ServiceInterworkDetailTitle';
 import ServiceInterworkDetailContent from '@/features/service-interwork/Detail/common/ServiceInterworkDetailContent';
+import {getUserPricePlan} from '@/api/payment.api';
+import {isPlanOnSubscription} from '@/data';
+
+type CurrentPlanType = {
+	isExpired: boolean;
+	isFreeTrial: boolean;
+};
 
 function ServiceInterworkRepair() {
 	const queryClient = useQueryClient();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
+	const [currentPlan, setCurrentPlan] = useState<CurrentPlanType>({
+		isExpired: false,
+		isFreeTrial: false,
+	});
 
 	const {data: partnershipData, isLoading} = useGetPartnershipInfo();
 
@@ -67,47 +82,120 @@ function ServiceInterworkRepair() {
 		[partnershipData?.profileImage]
 	);
 
+	const getCurrentPricePlanInfo = async () => {
+		try {
+			const {
+				planExpireDate,
+				planStartedAt,
+				pricePlan,
+				nextPricePlan,
+				usedNftCount,
+			} = await getUserPricePlan();
+
+			const isOnSubscription = isPlanOnSubscription({
+				startDate: new Date(planStartedAt),
+				endDate: planExpireDate ? new Date(planExpireDate) : undefined,
+				isNextPlanExisted: !!nextPricePlan,
+			});
+
+			setCurrentPlan((pre) => ({
+				...pre,
+				isExpired: !isOnSubscription,
+				isFreeTrial: pricePlan?.planLevel === 0,
+			}));
+		} catch (error) {
+			console.log('error', error);
+		}
+	};
+
+	useEffect(() => {
+		getCurrentPricePlanInfo();
+	}, []);
+
 	const InstallRepairButton = useMemo(() => {
+		const {isExpired, isFreeTrial} = currentPlan;
+
+		const openPricePlanModal = () => {
+			return onOpenMessageDialog({
+				title: '플랜 업그레이드가 필요해요!',
+				message: isExpired ? (
+					isFreeTrial ? (
+						<>
+							무료체험기간이 종료되어 서비스이용이 제한됩니다.
+							<br />
+							유료 플랜을 구독하고, 수선신청 서비스를 계속
+							이용해보세요!
+						</>
+					) : (
+						<>
+							유료 플랜을 구독하고, 수선신청 서비스를 계속
+							이용해보세요!
+						</>
+					)
+				) : (
+					'구독 플랜이 만료되었습니다. 새로운 플랜을 구독하고 수선신청 서비스를 계속 이용해보세요!'
+				),
+				disableClickBackground: true,
+				showBottomCloseButton: true,
+				closeButtonValue: '닫기',
+				buttons: (
+					<Button
+						color="black"
+						onClick={() => {
+							goToParentUrl('/b2b/payment/subscribe');
+						}}>
+						플랜 업그레이드
+					</Button>
+				),
+			});
+		};
+
 		return (
 			<Button
 				onClick={() => {
-					(async () => {
-						try {
-							await installServiceInterworkMutation.mutateAsync();
-							onOpenMessageDialog({
-								title: '수선신청 관리가 연동됐습니다.',
-								message: (
-									<>
-										고객 수선신청 화면에 표시되는 고객센터
-										버튼, A/S 주의사항을 개런티 설정에서
-										입력해주세요.
-									</>
-								),
-								showBottomCloseButton: true,
-								closeButtonValue: '닫기',
-								buttons: (
-									<Button
-										color="black"
-										onClick={() => {
-											let url = '/setup/guarantee';
-											if (isAlreadySetupGuarantee) {
-												url = '/re-setup/guarantee';
-											}
-											goToParentUrlWithState(url, {
-												'interwork-repair': true,
-											});
-										}}>
-										개런티 설정으로 이동
-									</Button>
-								),
-								onCloseFunc: () => {
-									updateParentPartnershipData();
-								},
-							});
-						} catch (e) {
-							onOpenError();
-						}
-					})();
+					if (isExpired) {
+						openPricePlanModal();
+					} else {
+						(async () => {
+							try {
+								const res =
+									await installServiceInterworkMutation.mutateAsync();
+								onOpenMessageDialog({
+									title: '수선신청 관리가 연동됐습니다.',
+									message: (
+										<>
+											고객 수선신청 화면에 표시되는
+											고객센터 버튼, A/S 주의사항을 개런티
+											설정에서 입력해주세요.
+										</>
+									),
+									showBottomCloseButton: true,
+									closeButtonValue: '닫기',
+									buttons: (
+										<Button
+											color="black"
+											onClick={() => {
+												let url = '/setup/guarantee';
+												if (isAlreadySetupGuarantee) {
+													url = '/re-setup/guarantee';
+												}
+												goToParentUrlWithState(url, {
+													'interwork-repair': true,
+												});
+											}}>
+											개런티 설정으로 이동
+										</Button>
+									),
+									onCloseFunc: () => {
+										updateParentPartnershipData();
+									},
+								});
+								// }
+							} catch (e) {
+								onOpenError();
+							}
+						})();
+					}
 				}}>
 				연동하기
 			</Button>

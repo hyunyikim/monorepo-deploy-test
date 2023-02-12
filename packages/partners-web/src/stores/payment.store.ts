@@ -1,28 +1,33 @@
 import {useQuery} from '@tanstack/react-query';
-import {parse} from 'date-fns';
 
 import {
-	getPaymentHistoryList,
 	getPricePlanList,
 	getUserPricePlan,
+	getPaymentHistoryDetail,
+	getPaymentHistoryList,
 } from '@/api/payment.api';
 import {PlanType, UserPricePlanWithDate} from '@/@types';
-import {DATE_FORMAT, TRIAL_PLAN} from '@/data';
+import {isPlanOnSubscription, TRIAL_PLAN} from '@/data';
+import {delay as delayFunc} from '@/utils';
 
 export const useGetPricePlanList = (
 	{
 		suspense,
+		delay,
 	}: {
 		suspense: boolean;
-	} = {suspense: false}
+		delay?: number | false;
+	} = {suspense: false, delay: false}
 ) => {
 	return useQuery({
 		queryKey: ['pricePlanList'],
-		queryFn: getPricePlanList,
-		suspense: suspense,
-		select: (data) => {
-			return data.data;
+		queryFn: async () => {
+			delay && (await delayFunc(delay));
+			return await getPricePlanList();
 		},
+		suspense,
+		refetchOnMount: false,
+		select: (data) => data.data,
 	});
 };
 
@@ -30,6 +35,7 @@ export const useGetPricePlanListByPlanType = (planType: PlanType) => {
 	return useQuery({
 		queryKey: ['pricePlanList'],
 		queryFn: getPricePlanList,
+		refetchOnMount: false,
 		select: (data) => {
 			return data?.data
 				.filter((plan) => plan.planType === planType)
@@ -38,6 +44,7 @@ export const useGetPricePlanListByPlanType = (planType: PlanType) => {
 	});
 };
 
+// TODO: 토큰 없는채로 조회되면서 suspense 에러 떨어짐
 export const useGetUserPricePlan = (
 	{
 		suspense,
@@ -49,39 +56,26 @@ export const useGetUserPricePlan = (
 		queryKey: ['userPricePlan'],
 		queryFn: getUserPricePlan,
 		suspense,
-		select: (userPlan) =>
-			({
+		refetchOnMount: false,
+		select: (userPlan) => {
+			return {
 				...userPlan,
-				planStartDate: parse(
-					userPlan.planStartDate,
-					DATE_FORMAT,
-					new Date()
-				),
-				planExpireDate: parse(
-					userPlan.planExpireDate,
-					DATE_FORMAT,
-					new Date()
-				),
-				...(userPlan.nextPlanStartDate && {
-					nextPlanStartDate: parse(
-						userPlan.nextPlanStartDate,
-						DATE_FORMAT,
-						new Date()
-					),
+				...(userPlan?.planStartedAt && {
+					planStartedAt: new Date(userPlan?.planStartedAt),
 				}),
-				...(userPlan.nextPlanPaymentDate && {
-					nextPlanPaymentDate: parse(
-						userPlan.nextPlanPaymentDate,
-						DATE_FORMAT,
-						new Date()
-					),
+				...(userPlan?.planExpireDate && {
+					planExpireDate: new Date(userPlan?.planExpireDate),
 				}),
-			} as UserPricePlanWithDate),
+				...(userPlan?.nextPlanStartDate && {
+					nextPlanStartDate: new Date(userPlan?.nextPlanStartDate),
+				}),
+			} as UserPricePlanWithDate;
+		},
 	});
 };
 
 /**
- * 유저가 유료플랜 구독 하고 있는지 여부
+ * 무료플랜 사용 여부
  */
 export const useIsUserUsedTrialPlan = (
 	{
@@ -94,29 +88,64 @@ export const useIsUserUsedTrialPlan = (
 		queryKey: ['userPricePlan'],
 		queryFn: getUserPricePlan,
 		suspense,
-		select: (userPlan) => userPlan.pricePlan.planId === TRIAL_PLAN.PLAN_ID,
+		refetchOnMount: false,
+		select: (userPlan) =>
+			userPlan.pricePlan.planLevel === TRIAL_PLAN.PLAN_LEVEL,
 	});
 };
 
 /**
- * 유저의 구독 내역 목록 조회
+ * 현재 플랜 구독 여부
  */
-// export const useGetUserPaymentHistoryList = (
-// 	{
-// 		suspense,
-// 	}: {
-// 		suspense: boolean;
-// 	} = {suspense: false}
-// ) => {
-// 	return useQuery({
-// 		queryKey: ['userPaymentHistoryList'],
-// 		queryFn: getPaymentHistoryList,
-// 		suspense,
-// 		select: (paymentHistoryList) =>
-// 			paymentHistoryList.map((history) => ({
-// 				...history,
-// 				startDate: parse(history.startDate, DATE_FORMAT, new Date()),
-// 				expireDate: parse(history.expireDate, DATE_FORMAT, new Date()),
-// 			})),
-// 	});
-// };
+export const useIsPlanOnSubscription = () => {
+	return useQuery({
+		queryKey: ['userPricePlan'],
+		queryFn: getUserPricePlan,
+		refetchOnMount: false,
+		select: (userPlan) =>
+			userPlan &&
+			isPlanOnSubscription({
+				startDate: userPlan?.planStartedAt
+					? new Date(userPlan.planStartedAt)
+					: undefined,
+				endDate: userPlan?.planExpireDate
+					? new Date(userPlan.planExpireDate)
+					: undefined,
+				isNextPlanExisted: !!userPlan?.nextPricePlan,
+			}),
+	});
+};
+
+/**
+ * 유저의 가장 최신 구독 내역 1건 조회
+ */
+export const useGetUserLatestPaymentHistoryList = () => {
+	return useQuery({
+		queryKey: ['useGetUserPaymentHistoryList'],
+		queryFn: () =>
+			getPaymentHistoryList({
+				sort: 'latest',
+				currentPage: 1,
+				pageMaxNum: 1,
+			}),
+	});
+};
+
+/**
+ * 유저의 구독 내역 상세 조회
+ */
+export const useGetUserPaymentHistoryDetail = (
+	orderId: string,
+	{
+		suspense,
+	}: {
+		suspense: boolean;
+	} = {suspense: false}
+) => {
+	return useQuery({
+		queryKey: ['useGetUserPaymentHistoryDetail', orderId],
+		queryFn: () => getPaymentHistoryDetail(orderId),
+		suspense,
+		refetchOnMount: false,
+	});
+};

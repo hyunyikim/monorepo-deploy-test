@@ -3,30 +3,33 @@ export type SubscribeNoticeStatus =
 	| 'CHARGED'
 	| 'CHANGE_PLAN_MONTH_TO_YEAR'
 	| 'CHANGE_PLAN_YEAR_TO_MONTH'
-	| 'CHANGE_PLAN_UPGRADE'
-	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY';
+	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY'
+	| 'CHARGED_PLAN_WILL_END'
+	| 'CHARGED_PLAN_FINISHED';
 
 export type SubscribeLineNoticeKey =
-	| SubscribeNoticeStatus
+	| Exclude<SubscribeNoticeStatus, 'CHARGED'>
 	| 'TRIAL_ALMOST_FINISH'
 	| 'TRIAL_FINISHED'
-	| 'LACKING_GUARANTEE'
-	| 'PLAN_WILL_END';
+	| 'LACKING_GUARANTEE';
 
-export type SubscribeNoticeKey = SubscribeNoticeStatus | 'USING_MONTH';
+export type SubscribeNoticeKey =
+	| Exclude<SubscribeNoticeStatus, 'CHARGED_PLAN_WILL_END'>
+	| 'USING_MONTH';
 
-export interface TotalSbuscribeInfoPreviewData {
-	data: SbuscribeInfoPreviewData;
-	canceledData?: SbuscribeInfoPreviewData;
-	totalPaidPrice?: number;
+export interface TotalSubscribeInfoPreviewData {
+	data: SubscribeInfoPreviewData;
+	canceledData?: SubscribeInfoPreviewData;
+	finalTotalPrice?: number;
 }
 
-export interface SbuscribeInfoPreviewData {
+export interface SubscribeInfoPreviewData {
 	planName: string;
 	displayTotalPrice: number; // 표기가격
-	planTotalPrice: number; // 정상가
+	planTotalPrice?: number; // 정상가
+	totalPrice: number; // 최종 합계
 	discountTotalPrice?: number; // 할인가(연결제만 표기)
-	totalPrice: number; // 구독료
 	subscribeDuration: string; // 구독 기간
-	payApprovedAt: string; // 결제일
+	payApprovedAt?: string; // 결제일
+	usedPayPrice?: string; // 사용금액
 }

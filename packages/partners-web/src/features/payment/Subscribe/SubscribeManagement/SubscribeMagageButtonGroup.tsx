@@ -1,7 +1,15 @@
-import {useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
+import {useQueryClient} from '@tanstack/react-query';
+import {format} from 'date-fns';
+
 import {Stack, Link} from '@mui/material';
 
-import {useGetUserPricePlan, useMessageDialog} from '@/stores';
+import {
+	useGetUserPricePlan,
+	useGlobalLoading,
+	useIsPlanOnSubscription,
+	useMessageDialog,
+} from '@/stores';
 import {OnOpenParamType, PricePlan} from '@/@types';
 import {
 	isPlanTypeMonth,
@@ -9,12 +17,13 @@ import {
 	isPlanUpgraded,
 	isPlanDowngraded,
 } from '@/data';
+import {patchPricePlan} from '@/api/payment.api';
+import {updateUserPricePlanData, openChannelTalk} from '@/utils';
 
 import {Button} from '@/components';
 import CancelSubscribe from './CancelSubscribe';
 
 type PaymentMessageModalKey =
-	| 'CANCEL_SUBSCRIBE'
 	| 'CHANGE_PLAN_YEAR_TO_MONTH'
 	| 'CHANGE_PLAN_MONTH_TO_YEAR'
 	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY'
@@ -23,13 +32,14 @@ type PaymentMessageModalType = {
 	[key in PaymentMessageModalKey]: OnOpenParamType;
 };
 
+const onClickChangePlanGuide = () => {
+	window.open(
+		`${VIRCLE_GUIDE_URL}/subscription/change-plan-policy`,
+		'_blank'
+	);
+};
+
 export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
-	CANCEL_SUBSCRIBE: {
-		title: '정말 구독을 취소하시겠어요?',
-		message: `지금 구독 취소하시면 yyyy년 M월 YY일까지 이용 가능하고, 그 이후부터 개런티 발급이 제한됩니다. 계속 하시겠어요?`,
-		showBottomCloseButton: true,
-		closeButtonValue: '취소',
-	},
 	CHANGE_PLAN_YEAR_TO_MONTH: {
 		title: '연결제를 월결제로 변경하시나요?',
 		message: (
@@ -41,7 +51,8 @@ export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
 						color: 'grey.600',
 						textDecorationColor: (theme) => theme.palette.grey[600],
 					}}
-					className="cursor-pointer">
+					className="cursor-pointer"
+					onClick={onClickChangePlanGuide}>
 					구독가이드
 				</Link>
 				를 참고해주세요.
@@ -61,7 +72,8 @@ export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
 						color: 'grey.600',
 						textDecorationColor: (theme) => theme.palette.grey[600],
 					}}
-					className="cursor-pointer">
+					className="cursor-pointer"
+					onClick={onClickChangePlanGuide}>
 					구독가이드
 				</Link>
 				를 참고해주세요.
@@ -91,7 +103,8 @@ export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
 						color: 'grey.600',
 						textDecorationColor: (theme) => theme.palette.grey[600],
 					}}
-					className="cursor-pointer">
+					className="cursor-pointer"
+					onClick={openChannelTalk}>
 					고객센터
 				</Link>
 				로 문의 주시면 버클팀에서 확인 후 이용중이시던 플랜의 구독
@@ -117,25 +130,45 @@ function SubscribeMagageButtonGroup({
 	setIsAvailableSelect: (value: boolean) => void;
 	onSubscribeCheckModalOpen: () => void;
 }) {
-	const {onOpen: onOpenMessageDialog} = useMessageDialog();
+	const queryClient = useQueryClient();
+	const {
+		onOpen: onOpenMessageDialog,
+		onOpenError,
+		onClose: onCloseMessageDialog,
+	} = useMessageDialog();
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const {data: userPlan} = useGetUserPricePlan();
+	const {data: isOnSubscription} = useIsPlanOnSubscription();
 
 	const isPlanChanged = useMemo(() => {
+		if (!isOnSubscription) {
+			// 현재 구독하지 않고 있을 경우, 모든 플랜 선택 가능
+			return true;
+		}
 		if (userPlan?.pricePlan.planId !== selectedPlan?.planId) {
 			return true;
 		}
 		return false;
-	}, [userPlan, selectedPlan]);
+	}, [userPlan, selectedPlan, isOnSubscription]);
 
-	const onClickSubscribeChange = () => {
-		if (!userPlan || !selectedPlan) {
+	const onClickSubscribeChange = useCallback(() => {
+		if (!selectedPlan) {
 			return;
 		}
 
+		// 기존 구독 종료
 		// 플랜 업그레이드 시
-		// TODO: 무료에서 유료로 업그레이드 시 체크
+		// 1. 동일한 플랜타입에서 업그레이드
+		// 2. 무료플랜에서 업그레이드
 		if (
-			isPlanUpgraded(userPlan.pricePlan.planLevel, selectedPlan.planLevel)
+			!userPlan ||
+			!isOnSubscription ||
+			(isPlanUpgraded(
+				userPlan.pricePlan.planLevel,
+				selectedPlan.planLevel
+			) &&
+				(userPlan.pricePlan.planType === selectedPlan.planType ||
+					isTrial))
 		) {
 			onSubscribeCheckModalOpen();
 			return;
@@ -149,6 +182,8 @@ function SubscribeMagageButtonGroup({
 		) {
 			messageDialogData = PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_MONTH_TO_YEAR;
 		}
+
+		// 연결제에서 월결제로
 		if (
 			isPlanTypeYear(userPlan.pricePlan.planType) &&
 			isPlanTypeMonth(selectedPlan.planType)
@@ -180,8 +215,7 @@ function SubscribeMagageButtonGroup({
 		) {
 			messageDialogData = PAYMENT_MESSAGE_MODAL.BAN_DOWNGRADE_YEAR_PLAN;
 			onOpenMessageDialog({
-				title: messageDialogData.title,
-				message: messageDialogData.message,
+				...messageDialogData,
 			});
 			return;
 		}
@@ -190,25 +224,92 @@ function SubscribeMagageButtonGroup({
 			return;
 		}
 		onOpenMessageDialog({
-			title: messageDialogData.title,
-			message: messageDialogData.message,
+			...messageDialogData,
 			buttons: (
-				<>
-					<Button
-						variant="contained"
-						color="black"
-						onClick={() => {
-							// TODO: 플랜 변경 api 호출
-						}}>
-						확인
-					</Button>
-				</>
+				<Button
+					variant="contained"
+					color="black"
+					onClick={() => {
+						(async () => {
+							try {
+								setIsLoading(true);
+								await patchPricePlan({
+									planId: selectedPlan.planId,
+								});
+								onOpenMessageDialog({
+									title: '구독 플랜이 변경됐습니다.',
+									showBottomCloseButton: true,
+									closeButtonValue: '확인',
+									onCloseFunc: () => {
+										setIsAvailableSelect(false);
+									},
+								});
+								updateUserPricePlanData();
+								queryClient.invalidateQueries({
+									queryKey: ['userPricePlan'],
+								});
+							} catch (e) {
+								onOpenError();
+							} finally {
+								setIsLoading(false);
+							}
+						})();
+					}}>
+					확인
+				</Button>
 			),
 		});
-	};
+	}, [selectedPlan, userPlan, isTrial, isOnSubscription]);
+
+	const onClickTrySubscribeChange = useCallback(() => {
+		if (
+			isOnSubscription &&
+			userPlan?.pricePlan &&
+			userPlan?.nextPricePlan &&
+			userPlan?.nextPlanStartDate &&
+			userPlan?.pricePlan?.planId !== userPlan?.nextPricePlan?.planId
+		) {
+			const {pricePlan, nextPricePlan, nextPlanStartDate} = userPlan;
+			onOpenMessageDialog({
+				title: '기존에 플랜 변경 요청을 하셨어요.',
+				message: (
+					<>
+						다시 플랜 변경 신청을 하시겠습니까?
+						<br />
+						현재 구독 중인 {pricePlan.planName}{' '}
+						{isPlanTypeMonth(pricePlan.planType) ? '월간' : '연간'}{' '}
+						플랜이 {format(nextPlanStartDate, 'yyyy')}년{' '}
+						{format(nextPlanStartDate, 'M')}월{' '}
+						{format(nextPlanStartDate, 'd')}일에 종료 되며, 새로운{' '}
+						{nextPricePlan.planName}{' '}
+						{isPlanTypeMonth(nextPricePlan.planType)
+							? '월간'
+							: '연간'}{' '}
+						플랜으로 구독이 결제될 예정입니다.
+					</>
+				),
+				buttons: (
+					<>
+						<Button
+							color="black"
+							onClick={() => {
+								setIsAvailableSelect(true);
+								onCloseMessageDialog();
+							}}>
+							플랜 변경
+						</Button>
+					</>
+				),
+				showBottomCloseButton: true,
+				closeButtonValue: '닫기',
+			});
+			return;
+		}
+		setIsAvailableSelect(true);
+	}, [userPlan, isOnSubscription]);
 
 	return (
-		<Stack flexDirection="row" alignItems="center" mt="20px">
+		<Stack flexDirection="row" alignItems="center">
 			{isAvailableSelect ? (
 				<>
 					<Button
@@ -218,7 +319,9 @@ function SubscribeMagageButtonGroup({
 							marginRight: '8px',
 						}}
 						onClick={onClickSubscribeChange}>
-						구독설정 변경
+						{!isOnSubscription || isTrial
+							? '구독'
+							: '구독설정 변경'}
 					</Button>
 					<Button
 						variant="outlined"
@@ -230,12 +333,12 @@ function SubscribeMagageButtonGroup({
 				</>
 			) : (
 				<>
-					<Button
-						height={40}
-						onClick={() => setIsAvailableSelect(true)}>
-						{isTrial ? '플랜 업그레이드' : '플랜 변경하기'}
+					<Button height={40} onClick={onClickTrySubscribeChange}>
+						{!isOnSubscription || isTrial
+							? '플랜 구독하기'
+							: '플랜 변경하기'}
 					</Button>
-					{!isTrial && <CancelSubscribe />}
+					{!isTrial && isOnSubscription && <CancelSubscribe />}
 				</>
 			)}
 		</Stack>

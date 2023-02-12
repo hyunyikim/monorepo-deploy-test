@@ -12,6 +12,7 @@ import SubscribeHistoryTab from '@/features/payment/Subscribe/SubscribeHistory/S
 import {IcChevronRight} from '@/assets/icon';
 
 import style from '@/assets/styles/style.module.scss';
+import {goToParentUrl} from '@/utils';
 
 function SubscribeManagement() {
 	const location = useLocation();
@@ -33,12 +34,15 @@ function SubscribeManagement() {
 				handleChange={(e, value) => {
 					handleChangeTab(value as string);
 					const {pathname, search} = location;
-					const {idx, ...parsed} = parse(search);
+					const {idx, mode, ...parsed} = parse(search);
 					if (idx) {
 						navigate(
-							`${pathname}${stringify(parsed, {
-								addQueryPrefix: true,
-							})}`,
+							`${pathname}${stringify(
+								{...parsed, mode: value},
+								{
+									addQueryPrefix: true,
+								}
+							)}`,
 							{
 								replace: true,
 							}
@@ -49,11 +53,14 @@ function SubscribeManagement() {
 					marginTop: '16px !important',
 				}}>
 				<Link
-					className="flex-center"
+					className="flex-center cursor-pointer"
 					sx={{
 						fontSize: 14,
 						fontWeight: 700,
 						textDecoration: 'none',
+					}}
+					onClick={() => {
+						goToParentUrl('/pricing');
 					}}>
 					자세한 가격 및 기능{' '}
 					<IcChevronRight

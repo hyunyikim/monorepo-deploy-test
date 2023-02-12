@@ -6,7 +6,7 @@ import {
 	brandCardBg2x,
 	brandCardBgMobile,
 	brandCardBgMobile2x,
-} from '@/assets/images/index';
+} from '@/assets/images/homepage/index';
 
 function BrandCardDesignSection() {
 	const screenWidth = window.innerWidth;

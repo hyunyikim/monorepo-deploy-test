@@ -73,9 +73,7 @@ export class PlanBillingRepository
 
 		const entities = Items as BillingEntity[];
 
-		const entity = entities.find(
-			(entity) => entity.unregisteredAt === undefined
-		);
+		const entity = entities.find((entity) => !entity.deletedAt);
 		if (!entity) return null;
 
 		return this.entityToModel(entity);
@@ -88,17 +86,17 @@ export class PlanBillingRepository
 	async findByPartnerIdx(partnerIdx: number) {
 		const {Items} = await this.query({
 			TableName: this.tableName,
-			IndexName: 'partnerIdx-index',
+			IndexName: 'partnerIdx-authenticatedAt-index',
 			KeyConditionExpression: 'partnerIdx = :key',
 			ExpressionAttributeValues: {
 				':key': partnerIdx,
 			},
+			ScanIndexForward: false,
 		}).promise();
 		if (!Items || Items.length === 0) return null;
 
 		const entities = Items as BillingEntity[];
-
-		const entity = entities.find((entity) => !entity.unregisteredAt);
+		const entity = entities.find((entity) => !entity.deletedAt);
 		if (!entity) return null;
 
 		return this.entityToModel(entity);
@@ -117,7 +115,7 @@ export class PlanBillingRepository
 		return billings
 			.filter((billing) => {
 				if (!registered) return true;
-				return billing.unregisteredAt === undefined;
+				return !billing.deletedAt;
 			})
 			.map((props) => this.entityToModel(props));
 	}

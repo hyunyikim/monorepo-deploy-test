@@ -12,12 +12,16 @@ import {
 	CancelPaymentHandler,
 	RegisterBillingHandler,
 	RegisterFreeBillingHandler,
+	RegisterCardHandler,
+	DeleteCardHandler,
 	UnregisterBillingHandler,
+	DeleteBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
+	DelayPaymentHandler,
 } from './application/command';
 import {
-	FindBillingByCustomerKeyHandler,
+	FindBillingByPartnerTokenHandler,
 	FindPaymentByOrderIdHandler,
 	FindPlanHandler,
 } from './application/query';
@@ -26,6 +30,7 @@ import {
 	BillingUnregisteredHandler,
 	BillingApprovedHandler,
 	BillingPlanChangedHandler,
+	BillingDelayedHandler,
 } from './application/event';
 import {
 	PlanBillingRepository,
@@ -43,7 +48,8 @@ import {BillingSaga} from './application/sagas';
 import {ScheduleModule} from '@nestjs/schedule';
 import {FindPaymentsHandler} from './application/query';
 import {RegularPaymentService} from './application/service/payment.service';
-import {VircleCoreAPI} from './infrastructure/api-client/vircleCoreApi';
+import {VircleCoreApi} from './infrastructure/api-client/vircle-core.api';
+import {NotificationHandler} from './application/command/notification.handler';
 
 const infra: Provider[] = [
 	{
@@ -57,11 +63,11 @@ const infra: Provider[] = [
 		inject: [ConfigService],
 	},
 	{
-		provide: VircleCoreAPI,
+		provide: VircleCoreApi,
 		useFactory: (configService: ConfigService) => {
 			const baseURL = configService.getOrThrow<string>('VIRCLE_API_URL');
 
-			return new VircleCoreAPI(baseURL);
+			return new VircleCoreApi(baseURL);
 		},
 		inject: [ConfigService],
 	},
@@ -75,18 +81,24 @@ const app: Provider[] = [
 	CancelPaymentHandler,
 	RegisterBillingHandler,
 	RegisterFreeBillingHandler,
+	RegisterCardHandler,
+	DeleteCardHandler,
 	UnregisterBillingHandler,
+	DeleteBillingHandler,
 	ApproveBillingPaymentHandler,
 	ChangeBillingPlanHandler,
+	DelayPaymentHandler,
+	NotificationHandler,
 
 	// Event Handler
 	BillingRegisteredHandler,
+	BillingDelayedHandler,
 	BillingUnregisteredHandler,
 	BillingApprovedHandler,
 	BillingPlanChangedHandler,
 
 	// Query Handler
-	FindBillingByCustomerKeyHandler,
+	FindBillingByPartnerTokenHandler,
 	FindPaymentsHandler,
 	FindPaymentByOrderIdHandler,
 	FindPlanHandler,

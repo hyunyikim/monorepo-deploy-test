@@ -1,6 +1,7 @@
 import {ReactNode} from 'react';
 import create from 'zustand';
 import {SxProps} from '@mui/material';
+import {amplitudeType} from '@/@types';
 
 type alignType = 'left' | 'center';
 
@@ -20,6 +21,7 @@ type ModalOpt = {
 	maxWidth?: string;
 	sx?: SxProps;
 	useBackgroundClickClose?: boolean;
+	amplitudeInfo?: amplitudeType;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void | null;
@@ -42,6 +44,7 @@ interface ModalState {
 	titlePadding?: string | number;
 	sx?: SxProps;
 	useBackgroundClickClose?: boolean;
+	amplitudeInfo?: amplitudeType;
 	onClickButton?: (
 		e: React.MouseEventHandler<HTMLButtonElement> | undefined
 	) => void;
@@ -66,6 +69,7 @@ export const useModalStore = create<ModalState>((set) => ({
 	sx: {},
 	useBackgroundClickClose: true,
 	customisedButton: null,
+	amplitudeInfo: {},
 	setIsOpen: (openState: boolean) => {
 		set((state) => ({...state, isOpen: openState}));
 	},

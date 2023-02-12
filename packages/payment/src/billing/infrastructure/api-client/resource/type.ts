@@ -15,18 +15,20 @@ export interface Billing {
 	/** 카드 정보를 대신해서 자동 결제를 요청할 때 사용되는 값입니다. 고객의 고유 ID인 customerKey와 연결됩니다. */
 	billingKey: string;
 	/** 발급된 빌링키와 연결된 카드 정보입니다. */
-	card: {
-		/** 카드사 이름입니다. */
-		company: string;
-		/** 카드사 코드입니다. */
-		issuerCode: string;
-		/** 카드 번호입니다. 번호의 일부는 마스킹 되어 있습니다. */
-		number: string;
-		/** 카드 종류입니다. 신용, 체크, 기프트 중 하나입니다. */
-		cardType: string;
-		/** 카드의 소유자 타입입니다. 개인, 법인 중 하나입니다. */
-		ownerType: string;
-	};
+	card?: BillingCard;
+}
+
+export interface BillingCard {
+	/** 카드사 이름입니다. */
+	company: string;
+	/** 카드사 코드입니다. */
+	issuerCode: string;
+	/** 카드 번호입니다. 번호의 일부는 마스킹 되어 있습니다. */
+	number: string;
+	/** 카드 종류입니다. 신용, 체크, 기프트 중 하나입니다. */
+	cardType: string;
+	/** 카드의 소유자 타입입니다. 개인, 법인 중 하나입니다. */
+	ownerType: string;
 }
 
 export interface RequestBillingAuthByCustomerKey {
@@ -519,4 +521,10 @@ export interface Cancel {
 	 * 취소 건에 대한 고유한 키 값입니다. 여러 건의 취소 거래를 구분하는데 사용됩니다.
 	 */
 	transactionKey: string;
+}
+
+/** 결제 에러 */
+export interface Error {
+	code: string;
+	message: string;
 }

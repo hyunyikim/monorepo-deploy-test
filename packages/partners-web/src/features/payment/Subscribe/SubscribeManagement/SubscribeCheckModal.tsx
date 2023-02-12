@@ -1,28 +1,35 @@
+import {Dispatch, SetStateAction} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {Stack, Typography} from '@mui/material';
 
 import {
 	PricePlan,
-	SbuscribeInfoPreviewData,
+	TotalSubscribeInfoPreviewData,
 	Card,
 	PatchPlanRequestParam,
 } from '@/@types';
 import {Button, Dialog} from '@/components';
-import {useMessageDialog, useGetUserPricePlan} from '@/stores';
+import {
+	useMessageDialog,
+	useGetUserPricePlan,
+	useGlobalLoading,
+} from '@/stores';
 
 import SubscribeInfoPreview from '@/features/payment/common/SubscribeInfoPreview';
 import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBullet';
 import AddPaymentCardModal from '@/features/payment/common/AddPaymentCardModal';
 import {useChildModalOpen} from '@/utils/hooks';
 import {patchPricePlan} from '@/api/payment.api';
+import {updateUserPricePlanData} from '@/utils';
 
 interface Props {
 	selectedPlan: PricePlan;
-	subscribePreview: SbuscribeInfoPreviewData;
+	subscribePreview: TotalSubscribeInfoPreviewData;
 	open: boolean;
 	onOpen: () => void;
 	onClose: () => void;
+	setIsAvailableSelect: Dispatch<SetStateAction<boolean>>;
 }
 
 function SubscribeCheckModal({
@@ -31,10 +38,14 @@ function SubscribeCheckModal({
 	open,
 	onOpen,
 	onClose,
+	setIsAvailableSelect,
 }: Props) {
 	const queryClient = useQueryClient();
 	const {data: userPlan} = useGetUserPricePlan();
+
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onOpenError = useMessageDialog((state) => state.onOpenError);
+	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const {
 		open: openAddPaymentModal,
 		onOpen: onOpenAddPaymentModal,
@@ -42,32 +53,37 @@ function SubscribeCheckModal({
 	} = useChildModalOpen({});
 
 	const patchPricePlanMutation = useMutation({
-		mutationFn: (data?: PatchPlanRequestParam) => patchPricePlan(data),
+		onMutate: () => {
+			setIsLoading(true);
+		},
+		mutationFn: (data: PatchPlanRequestParam) => patchPricePlan(data),
 		onSuccess: () => {
+			onClose();
+			updateUserPricePlanData();
 			queryClient.invalidateQueries({
-				queryKey: ['userPricePlan', 'userPaymentHistoryList'],
+				queryKey: ['userPricePlan'],
 			});
 			onOpenMessageDialog({
 				title: '구독 플랜이 변경됐습니다.',
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
-				onCloseFunc: onClose,
 			});
+			setIsAvailableSelect(false);
 		},
 		onError: (e) => {
-			onOpenMessageDialog({
-				title: '구독 플랜 변경 실패', // TODO: error message
-				showBottomCloseButton: true,
-				closeButtonValue: '확인',
-			});
+			console.log('e :>> ', e);
+			// TODO: 결제 실패 에러 메시지 표기
+			onOpenError();
+		},
+		onSettled: () => {
+			setIsLoading(false);
 		},
 	});
 
 	const onClickSubscribeChange = async () => {
-		const isUserRegisterCard = (card?: Card) => (card ? true : false);
-		if (isUserRegisterCard(userPlan?.card)) {
+		const isCardRegistered = userPlan?.card ? true : false;
+		if (isCardRegistered) {
 			await patchPricePlanMutation.mutateAsync({
-				customerKey: '',
 				planId: selectedPlan.planId,
 			});
 			return;
@@ -132,9 +148,7 @@ function SubscribeCheckModal({
 							width: '100%',
 						}}>
 						<SubscribeInfoPreview
-							data={{
-								data: subscribePreview,
-							}}
+							data={subscribePreview}
 							sx={{
 								width: '100%',
 								maxWidth: {
@@ -191,22 +205,26 @@ function SubscribeCheckModal({
 								borderRadius: '8px',
 								backgroundColor: theme.palette.grey[50],
 							})}
+							useDefaultData={false}
 							data={[
-								'업그레이드 시 기존 개런티 발급량이 남아 있다면 업그레이드한 플랜에 함께 적용됩니다. ',
+								'월 구독 업그레이드 시 기존 개런티 발급량이 남아 있다면 업그레이드 한 플랜에 합산됩니다.',
 								'환불은 카드취소가 불가능할 경우 고객센터를 통해 문의 주시면 사용일수를 계산해 지정계좌로 입금 해드립니다.',
-								'연결제 이용중 플랜의 업그레이드를 할 경우에는 플랜의 잔여 기간 만큼 업그레이드 한 플랜의 구독료가 결제 됩니다.',
-								'연결제 이용중 플랜의 구독을 취소하거나 다운그레이드 할 경우에는 위약금 규정에 따라 위약금을 공제 후 차액을 환불 해드립니다.',
-								'연결제 이용중 월결제로 변경 할 경우에는 연결제 계약이 끝나는 다음달부터 월단위로 결제가 진행됩니다.',
+								'연결제 이용중 플랜 업그레이드 할 경우에는 플랜을 사용하지 않은 기간 만큼 업그레이드 한 플랜의 구독료에서 차감되어 결제됩니다.',
+								'연결제 이용중 플랜의 구독을 취소할 경우에는 플랜 종료일까지 이용이 가능합니다.',
+								'연결제 이용중 플랜 다운그레이드 할 경우에는 위약금 규정에 따라 위약금을 공제 후 차액을 환불 해드립니다.',
+								'연결제 이용중 월결제로 변경 할 경우에는 연결제 구독이 끝나는날부터 월단위로 결제가 진행됩니다.',
 							]}
 						/>
 					</Stack>
 				</Stack>
 			</Dialog>
-			<AddPaymentCardModal
-				open={openAddPaymentModal}
-				onClose={onCloseAddPaymentModal}
-				afterAddPaymentCardFunc={onOpen}
-			/>
+			{openAddPaymentModal && (
+				<AddPaymentCardModal
+					open={openAddPaymentModal}
+					onClose={onCloseAddPaymentModal}
+					afterAddPaymentCardFunc={onOpen}
+				/>
+			)}
 		</>
 	);
 }

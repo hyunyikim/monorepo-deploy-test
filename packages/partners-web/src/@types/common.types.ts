@@ -79,3 +79,9 @@ export interface BulkResponse {
 	failure: number;
 	error: {idx: number; message: string}[];
 }
+
+export type amplitudeType = {
+	eventName: string;
+	eventPropertyKey: string;
+	eventPropertyValue: string;
+};

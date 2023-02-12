@@ -15,12 +15,17 @@ import {
 	RegisterBillingBodyDTO,
 	ChangeBillingPlanBodyDTO,
 	RegisterFreeBillingBodyDTO,
+	CustomerKeyDTO,
+	RegisterCardBodyDTO,
 } from './dto';
 import {
 	RegisterBillingCommand,
 	UnregisterBillingCommand,
+	DeleteBillingCommand,
 	ChangeBillingPlanCommand,
 	RegisterFreeBillingCommand,
+	RegisterCardCommand,
+	DeleteCardCommand,
 } from '../application/command';
 import {
 	FindBillingByPartnerTokenQuery,
@@ -31,10 +36,10 @@ import {
 import {BillingProps, PaymentProps, PricePlanProps} from '../domain';
 import {JwtAuthGuard} from './guards/jwt-auth.guard';
 import {GetToken, TokenInfo} from './getToken.decorator';
-import {createHmac} from 'crypto';
 import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
 import {HttpExceptionFilter} from './httpException.filter';
+import {PAYMENT_STATUS} from '../infrastructure/api-client';
 
 class BillingInterface {
 	readonly customerKey: string;
@@ -51,6 +56,7 @@ class BillingInterface {
 	readonly planStartedAt: string;
 	readonly planExpireDate?: string;
 	readonly nextPlanStartDate?: string;
+	readonly paymentFailedCount?: number;
 
 	constructor(billing: BillingProps) {
 		this.customerKey = billing.customerKey;
@@ -66,13 +72,16 @@ class BillingInterface {
 			  }
 			: undefined;
 		this.usedNftCount = billing.usedNftCount ?? 0;
-		this.planStartedAt = DateTime.fromISO(billing.authenticatedAt).toISO();
+		this.planStartedAt = DateTime.fromISO(
+			billing.lastPaymentAt || billing.authenticatedAt
+		).toISO();
 		this.planExpireDate = billing.planExpireDate
 			? DateTime.fromISO(billing.planExpireDate).toISO()
 			: undefined;
 		this.nextPlanStartDate = billing.nextPaymentDate
 			? DateTime.fromISO(billing.nextPaymentDate).toISO()
 			: undefined;
+		this.paymentFailedCount = billing.paymentFailedCount;
 	}
 }
 
@@ -80,6 +89,10 @@ class PaymentSummaryInterface {
 	readonly displayOrderId: string;
 	readonly orderId: string;
 	readonly planName: string;
+	readonly payTotalPrice: number;
+	readonly payPrice: number;
+	readonly payVat: number;
+	readonly payStatus: PAYMENT_STATUS;
 	readonly startDate: string;
 	readonly expireDate: string;
 
@@ -88,15 +101,19 @@ class PaymentSummaryInterface {
 		this.displayOrderId = tempOrderId[tempOrderId.length - 1];
 		this.orderId = payment.orderId;
 		this.planName = payment.pricePlan.planName;
-		this.startDate = DateTime.fromISO(payment.approvedAt).toISODate();
+		this.payTotalPrice = payment.totalAmount;
+		this.payPrice = payment.suppliedAmount;
+		this.payVat = payment.vat;
+		this.payStatus = payment.status; // TODO: 결제 실패건 처리 시 변경
+		this.startDate = DateTime.fromISO(payment.approvedAt).toISO();
 		this.expireDate = payment.expiredAt
-			? DateTime.fromISO(payment.expiredAt).toISODate()
+			? DateTime.fromISO(payment.expiredAt).toISO()
 			: DateTime.fromISO(payment.approvedAt)
 					.plus({
 						year: payment.pricePlan.planType === 'YEAR' ? 1 : 0,
 						month: payment.pricePlan.planType === 'YEAR' ? 0 : 1,
 					})
-					.toISODate();
+					.toISO();
 	}
 }
 
@@ -109,7 +126,7 @@ class PaymentDetailInterface extends PaymentSummaryInterface {
 		super(payment);
 
 		this.pricePlan = payment.pricePlan;
-		this.canceledPricePlan = undefined; //payment.canceledPricePlan;
+		this.canceledPricePlan = payment.canceledPricePlan;
 		this.payApprovedAt = DateTime.fromISO(payment.approvedAt).toISO();
 	}
 }
@@ -161,25 +178,15 @@ export class BillingController {
 		}: RegisterBillingBodyDTO,
 		@GetToken() token: TokenInfo
 	) {
-		// 유저가 보유한 카드당 1개만 빌링 생성 가능하도록 고정 해시값 생성
-		const hmac = createHmac('sha256', token.token);
-		hmac.update([token.partnerIdx, cardNumber].join('_'));
-		const customerKey = hmac.digest('base64');
-
 		// 구독 신청 커맨드 실행
-		const registerCommand = new RegisterBillingCommand(
-			token.partnerIdx,
-			planId,
-			customerKey,
-			{
-				cardNumber,
-				cardExpirationYear,
-				cardExpirationMonth,
-				cardPassword,
-				customerIdentityNumber,
-				customerEmail,
-			}
-		);
+		const registerCommand = new RegisterBillingCommand(token, planId, {
+			cardNumber,
+			cardExpirationYear,
+			cardExpirationMonth,
+			cardPassword,
+			customerIdentityNumber,
+			customerEmail,
+		});
 		await this.commandBus.execute(registerCommand);
 
 		return this.getBilling(token);
@@ -211,45 +218,74 @@ export class BillingController {
 	}
 
 	/**
-	 * 구독 취소 API
+	 * 카드 등록 API
+	 *
+	 * @param body
 	 * @param token
 	 */
-	@Delete('/')
+	@Post('/card')
 	@UseGuards(JwtAuthGuard)
-	async unregisterBilling(@GetToken() token: TokenInfo) {
-		const {partnerIdx} = token;
+	async registerCard(
+		@Body() body: RegisterCardBodyDTO,
+		@GetToken() token: TokenInfo
+	) {
+		// 무료 플랜 생성 커맨드 실행
+		const registerCommand = new RegisterCardCommand(token, body);
+		await this.commandBus.execute(registerCommand);
 
-		// 구독 조회
-		const query = new FindBillingByPartnerTokenQuery(token);
-		const billingProps = await this.queryBus.execute<
-			FindBillingByPartnerTokenQuery,
-			BillingProps
-		>(query);
+		return this.getBilling(token);
+	}
 
-		// 구독 취소 커맨드 실행
-		const command = new UnregisterBillingCommand(billingProps.customerKey);
+	/**
+	 * 카드 삭제 API
+	 * @param customerKey
+	 * @param token
+	 */
+	@Delete('/card')
+	@UseGuards(JwtAuthGuard)
+	async deleteCard(
+		@Body() {customerKey}: CustomerKeyDTO,
+		@GetToken() token: TokenInfo
+	) {
+		// 구독 삭제 커맨드 실행
+		const command = new DeleteCardCommand(token.partnerIdx);
 		await this.commandBus.execute(command);
 	}
 
 	/**
-	 * 결제 상세 조회 API
-	 * @param orderId
+	 * 구독 이력 조회 API
+	 *
+	 * @param params
 	 * @param token
 	 */
-	@Get('/receipt/:orderId')
+	@Get('/history')
 	@UseGuards(JwtAuthGuard)
-	async getReceipt(
-		@Param('orderId') orderId: string,
+	async getPlanHistory(
+		@Query() params: FindPaymentsQueryDto,
 		@GetToken() token: TokenInfo
 	) {
-		// 결제 조회
-		const query = new FindPaymentByOrderIdQuery(orderId);
-		const paymentProps = await this.queryBus.execute<
-			FindPaymentByOrderIdQuery,
-			PaymentProps
+		const {partnerIdx} = token;
+
+		// 구독 조회
+		const query = new FindPaymentsQuery(partnerIdx, {
+			...params,
+			status: PAYMENT_STATUS.DONE,
+		});
+		const results = await this.queryBus.execute<
+			FindPaymentsQuery,
+			{
+				total: number;
+				page: number;
+				data: PaymentProps[];
+			}
 		>(query);
 
-		return new PaymentDetailInterface(paymentProps);
+		return {
+			...results,
+			data: results.data.map(
+				(payment) => new PaymentSummaryInterface(payment)
+			),
+		};
 	}
 
 	/**
@@ -286,14 +322,33 @@ export class BillingController {
 	}
 
 	/**
+	 * 결제 상세 조회 API
+	 * @param orderId
+	 * @param token
+	 */
+	@Get('/receipt/:orderId')
+	@UseGuards(JwtAuthGuard)
+	async getReceipt(
+		@Param('orderId') orderId: string,
+		@GetToken() token: TokenInfo
+	) {
+		// 결제 조회
+		const query = new FindPaymentByOrderIdQuery(orderId);
+		const paymentProps = await this.queryBus.execute<
+			FindPaymentByOrderIdQuery,
+			PaymentProps
+		>(query);
+
+		return new PaymentDetailInterface(paymentProps);
+	}
+
+	/**
 	 * 현재 구독 조회 API
 	 * @param token
 	 */
 	@Get('/')
 	@UseGuards(JwtAuthGuard)
 	async getBilling(@GetToken() token: TokenInfo) {
-		const {partnerIdx} = token;
-
 		// 구독 조회
 		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
@@ -316,8 +371,20 @@ export class BillingController {
 		@GetToken() token: TokenInfo,
 		@Body() body: ChangeBillingPlanBodyDTO
 	) {
-		const {partnerIdx} = token;
+		// 구독 변경 커맨드 실행
+		const command = new ChangeBillingPlanCommand(body.planId, token);
+		await this.commandBus.execute(command);
 
+		return this.getBilling(token);
+	}
+
+	/**
+	 * 구독 취소 API
+	 * @param token
+	 */
+	@Patch('/cancel')
+	@UseGuards(JwtAuthGuard)
+	async unregisterBilling(@GetToken() token: TokenInfo) {
 		// 구독 조회
 		const query = new FindBillingByPartnerTokenQuery(token);
 		const billingProps = await this.queryBus.execute<
@@ -325,14 +392,20 @@ export class BillingController {
 			BillingProps
 		>(query);
 
-		// 구독 변경 커맨드 실행
-		const command = new ChangeBillingPlanCommand(
-			billingProps.customerKey,
-			body.planId,
-			billingProps
-		);
+		// 구독 취소 커맨드 실행
+		const command = new UnregisterBillingCommand(billingProps.customerKey);
 		await this.commandBus.execute(command);
+	}
 
-		return this.getBilling(token);
+	/**
+	 * 구독 삭제 API
+	 * @param token
+	 */
+	@Delete('/')
+	@UseGuards(JwtAuthGuard)
+	async deleteBilling(@GetToken() token: TokenInfo) {
+		// 구독 삭제 커맨드 실행
+		const command = new DeleteBillingCommand(token.partnerIdx);
+		await this.commandBus.execute(command);
 	}
 }

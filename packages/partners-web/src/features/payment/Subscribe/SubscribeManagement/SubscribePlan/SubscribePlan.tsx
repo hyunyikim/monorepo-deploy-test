@@ -1,62 +1,73 @@
 import {useMemo} from 'react';
 
-import {Box, Stack, Typography} from '@mui/material';
+import {Box, Stack, Theme, Typography} from '@mui/material';
+import {SxProps} from '@mui/system';
 
 interface Props {
 	title: string;
 	desc: string;
-	isSubscribed?: boolean;
+	showSubscribedChip?: boolean;
 	isTrial: boolean;
 	isEnded?: boolean;
 	onClick?: () => void;
 	children?: React.ReactNode;
+	sx?: SxProps<Theme>;
 }
 
 function SubscribePlan({
 	title,
 	desc,
-	isSubscribed = false,
+	showSubscribedChip = false,
 	isTrial,
 	isEnded = false,
 	onClick,
 	children,
+	sx,
 }: Props) {
 	return (
 		<>
 			<Stack
-				sx={(theme) => ({
-					minWidth: '460px',
-					padding: '20px',
-					borderRadius: '8px',
-					border: isEnded
-						? `1px solid ${theme.palette.grey[100]}`
-						: `1px solid ${theme.palette.primary.main}`,
-					color: theme.palette.grey[900],
-					'& .subscribe-chip': {
-						backgroundColor: 'primary.50',
-						color: 'primary.main',
-					},
-				})}
+				sx={[
+					(theme) => ({
+						minWidth: '460px',
+						padding: '20px',
+						borderRadius: '8px',
+						border: isEnded
+							? `1px solid ${theme.palette.grey[100]}`
+							: `1px solid ${theme.palette.primary.main}`,
+						color: theme.palette.grey[900],
+						'& .subscribe-chip': {
+							backgroundColor: 'primary.50',
+							color: 'primary.main',
+						},
+					}),
+					...(Array.isArray(sx) ? sx : [sx]),
+				]}
 				{...(onClick && {
 					onClick,
 					className: 'cursor-pointer',
 				})}>
-				<Stack>
-					<Stack flexDirection="row" alignItems="center">
-						<Typography
-							variant="subtitle2"
-							fontWeight="bold"
-							mr="6px">
-							{title}
-						</Typography>
-						{isSubscribed && (
-							<IsSubscribedChip
-								isTrial={isTrial}
-								isEnded={isEnded}
-							/>
-						)}
+				<Stack
+					flexDirection="row"
+					justifyContent="space-between"
+					alignItems="center">
+					<Stack>
+						<Stack flexDirection="row" alignItems="center" mb="4px">
+							<Typography
+								variant="subtitle2"
+								fontWeight="bold"
+								mr="6px">
+								{title}
+							</Typography>
+							{showSubscribedChip && (
+								<IsSubscribedChip
+									isTrial={isTrial}
+									isEnded={isEnded}
+								/>
+							)}
+						</Stack>
+						<Typography variant="caption1">{desc}</Typography>
 					</Stack>
-					<Typography variant="caption3">{desc}</Typography>
 				</Stack>
 				{children && children}
 			</Stack>

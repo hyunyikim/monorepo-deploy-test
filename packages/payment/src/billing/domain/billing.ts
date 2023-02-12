@@ -3,12 +3,19 @@ import {
 	BillingApprovedEvent,
 	BillingRegisteredEvent,
 	BillingUnregisteredEvent,
+	BillingDeletedEvent,
 	PlanChangedEvent,
 	BillingPausedEvent,
 	BillingResumedEvent,
+	CardRegisteredEvent,
+	CardDeletedEvent,
+	BillingDelayedEvent,
 } from './event';
 import {PaymentProps} from './payment';
-import {Billing as TossBilling} from '../infrastructure/api-client';
+import {
+	Billing as TossBilling,
+	BillingCard as TossBillingCard,
+} from '../infrastructure/api-client';
 import {DateTime} from 'luxon';
 import {PricePlan, PricePlanProps} from './pricePlan';
 
@@ -19,9 +26,18 @@ export interface Billing {
 	properties: () => BillingProps;
 	register: () => void;
 	unregister: () => void;
-	isRegistered: boolean;
+	registerCard: () => void;
+	deleteCard: () => void;
+	delete: (isBillingChanged?: boolean) => void;
+	isDeleted: boolean;
 	approve: (payment: PaymentProps) => void;
-	changePlan: (plan: PricePlanProps) => void;
+	delay: (payment: PaymentProps) => void;
+	changePlan: (
+		newPricePlan: PricePlanProps,
+		remainLimit: number,
+		scheduledDate?: string,
+		canceledPricePlan?: PricePlanProps
+	) => void;
 	pause: () => void;
 	resume: () => void;
 	commit: () => void;
@@ -35,13 +51,17 @@ export type BillingProps = TossBilling & {
 	orderId?: string;
 	pricePlan: PricePlanProps;
 	pausedAt?: string;
-	unregisteredAt?: string;
+	deletedAt?: string;
 	lastPaymentAt?: string;
 	lastPaymentKey?: string;
+	lastPaymentFailedAt?: string;
+	paymentFailedCount?: number;
 	planExpireDate?: string;
 	nextPaymentDate?: string;
 	nextPricePlan?: PricePlanProps;
+	canceledPricePlan?: PricePlanProps;
 	usedNftCount?: number;
+	paymentEmail?: string;
 };
 
 /**
@@ -49,62 +69,61 @@ export type BillingProps = TossBilling & {
  * TODO: 추후 구독 정보와 PG사의 빌링 등록 내역을 분리하면 좋을 듯
  */
 export class PlanBilling extends AggregateRoot implements Billing {
+	private card?: TossBillingCard;
 	private orderId?: string;
 	private pausedAt?: string;
-	private unregisteredAt?: string;
+	private deletedAt?: string;
 	private lastPaymentAt?: string;
 	private lastPaymentKey?: string;
+	private lastPaymentFailedAt?: string;
+	private paymentFailedCount?: number;
 	private planExpireDate?: string;
 	private nextPaymentDate?: string;
 	private nextPricePlan?: PricePlanProps;
-	private usedNftCount?: number;
+	private canceledPricePlan?: PricePlanProps;
+	private readonly usedNftCount?: number;
+	private readonly paymentEmail?: string;
 
 	constructor(private props: BillingProps) {
 		super();
 
+		this.card = props?.card;
 		this.orderId = props?.orderId;
 		this.pausedAt = props?.pausedAt;
-		this.unregisteredAt = props?.unregisteredAt;
+		this.deletedAt = props?.deletedAt;
 		this.lastPaymentAt = props?.lastPaymentAt;
 		this.lastPaymentKey = props?.lastPaymentKey;
+		this.lastPaymentFailedAt = props?.lastPaymentFailedAt;
+		this.paymentFailedCount = props?.paymentFailedCount;
 		this.planExpireDate = props?.planExpireDate;
 		this.nextPaymentDate = props?.nextPaymentDate;
 		this.nextPricePlan = props?.nextPricePlan;
+		this.canceledPricePlan = props?.canceledPricePlan;
 		this.usedNftCount = props?.usedNftCount;
+		this.paymentEmail = props?.paymentEmail;
 	}
 
 	properties(): BillingProps {
 		return {
 			...this.props,
+			card: this.card,
 			orderId: this.orderId,
 			pricePlan: new PricePlan(this.props.pricePlan),
 			pausedAt: this.pausedAt,
-			unregisteredAt: this.unregisteredAt,
+			deletedAt: this.deletedAt,
 			lastPaymentAt: this.lastPaymentAt,
 			lastPaymentKey: this.lastPaymentKey,
+			lastPaymentFailedAt: this.lastPaymentFailedAt,
+			paymentFailedCount: this.paymentFailedCount,
 			planExpireDate: this.planExpireDate,
 			nextPaymentDate: this.nextPaymentDate,
-			nextPricePlan: this.nextPricePlan,
+			nextPricePlan: this.nextPricePlan
+				? new PricePlan(this.nextPricePlan)
+				: undefined,
+			canceledPricePlan: this.canceledPricePlan,
 			usedNftCount: this.usedNftCount,
+			paymentEmail: this.paymentEmail,
 		};
-	}
-
-	/**
-	 * 구독 중지
-	 */
-	pause(): void {
-		this.pausedAt = DateTime.now().toISO();
-		const event = new BillingPausedEvent(this.properties());
-		this.apply(event);
-	}
-
-	/**
-	 * 구독 재개
-	 */
-	resume(): void {
-		this.pausedAt = undefined;
-		const event = new BillingResumedEvent(this.properties());
-		this.apply(event);
 	}
 
 	/**
@@ -119,9 +138,49 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	 * 구독 취소
 	 */
 	unregister(): void {
-		const now = DateTime.now();
-		this.unregisteredAt = now.toISO();
+		this.nextPricePlan = undefined;
+		this.nextPaymentDate = undefined;
+		this.planExpireDate = DateTime.fromISO(
+			this.props.lastPaymentAt || this.props.authenticatedAt
+		)
+			.plus({
+				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
+				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+			})
+			.toISO();
+
 		const event = new BillingUnregisteredEvent(this.properties());
+		this.apply(event);
+	}
+
+	/**
+	 * 카드 등록
+	 */
+	registerCard(): void {
+		const event = new CardRegisteredEvent(this.properties());
+		this.apply(event);
+	}
+
+	/**
+	 * 카드 삭제
+	 */
+	deleteCard(): void {
+		const event = new CardDeletedEvent(this.properties());
+		this.apply(event);
+	}
+
+	/**
+	 * 구독 삭제
+	 */
+	delete(isBillingChanged = false): void {
+		this.deletedAt = DateTime.now().toISO();
+		this.nextPricePlan = undefined;
+		this.nextPaymentDate = undefined;
+
+		const event = new BillingDeletedEvent(
+			this.properties(),
+			isBillingChanged
+		);
 		this.apply(event);
 	}
 
@@ -135,32 +194,107 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.lastPaymentKey = payment.paymentKey;
 		this.lastPaymentAt = now.toISO();
 
-		// 무료플랜 및 직접 만료일자를 넣어준 경우 예외처리
-		if (!this.nextPaymentDate) {
-			this.nextPricePlan = this.props.pricePlan;
-			this.nextPaymentDate = now
+		// 다음 결제 예정 플랜이 있을 경우 플랜 변경
+		if (this.props.nextPricePlan) {
+			this.props.pricePlan = this.props.nextPricePlan;
+		}
+
+		this.nextPricePlan = this.props.pricePlan;
+		this.nextPaymentDate = now
+			.plus({
+				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
+				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+			})
+			.toISO();
+
+		const event = new BillingApprovedEvent(this.properties(), payment);
+		this.apply(event);
+	}
+
+	/**
+	 * 결제 연장
+	 * @param payment
+	 */
+	delay(payment: PaymentProps): void {
+		const now = DateTime.now();
+		this.orderId = payment.orderId;
+		this.lastPaymentFailedAt = now.toISO();
+		this.paymentFailedCount = (this.paymentFailedCount || 0) + 1;
+
+		// 5일간 결제 재시도 후 사용 제한
+		if (this.paymentFailedCount < 6) {
+			this.nextPaymentDate = now.plus({days: 1}).toISO();
+		} else {
+			this.nextPricePlan = undefined;
+			this.nextPaymentDate = undefined;
+			this.planExpireDate = now.toISO();
+		}
+
+		const event = new BillingDelayedEvent(this.properties(), payment);
+		this.apply(event);
+	}
+
+	/**
+	 * 플랜 변경
+	 * @param newPricePlan
+	 * @param remainLimit
+	 * @param scheduledDate
+	 * @param canceledPricePlan
+	 */
+	changePlan(
+		newPricePlan: PricePlanProps,
+		remainLimit: number,
+		scheduledDate?: string,
+		canceledPricePlan?: PricePlanProps
+	): void {
+		const prevPlan = this.props.pricePlan;
+		// 예약이 아닐경우 현재 플랜까지 즉시 신규플랜으로 변경
+		if (!scheduledDate) {
+			this.props.pricePlan = {
+				...newPricePlan,
+				planLimit: newPricePlan.planLimit + remainLimit,
+			};
+			this.nextPaymentDate = DateTime.now()
 				.plus({
 					year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
 					month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
 				})
 				.toISO();
 		}
-		const event = new BillingApprovedEvent(this.properties(), payment);
+		this.nextPricePlan = newPricePlan;
+		this.canceledPricePlan = canceledPricePlan;
+		this.planExpireDate = undefined;
+		this.paymentFailedCount = undefined;
+
+		const event = new PlanChangedEvent(
+			this.properties(),
+			prevPlan,
+			scheduledDate
+		);
 		this.apply(event);
 	}
 
 	/**
-	 * 플랜 변경
-	 * @param pricePlan
+	 * 구독 중지
 	 */
-	changePlan(pricePlan: PricePlanProps): void {
-		const offset = pricePlan.planLevel - this.props.pricePlan.planLevel;
-		this.props.pricePlan = pricePlan;
-		const event = new PlanChangedEvent(this.props, offset);
+	pause(): void {
+		this.pausedAt = DateTime.now().toISO();
+
+		const event = new BillingPausedEvent(this.properties());
 		this.apply(event);
 	}
 
-	get isRegistered() {
-		return this.unregisteredAt === undefined;
+	/**
+	 * 구독 재개
+	 */
+	resume(): void {
+		this.pausedAt = undefined;
+
+		const event = new BillingResumedEvent(this.properties());
+		this.apply(event);
+	}
+
+	get isDeleted() {
+		return !!this.deletedAt;
 	}
 }

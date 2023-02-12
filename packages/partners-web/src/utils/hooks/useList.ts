@@ -23,11 +23,14 @@ const useList = <
 	apiFunc,
 	apiRestParam = [],
 	initialFilter,
-	isQueryChange = true,
+	isQueryChange = true, // url querystring으로 목록 조회 값을 표기할지 여부
 }: Props<D, F>) => {
 	const navigate = useNavigate();
 	const {pathname, search} = useLocation();
 	const [data, setData] = useState<D | null>(null);
+
+	// url querystring으로 관리 안할 경우 사용하는 params 값
+	const [localParams, setLocalParams] = useState<F>({});
 
 	const parsedSearch = useMemo<F>(() => {
 		const res = qs.parse(search, {
@@ -39,6 +42,10 @@ const useList = <
 		return otherSearch as F;
 	}, [search]);
 
+	const params = useMemo<F>(() => {
+		return isQueryChange ? parsedSearch : localParams;
+	}, [isQueryChange, parsedSearch, localParams]);
+
 	const totalSize = useMemo<number>(() => {
 		if (data) {
 			return data?.total ?? data?.totalNo ?? 0;
@@ -49,6 +56,7 @@ const useList = <
 	// TODO: 선언적으로 로딩/에러 다룰 수 있도록 변경하기
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<any | null>(null);
+
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
 	const handleLoadData = useCallback((params: F) => {
@@ -70,24 +78,27 @@ const useList = <
 
 	useEffect(() => {
 		// 최초 해당 메뉴 진입시 init filter
-		const isInitialSearch = Object.keys(parsedSearch).length === 0;
+		const isInitialSearch = Object.keys(params).length === 0;
 		// 조회되어야 하는 필터의 개수와 맞지 않을 경우(url을 통해서 부분 필터만 전달 되었을 경우)
 		const isSeveralSearch =
-			Object.keys(initialFilter).length !==
-			Object.keys(parsedSearch).length;
+			Object.keys(initialFilter).length !== Object.keys(params).length;
 
 		if (isInitialSearch || isSeveralSearch) {
 			const param = {
 				...initialFilter,
-				...parsedSearch,
+				...params,
 			};
-			navigate(`${pathname}?${qs.stringify(param)}`, {
-				replace: true,
-			});
+			if (isQueryChange) {
+				navigate(`${pathname}?${qs.stringify(param)}`, {
+					replace: true,
+				});
+				return;
+			}
+			setLocalParams(param);
 			return;
 		}
-		handleLoadData(parsedSearch);
-	}, [parsedSearch]);
+		handleLoadData(params);
+	}, [isQueryChange, params]);
 
 	const handleChangeFilter = useCallback(
 		(newParam: {[key: string]: any}) => {
@@ -102,40 +113,42 @@ const useList = <
 			if (newParam.hasOwnProperty('currentPage')) {
 				pageParam['currentPage'] = newParam?.currentPage;
 			}
-			const chaningQuery = qs.stringify({
-				...parsedSearch,
+			const param = {
+				...params,
 				...newParam,
 				...pageParam,
-			});
-			navigate(`${pathname}?${chaningQuery}`, {
-				replace: true,
-			});
-
+			};
+			if (isQueryChange) {
+				const chaningQuery = qs.stringify(param);
+				navigate(`${pathname}?${chaningQuery}`, {
+					replace: true,
+				});
+			} else {
+				setLocalParams(param);
+			}
 			// 조회 후 scroll up
 			window.scrollTo(0, 0);
 		},
-		[pathname, parsedSearch]
+		[isQueryChange, params, navigate, pathname]
 	);
-
-	const handleSearch = (param?: F) => {
-		const sortedParsedSearch = sortObjectByKey(parsedSearch);
-		const newParam = {
-			...parsedSearch,
-			...(param && param),
+	const handleSearch = (newParam?: F) => {
+		const sortedParsedSearch = sortObjectByKey(params);
+		const param = {
+			...params,
+			...(newParam && newParam),
 		};
-		const sortedParam = sortObjectByKey(newParam);
-
+		const sortedParam = sortObjectByKey(param);
 		const paramChanged =
 			JSON.stringify(sortedParsedSearch) !== JSON.stringify(sortedParam);
 
 		// 신규 파라미터라면, query string 변경
 		if (paramChanged) {
-			handleChangeFilter(newParam);
+			handleChangeFilter(param);
 			return;
 		}
 
 		// 동일한 파라미터라면, 데이터 재호출
-		handleLoadData(parsedSearch);
+		handleLoadData(param);
 	};
 
 	const handleReset = useCallback(() => {
@@ -144,11 +157,10 @@ const useList = <
 
 	const paginationProps = useMemo(() => {
 		const currentPage = Number(
-			(parsedSearch as F & {currentPage: number})?.currentPage ?? 1
+			(params as F & {currentPage: number})?.currentPage ?? 1
 		);
 		const pageMaxNum = Number(
-			(parsedSearch as F & {pageMaxNum: number})?.pageMaxNum ??
-				defaultPageSize
+			(params as F & {pageMaxNum: number})?.pageMaxNum ?? defaultPageSize
 		);
 		const count = Math.ceil(totalSize / pageMaxNum);
 		return {
@@ -160,7 +172,7 @@ const useList = <
 				});
 			},
 		};
-	}, [parsedSearch, totalSize, handleChangeFilter]);
+	}, [params, totalSize, handleChangeFilter]);
 
 	return {
 		isLoading,
@@ -168,7 +180,7 @@ const useList = <
 		data,
 		totalSize,
 		paginationProps,
-		filter: parsedSearch,
+		filter: params,
 		handleChangeFilter,
 		handleSearch,
 		handleReset,

@@ -1,10 +1,6 @@
 import {ICommand} from '@nestjs/cqrs';
-import {BillingProps} from '../../domain';
+import {TokenInfo} from 'src/billing/interface/getToken.decorator';
 
 export class ChangeBillingPlanCommand implements ICommand {
-	constructor(
-		readonly customerKey: string,
-		readonly planId: string,
-		readonly currentBillingProps: BillingProps
-	) {}
+	constructor(readonly planId: string, readonly token: TokenInfo) {}
 }

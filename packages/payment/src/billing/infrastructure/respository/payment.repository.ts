@@ -3,7 +3,7 @@ import {PlanPaymentFactory, Payment, PaymentProps} from '../../domain';
 import {PaymentRepository} from '../../domain/repository';
 import {DynamoDB} from 'aws-sdk';
 import {InjectionToken} from '../../../injection.token';
-import {DateTime} from 'luxon';
+import {PAYMENT_STATUS} from '../api-client';
 
 type PaymentEntity = PaymentProps;
 
@@ -107,17 +107,17 @@ export class PlanPaymentRepository
 	/**
 	 * 결제내역 검색
 	 * @param partnerIdx
+	 * @param status
 	 * @param sort
 	 * @param page
 	 * @param pageSize
-	 * @param range
 	 */
 	async search(
 		partnerIdx: number,
+		status: PAYMENT_STATUS,
 		sort: 'ASC' | 'DESC',
 		page: number,
-		pageSize: number,
-		range?: {startAt: Date; endAt: Date}
+		pageSize: number
 	): Promise<{
 		total: number;
 		data: Payment[];
@@ -127,7 +127,7 @@ export class PlanPaymentRepository
 
 		const params: DynamoDB.DocumentClient.QueryInput = {
 			TableName: this.tableName,
-			IndexName: 'partnerIdx-approvedAt-index',
+			IndexName: 'partnerIdx-status-index',
 			KeyConditionExpression: 'partnerIdx = :key',
 			ExpressionAttributeValues: {
 				':key': partnerIdx,
@@ -135,14 +135,14 @@ export class PlanPaymentRepository
 			ScanIndexForward: sort === 'ASC',
 		};
 
-		if (range) {
-			const {startAt, endAt} = range;
-			params.KeyConditionExpression +=
-				' and approvedAt between :startAt and :endAt';
+		if (status) {
+			params.KeyConditionExpression += ' and #status = :status';
+			params.ExpressionAttributeNames = {
+				'#status': 'status',
+			};
 			params.ExpressionAttributeValues = {
 				...params.ExpressionAttributeValues,
-				':startAt': DateTime.fromJSDate(startAt).toISO(),
-				':endAt': DateTime.fromJSDate(endAt).toISO(),
+				':status': status,
 			};
 		}
 

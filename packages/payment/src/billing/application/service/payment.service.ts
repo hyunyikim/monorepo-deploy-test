@@ -21,15 +21,16 @@ export class RegularPaymentService {
 		@Inject(PlanBillingRepository)
 		private readonly billingRepo: BillingRepository,
 		@Inject(PricePlanRepository)
-		private readonly planRepository: PlanRepository,
-		@Inject(InjectionToken.CRON_TASK_ON) private readonly cronTask: boolean,
+		private readonly planRepo: PlanRepository,
+		@Inject(InjectionToken.CRON_TASK_ON)
+		private readonly cronTask: boolean,
 		@Inject(Logger) private readonly logger: Logger
 	) {}
 
 	/**
-	 * 결제실행 배치 (매일, 매시간 30분 마다 실행)
+	 * 결제실행 배치 (매일, 매시간, 매분 30초 마다 실행) TODO: 오픈전에 변경할 것
 	 */
-	@Cron('30 * * * * *', {name: 'REGULAR_PAYMENT_BATCH_JOB'})
+	@Cron('*/30 * * * * *', {name: 'REGULAR_PAYMENT_BATCH_JOB'})
 	async paymentBatchJob() {
 		if (!this.cronTask) return;
 		const billings = await this.billingRepo.getAll(true);
@@ -37,7 +38,7 @@ export class RegularPaymentService {
 		for (const billing of billings) {
 			if (this.isPaymentTiming(billing)) {
 				paidBillings.push(billing.properties());
-				this.createPayment(billing);
+				await this.requestRegularPayment(billing);
 			}
 		}
 		this.logger.log(
@@ -57,34 +58,55 @@ export class RegularPaymentService {
 	 * 정기결제 요청 생성
 	 * @param billing
 	 */
-	createPayment(billing: Billing) {
+	async requestRegularPayment(billing: Billing) {
 		const props = billing.properties();
-		const {partnerIdx, billingKey, pricePlan, customerKey} = props;
+		const {partnerIdx, nextPricePlan, customerKey} = props;
+
+		if (!nextPricePlan) {
+			return false;
+		}
 
 		const command = new ApproveBillingPaymentCommand(
 			partnerIdx,
-			billingKey,
-			pricePlan,
-			this.generatePaymentPayload(partnerIdx, customerKey, pricePlan)
+			billing,
+			nextPricePlan,
+			this.generatePaymentPayload(partnerIdx, customerKey, nextPricePlan),
+			undefined,
+			true
 		);
-		this.commandBus.execute(command);
+		await this.commandBus.execute(command);
 	}
 
 	/**
 	 * 결제 요청 데이터 생성
 	 * @param partnerIdx
 	 * @param customerKey
-	 * @param orderId
 	 * @param pricePlan
+	 * @param canceledPricePlan
 	 */
 	generatePaymentPayload(
 		partnerIdx: number,
 		customerKey: string,
-		pricePlan: PricePlanProps
+		pricePlan: PricePlanProps,
+		canceledPricePlan?: PricePlanProps
 	) {
 		const orderName = `${pricePlan.planName} (${
 			pricePlan.planType === 'YEAR' ? '연 결제' : '월 결제'
 		})`;
+
+		// 결제 금액 (부가세 적용)
+		let payPrice = pricePlan.payPrice;
+
+		// 취소할 금액이 있을 경우 (마이너스 결제 방지)
+		if (canceledPricePlan) {
+			const canceledPrice = Number(canceledPricePlan.canceledPrice || 0);
+			payPrice -=
+				canceledPrice > payPrice
+					? payPrice
+					: canceledPrice > 0
+					? canceledPrice
+					: 0;
+		}
 
 		const orderId = [
 			partnerIdx.toString(),
@@ -94,7 +116,7 @@ export class RegularPaymentService {
 
 		return {
 			customerKey,
-			amount: pricePlan.totalPrice + pricePlan.vat,
+			amount: payPrice,
 			orderId,
 			orderName,
 		};
@@ -106,22 +128,28 @@ export class RegularPaymentService {
 	 * @private
 	 */
 	private isPaymentTiming(billing: Billing) {
-		const {unregisteredAt, nextPaymentDate, pausedAt, card} =
+		const {deletedAt, nextPaymentDate, nextPricePlan, pausedAt, card} =
 			billing.properties();
 
 		// 빌링이 취소된 경우
-		if (unregisteredAt !== undefined) return false;
+		if (deletedAt) return false;
 
 		// 카드 정보가 등록되지 않은 경우
-		if (!card || !card.number) return false;
+		if (!card) return false;
 
-		// 다음 결제 예정일자가 없는 경우
-		if (!nextPaymentDate) return false;
+		// 다음 결제 예정일자 또는 결제예정 금액이 없는 경우
+		if (
+			!nextPaymentDate ||
+			!nextPricePlan ||
+			!nextPricePlan.displayTotalPrice
+		) {
+			return false;
+		}
 
 		// 현재 이용중인 플랜이 일시 중지된 경우
-		if (pausedAt !== undefined) return false;
+		if (pausedAt) return false;
 
-		// 다음 예정 플랜이 무료플랜인 경우
+		// TODO: 이미 결제를 완료한 경우 중복결제 방지
 
 		return DateTime.now() > DateTime.fromISO(nextPaymentDate);
 	}

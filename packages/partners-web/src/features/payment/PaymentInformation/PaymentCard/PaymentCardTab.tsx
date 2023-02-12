@@ -1,23 +1,20 @@
-import {Stack, Typography, TableRow} from '@mui/material';
+import {Stack, Typography, TableRow, Box} from '@mui/material';
 
 import {useChildModalOpen} from '@/utils/hooks';
 
 import {IcAtm} from '@/assets/icon';
-import {
-	LabeledSwitch,
-	Table,
-	HeadTableCell,
-	TableCell,
-	Chip,
-} from '@/components';
+import {Table, HeadTableCell, TableCell, Chip} from '@/components';
 import PaymentCardDetailModal from './PaymentCardDetailModal';
-import {LogoVisa, LogoVisa2x} from '@/assets/images/payment-network';
+import {useGetUserPricePlan} from '@/stores';
 
-const totalSize = 10;
+const totalSize = 1;
 const isLoading = false;
 
 function PaymentCardTab() {
 	const {open, onOpen, onClose} = useChildModalOpen({});
+	const {data: userPlan} = useGetUserPricePlan();
+	const card = userPlan?.card;
+
 	return (
 		<>
 			<Stack mt="40px">
@@ -44,49 +41,83 @@ function PaymentCardTab() {
 					유료 플랜 결제를 위해서 1개 이상의 카드가 필요합니다.
 				</Typography>
 				<Stack>
-					<Table
-						isLoading={isLoading}
-						totalSize={totalSize}
-						headcell={
-							<>
-								<HeadTableCell width={240}>카드</HeadTableCell>
-								<HeadTableCell width={180}>
-									유효기간
-								</HeadTableCell>
-								<HeadTableCell minWidth={300}>
-									결제사
-								</HeadTableCell>
-								<HeadTableCell width={180}>기타</HeadTableCell>
-								<HeadTableCell width={180}>
-									결제 상태
-								</HeadTableCell>
-							</>
-						}>
-						<TableRow>
-							<TableCell>
-								<img
-									src={LogoVisa}
-									srcSet={`${LogoVisa} 1x, ${LogoVisa2x} 2x`}
-									width={32}
-								/>
-								<Typography
-									className="underline"
-									onClick={onOpen}
-									ml="12px">
-									test
-								</Typography>
-							</TableCell>
-							<TableCell>test</TableCell>
-							<TableCell>test</TableCell>
-							<TableCell>test</TableCell>
-							<TableCell>
-								<Chip color="green" label="기본 결제 카드" />
-							</TableCell>
-						</TableRow>
-					</Table>
+					{userPlan && (
+						<Table
+							isLoading={isLoading}
+							totalSize={totalSize}
+							headcell={
+								<>
+									<HeadTableCell width={240}>
+										카드
+									</HeadTableCell>
+									<HeadTableCell minWidth={300}>
+										결제사
+									</HeadTableCell>
+									<HeadTableCell width={180}>
+										기타
+									</HeadTableCell>
+									<HeadTableCell width={180}>
+										결제 상태
+									</HeadTableCell>
+								</>
+							}>
+							{card ? (
+								<TableRow>
+									<TableCell>
+										<Box
+											className="flex-center"
+											sx={{
+												width: '32px',
+												height: '32px',
+												borderRadius: '50%',
+												border: (theme) =>
+													`0.35px solid ${theme.palette.grey[100]}`,
+											}}>
+											<IcAtm width={20} height={20} />
+										</Box>
+										<Typography
+											className="underline"
+											onClick={onOpen}
+											ml="12px">
+											{new Array(4)
+												.fill(null)
+												.map((_, idx) => (
+													<>
+														{card?.number.slice(
+															idx * 4,
+															idx * 4 + 4
+														)}{' '}
+													</>
+												))}
+										</Typography>
+									</TableCell>
+									<TableCell>{card.company}</TableCell>
+									<TableCell>-</TableCell>
+									<TableCell>
+										<Chip
+											color="green"
+											label="기본 결제 카드"
+										/>
+									</TableCell>
+								</TableRow>
+							) : (
+								<TableRow>
+									<TableCell align="center" colSpan={20}>
+										등록된 카드가 존재하지 않습니다.
+									</TableCell>
+								</TableRow>
+							)}
+						</Table>
+					)}
 				</Stack>
 			</Stack>
-			<PaymentCardDetailModal data={{}} open={open} onClose={onClose} />
+			{userPlan?.card && (
+				<PaymentCardDetailModal
+					data={userPlan}
+					open={open}
+					onClose={onClose}
+				/>
+			)}
 		</>
 	);
 }

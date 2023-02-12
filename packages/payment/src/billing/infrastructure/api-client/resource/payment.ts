@@ -2,6 +2,7 @@ import {AxiosInstance} from 'axios';
 import {join} from 'path';
 import {Resource} from './resource';
 import {
+	Error,
 	KeyInPaymentBody,
 	Payment,
 	PaymentCancelBody,
@@ -17,7 +18,7 @@ export class PaymentResource implements Resource {
 
 	/**
 	 * {paymentKey}에 해당하는 결제를 검증하고 승인합니다.
-	 * @param paymentKey 결제 건에 대한 고유한 키값입니다.
+	 *
 	 * @param amount 결제할 금액입니다.
 	 * @param orderId 상점에서 주문 건을 구분하기 위해 발급한 고유 ID입니다. 영문 대소문자, 숫자, 특수문자 -, _, =로 이루어진 6자 이상 64자 이하의 문자열이어야 합니다.
 	 * @returns 결제 승인 요청에 성공했다면 Payment 객체가 돌아옵니다.
@@ -26,10 +27,11 @@ export class PaymentResource implements Resource {
 	async confirm(paymentKey: string, amount: number, orderId: string) {
 		const url = join(this.path, paymentKey);
 		const reqBody = {amount, orderId};
-		const {data: payment} = await this.httpClient.post<Payment>(
+		const {data: payment} = await this.httpClient.post<Payment | Error>(
 			url,
 			reqBody
 		);
+
 		return payment;
 	}
 

@@ -2,8 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import {css} from '@emotion/react';
 
-import logo from '../../../assets/images/img_footer_mass_adoption_logo.png';
-import logo2x from '../../../assets/images/img_footer_mass_adoption_logo@2x.png';
+import {footerLogo, footerLogo2x} from '@/assets/images/homepage/index';
 
 function PartnersHomepageFooter() {
 	return (
@@ -11,8 +10,8 @@ function PartnersHomepageFooter() {
 			<div className="contents_container content">
 				<div className="company_service_section">
 					<img
-						src={logo}
-						srcSet={`${logo} 1x, ${logo2x} 2x`}
+						src={footerLogo}
+						srcSet={`${footerLogo} 1x, ${footerLogo2x} 2x`}
 						className="footer_logo"
 						alt="mass-adoption-logo"
 					/>
