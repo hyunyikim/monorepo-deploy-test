@@ -1,8 +1,9 @@
 import {PlanRepository} from '../../domain/repository';
 import {InjectionToken} from '../../../injection.token';
-import {Injectable, Inject} from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import {DynamoDB} from 'aws-sdk';
 import {PricePlan, PricePlanProps} from '../../domain/pricePlan';
+import {PLAN_TYPE} from '../api-client';
 
 /**
  * 요금제 플랜 데이터 저장소
@@ -26,7 +27,7 @@ export class PricePlanRepository
 	 * @param activated
 	 * @param planType
 	 */
-	async getAll(activated: boolean, planType?: 'YEAR' | 'MONTH') {
+	async getAll(activated: boolean, planType?: PLAN_TYPE) {
 		const {Items} = await this.scan({
 			TableName: this.tableName,
 			IndexName: 'planType-planLevel-index',
@@ -64,10 +65,18 @@ export class PricePlanRepository
 	/**
 	 * 무료 플랜 찾기
 	 */
-	async findFreePlan(planType: 'YEAR' | 'MONTH' = 'MONTH') {
+	async findFreePlan(planType: PLAN_TYPE = PLAN_TYPE.MONTH) {
 		const plans: PricePlan[] = await this.getAll(false);
 		return plans.filter(
 			(plan) => plan.planLevel === 0 && plan.planType === planType
 		)[0];
+	}
+
+	/**
+	 * 엔터프라이즈 플랜 찾기
+	 */
+	async findEnterprisePlan() {
+		const plans: PricePlan[] = await this.getAll(false);
+		return plans.filter((plan) => plan.planType === PLAN_TYPE.INFINITE)[0];
 	}
 }

@@ -42,6 +42,11 @@ export class ApproveBillingPaymentHandler
 			useDelay,
 		} = command;
 
+		// 결제할 금액이 없을 경우 결제 시도 안함
+		if (payload.amount === 0) {
+			return;
+		}
+
 		try {
 			// 결제 승인 요청
 			const tossPayment = await this.paymentsApi.billing.requestApprove(

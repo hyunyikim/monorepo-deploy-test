@@ -15,6 +15,7 @@ import {
 	DeleteBillingCommand,
 	RegisterCardCommand,
 	DeleteCardCommand,
+	RegisterEnterpriseBillingCommand,
 } from './register-billing.command';
 import {BillingProps, PlanBillingFactory, PricePlan} from '../../domain';
 import {PricePlanRepository} from '../../infrastructure/respository';
@@ -140,16 +141,12 @@ export class RegisterFreeBillingHandler
 		const billing = await this.billingRepo.findByPartnerIdx(partnerIdx);
 		if (billing) {
 			const billingProps = billing.properties();
-
-			// TODO: 해당 케이스도 무료 플랜을 부여할 수 있는 방안을 고민해야할 듯
 			if (
 				billingProps.pricePlan?.planLevel > 0 &&
 				!billingProps.deletedAt
 			) {
 				throw new ConflictException('ALREADY_USE_PAID_PLAN');
 			}
-
-			// 무료 플랜을 이용중인 경우 현재 플랜을 연장
 		}
 
 		// 무료플랜 조회
@@ -180,6 +177,67 @@ export class RegisterFreeBillingHandler
 					month: planMonth || 1,
 				})
 				.toISODate()}T23:59:59+09:00`,
+		} as BillingProps;
+
+		const newBilling = this.factory.create(billingProps);
+
+		// DB 저장
+		await this.billingRepo.saveBilling(newBilling);
+
+		newBilling.commit();
+	}
+}
+
+/**
+ * 엔터프라이즈 플랜 신청 커맨드 핸들러
+ */
+@CommandHandler(RegisterEnterpriseBillingCommand)
+export class RegisterEnterpriseBillingHandler
+	implements ICommandHandler<RegisterEnterpriseBillingCommand, void>
+{
+	constructor(
+		@Inject(PlanBillingRepository)
+		private readonly billingRepo: BillingRepository,
+		@Inject(PlanBillingFactory)
+		private readonly factory: PlanBillingFactory,
+		@Inject(PricePlanRepository)
+		private readonly planRepo: PlanRepository
+	) {}
+
+	async execute(command: RegisterEnterpriseBillingCommand): Promise<void> {
+		const {partnerIdx} = command;
+
+		// 이미 이용중인 유료 플랜이 있을 경우
+		const billing = await this.billingRepo.findByPartnerIdx(partnerIdx);
+		if (billing) {
+			const billingProps = billing.properties();
+			if (
+				billingProps.pricePlan?.planLevel > 0 &&
+				!billingProps.deletedAt
+			) {
+				throw new ConflictException('ALREADY_USE_PAID_PLAN');
+			}
+		}
+
+		// 무료플랜 조회
+		const enterprisePlan = await this.planRepo.findEnterprisePlan();
+		if (!enterprisePlan) {
+			throw new NotFoundException('NOT_FOUND_PLAN');
+		}
+
+		// 키 생성
+		const billingKey = [
+			'ENTERPRISE_BILLING_KEY',
+			partnerIdx.toString(),
+			DateTime.now().valueOf(),
+		].join('_');
+
+		// 빌링 생성
+		const billingProps = {
+			billingKey,
+			partnerIdx: partnerIdx,
+			pricePlan: enterprisePlan,
+			authenticatedAt: DateTime.now().toISO(),
 		} as BillingProps;
 
 		const newBilling = this.factory.create(billingProps);

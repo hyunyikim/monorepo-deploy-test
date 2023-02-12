@@ -9,6 +9,14 @@ import {Observable} from 'rxjs';
 import {Request} from 'express';
 import {JwtService} from '@nestjs/jwt';
 
+export enum ADMIN_TYPE {
+	MASTER = 'M',
+	MANAGER = 'A',
+	INSPECTOR = 'V',
+	REPAIRER = 'R',
+	B2B = 'B',
+}
+
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
 	constructor(@Inject(JwtService) private jwtService: JwtService) {}
@@ -26,10 +34,18 @@ export class JwtAuthGuard implements CanActivate {
 		req['token'] = token;
 		return this.jwtService
 			.verifyAsync(token)
-			.then((payload: {idx: number; iat: number; exp: number}) => {
-				req['partnerIdx'] = payload.idx;
-				return true;
-			})
+			.then(
+				(payload: {
+					idx: number;
+					type: ADMIN_TYPE;
+					iat: number;
+					exp: number;
+				}) => {
+					req['partnerIdx'] = payload.idx;
+					req['adminType'] = payload.type;
+					return true;
+				}
+			)
 			.catch((error) => {
 				console.log(error);
 				throw new BadRequestException('Invalid Token');

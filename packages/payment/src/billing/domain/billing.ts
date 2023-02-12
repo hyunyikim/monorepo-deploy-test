@@ -15,6 +15,7 @@ import {PaymentProps} from './payment';
 import {
 	Billing as TossBilling,
 	BillingCard as TossBillingCard,
+	PLAN_TYPE,
 } from '../infrastructure/api-client';
 import {DateTime} from 'luxon';
 import {PricePlan, PricePlanProps} from './pricePlan';
@@ -144,8 +145,8 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			this.props.lastPaymentAt || this.props.authenticatedAt
 		)
 			.plus({
-				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
-				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+				year: this.props.pricePlan.planType === PLAN_TYPE.YEAR ? 1 : 0,
+				month: this.props.pricePlan.planType === PLAN_TYPE.YEAR ? 0 : 1,
 			})
 			.toISO();
 
@@ -202,8 +203,8 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		this.nextPricePlan = this.props.pricePlan;
 		this.nextPaymentDate = now
 			.plus({
-				year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
-				month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+				year: this.props.pricePlan.planType === PLAN_TYPE.YEAR ? 1 : 0,
+				month: this.props.pricePlan.planType === PLAN_TYPE.YEAR ? 0 : 1,
 			})
 			.toISO();
 
@@ -256,8 +257,14 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			};
 			this.nextPaymentDate = DateTime.now()
 				.plus({
-					year: this.props.pricePlan.planType === 'YEAR' ? 1 : 0,
-					month: this.props.pricePlan.planType === 'YEAR' ? 0 : 1,
+					year:
+						this.props.pricePlan.planType === PLAN_TYPE.YEAR
+							? 1
+							: 0,
+					month:
+						this.props.pricePlan.planType === PLAN_TYPE.YEAR
+							? 0
+							: 1,
 				})
 				.toISO();
 		}

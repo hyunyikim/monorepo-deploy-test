@@ -3,9 +3,10 @@ import {IQuery, IQueryHandler, QueryHandler} from '@nestjs/cqrs';
 import {PricePlanRepository} from '../../infrastructure/respository';
 import {PlanRepository} from '../../domain/repository';
 import {PricePlanProps} from '../../domain';
+import {PLAN_TYPE} from '../../infrastructure/api-client';
 
 export class FindPlanQuery implements IQuery {
-	constructor(readonly planType?: 'YEAR' | 'MONTH') {}
+	constructor(readonly planType?: PLAN_TYPE) {}
 }
 
 /**

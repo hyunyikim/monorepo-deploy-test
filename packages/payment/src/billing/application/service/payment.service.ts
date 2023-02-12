@@ -10,6 +10,7 @@ import {
 } from '../../infrastructure/respository';
 import {Cron} from '@nestjs/schedule';
 import {InjectionToken} from '../../../injection.token';
+import {PLAN_TYPE} from '../../infrastructure/api-client';
 
 /**
  * 결제관련 서비스 로직
@@ -91,7 +92,12 @@ export class RegularPaymentService {
 		canceledPricePlan?: PricePlanProps
 	) {
 		const orderName = `${pricePlan.planName} (${
-			pricePlan.planType === 'YEAR' ? '연 결제' : '월 결제'
+			{
+				[PLAN_TYPE.YEAR]: '연 결제',
+				[PLAN_TYPE.MONTH]: '월 결제',
+				[PLAN_TYPE.INFINITE]: '무제한',
+				[PLAN_TYPE.CUSTOM]: '커스텀',
+			}[pricePlan.planType]
 		})`;
 
 		// 결제 금액 (부가세 적용)

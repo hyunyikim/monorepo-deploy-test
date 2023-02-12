@@ -42,3 +42,19 @@ export class ChangeBillingPlanBodyDTO {
 	@IsString()
 	readonly planId: string;
 }
+
+export class AdminRegisterFreeBillingBodyDTO {
+	@IsNumber()
+	readonly partnerIdx: number;
+
+	@IsNumber()
+	readonly planMonth: number;
+
+	@IsNumber()
+	readonly planLimit: number;
+}
+
+export class AdminRegisterEnterpriseBillingBodyDTO {
+	@IsNumber()
+	readonly partnerIdx: number;
+}
