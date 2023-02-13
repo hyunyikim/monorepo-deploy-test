@@ -2,9 +2,9 @@ import {BadRequestException, Inject, NotFoundException} from '@nestjs/common';
 import {CommandBus, CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {BillingRepository, PaymentRepository} from '../../domain/repository';
 import {
-	PricePlanRepository,
 	PlanBillingRepository,
 	PlanPaymentRepository,
+	PricePlanRepository,
 } from '../../infrastructure/respository';
 import {ChangeBillingPlanCommand} from './change-billing-plan.command';
 import {PricePlan, PricePlanProps} from '../../domain';
@@ -12,6 +12,7 @@ import {DateTime} from 'luxon';
 import {VircleCoreApi} from '../../infrastructure/api-client/vircle-core.api';
 import {ApproveBillingPaymentCommand} from './approve-billing-payment.command';
 import {RegularPaymentService} from '../service/payment.service';
+import {PLAN_TYPE} from '../../infrastructure/api-client';
 
 /**
  * 구독플랜 변경 커맨드 핸들러
@@ -86,6 +87,11 @@ export class ChangeBillingPlanHandler
 			throw new BadRequestException('ALREADY_USED_SAME_PLAN');
 		}
 
+		// 엔터프라이즈 고객은 플랜 변경 불가
+		if (currentPlan.planType === PLAN_TYPE.INFINITE) {
+			throw new BadRequestException('IMPOSSIBLE_CHANGE_PLAN');
+		}
+
 		////////////////////
 		// 상위 플랜으로 변경
 		////////////////////
@@ -96,8 +102,8 @@ export class ChangeBillingPlanHandler
 		) {
 			// 월결제 -> 연결제 (변경 예약)
 			if (
-				currentPlan.planType === 'MONTH' &&
-				newPlan.planType === 'YEAR'
+				currentPlan.planType === PLAN_TYPE.MONTH &&
+				newPlan.planType === PLAN_TYPE.YEAR
 			) {
 				// 다음달 결제예정일에 업그레이드 예약
 				scheduledDate = billingProps.nextPaymentDate;
@@ -105,8 +111,8 @@ export class ChangeBillingPlanHandler
 
 			// 연결제 -> 연결제 (즉시 변경)
 			if (
-				currentPlan.planType === 'YEAR' &&
-				newPlan.planType === 'YEAR'
+				currentPlan.planType === PLAN_TYPE.YEAR &&
+				newPlan.planType === PLAN_TYPE.YEAR
 			) {
 				// 사용한 개월수 = 플랜 시작일(직전 결제일) 부터 현재까지 개월 수
 				const usedMonths: number =
@@ -139,8 +145,8 @@ export class ChangeBillingPlanHandler
 
 			// 월결제 -> 월결제 (즉시 변경)
 			if (
-				currentPlan.planType === 'MONTH' &&
-				newPlan.planType === 'MONTH'
+				currentPlan.planType === PLAN_TYPE.MONTH &&
+				newPlan.planType === PLAN_TYPE.YEAR
 			) {
 				// 사용량 조회
 				const payload = {
@@ -170,8 +176,8 @@ export class ChangeBillingPlanHandler
 
 			// 연결제 -> 연결제 (변경불가!)
 			if (
-				currentPlan.planType === 'YEAR' &&
-				newPlan.planType === 'YEAR'
+				currentPlan.planType === PLAN_TYPE.YEAR &&
+				newPlan.planType === PLAN_TYPE.YEAR
 			) {
 				throw new BadRequestException('IMPOSSIBLE_CHANGE_PLAN');
 			}

@@ -1,7 +1,7 @@
 import {Payment} from './payment';
 import {Billing} from './billing';
 import {PricePlanProps} from './pricePlan';
-import {PAYMENT_STATUS} from '../infrastructure/api-client';
+import {PAYMENT_STATUS, PLAN_TYPE} from '../infrastructure/api-client';
 
 export interface PaymentRepository {
 	savePayment: (payment: Payment) => Promise<void>;
@@ -31,10 +31,9 @@ export interface BillingRepository {
 export interface PlanRepository {
 	getAll: (
 		activated: boolean,
-		planType?: 'YEAR' | 'MONTH'
+		planType?: PLAN_TYPE
 	) => Promise<PricePlanProps[]>;
 	findByPlanId: (planId: string) => Promise<PricePlanProps | null>;
-	findFreePlan: (
-		planType?: 'YEAR' | 'MONTH'
-	) => Promise<PricePlanProps | null>;
+	findFreePlan: (planType?: PLAN_TYPE) => Promise<PricePlanProps | null>;
+	findEnterprisePlan: () => Promise<PricePlanProps | null>;
 }

@@ -39,9 +39,9 @@ import {GetToken, TokenInfo} from './getToken.decorator';
 import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
 import {HttpExceptionFilter} from './httpException.filter';
-import {PAYMENT_STATUS} from '../infrastructure/api-client';
+import {PAYMENT_STATUS, PLAN_TYPE} from '../infrastructure/api-client';
 
-class BillingInterface {
+export class BillingInterface {
 	readonly customerKey: string;
 	readonly pricePlan: PricePlanProps;
 	readonly nextPricePlan?: PricePlanProps;
@@ -85,7 +85,7 @@ class BillingInterface {
 	}
 }
 
-class PaymentSummaryInterface {
+export class PaymentSummaryInterface {
 	readonly displayOrderId: string;
 	readonly orderId: string;
 	readonly planName: string;
@@ -110,14 +110,20 @@ class PaymentSummaryInterface {
 			? DateTime.fromISO(payment.expiredAt).toISO()
 			: DateTime.fromISO(payment.approvedAt)
 					.plus({
-						year: payment.pricePlan.planType === 'YEAR' ? 1 : 0,
-						month: payment.pricePlan.planType === 'YEAR' ? 0 : 1,
+						year:
+							payment.pricePlan.planType === PLAN_TYPE.YEAR
+								? 1
+								: 0,
+						month:
+							payment.pricePlan.planType === PLAN_TYPE.YEAR
+								? 0
+								: 1,
 					})
 					.toISO();
 	}
 }
 
-class PaymentDetailInterface extends PaymentSummaryInterface {
+export class PaymentDetailInterface extends PaymentSummaryInterface {
 	readonly pricePlan: PricePlanProps;
 	readonly payApprovedAt: string;
 	readonly canceledPricePlan?: PricePlanProps;
@@ -144,7 +150,7 @@ export class BillingController {
 	 * @param planType
 	 */
 	@Get('/plans')
-	async getPlans(@Query('planType') planType?: 'YEAR' | 'MONTH') {
+	async getPlans(@Query('planType') planType?: PLAN_TYPE) {
 		const query = new FindPlanQuery(planType);
 		return await this.queryBus.execute<FindPlanQuery, PricePlanProps[]>(
 			query

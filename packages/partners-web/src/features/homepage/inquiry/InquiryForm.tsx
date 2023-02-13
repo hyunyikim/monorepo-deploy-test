@@ -291,12 +291,10 @@ function InquiryForm() {
 				type: 'operation',
 				title: '디지털 보증서 도입문의',
 				data: {
-					담당자: values.name,
-					회사명: values.companyName,
-					핸드폰: values.phoneNum,
-					// 이메일: '',
-					// '담당부서 및 직책': '',
-					// 문의내용: '',
+					기업명: values.companyName,
+					이름: values.name,
+					전화번호: values.phoneNum,
+					마켓팅동의: checkboxState.agreeMarketing ? 'O' : 'X',
 				},
 			});
 

@@ -383,7 +383,9 @@ export class Cafe24EventService {
 			ordererName: buyerName,
 			ordererTel: buyerPhone.replaceAll('-', ''),
 			// (SXLP-2806): 판매처 변경
-			platformName: ['self', 'mobile'].includes(order_place_id)
+			platformName: ['self', 'mobile', 'mobile_d', 'NCHECKOUT'].includes(
+				order_place_id
+			)
 				? '공식 홈페이지'
 				: order_place_name,
 			modelNum:

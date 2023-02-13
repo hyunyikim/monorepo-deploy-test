@@ -19,6 +19,7 @@ export class PaymentResource implements Resource {
 	/**
 	 * {paymentKey}에 해당하는 결제를 검증하고 승인합니다.
 	 *
+	 * @param paymentKey
 	 * @param amount 결제할 금액입니다.
 	 * @param orderId 상점에서 주문 건을 구분하기 위해 발급한 고유 ID입니다. 영문 대소문자, 숫자, 특수문자 -, _, =로 이루어진 6자 이상 64자 이하의 문자열이어야 합니다.
 	 * @returns 결제 승인 요청에 성공했다면 Payment 객체가 돌아옵니다.
@@ -68,6 +69,7 @@ export class PaymentResource implements Resource {
 	/**
 	 * 승인된 결제를 paymentKey로 취소합니다.
 	 * @param paymentKey 결제 건에 대한 고유한 키값입니다.
+	 * @param body
 	 * @returns 결제 취소 요청에 성공했다면 Payment 객체의 cancels 필드에 취소 객체가 배열로 돌아옵니다.
 	 * {@link https://docs.tosspayments.com/reference#%EA%B2%B0%EC%A0%9C-%EC%B7%A8%EC%86%8C}
 	 */
