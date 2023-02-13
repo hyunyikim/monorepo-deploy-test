@@ -1,4 +1,5 @@
 import {AggregateRoot} from '@nestjs/cqrs';
+import {PLAN_TYPE} from '../infrastructure/api-client';
 
 /**
  * 요금제 플랜 인터페이스
@@ -16,7 +17,7 @@ export interface PricePlanProps {
 	vat: number;
 	payPrice: number;
 	planLimit: number;
-	planType: 'DAY' | 'MONTH' | 'YEAR';
+	planType: PLAN_TYPE;
 	planLevel: number;
 	activated: boolean;
 	usedMonths?: number;
@@ -41,7 +42,7 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 	vat: number;
 	payPrice: number;
 	planLimit: number;
-	planType: 'DAY' | 'MONTH' | 'YEAR';
+	planType: PLAN_TYPE;
 	planLevel: number;
 	activated: boolean;
 	usedMonths?: number;
@@ -64,7 +65,8 @@ export class PricePlan extends AggregateRoot implements PricePlanProps {
 	 * 최종 결제 금액 계산
 	 */
 	calculateTotalAmount() {
-		const months = this.usedMonths || this.planType === 'YEAR' ? 12 : 1; // 수량(개월수)
+		const months =
+			this.usedMonths || this.planType === PLAN_TYPE.YEAR ? 12 : 1; // 수량(개월수)
 		this.discountPrice = this.discountRate
 			? Math.round(this.planPrice * (this.discountRate / 100)) // 할인금액
 			: 0;

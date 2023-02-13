@@ -42,7 +42,7 @@ export class FindBillingByPartnerTokenHandler
 				).diffNow('months').months
 			) || 1;
 
-		// 연결제일 경우 오늘일자가 포함된 1개월치만 검색되도록
+		// 오늘일자가 포함된 1개월치 사용량만 조회되도록 검색 시작일자를 계산
 		const startDate: string =
 			usedMonths > 1
 				? DateTime.fromISO(

@@ -25,6 +25,10 @@ export class RegisterFreeBillingCommand implements ICommand {
 	) {}
 }
 
+export class RegisterEnterpriseBillingCommand implements ICommand {
+	constructor(readonly partnerIdx: number) {}
+}
+
 export class RegisterCardCommand implements ICommand {
 	constructor(
 		readonly token: TokenInfo,

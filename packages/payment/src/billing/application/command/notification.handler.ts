@@ -1,9 +1,9 @@
-import {Inject, NotFoundException} from '@nestjs/common';
+import {Inject} from '@nestjs/common';
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {PlanBillingRepository} from '../../infrastructure/respository';
 import {BillingRepository} from '../../domain/repository';
 import {NotificationCommand} from './notification.command';
-import {EMAIL_TEMPLATE} from 'src/billing/infrastructure/api-client';
+import {EMAIL_TEMPLATE, PLAN_TYPE} from 'src/billing/infrastructure/api-client';
 import {
 	PaymentEmailPayload,
 	PaymentSlackPayload,
@@ -36,7 +36,12 @@ export class NotificationHandler
 		const {billing, event, payment, prevPlan, date} = command;
 
 		const detailPlanName = `${billing.pricePlan.planName} (${
-			billing.pricePlan.planType === 'YEAR' ? '연 결제' : '월 결제'
+			{
+				[PLAN_TYPE.YEAR]: '연 결제',
+				[PLAN_TYPE.MONTH]: '월 결제',
+				[PLAN_TYPE.INFINITE]: '무제한',
+				[PLAN_TYPE.CUSTOM]: '커스텀',
+			}[billing.pricePlan.planType]
 		})`;
 
 		let mailPayload: PaymentEmailPayload | undefined;
@@ -65,14 +70,20 @@ export class NotificationHandler
 					}:`,
 					params: {
 						이전플랜명: `${prevPlan!.planName} (${
-							prevPlan!.planType === 'YEAR'
-								? '연 결제'
-								: '월 결제'
+							{
+								[PLAN_TYPE.YEAR]: '연 결제',
+								[PLAN_TYPE.MONTH]: '월 결제',
+								[PLAN_TYPE.INFINITE]: '무제한',
+								[PLAN_TYPE.CUSTOM]: '커스텀',
+							}[billing.pricePlan.planType]
 						})`,
 						신규플랜명: `${billing.nextPricePlan!.planName} (${
-							billing.nextPricePlan!.planType === 'YEAR'
-								? '연 결제'
-								: '월 결제'
+							{
+								[PLAN_TYPE.YEAR]: '연 결제',
+								[PLAN_TYPE.MONTH]: '월 결제',
+								[PLAN_TYPE.INFINITE]: '무제한',
+								[PLAN_TYPE.CUSTOM]: '커스텀',
+							}[billing.pricePlan.planType]
 						})`,
 						변경일자: date
 							? DateTime.fromISO(date).toISODate()
