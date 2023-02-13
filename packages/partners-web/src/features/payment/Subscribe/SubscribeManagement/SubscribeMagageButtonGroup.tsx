@@ -266,8 +266,8 @@ function SubscribeMagageButtonGroup({
 
 	const onClickTrySubscribeChange = useCallback(() => {
 		// TODO: 자동결제 모듈 붙기 전 임시 처리
-		onOpenMessageDialog(BAN_PLAN_UPGRADE_MODAL);
-		return;
+		/*onOpenMessageDialog(BAN_PLAN_UPGRADE_MODAL);
+		return;*/
 
 		if (
 			isOnSubscription &&
