@@ -21,7 +21,7 @@ export interface GuaranteeRequestPayload {
 	weight?: string;
 	orderedAt?: string;
 	orderId?: string;
-	image?: Readable;
+	image?: Readable | null;
 }
 @Injectable()
 export class VircleCoreAPI {
