@@ -274,12 +274,14 @@ export class Cafe24EventService {
 		if (!hook.productInfo) {
 			throw new InternalServerErrorException('NO PRODUCT INFO');
 		}
-		const {data: stream} = await axios.get<Readable>(
-			hook.productInfo.detail_image,
-			{
-				responseType: 'stream',
-			}
-		);
+		/**
+		 * 이미지가 없을 경우 null로 처리. (SXLP-2954)
+		 */
+		const {data: stream} = hook.productInfo.detail_image
+			? {data: null}
+			: await axios.get<Readable>(hook.productInfo.detail_image, {
+					responseType: 'stream',
+			  });
 
 		/**
 		 * 수동 발급=1, 자동발급=2
@@ -371,7 +373,7 @@ export class Cafe24EventService {
 		buyerPhone: string,
 		interwork: Cafe24Interwork,
 		orderItem: OrderItem,
-		image?: Readable
+		image?: Readable | null
 	): GuaranteeRequestPayload {
 		return {
 			productName: `${orderItem.product_name}`,
