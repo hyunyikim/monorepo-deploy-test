@@ -18,6 +18,7 @@ import {
 import {
 	getChargedPlanDescription,
 	getSubscribePreviwData,
+	isPlanEnterprise,
 	TRIAL_PLAN,
 } from '@/data';
 import {useChildModalOpen} from '@/utils/hooks';
@@ -123,6 +124,7 @@ function SubscribeManagementTab() {
 					{!isAvailableSelect ? (
 						<>
 							<NowSubscribedPlan
+								isTrial={!!isTrial}
 								userPlan={userPlan}
 								planList={planList}
 								isOnSubscription={!!isOnSubscription}
@@ -137,6 +139,11 @@ function SubscribeManagementTab() {
 						/>
 					)}
 					<SubscribeMagageButtonGroup
+						showButtonGroup={
+							isPlanEnterprise(userPlan?.pricePlan.planType)
+								? false
+								: true
+						}
 						isTrial={!!isTrial}
 						isAvailableSelect={isAvailableSelect}
 						selectedPlan={selectedPlan}
@@ -174,10 +181,12 @@ function SubscribeManagementTab() {
 }
 
 const NowSubscribedPlan = ({
+	isTrial,
 	userPlan,
 	planList,
 	isOnSubscription,
 }: {
+	isTrial: boolean;
 	userPlan?: UserPricePlanWithDate;
 	planList?: PricePlan[];
 	isOnSubscription: boolean;
@@ -185,19 +194,26 @@ const NowSubscribedPlan = ({
 	if (!userPlan || !planList) {
 		return <></>;
 	}
-	const usingPlanLimit =
-		planList?.find((plan) => plan.planId === userPlan?.pricePlan?.planId)
-			?.planLimit || userPlan?.pricePlan.planLimit;
-	const isTrial = userPlan?.pricePlan.planLevel === TRIAL_PLAN.PLAN_LEVEL;
-	const desc = isTrial
-		? TRIAL_PLAN.PLAN_DESCRIPTION
-		: getChargedPlanDescription(usingPlanLimit || 0);
+
+	const desc = () => {
+		if (isPlanEnterprise(userPlan?.pricePlan.planType)) {
+			return null;
+		}
+		if (isTrial) {
+			return TRIAL_PLAN.PLAN_DESCRIPTION;
+		}
+		const usingPlanLimit =
+			planList?.find(
+				(plan) => plan.planId === userPlan?.pricePlan?.planId
+			)?.planLimit || userPlan?.pricePlan.planLimit;
+		return getChargedPlanDescription(usingPlanLimit || 0);
+	};
 
 	if (!isOnSubscription && isTrial) {
 		return (
 			<SubscribePlan
 				title={userPlan.pricePlan.planName}
-				desc={desc}
+				desc={desc() as string}
 				showSubscribedChip={true}
 				isTrial={isTrial}
 				isEnded={!isOnSubscription}
@@ -210,7 +226,7 @@ const NowSubscribedPlan = ({
 	return (
 		<SubscribePlan
 			title={userPlan.pricePlan.planName}
-			desc={desc}
+			desc={desc()}
 			showSubscribedChip={true}
 			isTrial={isTrial}
 			isEnded={!isOnSubscription}

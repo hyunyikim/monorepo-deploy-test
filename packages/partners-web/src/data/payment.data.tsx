@@ -5,7 +5,10 @@ import {
 	UserPricePlanWithDate,
 	TotalSubscribeInfoPreviewData,
 	SubscribeInfoPreviewData,
+	OnOpenParamType,
 } from '@/@types';
+import {Button} from '@/components';
+import {openChannelTalk} from '@/utils';
 import {
 	addMonths,
 	isBefore,
@@ -66,6 +69,9 @@ export const isPlanSameLevel = (
 	return nowPlanLevel === nextPlanLevel ? true : false;
 };
 
+export const isPlanEnterprise = (planType?: PlanType) =>
+	planType === 'INFINITE' ? true : false;
+
 export const checkSubscribeNoticeStatus = (
 	userPlan?: UserPricePlanWithDate
 ): SubscribeNoticeStatus | null => {
@@ -78,6 +84,11 @@ export const checkSubscribeNoticeStatus = (
 	// trial
 	if (pricePlan.planLevel === TRIAL_PLAN.PLAN_LEVEL) {
 		return 'TRIAL';
+	}
+
+	// 엔터프라이즈
+	if (isPlanEnterprise(pricePlan.planType)) {
+		return 'ENTERPRISE';
 	}
 
 	// 유료 플랜
@@ -106,6 +117,7 @@ export const checkSubscribeNoticeStatus = (
 		startDate: userPlan?.planStartedAt,
 		endDate: userPlan?.planExpireDate,
 		isNextPlanExisted: !!userPlan?.nextPricePlan,
+		planType: pricePlan.planType,
 	});
 
 	// 유료플랜 구독 종료
@@ -123,12 +135,17 @@ export const checkSubscribeNoticeStatus = (
 export const isPlanOnSubscription = ({
 	startDate,
 	endDate,
+	planType,
 	isNextPlanExisted,
 }: {
 	startDate?: Date;
 	endDate?: Date;
+	planType?: PlanType;
 	isNextPlanExisted: boolean;
 }) => {
+	if (planType === 'INFINITE') {
+		return true;
+	}
 	if (isNextPlanExisted) {
 		return true;
 	}
@@ -167,6 +184,7 @@ export const getSubscribePreviwData = ({
 		startDate: userPlan?.planStartedAt,
 		endDate: userPlan?.planExpireDate,
 		isNextPlanExisted: !!userPlan?.nextPricePlan,
+		planType: userPlan?.pricePlan.planType,
 	});
 
 	const data: SubscribeInfoPreviewData = {
@@ -316,4 +334,17 @@ export const getSubscribePreviwData = ({
 			payApprovedAt: format(payApprovedAt, DATE_FORMAT_SEPERATOR_DOT),
 		},
 	};
+};
+
+export const BAN_PLAN_UPGRADE_MODAL: OnOpenParamType = {
+	title: '플랜 구독 서비스는 준비중입니다.',
+	message:
+		'유료 플랜 관련해서 궁금한 점 있으시면 고객센터로 문의하시면 상담 도와드리겠습니다.',
+	showBottomCloseButton: true,
+	closeButtonValue: '닫기',
+	buttons: (
+		<Button color="black" onClick={openChannelTalk}>
+			고객센터 문의
+		</Button>
+	),
 };

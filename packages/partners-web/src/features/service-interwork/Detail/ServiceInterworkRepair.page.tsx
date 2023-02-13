@@ -96,6 +96,7 @@ function ServiceInterworkRepair() {
 				startDate: new Date(planStartedAt),
 				endDate: planExpireDate ? new Date(planExpireDate) : undefined,
 				isNextPlanExisted: !!nextPricePlan,
+				planType: pricePlan.planType,
 			});
 
 			setCurrentPlan((pre) => ({

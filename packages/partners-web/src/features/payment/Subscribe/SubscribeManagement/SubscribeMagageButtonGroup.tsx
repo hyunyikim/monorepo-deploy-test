@@ -16,6 +16,7 @@ import {
 	isPlanTypeYear,
 	isPlanUpgraded,
 	isPlanDowngraded,
+	BAN_PLAN_UPGRADE_MODAL,
 } from '@/data';
 import {patchPricePlan} from '@/api/payment.api';
 import {updateUserPricePlanData, openChannelTalk} from '@/utils';
@@ -118,12 +119,14 @@ export const PAYMENT_MESSAGE_MODAL: PaymentMessageModalType = {
 };
 
 function SubscribeMagageButtonGroup({
+	showButtonGroup,
 	isTrial,
 	isAvailableSelect,
 	selectedPlan,
 	setIsAvailableSelect,
 	onSubscribeCheckModalOpen,
 }: {
+	showButtonGroup: boolean;
 	isTrial: boolean;
 	isAvailableSelect: boolean;
 	selectedPlan?: PricePlan;
@@ -262,6 +265,10 @@ function SubscribeMagageButtonGroup({
 	}, [selectedPlan, userPlan, isTrial, isOnSubscription]);
 
 	const onClickTrySubscribeChange = useCallback(() => {
+		// TODO: 자동결제 모듈 붙기 전 임시 처리
+		onOpenMessageDialog(BAN_PLAN_UPGRADE_MODAL);
+		return;
+
 		if (
 			isOnSubscription &&
 			userPlan?.pricePlan &&
@@ -307,6 +314,10 @@ function SubscribeMagageButtonGroup({
 		}
 		setIsAvailableSelect(true);
 	}, [userPlan, isOnSubscription]);
+
+	if (!showButtonGroup) {
+		return null;
+	}
 
 	return (
 		<Stack flexDirection="row" alignItems="center">

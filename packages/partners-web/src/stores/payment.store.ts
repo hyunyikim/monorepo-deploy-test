@@ -111,6 +111,7 @@ export const useIsPlanOnSubscription = () => {
 				endDate: userPlan?.planExpireDate
 					? new Date(userPlan.planExpireDate)
 					: undefined,
+				planType: userPlan.pricePlan.planType,
 				isNextPlanExisted: !!userPlan?.nextPricePlan,
 			}),
 	});

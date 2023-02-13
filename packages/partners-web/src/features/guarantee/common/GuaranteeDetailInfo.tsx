@@ -35,7 +35,7 @@ function GuaranteeDetailInfo({data}: {data: GuaranteeDetail}) {
 				}}>
 				<DetailInfoColumn
 					title="발급일"
-					value={data?.issuedAt ? data?.issuedAt.slice(0, 10) : '-'}
+					value={data?.appliedAt ? data?.appliedAt.slice(0, 10) : '-'}
 				/>
 				<DetailInfoColumn
 					title="개런티 번호"
@@ -68,32 +68,33 @@ function GuaranteeDetailInfo({data}: {data: GuaranteeDetail}) {
 				columnGap="16px"
 				rowGap="16px"
 				mt="24px">
-				<Button
-					variant="contained"
-					startIcon={<IcLinkWhite20 />}
-					onClick={() => {
-						sendAmplitudeLog('guarantee_detail_url_click', {
-							button_title: '개런티 url 클릭',
-						});
-						const externalLink = data?.externalLink;
-						if (!externalLink) return;
-						window.open(externalLink);
-					}}>
-					개런티 URL
-				</Button>
-				<Button
-					variant="contained"
-					color="primary-50"
-					startIcon={<IcPaperPlane />}
-					onClick={() => {
-						const transactionHash = data?.transactionHash;
-						if (!transactionHash) return;
-						const url = `${KLAYTN_SCOPE_URL}/tx/${transactionHash}`;
-						window.open(url);
-					}}
-					data-tracking={`guarantee_detail_itemimage_click,{'button_title': '트랜잭션 해시값 클릭'}`}>
-					트랜잭션 해시
-				</Button>
+				{data?.externalLink && (
+					<Button
+						variant="contained"
+						startIcon={<IcLinkWhite20 />}
+						data-tracking={`guarantee_detail_url_click,{'button_title': '개런티 url 클릭'}`}
+						onClick={() => {
+							data?.externalLink &&
+								window.open(data?.externalLink);
+						}}>
+						개런티 URL
+					</Button>
+				)}
+				{data?.transactionHash && (
+					<Button
+						variant="contained"
+						color="primary-50"
+						startIcon={<IcPaperPlane />}
+						onClick={() => {
+							const transactionHash = data?.transactionHash;
+							if (!transactionHash) return;
+							const url = `${KLAYTN_SCOPE_URL}/tx/${transactionHash}`;
+							window.open(url);
+						}}
+						data-tracking={`guarantee_detail_itemimage_click,{'button_title': '트랜잭션 해시값 클릭'}`}>
+						트랜잭션 해시
+					</Button>
+				)}
 			</Stack>
 		</Stack>
 	);

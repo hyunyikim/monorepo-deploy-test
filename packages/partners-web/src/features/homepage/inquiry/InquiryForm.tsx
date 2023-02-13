@@ -415,7 +415,7 @@ function InquiryForm() {
 									[필수]
 									<AtagComponent
 										url={
-											'https://guide.vircle.co.kr/policy/terms_220627'
+											'https://guide.vircle.co.kr/policy/terms_230213 '
 										}>
 										<h3>&nbsp;개인정보수집 및 이용 </h3>
 									</AtagComponent>
