@@ -11,6 +11,7 @@ import PaymentCardTab from './PaymentCard/PaymentCardTab';
 import PaymentReceiptTab from './PaymentReceipt/PaymentReceiptTab';
 import AddPaymentCardModal from '../common/AddPaymentCardModal';
 import {useGetUserPricePlan, useMessageDialog} from '@/stores';
+import {BAN_PLAN_UPGRADE_MODAL} from '@/data';
 
 function PaymentInformation() {
 	const location = useLocation();
@@ -25,6 +26,10 @@ function PaymentInformation() {
 	const {data: userPlan} = useGetUserPricePlan();
 
 	const onOpenAddCardModal = () => {
+		// TODO: 자동결제 모듈 붙기 전 임시 처리
+		onMessageDialogOpen(BAN_PLAN_UPGRADE_MODAL);
+		return;
+
 		if (userPlan?.card) {
 			onMessageDialogOpen({
 				title: '결제 카드는 1개만 등록이 가능합니다.',

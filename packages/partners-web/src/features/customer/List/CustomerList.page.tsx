@@ -123,6 +123,7 @@ function CustomerList() {
 				startDate: new Date(planStartedAt),
 				endDate: planExpireDate ? new Date(planExpireDate) : undefined,
 				isNextPlanExisted: !!nextPricePlan,
+				planType: pricePlan.planType,
 			});
 
 			if (!isOnSubscription) {

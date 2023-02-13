@@ -150,8 +150,11 @@ function SubscribeLineNotice() {
 		} = userPlan;
 		const {planLimit} = pricePlan;
 		const subscribeStatus = checkSubscribeNoticeStatus(userPlan);
-
-		if (!subscribeStatus || subscribeStatus === 'CHARGED') {
+		if (
+			!subscribeStatus ||
+			subscribeStatus === 'CHARGED' ||
+			subscribeStatus === 'ENTERPRISE'
+		) {
 			return null;
 		}
 		// trial

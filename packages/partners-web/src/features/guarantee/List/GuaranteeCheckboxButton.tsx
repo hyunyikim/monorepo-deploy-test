@@ -16,6 +16,7 @@ import {
 } from '@/api/guarantee.api';
 import {updateUserPricePlanData, goToParentUrl} from '@/utils';
 import RegisterGuaranteeListProgressModal from '@/features/guarantee/List/RegisterGuaranteeListProgressModal';
+import {isPlanEnterprise} from '@/data';
 
 interface Props {
 	nftReqState: string;
@@ -314,24 +315,33 @@ function GuaranteeCheckboxButton({
 							color="black"
 							height={32}
 							onClick={() => {
-								if (expireDate) {
-									if (expireDate - currentDate < 0) {
-										if (isFreeTrial) {
-											/* 무료체험이 만료되었을때 */
-											return freeTrialExpiredModal();
-										} else {
-											/* 유로플랜이 만료되었을때 */
-											return expiredPricePlanModal();
+								if (
+									!isPlanEnterprise(
+										userPlan?.pricePlan.planType
+									)
+								) {
+									if (expireDate) {
+										if (expireDate - currentDate < 0) {
+											if (isFreeTrial) {
+												/* 무료체험이 만료되었을때 */
+												return freeTrialExpiredModal();
+											} else {
+												/* 유로플랜이 만료되었을때 */
+												return expiredPricePlanModal();
+											}
 										}
 									}
-								}
 
-								/* 개런티 잔여량보다 발급하려는 수가 더 많을때 */
-								if (
-									typeof currentGuaranteeBalance === 'number'
-								) {
-									if (totalCount > currentGuaranteeBalance) {
-										return notEnoughGuaranteeBalanceModal();
+									/* 개런티 잔여량보다 발급하려는 수가 더 많을때 */
+									if (
+										typeof currentGuaranteeBalance ===
+										'number'
+									) {
+										if (
+											totalCount > currentGuaranteeBalance
+										) {
+											return notEnoughGuaranteeBalanceModal();
+										}
 									}
 								}
 

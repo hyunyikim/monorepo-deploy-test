@@ -5,7 +5,8 @@ export type SubscribeNoticeStatus =
 	| 'CHANGE_PLAN_YEAR_TO_MONTH'
 	| 'CHANGE_PLAN_DOWNGRADE_MONTHLY'
 	| 'CHARGED_PLAN_WILL_END'
-	| 'CHARGED_PLAN_FINISHED';
+	| 'CHARGED_PLAN_FINISHED'
+	| 'ENTERPRISE';
 
 export type SubscribeLineNoticeKey =
 	| Exclude<SubscribeNoticeStatus, 'CHARGED'>

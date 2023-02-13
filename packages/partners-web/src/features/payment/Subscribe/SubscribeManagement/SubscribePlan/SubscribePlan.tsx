@@ -5,7 +5,7 @@ import {SxProps} from '@mui/system';
 
 interface Props {
 	title: string;
-	desc: string;
+	desc: string | null;
 	showSubscribedChip?: boolean;
 	isTrial: boolean;
 	isEnded?: boolean;
@@ -29,7 +29,9 @@ function SubscribePlan({
 			<Stack
 				sx={[
 					(theme) => ({
+						justifyContent: 'center',
 						minWidth: '460px',
+						minHeight: '80px',
 						padding: '20px',
 						borderRadius: '8px',
 						border: isEnded
@@ -52,7 +54,7 @@ function SubscribePlan({
 					justifyContent="space-between"
 					alignItems="center">
 					<Stack>
-						<Stack flexDirection="row" alignItems="center" mb="4px">
+						<Stack flexDirection="row" alignItems="center">
 							<Typography
 								variant="subtitle2"
 								fontWeight="bold"
@@ -66,7 +68,11 @@ function SubscribePlan({
 								/>
 							)}
 						</Stack>
-						<Typography variant="caption1">{desc}</Typography>
+						{desc && (
+							<Typography variant="caption1" mt="4px">
+								{desc}
+							</Typography>
+						)}
 					</Stack>
 				</Stack>
 				{children && children}

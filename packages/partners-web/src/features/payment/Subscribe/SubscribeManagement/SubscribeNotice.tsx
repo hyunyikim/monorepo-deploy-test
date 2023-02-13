@@ -184,7 +184,6 @@ function SubscribeNotice({sx = {}}: Props) {
 	const SubscribeNoticeComponent = useMemo(() => {
 		const subscribeNoticeStatus = checkSubscribeNoticeStatus(userPlan);
 		if (!planList || !subscribeNoticeStatus) return;
-
 		if (
 			subscribeNoticeStatus === 'TRIAL' ||
 			subscribeNoticeStatus === 'CHARGED_PLAN_WILL_END'

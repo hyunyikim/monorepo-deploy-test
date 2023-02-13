@@ -1,6 +1,6 @@
 import {ListRequestParam} from './list.types';
 
-export type PlanType = 'MONTH' | 'YEAR';
+export type PlanType = 'MONTH' | 'YEAR' | 'INFINITE';
 
 export interface PricePlan {
 	planId: string; // ID
