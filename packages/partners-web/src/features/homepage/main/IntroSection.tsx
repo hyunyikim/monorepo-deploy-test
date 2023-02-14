@@ -203,7 +203,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 															}
 															srcSet={`${alternativeVircle} 1x, ${alternativeVircle} 2x`}
 															alt="alternative_intro_img"
-															className="img_vircle_phone"
+															className="img_vircle_phone img"
 														/>
 													</video>
 												</div>
@@ -379,7 +379,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 												src={alternativeVircle}
 												srcSet={`${alternativeVircle} 1x, ${alternativeVircle} 2x`}
 												alt="alternative_intro_img"
-												className="img_vircle_phone"
+												className="img_vircle_phone img"
 											/>
 										</video>
 									</div>
