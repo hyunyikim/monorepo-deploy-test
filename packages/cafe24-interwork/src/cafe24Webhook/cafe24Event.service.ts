@@ -278,10 +278,10 @@ export class Cafe24EventService {
 		 * 이미지가 없을 경우 null로 처리. (SXLP-2954)
 		 */
 		const {data: stream} = hook.productInfo.detail_image
-			? {data: null}
-			: await axios.get<Readable>(hook.productInfo.detail_image, {
+			? await axios.get<Readable>(hook.productInfo.detail_image, {
 					responseType: 'stream',
-			  });
+			  })
+			: {data: null};
 
 		/**
 		 * 수동 발급=1, 자동발급=2
