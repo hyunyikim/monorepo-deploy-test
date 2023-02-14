@@ -317,12 +317,17 @@ section {
 					left: 0;
 					right: 0;
 					margin: auto;
+					pointer-events: none;
 				}
 
 				.img_vircle_phone {
 					width: 341px;
 					height: 669px;
 					border-radius: 64px;
+
+					&.img {
+						pointer-events: none;
+					}
 				}
 
 				.title_container {
@@ -1658,6 +1663,7 @@ section {
 						left: 0;
 						right: 0;
 						margin: auto;
+						pointer-events: none;
 					}
 				}
 			}

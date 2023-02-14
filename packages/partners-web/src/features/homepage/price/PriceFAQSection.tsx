@@ -17,7 +17,6 @@ type IsOpenProps = {
 
 const FAQServiceContainerStyle = styled('section')`
 	padding: 0 0 150px;
-
 	@media (max-width: 1200px) {
 		padding: 0px 80px 150px;
 	}
@@ -39,7 +38,6 @@ const TitleSectionStyle = styled('div')`
 	align-items: center;
 	gap: 12px;
 	margin-bottom: 71px;
-
 	h1 {
 		font-weight: 700;
 		font-size: 50px;
@@ -55,11 +53,9 @@ const TitleSectionStyle = styled('div')`
 		color: #526eff;
 		margin: 0;
 	}
-
 	@media (max-width: 820px) {
 		margin-bottom: 50px;
 		gap: 14px;
-
 		h1 {
 			font-size: 36px;
 			line-height: 43px;
@@ -69,10 +65,8 @@ const TitleSectionStyle = styled('div')`
 			line-height: 25px;
 		}
 	}
-
 	@media (max-width: 480px) {
 		margin-bottom: 20px;
-
 		h1 {
 			font-size: 26px;
 			line-height: 31px;
@@ -87,7 +81,6 @@ const TitleSectionStyle = styled('div')`
 const FAQListContainerStyle = styled('div')`
 	border-top: 1px solid #e2e2e9;
 	margin-bottom: 60px;
-
 	@media (max-width: 820px) {
 		margin-bottom: 22px;
 	}
@@ -106,12 +99,10 @@ const FAQListTitleBoxStyle = styled('div')`
 	border-bottom: 1px solid #e2e2e9;
 	height: 142px;
 	padding: 50px 0;
-
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	cursor: pointer;
-
 	h2 {
 		font-weight: 700;
 		font-size: 34px;
@@ -120,18 +111,15 @@ const FAQListTitleBoxStyle = styled('div')`
 		margin: 0;
 		pointer-events: none;
 	}
-
 	@media (max-width: 820px) {
 		max-height: 76px;
 		height: 100%;
 		padding: 30px 0;
-
 		h2 {
 			font-size: 16px;
 			line-height: 20px;
 		}
 	}
-
 	@media (max-width: 480px) {
 		h2 {
 			max-width: 260px;
@@ -143,7 +131,6 @@ const GreyArrowStyle = styled('img')<IsOpenProps>`
 	pointer-events: none;
 	transition: all 250ms ease-in-out;
 	transform: ${({isOpen}) => (isOpen ? 'rotate(0deg)' : 'rotate(180deg)')};
-
 	@media (max-width: 820px) {
 		width: 20px;
 		height: 20px;
@@ -164,11 +151,9 @@ const FAQListContentBoxStyle = styled('div')<IsOpenProps>`
 			padding: isOpen ? '46px 40px 56px' : '0px 40px 0px',
 			opacity: isOpen ? 1 : 0,
 		})};
-
 	@media (max-width: 820px) {
 		font-size: 14px;
 		line-height: 22px;
-
 		height: '0px';
 		${({isOpen}) => ({
 			padding: isOpen ? '20px 16px' : '0px 16px',
@@ -186,37 +171,30 @@ const GuideDocsTextStyle = styled('div')`
 	color: #5c5c65;
 	text-align: center;
 	margin-bottom: 150px;
-
 	a {
 		font-weight: 700;
 		font-size: 24px;
 		line-height: 20px;
-
 		text-decoration-line: underline;
 		color: #526eff;
-
 		button {
 			font-weight: 700;
 			font-size: 24px;
 			line-height: 20px;
 			padding: 0;
-
 			text-decoration-line: underline;
 			color: #526eff;
 			border: 0;
 			background-color: transparent;
 		}
 	}
-
 	@media (max-width: 820px) {
 		font-size: 14px;
 		line-height: 20px;
 		margin-bottom: 100px;
-
 		a {
 			font-size: 14px;
 			line-height: 20px;
-
 			button {
 				font-size: 14px;
 				line-height: 20px;
@@ -233,7 +211,6 @@ const TextWithCommaStyle = styled('p')`
 	text-align: center;
 	display: inline;
 	margin: 0;
-
 	@media (max-width: 820px) {
 		display: block;
 		font-size: 14px;
@@ -245,7 +222,6 @@ const EndingSignupBoxStyle = styled('div')`
 	height: 500px;
 	max-width: 1200px;
 	position: relative;
-
 	@media (max-width: 820px) {
 		height: 340px;
 		border-radius: 16px;
@@ -258,7 +234,6 @@ const EndingBgImg = styled('div')`
 	height: 100%;
 	border-radius: 30px;
 	background-size: cover;
-
 	@media (max-width: 480px) {
 		border-radius: 16px;
 		background: url(${imgMobileEndingBg2x}) no-repeat center;
@@ -272,19 +247,16 @@ const EndingSignupTitleBoxStyle = styled('div')`
 	right: 0;
 	top: 142px;
 	margin: 0 auto;
-
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 60px;
-
 	> img {
 		max-width: 476px;
 		max-height: 144px;
 		width: 100%;
 		height: 100%;
 	}
-
 	button {
 		width: 225px;
 		height: 60px;
@@ -298,16 +270,13 @@ const EndingSignupTitleBoxStyle = styled('div')`
 		border: 0;
 		cursor: pointer;
 	}
-
 	@media (max-width: 820px) {
 		top: 96px;
 		gap: 54px;
-
 		> img {
 			max-width: 238px;
 			max-height: 74px;
 		}
-
 		button {
 			width: 225px;
 			height: 56px;

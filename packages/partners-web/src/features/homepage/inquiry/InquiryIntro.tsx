@@ -12,7 +12,6 @@ import {
 
 const InquiryContainerStyle = styled('section')`
 	padding-top: 102px;
-
 	@media (max-width: 480px) {
 		padding-top: 60px;
 	}
@@ -30,7 +29,6 @@ const InquiryBgStyle = styled('div')`
 	width: 100%;
 	height: 541px;
 	position: relative;
-
 	::after {
 		content: '';
 		display: block;
@@ -38,13 +36,11 @@ const InquiryBgStyle = styled('div')`
 		mix-blend-mode: normal;
 		backdrop-filter: blur(30px);
 		height: 541px;
-
 		position: absolute;
 		left: 0;
 		top: 0;
 		right: 0;
 	}
-
 	@media (max-width: 480px) {
 		height: 642px;
 		::after {
@@ -58,7 +54,6 @@ const MainTextAreaStyle = styled('div')`
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-
 	position: absolute;
 	left: 0;
 	right: 0;
@@ -82,7 +77,6 @@ const MainTextAreaStyle = styled('div')`
 		color: #ffffff;
 		margin: 0;
 	}
-
 	@media (max-width: 480px) {
 		top: 77px;
 		h3 {
@@ -107,14 +101,12 @@ const VideoWrapStyle = styled('div')`
 	left: 0;
 	right: 0;
 	z-index: 2;
-
 	video {
 		height: 542px;
 	}
 	img {
 		height: 542px;
 	}
-
 	@media (max-width: 480px) {
 		top: 0px;
 		video {
@@ -136,7 +128,10 @@ const ATagWrapStyle = styled('a')`
 		border-radius: 64px;
 		border: 0;
 		cursor: pointer;
+<<<<<<< HEAD
 
+=======
+>>>>>>> hotfix/fix_homepage_error
 		position: absolute;
 		left: 0;
 		right: 0;
@@ -144,7 +139,10 @@ const ATagWrapStyle = styled('a')`
 		z-index: 2;
 		margin: auto;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> hotfix/fix_homepage_error
 	@media (max-width: 480px) {
 		button {
 		}
