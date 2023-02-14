@@ -16,7 +16,7 @@ function Inquiry() {
 			<HomepageHeader bgColor={'black'} />
 
 			<InquiryIntro />
-			<BenefitOfNFT />
+			{/* <BenefitOfNFT /> */}
 			<InquiryForm />
 		</div>
 	);
