@@ -21,6 +21,7 @@ const InquiryContainerStyle = styled('section')`
 const InquiryWrapStyle = styled('div')`
 	max-width: 1200px;
 	margin: auto;
+	position: relative;
 `;
 
 const InquiryBgStyle = styled('div')`
@@ -46,6 +47,9 @@ const InquiryBgStyle = styled('div')`
 
 	@media (max-width: 480px) {
 		height: 642px;
+		::after {
+			height: 642px;
+		}
 	}
 `;
 
@@ -58,8 +62,9 @@ const MainTextAreaStyle = styled('div')`
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 162px;
+	top: 60px;
 	z-index: 3;
+
 	h3 {
 		font-weight: 300;
 		font-size: 24px;
@@ -76,30 +81,15 @@ const MainTextAreaStyle = styled('div')`
 		text-align: center;
 		color: #ffffff;
 		margin: 0;
-		margin-bottom: 230px;
-	}
-	button {
-		font-weight: 700;
-		font-size: 20px;
-		line-height: 58px;
-		text-align: center;
-		color: #ffffff;
-		width: 286px;
-		height: 58px;
-		background: linear-gradient(260.19deg, #9e22ff 19.8%, #e3115d 53.77%);
-		border-radius: 64px;
-		border: 0;
-		cursor: pointer;
 	}
 
 	@media (max-width: 480px) {
-		top: 122px;
+		top: 77px;
 		h3 {
 			font-size: 20px;
 		}
 		h2 {
 			font-size: 28px;
-			margin-bottom: 351px;
 		}
 		button {
 			line-height: 51px;
@@ -116,7 +106,6 @@ const VideoWrapStyle = styled('div')`
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 102px;
 	z-index: 2;
 
 	video {
@@ -127,9 +116,37 @@ const VideoWrapStyle = styled('div')`
 	}
 
 	@media (max-width: 480px) {
-		top: 60px;
+		top: 0px;
 		video {
 			height: 642px;
+		}
+	}
+`;
+
+const ATagWrapStyle = styled('a')`
+	button {
+		font-weight: 700;
+		font-size: 20px;
+		line-height: 58px;
+		text-align: center;
+		color: #ffffff;
+		width: 286px;
+		height: 58px;
+		background: linear-gradient(260.19deg, #9e22ff 19.8%, #e3115d 53.77%);
+		border-radius: 64px;
+		border: 0;
+		cursor: pointer;
+
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 60px;
+		z-index: 2;
+		margin: auto;
+	}
+
+	@media (max-width: 480px) {
+		button {
 		}
 	}
 `;
@@ -155,9 +172,9 @@ function InquiryIntro() {
 						</h2>
 					</div>
 
-					<a href="#inquiryForm">
+					{/* <a href="#inquiryForm">
 						<button onClick={goToInquiry}>도입문의</button>
-					</a>
+					</a> */}
 				</MainTextAreaStyle>
 
 				<VideoWrapStyle>
@@ -181,8 +198,12 @@ function InquiryIntro() {
 							보증서가 돌아가고 있는 영상
 						</p>
 					</video>
+					<ATagWrapStyle href="#inquiryForm">
+						<button onClick={goToInquiry}>도입문의</button>
+					</ATagWrapStyle>
 				</VideoWrapStyle>
 			</InquiryWrapStyle>
+
 			<InquiryBgStyle />
 		</InquiryContainerStyle>
 	);

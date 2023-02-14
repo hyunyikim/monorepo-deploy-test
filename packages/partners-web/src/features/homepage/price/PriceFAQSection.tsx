@@ -199,6 +199,7 @@ const GuideDocsTextStyle = styled('div')`
 			font-weight: 700;
 			font-size: 24px;
 			line-height: 20px;
+			padding: 0;
 
 			text-decoration-line: underline;
 			color: #526eff;
@@ -215,6 +216,11 @@ const GuideDocsTextStyle = styled('div')`
 		a {
 			font-size: 14px;
 			line-height: 20px;
+
+			button {
+				font-size: 14px;
+				line-height: 20px;
+			}
 		}
 	}
 `;

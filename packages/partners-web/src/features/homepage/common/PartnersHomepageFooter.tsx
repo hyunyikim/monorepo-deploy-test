@@ -79,14 +79,14 @@ function PartnersHomepageFooter() {
 						서울특별시 강남구 테헤란로 217, 오렌지플래닛 702
 						<br />
 						<a
-							href="https://www.notion.so/mation/2022-06-27-d08653c6fda04b69952c11e4708ea1c8"
+							href="https://guide.vircle.co.kr/policy/agreement_230213"
 							target="_blank"
 							rel="noreferrer">
 							<h6 className="link_text">서비스이용약관</h6>
 						</a>
 						&nbsp;&nbsp;|&nbsp;&nbsp;
 						<a
-							href="https://www.notion.so/mation/2022-06-27-8cc5101ad9004970a21af93baa5253f5"
+							href="https://guide.vircle.co.kr/policy/terms_230213"
 							target="_blank"
 							rel="noreferrer">
 							<h6 className="link_text">개인정보처리방침</h6>
