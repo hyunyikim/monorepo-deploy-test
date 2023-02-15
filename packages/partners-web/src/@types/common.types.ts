@@ -57,7 +57,8 @@ export type InputType =
 			inputProps?: Record<string, any>;
 	  }
 	| SelectInputType
-	| HiddenInputType;
+	| HiddenInputType
+	| AutocompleteInputType;
 
 export type SelectInputType = {
 	type: string;
@@ -71,6 +72,15 @@ export type SelectInputType = {
 export type HiddenInputType = {
 	type: 'hidden';
 	name: string;
+};
+
+export type AutocompleteInputType = {
+	type: 'autocomplete';
+	name: string;
+	placeholder?: string;
+	label?: string;
+	required?: string;
+	options?: Options<any>;
 };
 
 export interface BulkResponse {

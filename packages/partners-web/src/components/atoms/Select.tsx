@@ -14,11 +14,14 @@ import {Options} from '@/@types';
 
 import {IcChevronDown} from '@/assets/icon';
 
+import style from '@/assets/styles/style.module.scss';
+
 type Height = 48 | 32;
 
 export interface Props<T> extends Omit<SelectProps, 'error'> {
 	width?: number | 'auto' | '100%';
 	height?: Height;
+	defaultTextColor?: string;
 	options: Options<T>;
 	error?: FieldError;
 }
@@ -32,6 +35,7 @@ function Select<T>(
 	{
 		width = 'auto',
 		height = 48,
+		defaultTextColor,
 		options,
 		sx = {},
 		value,
@@ -44,8 +48,16 @@ function Select<T>(
 	ref: Ref<unknown>
 ) {
 	const [textColor, setTextColor] = useState({
-		color: '#AEAEBA',
+		color: '#222227',
 	});
+
+	useEffect(() => {
+		if (defaultTextColor) {
+			setTextColor({
+				color: defaultTextColor,
+			});
+		}
+	}, [defaultTextColor]);
 
 	useEffect(() => {
 		if (value || defaultValue) {
@@ -82,12 +94,15 @@ function Select<T>(
 				})}
 				IconComponent={(props) => (
 					<SvgIcon
+						{...props}
 						sx={{
 							width: '16px',
 							height: '16px',
-						}}
-						{...props}>
-						<IcChevronDown />
+							right: `${
+								height === 48 ? '16px' : '12px'
+							} !important`,
+						}}>
+						<IcChevronDown color={style.vircleGrey900} />
 					</SvgIcon>
 				)}
 				{...(placeholder && {

@@ -9,6 +9,7 @@ import {
 	ProductRegisterFormData,
 	CustomField,
 	InputType,
+	ProductGuaranteeStatus,
 } from '@/@types';
 import {linkFormChecker} from '@/utils';
 
@@ -52,6 +53,13 @@ export const guaranteeRegisterProductListSearchFilter: ListSearchFilters = [
 		component: 'searchField',
 		options: productListSearchTypes,
 	},
+];
+
+export const productGuaranteeStatus: Options<ProductGuaranteeStatus | ''> = [
+	{label: '발급상태:전체', value: ''},
+	{label: '신청대기', value: 'ready'},
+	{label: '발급완료', value: 'complete'},
+	{label: '발급취소', value: 'cancel'},
 ];
 
 const productRegisterProductCodeInput: InputType = {

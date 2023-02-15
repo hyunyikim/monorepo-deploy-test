@@ -128,10 +128,6 @@ const ATagWrapStyle = styled('a')`
 		border-radius: 64px;
 		border: 0;
 		cursor: pointer;
-<<<<<<< HEAD
-
-=======
->>>>>>> hotfix/fix_homepage_error
 		position: absolute;
 		left: 0;
 		right: 0;
@@ -139,10 +135,6 @@ const ATagWrapStyle = styled('a')`
 		z-index: 2;
 		margin: auto;
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> hotfix/fix_homepage_error
 	@media (max-width: 480px) {
 		button {
 		}

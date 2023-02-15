@@ -21,6 +21,7 @@ import {
 	goToParentUrl,
 	sendAmplitudeLog,
 	goToGuaranteeExcelUploadPage,
+	usePageView,
 } from '@/utils';
 
 import {
@@ -37,14 +38,14 @@ import {
 	Checkbox,
 } from '@/components';
 import GuaranteeCheckboxButton from '@/features/guarantee/List/GuaranteeCheckboxButton';
+import {useGetPlatformList} from '@/stores';
 
 const menu = 'guarantee';
 const menuKo = '개런티';
 
 function GuaranteeList() {
-	useEffect(() => {
-		sendAmplitudeLog('guarantee_pv', {pv_title: '개런티목록 노출'});
-	}, []);
+	usePageView('guarantee_pv', '개런티목록 노출');
+	const {data: platformList} = useGetPlatformList();
 
 	const {
 		isLoading,
@@ -64,6 +65,7 @@ function GuaranteeList() {
 		initialFilter: {
 			...initialSearchFilter,
 			nft_req_state: '',
+			platform: '',
 		},
 	});
 
@@ -91,6 +93,17 @@ function GuaranteeList() {
 		return false;
 	}, [filter.nft_req_state]);
 
+	const platformOptions = useMemo(() => {
+		const defaultOption = {
+			label: '전체',
+			value: '',
+		};
+		if (platformList) {
+			return [defaultOption, ...platformList];
+		}
+		return [defaultOption];
+	}, [platformList]);
+
 	return (
 		<>
 			<Box p={5}>
@@ -99,7 +112,15 @@ function GuaranteeList() {
 					menu={menu}
 					menuKo={menuKo}
 					filter={filter}
-					filterComponent={guaranteeListSearchFilter}
+					filterComponent={guaranteeListSearchFilter.map((item) => {
+						if (item.name === 'platform') {
+							return {
+								...item,
+								options: platformOptions,
+							};
+						}
+						return item;
+					})}
 					onSearch={(param) => {
 						handleSearch(param);
 						onResetCheckedItem();

@@ -44,3 +44,8 @@ export interface GuaranteeDetail extends GuaranteeSummary {
 	modifiedAt: string | null;
 	remindedAt: string | null;
 }
+
+export interface Platform {
+	platformIdx: number;
+	platformName: string;
+}

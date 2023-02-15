@@ -148,7 +148,7 @@ function SearchFilter<F extends object>({
 								label={item.label}
 								value={
 									filter[item.name as keyof F] ??
-									(item.options as Options)[0].value
+									(item.options as Options)[0]?.value
 								}
 								options={item.options as Options}
 								onChange={(value) =>
