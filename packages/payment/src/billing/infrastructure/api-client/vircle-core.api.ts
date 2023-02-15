@@ -9,6 +9,8 @@ import {
 	IsString,
 } from 'class-validator';
 import {EMAIL_TEMPLATE} from './resource';
+import {BillingProps, PricePlanProps} from '../../domain';
+import {BillingInterface} from '../../interface/billing.controller';
 
 export class FindRangePayload {
 	@IsString()
@@ -88,6 +90,65 @@ export class VircleCoreApi {
 			},
 		});
 		return data;
+	}
+
+	/**
+	 * 이용 플랜 업데이트
+	 * @param token
+	 * @param billing
+	 */
+	async updateUsedPlan(
+		token: string,
+		billing: BillingInterface
+	): Promise<any> {
+		const params = {
+			payPlan: billing.pricePlan.planName,
+			payPlanId: billing.pricePlan.planId,
+			planStartDate: billing.planStartedAt || '',
+			planExpireDate: billing.planExpireDate || '',
+			payLimit: billing.pricePlan.planLimit,
+		};
+
+		return await this.httpAgent.patch(
+			`v1/admin/partnerships/plan`,
+			params,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+	}
+
+	/**
+	 * 이용 플랜 업데이트 (관리자)
+	 * @param token
+	 * @param partnerIdx
+	 * @param billing
+	 */
+	async updateUsedPlanForMaster(
+		token: string,
+		partnerIdx: number,
+		billing: BillingInterface
+	): Promise<any> {
+		const params = {
+			partnerIdx,
+			payPlan: billing.pricePlan.planName,
+			payPlanId: billing.pricePlan.planId,
+			planStartDate: billing.planStartedAt || '',
+			planExpireDate: billing.planExpireDate || '',
+			payLimit: billing.pricePlan.planLimit,
+		};
+
+		return await this.httpAgent.patch(
+			`v1/master/partnerships/plan`,
+			params,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
 	}
 
 	/**

@@ -51,7 +51,7 @@ import {FindPaymentsHandler} from './application/query';
 import {RegularPaymentService} from './application/service/payment.service';
 import {VircleCoreApi} from './infrastructure/api-client/vircle-core.api';
 import {NotificationHandler} from './application/command/notification.handler';
-import {AdminBillingController} from './interface/admin.billing.controller';
+import {MasterBillingController} from './interface/master.billing.controller';
 
 const infra: Provider[] = [
 	{
@@ -206,7 +206,7 @@ const domain: Provider[] = [
 			inject: [ConfigService],
 		}),
 	],
-	controllers: [BillingController, AdminBillingController],
+	controllers: [BillingController, MasterBillingController],
 	providers: [Logger, ...domain, ...infra, ...app],
 })
 export class BillingModule {}
