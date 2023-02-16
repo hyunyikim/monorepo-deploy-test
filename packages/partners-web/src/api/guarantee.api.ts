@@ -8,6 +8,7 @@ import {
 	GuaranteeListResponse,
 	GauranteeDetailResponse,
 	BulkResponse,
+	Platform,
 } from '@/@types';
 
 export const getGuaranteeList = async (
@@ -82,4 +83,9 @@ export const bulkCancelGuarantee = async (nftIdxList: number[]) => {
 	return await instance.patch<BulkResponse>(`/v1/admin/nft/cancel/bulk`, {
 		nftIdxList,
 	});
+};
+
+// 판매처 조회
+export const getPlatformList = async () => {
+	return await instance.get<Platform[]>('/v1/admin/nft/platform');
 };

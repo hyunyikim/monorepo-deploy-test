@@ -1,3 +1,5 @@
+import {ListRequestParam} from './list.types';
+
 export type ProductListRequestSearchType = 'all' | 'name' | 'code' | 'num';
 
 export interface Product {
@@ -28,7 +30,7 @@ export interface ProductListResponse extends Omit<Product, 'customField'> {
 	customField?: CustomField;
 }
 
-export interface ProductDetailResponse extends Omit<Product, 'brand'> {
+export interface ProductDetailResponse extends Product {
 	nftCount: number;
 }
 
@@ -80,4 +82,22 @@ export interface ProductRegisterFormData
 export interface ImageState {
 	file: File | string | null;
 	preview: string;
+}
+
+export type ProductGuaranteeStatus = 'ready' | 'complete' | 'cancel';
+export interface ProductGuaranteeRequestParam
+	extends Pick<ListRequestParam, 'sort' | 'currentPage' | 'pageMaxNum'> {
+	nftStatus: ProductGuaranteeStatus | '';
+}
+export interface ProductGuarantee {
+	idx: number;
+	nftNumber: string;
+	nftStatusCode: string;
+	nftStatus: string;
+	nftType: string;
+	productName: string;
+	ordererName: string;
+	ordererTel: string;
+	platformIdx: number;
+	registeredAt: string;
 }

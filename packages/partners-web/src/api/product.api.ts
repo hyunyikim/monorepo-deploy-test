@@ -6,6 +6,9 @@ import {
 	ProductListRequestSearchType,
 	ProductListResponse,
 	ProductDetailResponse,
+	ProductGuarantee,
+	ListResponseV2,
+	ProductGuaranteeRequestParam,
 } from '@/@types';
 
 export const getProductList = async (
@@ -67,4 +70,24 @@ export const bulkDeleteProduct = async (productIdxList: number[]) => {
 
 export const deleteProductImage = async (productIdx: number) => {
 	await instance.delete(`/v1/admin/partners-product/${productIdx}/image`);
+};
+
+export const getProductGuaranteeList = async (
+	params: ProductGuaranteeRequestParam,
+	productIdx: number
+) => {
+	const {nftStatus, sort, pageMaxNum, currentPage} = params;
+	return await instance.get<ListResponseV2<ProductGuarantee[]>>(
+		`/v1/admin/partners-product/${productIdx}/nft`,
+		{
+			params: {
+				...(nftStatus && {
+					nftStatus,
+				}),
+				sort,
+				pageSize: pageMaxNum,
+				page: currentPage,
+			},
+		}
+	);
 };

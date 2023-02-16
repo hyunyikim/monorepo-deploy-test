@@ -3,40 +3,18 @@ import {Cafe24Category, Cafe24Interwork, IssueSetting} from '@/@types';
 
 export const getCategoryList = async (mallId: string, name = '') => {
 	const url = `/cafe24/v1/interwork/${mallId}/categories`;
-	const resp = await nonAuthInstance.get<Cafe24Category[]>(url, {
+	const resp = await bearerTokenInstance.get<Cafe24Category[]>(url, {
 		params: {
 			name: name || undefined,
 		},
 	});
-	return resp.data;
-};
-
-export const getInterwork = async (mallId: string) => {
-	const url = `/cafe24/v1/interwork/${mallId}`;
-	const resp = await nonAuthInstance.get(url);
-	return resp.data;
+	return resp;
 };
 
 export const getInterworkByToken = async () => {
 	return await bearerTokenInstance.get<Cafe24Interwork>(
 		`/cafe24/v1/interwork`
 	);
-};
-
-export const getInterworkMaster = async (idx: number) => {
-	const url = `/master/interwork`;
-	const resp = await bearerTokenInstance.get(url, {
-		params: {
-			partnershipIdx: idx,
-		},
-	});
-	return resp;
-};
-
-export const getGuaranteeReqInfo = async (reqIdx: number) => {
-	const url = `/cafe24/v1/guarantees/${reqIdx}`;
-	const resp = await bearerTokenInstance.get(url);
-	return resp;
 };
 
 // cafe24 연동 초기화

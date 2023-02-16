@@ -59,6 +59,7 @@ const MainTextAreaStyle = styled('div')`
 	right: 0;
 	top: 60px;
 	z-index: 3;
+
 	h3 {
 		font-weight: 300;
 		font-size: 24px;

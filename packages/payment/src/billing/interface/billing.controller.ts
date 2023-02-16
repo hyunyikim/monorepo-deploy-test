@@ -9,6 +9,7 @@ import {
 	UseGuards,
 	Param,
 	UseFilters,
+	Inject,
 } from '@nestjs/common';
 import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {
@@ -40,6 +41,7 @@ import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
 import {HttpExceptionFilter} from './httpException.filter';
 import {PAYMENT_STATUS, PLAN_TYPE} from '../infrastructure/api-client';
+import {VircleCoreApi} from '../infrastructure/api-client/vircle-core.api';
 
 export class BillingInterface {
 	readonly customerKey: string;
@@ -143,7 +145,12 @@ export class PaymentDetailInterface extends PaymentSummaryInterface {
 @Controller({version: '1', path: 'billing'})
 @UseFilters(HttpExceptionFilter)
 export class BillingController {
-	constructor(readonly commandBus: CommandBus, readonly queryBus: QueryBus) {}
+	constructor(
+		readonly commandBus: CommandBus,
+		readonly queryBus: QueryBus,
+		@Inject(VircleCoreApi)
+		private readonly vircleCoreApi: VircleCoreApi
+	) {}
 
 	/**
 	 * 구독 플랜 목록 조회 API
@@ -195,7 +202,11 @@ export class BillingController {
 		});
 		await this.commandBus.execute(registerCommand);
 
-		return this.getBilling(token);
+		const billing = await this.getBilling(token);
+
+		await this.vircleCoreApi.updateUsedPlan(token.token, billing);
+
+		return billing;
 	}
 
 	/**
@@ -220,7 +231,11 @@ export class BillingController {
 		);
 		await this.commandBus.execute(registerCommand);
 
-		return this.getBilling(token);
+		const billing = await this.getBilling(token);
+
+		await this.vircleCoreApi.updateUsedPlan(token.token, billing);
+
+		return billing;
 	}
 
 	/**
@@ -381,7 +396,11 @@ export class BillingController {
 		const command = new ChangeBillingPlanCommand(body.planId, token);
 		await this.commandBus.execute(command);
 
-		return this.getBilling(token);
+		const billing = await this.getBilling(token);
+
+		await this.vircleCoreApi.updateUsedPlan(token.token, billing);
+
+		return billing;
 	}
 
 	/**
@@ -401,6 +420,12 @@ export class BillingController {
 		// 구독 취소 커맨드 실행
 		const command = new UnregisterBillingCommand(billingProps.customerKey);
 		await this.commandBus.execute(command);
+
+		const billing = await this.getBilling(token);
+
+		await this.vircleCoreApi.updateUsedPlan(token.token, billing);
+
+		return billing;
 	}
 
 	/**

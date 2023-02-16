@@ -14,6 +14,7 @@ import {
 	ProductRegisterFormData,
 	GuaranteeRequestState,
 	ImageState,
+	AutocompleteInputType,
 } from '@/@types';
 import {guaranteeRegisterSchemaShape} from '@/utils/schema';
 import {
@@ -40,11 +41,17 @@ import {
 	useMessageDialog,
 	useGuaranteePreviewStore,
 	useGlobalLoading,
+	useGetPlatformList,
 } from '@/stores';
-import {registerProduct} from '@/api/product.api';
+import {getProductDetail, registerProduct} from '@/api/product.api';
 import {useChildModalOpen} from '@/utils/hooks';
 
-import {Button, InputWithLabel, BottomNavigation} from '@/components';
+import {
+	Button,
+	InputWithLabel,
+	BottomNavigation,
+	LabeledAutocomplete,
+} from '@/components';
 import GuaranteeRegisterProduct from '@/features/guarantee/Register/GuaranteeRegisterProduct';
 import GuaranteeRegisterNewProductModal from '@/features/guarantee/Register/GuaranteeRegisterNewProductModal';
 import GuaranteeRegisterSelectProductModal from '@/features/guarantee/Register/GuaranteeRegisterSelectProductModal';
@@ -52,9 +59,10 @@ import {useGetUserPricePlan} from '@/stores';
 
 interface Props {
 	initialData: GauranteeDetailResponse | null;
+	productIdx: number | null;
 }
 
-function GuaranteeRegisterForm({initialData}: Props) {
+function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const setGuaranteePreviewData = useGuaranteePreviewStore(
@@ -96,6 +104,9 @@ function GuaranteeRegisterForm({initialData}: Props) {
 	const [productImages, setProductImages] = useState<ImageState[]>([]);
 	const [registerNewProduct, setRegisterNewProduct] =
 		useState<boolean>(false);
+
+	// 판매처 목록(autocomplete의 옵션값)
+	const {data: platformList} = useGetPlatformList();
 
 	const isInitialRegister = useMemo(
 		() => (initialData ? false : true),
@@ -185,6 +196,59 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			]);
 		}
 	}, [initialData, partnershipInfo]);
+
+	// 상품 상세 페이지에서 넘어온 경우, 상품을 기본으로 세팅해줌
+	useEffect(() => {
+		if (!productIdx) {
+			return;
+		}
+		(async () => {
+			const productData = await getProductDetail(productIdx);
+			if (!productData) {
+				return;
+			}
+			reset({
+				productIdx,
+			});
+
+			const {
+				idx,
+				name,
+				categoryCode,
+				categoryName,
+				brandIdx,
+				brand,
+				modelNum,
+				price,
+				warranty,
+				customField,
+				productImage,
+			} = productData;
+			setProducts([
+				{
+					idx,
+					name,
+					categoryCode,
+					categoryName,
+					brandIdx,
+					brandName: brand?.name,
+					brandNameEn: brand?.englishName,
+					modelNum,
+					price: price ? price.toLocaleString() : '',
+					warranty,
+					customField,
+				},
+			]);
+			if (productImage) {
+				setProductImages([
+					{
+						file: null,
+						preview: productImage,
+					},
+				]);
+			}
+		})();
+	}, [productIdx]);
 
 	const watched = useWatch({
 		control,
@@ -298,20 +362,30 @@ function GuaranteeRegisterForm({initialData}: Props) {
 			});
 			return;
 		}
-
 		const formData = new FormData();
 		const customFields = partnershipInfo?.nftCustomFields;
 		Object.keys(data).forEach((key: string) => {
-			const value =
+			let formValue =
 				data[
 					key as keyof (
 						| GuaranteeRegisterFormData
 						| GuaranteeRegisterProductFormData
 					)
 				];
-			if (value) {
-				formData.append(key, String(value));
+			let formKey = key;
+			if (formValue) {
+				if (formKey === 'platform_nm') {
+					// 판매처를 기존 데이터에서 선택했는지 or 직접 선택했는지 판단
+					const existedPlatform = platformList?.find(
+						(platform) => platform.label.trim() === formValue
+					);
+					if (existedPlatform) {
+						formKey = 'platform_idx';
+						formValue = existedPlatform.value;
+					}
+				}
 			}
+			formData.append(formKey, formValue ? String(formValue) : '');
 		});
 		const product = products[0];
 		Object.keys(product).forEach((key: string) => {
@@ -635,6 +709,24 @@ function GuaranteeRegisterForm({initialData}: Props) {
 													e
 												);
 										}
+									}}
+								/>
+							);
+						}
+						if (type === 'autocomplete') {
+							return (
+								<LabeledAutocomplete
+									key={name}
+									{...(input as AutocompleteInputType)}
+									width="100%"
+									defaultOptions={
+										platformList?.map(
+											(item) => item.label
+										) || []
+									}
+									value={getValues('platform_nm') || ''}
+									onChange={(value) => {
+										setValue('platform_nm', value);
 									}}
 								/>
 							);

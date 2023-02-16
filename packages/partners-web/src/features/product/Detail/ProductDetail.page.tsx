@@ -3,6 +3,7 @@ import {useGetProductDetail} from '@/stores';
 
 import {ContentWrapper} from '@/components';
 import ProductDetailInfo from './ProductDetailInfo';
+import ProductGuaranteeTable from './ProductGuaranteeTable';
 
 function ProductDetail() {
 	const {idx} = useParams();
@@ -10,6 +11,7 @@ function ProductDetail() {
 	return (
 		<ContentWrapper fullWidth={true}>
 			{data && <ProductDetailInfo data={data} />}
+			{idx && <ProductGuaranteeTable idx={Number(idx)} />}
 		</ContentWrapper>
 	);
 }

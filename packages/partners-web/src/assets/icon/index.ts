@@ -58,5 +58,10 @@ export {default as IcAtm} from './ic-atm.svg';
 export {default as IcCalendar} from './ic-calendar.svg';
 export {default as IcReceipt} from './ic-receipt.svg';
 
+export {default as IcDocsInGreyBox} from './icon_docs_in_grey_box_40.png';
+export {default as IcCrossoutInRedBox} from './icon_crossout_in_red_box_40.png';
+export {default as IcTickInBlueBox} from './icon_tick_in_blue_circle_40.png';
+export {default as IcWalletInGreen} from './icon_wallet_in_green_box_40.png';
+
 // Logo
 export {default as IcVircleLogo} from './ic-vircle-logo.svg';

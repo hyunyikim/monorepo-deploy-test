@@ -44,6 +44,12 @@ export const guaranteeListSearchFilter: ListSearchFilters = [
 		label: '기간',
 		component: 'searchDate',
 	},
+	{
+		name: 'platform',
+		label: '판매처',
+		component: 'select',
+		options: [],
+	},
 ];
 
 export const getGuaranteeStatusChip = (status: string, text: string) => {
@@ -99,9 +105,9 @@ export const guaranteeRegisterInputList: InputTypeList = [
 		},
 	},
 	{
-		type: 'text',
+		type: 'autocomplete',
 		name: 'platform_nm',
-		placeholder: '예시: 공홈, 무신사, 오프라인 매장명 등',
+		placeholder: '판매처를 입력해주세요',
 		label: '판매처',
 		required: false,
 	},

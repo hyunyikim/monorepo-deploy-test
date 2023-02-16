@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
+import {parse} from 'qs';
 
 import {Stack} from '@mui/material';
 
@@ -16,7 +17,11 @@ import {Button, TitleTypography} from '@/components';
 function GuaranteeRegister() {
 	usePageView('guarantee_publish_pv', '개런티발급 노출');
 	const params = useParams();
+	const {search} = useLocation();
 	const idx = params?.idx;
+	const productIdx = parse(search, {
+		ignoreQueryPrefix: true,
+	})?.productIdx;
 
 	const [data, setData] = useState<GauranteeDetailResponse | null>(null);
 	const {data: partnershipInfo} = useGetPartnershipInfo();
@@ -92,7 +97,10 @@ function GuaranteeRegister() {
 					md: '100px',
 				}}>
 				<TitleTypography title="개런티 발급하기" />
-				<GuaranteeRegisterForm initialData={data} />
+				<GuaranteeRegisterForm
+					initialData={data}
+					productIdx={productIdx ? Number(productIdx) : null}
+				/>
 			</Stack>
 			<GuaranteeRegisterPreviewCard />
 		</Stack>

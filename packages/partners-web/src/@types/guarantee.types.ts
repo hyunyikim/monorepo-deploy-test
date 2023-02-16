@@ -11,6 +11,7 @@ export type GuaranteeStatus = 'READY' | 'CONFIRMED' | 'COMPLETED' | 'CANCELED';
 
 export interface GuaranteeListRequestParam {
 	nft_req_state: string;
+	platform: number | '';
 }
 
 export type GuaranteeRequestState = '1' | '2' | '3' | '4' | '9';
@@ -166,7 +167,8 @@ export interface GuaranteeRegisterRequestParam {
 	orderer_nm: string;
 	orderer_tel: string;
 	order_dt?: string;
-	platform_nm?: string;
+	platform_nm?: string; // 판매처명
+	platform_idx?: number; // 판매처 idx
 	ref_order_id?: string;
 
 	// 값이 있다면 기존 등록된 상품을 선택했음

@@ -16,6 +16,7 @@ export {default as Checkbox} from '@/components/atoms/Checkbox';
 export {default as LinearProgress} from '@/components/atoms/LinearProgress';
 export {default as Tab} from '@/components/atoms/Tab';
 export {default as Switch} from '@/components/atoms/Switch';
+export {default as Autocomplete} from '@/components/atoms/Autocomplete';
 
 export {default as Logo} from '@/components/molecules/Logo';
 export {default as InputWithLabel} from '@/components/molecules/InputWithLabel';
@@ -24,6 +25,7 @@ export {default as Breadcrumbs} from '@/components/molecules/Breadcrumbs';
 export {default as LabeledSelect} from '@/components/molecules/LabeledSelect';
 export {default as LabeledCheckbox} from '@/components/molecules/LabeledCheckbox';
 export {default as LabeledSwitch} from '@/components/molecules/LabeledSwitch';
+export {default as LabeledAutocomplete} from '@/components/molecules/LabeledAutocomplete';
 
 export {default as SearchDate} from '@/components/organisms/SearchDate';
 export {default as SearchField} from '@/components/organisms/SearchField';
