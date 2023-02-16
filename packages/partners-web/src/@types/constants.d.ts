@@ -1,3 +1,4 @@
+declare const ENV_MODE: string;
 declare const API_URL: string;
 declare const STATIC_URL: string;
 declare const EVENT_URL: string;
