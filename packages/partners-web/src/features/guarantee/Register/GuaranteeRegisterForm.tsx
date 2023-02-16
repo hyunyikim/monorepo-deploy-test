@@ -210,12 +210,14 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 			reset({
 				productIdx,
 			});
+
 			const {
 				idx,
 				name,
 				categoryCode,
 				categoryName,
 				brandIdx,
+				brand,
 				modelNum,
 				price,
 				warranty,
@@ -229,8 +231,8 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 					categoryCode,
 					categoryName,
 					brandIdx,
-					brandName: '',
-					brandNameEn: '',
+					brandName: brand?.name,
+					brandNameEn: brand?.englishName,
 					modelNum,
 					price: price ? price.toLocaleString() : '',
 					warranty,

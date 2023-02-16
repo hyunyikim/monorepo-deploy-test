@@ -35,9 +35,15 @@ export const useGetPlatformList = () => {
 		queryKey: ['sellerList', token],
 		queryFn: getPlatformList,
 		select: (data) =>
-			data.map((item) => ({
-				value: item.platformIdx,
-				label: item.platformName,
-			})),
+			data
+				.map((item) => ({
+					value: item.platformIdx,
+					label: item.platformName,
+				}))
+				.sort((a, b) => {
+					const aLabel = a.label.toUpperCase();
+					const bLabel = b.label.toUpperCase();
+					return aLabel === bLabel ? 0 : aLabel < bLabel ? -1 : 1;
+				}),
 	});
 };

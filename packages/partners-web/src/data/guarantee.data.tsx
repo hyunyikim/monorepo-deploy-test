@@ -46,7 +46,7 @@ export const guaranteeListSearchFilter: ListSearchFilters = [
 	},
 	{
 		name: 'platform',
-		label: '기간',
+		label: '판매처',
 		component: 'select',
 		options: [],
 	},

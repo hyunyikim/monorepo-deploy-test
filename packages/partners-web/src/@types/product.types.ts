@@ -30,7 +30,7 @@ export interface ProductListResponse extends Omit<Product, 'customField'> {
 	customField?: CustomField;
 }
 
-export interface ProductDetailResponse extends Omit<Product, 'brand'> {
+export interface ProductDetailResponse extends Product {
 	nftCount: number;
 }
 
