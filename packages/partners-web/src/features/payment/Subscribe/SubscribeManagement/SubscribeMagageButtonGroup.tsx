@@ -269,10 +269,7 @@ function SubscribeMagageButtonGroup({
 	const onClickTrySubscribeChange = useCallback(() => {
 		// TODO:
 		// 운영 환경에서 내부 테스트 계정 아니라면 모두 결제 진입 막음
-		if (
-			ENV_MODE === 'production' &&
-			partnershipData?.email !== 'test@vircle.co.kr'
-		) {
+		if (partnershipData?.email !== 'test@vircle.co.kr') {
 			onOpenMessageDialog(BAN_PLAN_UPGRADE_MODAL);
 			return;
 		}
