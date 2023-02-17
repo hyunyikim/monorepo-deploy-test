@@ -10,7 +10,11 @@ import {Button, ContentWrapper, Tab} from '@/components';
 import PaymentCardTab from './PaymentCard/PaymentCardTab';
 import PaymentReceiptTab from './PaymentReceipt/PaymentReceiptTab';
 import AddPaymentCardModal from '../common/AddPaymentCardModal';
-import {useGetUserPricePlan, useMessageDialog} from '@/stores';
+import {
+	useGetPartnershipInfo,
+	useGetUserPricePlan,
+	useMessageDialog,
+} from '@/stores';
 import {BAN_PLAN_UPGRADE_MODAL} from '@/data';
 
 function PaymentInformation() {
@@ -21,14 +25,16 @@ function PaymentInformation() {
 		defaultValue: 'card',
 	});
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const {data: partnershipData} = useGetPartnershipInfo();
 	const {open, onOpen, onClose} = useChildModalOpen({});
 
 	const {data: userPlan} = useGetUserPricePlan();
 
 	const onOpenAddCardModal = () => {
-		// TODO: 자동결제 모듈 붙기 전 임시 처리
-		onMessageDialogOpen(BAN_PLAN_UPGRADE_MODAL);
-		return;
+		if (partnershipData?.email !== 'test@vircle.co.kr') {
+			onMessageDialogOpen(BAN_PLAN_UPGRADE_MODAL);
+			return;
+		}
 
 		if (userPlan?.card) {
 			onMessageDialogOpen({
