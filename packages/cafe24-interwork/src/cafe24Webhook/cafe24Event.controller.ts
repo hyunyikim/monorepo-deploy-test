@@ -76,11 +76,10 @@ export class Cafe24EventController {
 
 	@Post('order/register')
 	@UseGuards(ApiKeyGuard)
-	async handleOrderRegisterEvent(
-		@Body() webHook: WebHookBody<EventOrderRegister>
-	) {
-		const result = await this.cafe24OrderEventHandler.handle(webHook);
-		return result;
+	handleOrderRegisterEvent(@Body() webHook: WebHookBody<EventOrderRegister>) {
+		// const result = await this.cafe24OrderEventHandler.handle(webHook);
+		// return result;
+		return 'OK';
 	}
 
 	@Post('order/return')
