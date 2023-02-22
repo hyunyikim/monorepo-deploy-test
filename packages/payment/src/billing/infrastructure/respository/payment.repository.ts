@@ -132,7 +132,6 @@ export class PlanPaymentRepository
 			ExpressionAttributeValues: {
 				':key': partnerIdx,
 			},
-			ScanIndexForward: sort === 'ASC',
 		};
 
 		if (status) {
