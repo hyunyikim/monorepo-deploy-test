@@ -64,8 +64,8 @@ export class Cafe24EventService {
 			mergeMap((hook) => this.addOrdersInfo(hook)),
 			mergeMap((hook) => this.addProductsInfo(hook)),
 			concatMap((hook) => this.divideEachOrder(hook)),
-			concatMap((hook) => this.divideEachOrderItem(hook)),
 			mergeMap((hook) => this.addNftInfo(hook)),
+			concatMap((hook) => this.divideEachOrderItem(hook)),
 			map((hook) => this.categorizeAction(hook)),
 			map((hook) => this.targetCategory(hook)),
 			mergeMap((hook) => this.handleAction(hook, traceId))
@@ -210,53 +210,53 @@ export class Cafe24EventService {
 		}));
 	}
 
-	private divideEachOrderItem(hook: {
+	private async addNftInfo(hook: {
 		order: Order;
 		products: Array<Product>;
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
-		return hook.order.items.flatMap((item) => {
-			return [...Array(item.quantity).keys()].map(() => ({
-				...hook,
-				item,
-				productInfo: hook.products.find(
-					(product) => product.product_no === item.product_no
-				),
-			}));
-		});
-	}
-
-	private async addNftInfo(hook: {
-		order: Order;
-		item: OrderItem;
-		productInfo: Product | undefined;
-		interwork: Cafe24Interwork;
-		webHook: WebHookBody<EventBatchOrderShipping>;
-	}) {
-		const item = hook.item;
 		const reqList = await this.guaranteeReqRepo.getRequestListByOrderId(
 			hook.order.order_id,
 			hook.interwork.mallId
 		);
 		this.logger.log(`reqList: ${JSON.stringify(reqList)}`);
 
-		let req = reqList.find(
-			(req) =>
-				req.orderItemCode === item.order_item_code && !req.canceledAt
-		);
-
-		if (!req) {
-			req = reqList.find(
-				(req) =>
-					req.productCode === item.product_code && !req.canceledAt
-			);
-		}
-
 		return {
 			...hook,
-			nftReqIdx: req?.reqIdx,
+			nftList: reqList,
 		};
+	}
+
+	private divideEachOrderItem(hook: {
+		order: Order;
+		products: Array<Product>;
+		interwork: Cafe24Interwork;
+		webHook: WebHookBody<EventBatchOrderShipping>;
+		nftList: Array<GuaranteeRequest>;
+	}) {
+		const {nftList} = hook;
+		return hook.order.items.flatMap((item) => {
+			let itemNftList = nftList.filter(
+				(nft) =>
+					nft.orderItemCode === item.order_item_code &&
+					!nft.canceledAt
+			);
+			if (!itemNftList.length) {
+				itemNftList = nftList.filter(
+					(nft) =>
+						nft.productCode === item.product_code && !nft.canceledAt
+				);
+			}
+			return [...Array(item.quantity).keys()].map((_, idx) => ({
+				...hook,
+				item,
+				productInfo: hook.products.find(
+					(product) => product.product_no === item.product_no
+				),
+				nftReqIdx: itemNftList[idx]?.reqIdx,
+			}));
+		});
 	}
 
 	private categorizeAction(hook: {
@@ -270,7 +270,8 @@ export class Cafe24EventService {
 		const status = hook.item.order_status as CAFE24_ORDER_STATUS;
 		const issued = !!hook.nftReqIdx;
 		const action =
-			status === CAFE24_ORDER_STATUS.DELIVERED
+			status === CAFE24_ORDER_STATUS.DELIVERED ||
+			status === CAFE24_ORDER_STATUS.CONFIRMED
 				? !issued
 					? WEBHOOK_ACTION.ISSUE
 					: WEBHOOK_ACTION.PASS

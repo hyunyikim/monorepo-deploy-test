@@ -6,6 +6,7 @@ export enum CAFE24_ORDER_STATUS {
 	'N22' = 'N22', // 배송보류
 	'N30' = 'N30', // 배송중
 	'DELIVERED' = 'N40', // 배송완료
+	'CONFIRMED' = 'N50', // 구매확정
 	'N50' = 'N50', // 구매확정
 	'C00' = 'C00', // 취소신청
 	'C10' = 'C10', // 취소접수 - 관리자
@@ -49,7 +50,7 @@ export enum WEBHOOK_ACTION {
 
 export const orderStatus2Action = (order: CAFE24_ORDER_STATUS) => {
 	switch (order) {
-		case CAFE24_ORDER_STATUS.DELIVERED:
+		case (CAFE24_ORDER_STATUS.DELIVERED, CAFE24_ORDER_STATUS.CONFIRMED):
 			return WEBHOOK_ACTION.ISSUE;
 		case CAFE24_ORDER_STATUS.REFUNDED:
 		case CAFE24_ORDER_STATUS.EXCHANGED: // TODO: 교환도 cancel 인데 바꿔야할 듯
