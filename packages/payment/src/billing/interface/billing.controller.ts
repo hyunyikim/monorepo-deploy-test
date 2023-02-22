@@ -59,6 +59,9 @@ export class BillingInterface {
 	readonly planExpireDate?: string;
 	readonly nextPlanStartDate?: string;
 	readonly paymentFailedCount?: number;
+	readonly usedMonths?: number;
+	readonly monthStartDate?: string;
+	readonly monthEndDate?: string;
 
 	constructor(billing: BillingProps) {
 		this.customerKey = billing.customerKey;
@@ -84,6 +87,9 @@ export class BillingInterface {
 			? DateTime.fromISO(billing.nextPaymentDate).toISO()
 			: undefined;
 		this.paymentFailedCount = billing.paymentFailedCount;
+		this.usedMonths = billing.currentTerm?.usedMonths;
+		this.monthStartDate = billing.currentTerm?.startDate;
+		this.monthEndDate = billing.currentTerm?.endDate;
 	}
 }
 
