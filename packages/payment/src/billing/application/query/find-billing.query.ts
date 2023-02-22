@@ -35,32 +35,9 @@ export class FindBillingByPartnerTokenHandler
 
 		const billingProps: BillingProps = billing.properties();
 
-		const usedMonths: number =
-			Math.ceil(
-				-DateTime.fromISO(
-					billingProps.lastPaymentAt || billingProps.authenticatedAt
-				).diffNow('months').months
-			) || 1;
-
-		// 오늘일자가 포함된 1개월치 사용량만 조회되도록 검색 시작일자를 계산
-		const startDate: string =
-			usedMonths > 1
-				? DateTime.fromISO(
-						billingProps.lastPaymentAt ||
-							billingProps.authenticatedAt
-				  )
-						.plus({
-							months: usedMonths - 1,
-						})
-						.toISO()
-				: DateTime.fromISO(
-						billingProps.lastPaymentAt ||
-							billingProps.authenticatedAt
-				  ).toISO();
-
 		// 사용량 조회
 		const payload = {
-			from: startDate.substring(0, 19),
+			from: billing.currentTerm.startDate.substring(0, 19),
 		};
 		const {total} = await this.vircleCoreApi.getUsedGuaranteeCount(
 			token.token,

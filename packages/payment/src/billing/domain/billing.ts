@@ -31,6 +31,11 @@ export interface Billing {
 	deleteCard: () => void;
 	delete: (isBillingChanged?: boolean) => void;
 	isDeleted: boolean;
+	currentTerm: {
+		usedMonths: number;
+		startDate: string;
+		endDate: string;
+	};
 	approve: (payment: PaymentProps) => void;
 	delay: (payment: PaymentProps) => void;
 	changePlan: (
@@ -63,6 +68,11 @@ export type BillingProps = TossBilling & {
 	canceledPricePlan?: PricePlanProps;
 	usedNftCount?: number;
 	paymentEmail?: string;
+	currentTerm?: {
+		usedMonths: number;
+		startDate: string;
+		endDate: string;
+	};
 };
 
 /**
@@ -124,6 +134,7 @@ export class PlanBilling extends AggregateRoot implements Billing {
 			canceledPricePlan: this.canceledPricePlan,
 			usedNftCount: this.usedNftCount,
 			paymentEmail: this.paymentEmail,
+			currentTerm: this.currentTerm,
 		};
 	}
 
@@ -303,5 +314,36 @@ export class PlanBilling extends AggregateRoot implements Billing {
 
 	get isDeleted() {
 		return !!this.deletedAt;
+	}
+
+	get currentTerm() {
+		const startedAt = DateTime.fromISO(
+			this.props.lastPaymentAt || this.props.authenticatedAt
+		);
+
+		const usedMonths: number =
+			Math.ceil(-startedAt.diffNow('months').months) || 1;
+
+		// 오늘일자가 포함된 1개월치 사용량만 조회되도록 검색 시작일자를 계산
+		const startDate =
+			usedMonths > 1
+				? startedAt
+						.plus({
+							months: usedMonths - 1,
+						})
+						.toISO()
+				: startedAt.toISO();
+
+		const endDate = DateTime.fromISO(startDate)
+			.plus({
+				months: 1,
+			})
+			.toISO();
+
+		return {
+			usedMonths,
+			startDate,
+			endDate,
+		};
 	}
 }
