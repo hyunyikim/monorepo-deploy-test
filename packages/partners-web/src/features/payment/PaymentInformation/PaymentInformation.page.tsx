@@ -31,7 +31,10 @@ function PaymentInformation() {
 	const {data: userPlan} = useGetUserPricePlan();
 
 	const onOpenAddCardModal = () => {
-		if (partnershipData?.email !== 'test@vircle.co.kr') {
+		if (
+			ENV_MODE === 'production' &&
+			partnershipData?.email !== 'test@vircle.co.kr'
+		) {
 			onMessageDialogOpen(BAN_PLAN_UPGRADE_MODAL);
 			return;
 		}
