@@ -1,5 +1,5 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
-import {TransformPlainToInstance} from 'class-transformer';
+import {plainToInstance, TransformPlainToInstance} from 'class-transformer';
 import {
 	AccessToken,
 	Category,
@@ -73,7 +73,8 @@ export class Cafe24API {
 			},
 			auth,
 		});
-		return data;
+		const accessTokenInstance = plainToInstance(AccessToken, data);
+		return accessTokenInstance;
 	}
 
 	@TransformPlainToInstance(Store)
@@ -125,6 +126,25 @@ export class Cafe24API {
 			},
 		});
 		return data.product;
+	}
+
+	@TransformPlainToInstance(Product)
+	async getProductResourceList(
+		mallId: string,
+		accessToken: string,
+		productNoList: string
+	) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/products?product_no=${productNoList}?limit=100`;
+		const {data} = await this.httpAgent.get<{products: Array<Product>}>(
+			url,
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json',
+				},
+			}
+		);
+		return data.products;
 	}
 
 	@TransformPlainToInstance(Product)
@@ -242,6 +262,18 @@ export class Cafe24API {
 			},
 		});
 		return data.order;
+	}
+
+	@TransformPlainToInstance(Order)
+	async getOrderList(mallId: string, accessToken: string, orderIds: string) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/orders?order_id=${orderIds}&embed=items,buyer&limit=1000`;
+		const {data} = await this.httpAgent.get<{orders: Array<Order>}>(url, {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				'Content-Type': 'application/json',
+			},
+		});
+		return data.orders;
 	}
 
 	@TransformPlainToInstance(OrderItem)
