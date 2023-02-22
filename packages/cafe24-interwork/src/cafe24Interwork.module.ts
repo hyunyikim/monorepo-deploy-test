@@ -5,7 +5,7 @@ import {Cafe24InterworkService} from './cafe24Interwork/cafe24Interwork.service'
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {Cafe24API} from './cafe24Api/cafe24Api';
 import {InterworkRepository} from './dynamo/interwork.repository';
-import {DynamoDB} from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 import {HealthCheckController} from './healthCheck/healthcheck.controller';
 import {VircleCoreAPI} from './vircleCoreApiService';
 import {Cafe24EventController} from './cafe24Webhook/cafe24Event.controller';
@@ -24,6 +24,7 @@ import {KakaoAlimTalkModule} from './kakao-alim-talk/kakao-alim-talk.module';
 import {KakaoAlimTalkService} from './kakao-alim-talk';
 import {Cafe24OrderEventHandler} from './cafe24Webhook/cafe24OrderEvent.handler';
 import {MasterCafe24InterworkController} from './cafe24Interwork/cafe24intework.master.controller';
+import {SqsService} from './sqs/sqs.service';
 @Module({
 	imports: [
 		ScheduleModule.forRoot(),
@@ -74,7 +75,7 @@ import {MasterCafe24InterworkController} from './cafe24Interwork/cafe24intework.
 				const tableName = configService.getOrThrow<string>(
 					'CAFE24_DDB_TABLE_NAME_INTERWORK'
 				);
-				const ddbClient = new DynamoDB.DocumentClient({
+				const ddbClient = new AWS.DynamoDB.DocumentClient({
 					region: 'ap-northeast-2',
 				});
 				return new InterworkRepository(ddbClient, tableName);
@@ -87,10 +88,22 @@ import {MasterCafe24InterworkController} from './cafe24Interwork/cafe24intework.
 				const tableName = configService.getOrThrow<string>(
 					'CAFE24_DDB_TABLE_NAME_GUARANTEE_REQ'
 				);
-				const ddbClient = new DynamoDB.DocumentClient({
+				const ddbClient = new AWS.DynamoDB.DocumentClient({
 					region: 'ap-northeast-2',
 				});
 				return new GuaranteeRequestRepository(ddbClient, tableName);
+			},
+			inject: [ConfigService],
+		},
+		{
+			provide: SqsService,
+			useFactory: (config: ConfigService) => {
+				const sqs = new AWS.SQS({
+					region: config.getOrThrow(
+						'CAFE24_SQS_WEBHOOK_FAILED_QUEUE_REGION'
+					),
+				});
+				return new SqsService(sqs, config);
 			},
 			inject: [ConfigService],
 		},

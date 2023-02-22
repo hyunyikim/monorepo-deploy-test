@@ -1,5 +1,5 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
-import {TransformPlainToInstance} from 'class-transformer';
+import {plainToInstance, TransformPlainToInstance} from 'class-transformer';
 import {
 	AccessToken,
 	Category,
@@ -73,7 +73,8 @@ export class Cafe24API {
 			},
 			auth,
 		});
-		return data;
+		const accessTokenInstance = plainToInstance(AccessToken, data);
+		return accessTokenInstance;
 	}
 
 	@TransformPlainToInstance(Store)

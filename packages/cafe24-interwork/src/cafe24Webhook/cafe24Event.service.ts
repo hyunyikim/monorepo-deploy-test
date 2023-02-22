@@ -34,6 +34,9 @@ import {
 	orderStatus2Action,
 	WEBHOOK_ACTION,
 } from 'src/common/constant/constant';
+import {SqsService} from 'src/sqs/sqs.service';
+import {Cron} from '@nestjs/schedule';
+import {SlackReporter} from 'src/slackReporter';
 
 @Injectable()
 export class Cafe24EventService {
@@ -45,51 +48,117 @@ export class Cafe24EventService {
 		private guaranteeReqRepo: GuaranteeRequestRepository,
 		@Inject(VircleCoreAPI) private vircleCoreApi: VircleCoreAPI,
 		@Inject(TokenRefresher) private tokenRefresher: TokenRefresher,
-		@Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
+		@Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService,
+		@Inject(SqsService) private sqsService: SqsService,
+		@Inject(SlackReporter) private readonly slackReporter: SlackReporter
 	) {}
+
+	@Cron('*/20 * * * * *', {name: 'RETRY_DELIVERY_HOOK'})
+	async retryDeliveryHook() {
+		const message = await this.sqsService.consume();
+		if (message) {
+			let param: {
+				traceId: string;
+				webHook: WebHookBody<EventBatchOrderShipping>;
+				retryCount: number;
+			};
+			try {
+				param = JSON.parse(message.Body as string) as {
+					traceId: string;
+					webHook: WebHookBody<EventBatchOrderShipping>;
+					retryCount: number;
+				};
+			} catch (e) {
+				throw new Error('json parse error');
+			}
+			if (param.retryCount > 3) {
+				this.slackReporter.sendWebhookFailed(
+					param.traceId,
+					param.webHook
+				);
+				this.logger.error({
+					message: 'Tried webhook request 3 times but finally failed',
+					param,
+				});
+				throw new Error(
+					'Tried webhook request 3 times but finally failed'
+				);
+			} else {
+				await this.handleDeliveryHook(
+					param.traceId,
+					param.webHook,
+					param.retryCount
+				);
+			}
+		}
+	}
 
 	async handleDeliveryHook(
 		traceId: string,
-		webHook: WebHookBody<EventBatchOrderShipping>
+		webHook: WebHookBody<EventBatchOrderShipping>,
+		retryCount = 0
 	) {
 		this.logger.log(
 			`Delivery Hook Start
+			X-Trace-ID: ${traceId}
 			EventType: ${webHook.event_no}
 			OrderIDs: ${webHook.resource.order_id}
 			MallId: ${webHook.resource.mall_id}`
 		);
-		const hook = await this.addInterworkInfo(webHook);
-		this.logger.log(`Passed auth and refreshed token`);
-		const orderItems = of(hook).pipe(
-			mergeMap((hook) => this.addOrdersInfo(hook)),
-			mergeMap((hook) => this.addProductsInfo(hook)),
-			concatMap((hook) => this.divideEachOrder(hook)),
-			mergeMap((hook) => this.addNftInfo(hook)),
-			concatMap((hook) => this.divideEachOrderItem(hook)),
-			map((hook) => this.categorizeAction(hook)),
-			map((hook) => this.targetCategory(hook)),
-			mergeMap((hook) => this.handleAction(hook, traceId))
-		);
 
-		const report$ = orderItems.pipe(
-			groupBy((h) => h.action),
-			mergeMap((h) =>
-				h.pipe(
-					map(({action, nftReqIdx, item}) => ({
-						action,
-						nftReqIdx,
-						orderItemCode: item.order_item_code,
-						status: item.order_status,
-					})),
-					toArray()
+		try {
+			const hook = await this.addInterworkInfo(webHook);
+			this.logger.log(`Passed auth and refreshed token`);
+			const orderItems = of(hook).pipe(
+				mergeMap((hook) => this.addOrdersInfo(hook)),
+				mergeMap((hook) => this.addProductsInfo(hook)),
+				concatMap((hook) => this.divideEachOrder(hook)),
+				mergeMap((hook) => this.addNftInfo(hook)),
+				concatMap((hook) => this.divideEachOrderItem(hook)),
+				map((hook) => this.categorizeAction(hook)),
+				map((hook) => this.targetCategory(hook)),
+				mergeMap((hook) => this.handleAction(hook, traceId))
+			);
+
+			const report$ = orderItems.pipe(
+				groupBy((h) => h.action),
+				mergeMap((h) =>
+					h.pipe(
+						map(({action, nftReqIdx, item}) => ({
+							action,
+							nftReqIdx,
+							orderItemCode: item.order_item_code,
+							status: item.order_status,
+						})),
+						toArray()
+					)
 				)
-			)
-		);
+			);
 
-		// TODO: 웹훅이니 응답을 줄 필요가 없다면 지워도 될 것 같다.
-		const report = await lastValueFrom(report$);
-		this.logger.log(report);
-		return report;
+			// TODO: 웹훅이니 응답을 줄 필요가 없다면 지워도 될 것 같다.
+			const report = await lastValueFrom(report$);
+			this.logger.log(report);
+			return report;
+		} catch (e) {
+			await this.sqsService.send({
+				MessageBody: JSON.stringify({
+					traceId,
+					webHook,
+					retryCount: retryCount + 1,
+				}),
+				MessageAttributes: {
+					mallId: {
+						DataType: 'String',
+						StringValue: webHook.resource.mall_id,
+					},
+					orderId: {
+						DataType: 'String',
+						StringValue: webHook.resource.order_id,
+					},
+				},
+			});
+			throw e;
+		}
 	}
 
 	private async addInterworkInfo(

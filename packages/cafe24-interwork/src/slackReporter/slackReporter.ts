@@ -9,6 +9,7 @@ import {
 	KnownBlock,
 	SectionBlock,
 } from '@slack/web-api';
+import {EventBatchOrderShipping, WebHookBody} from 'src/cafe24Interwork';
 
 @Injectable()
 export class SlackReporter {
@@ -46,6 +47,17 @@ export class SlackReporter {
 			channel: this.channel,
 			thread_ts: thread_ts,
 			text: message,
+		});
+		return res;
+	}
+
+	async sendWebhookFailed(
+		traceId: string,
+		webhook: WebHookBody<EventBatchOrderShipping>
+	) {
+		const res = await this.slackClient.chat.postMessage({
+			text: `웹훅 재시도 실패, orderId:${webhook.resource.order_id} mallId: ${webhook.resource.mall_id}`,
+			channel: this.channel,
 		});
 		return res;
 	}
