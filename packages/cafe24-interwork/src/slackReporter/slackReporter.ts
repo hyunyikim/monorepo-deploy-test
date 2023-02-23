@@ -57,7 +57,7 @@ export class SlackReporter {
 	) {
 		const res = await this.slackClient.chat.postMessage({
 			text: `웹훅 재시도 실패, orderId:${webhook.resource.order_id} mallId: ${webhook.resource.mall_id}`,
-			channel: this.channel,
+			channel: 'C0308G2L5CJ', // #tech_error
 		});
 		return res;
 	}
