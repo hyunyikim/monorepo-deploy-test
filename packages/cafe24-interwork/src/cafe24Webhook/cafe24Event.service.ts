@@ -343,14 +343,8 @@ export class Cafe24EventService {
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
 		const status = hook.item.order_status as CAFE24_ORDER_STATUS;
-		const issued = !!hook.nftReqIdx;
-		const action =
-			status === CAFE24_ORDER_STATUS.DELIVERED ||
-			status === CAFE24_ORDER_STATUS.CONFIRMED
-				? !issued
-					? WEBHOOK_ACTION.ISSUE
-					: WEBHOOK_ACTION.PASS
-				: orderStatus2Action(status);
+		const isIssued = !!hook.nftReqIdx;
+		const action = orderStatus2Action(status, isIssued);
 
 		return {
 			...hook,
@@ -415,6 +409,10 @@ export class Cafe24EventService {
 			case WEBHOOK_ACTION.CANCEL:
 				const canceled = await this.cancelGuarantee(hook, traceId);
 				return canceled;
+			case WEBHOOK_ACTION.REISSUE:
+				await this.cancelGuarantee(hook, traceId);
+				const reissued = await this.issueGuarantee(hook, traceId);
+				return reissued;
 			case WEBHOOK_ACTION.PASS:
 				return hook;
 			default:
