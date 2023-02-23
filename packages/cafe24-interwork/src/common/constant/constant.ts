@@ -46,15 +46,20 @@ export enum WEBHOOK_ACTION {
 	'ISSUE' = 'issue',
 	'CANCEL' = 'cancel',
 	'PASS' = 'pass',
+	'REISSUE' = 'reissue',
 }
 
-export const orderStatus2Action = (order: CAFE24_ORDER_STATUS) => {
+export const orderStatus2Action = (
+	order: CAFE24_ORDER_STATUS,
+	isIssued: boolean
+) => {
 	switch (order) {
 		case (CAFE24_ORDER_STATUS.DELIVERED, CAFE24_ORDER_STATUS.CONFIRMED):
-			return WEBHOOK_ACTION.ISSUE;
+			return isIssued ? WEBHOOK_ACTION.PASS : WEBHOOK_ACTION.ISSUE;
 		case CAFE24_ORDER_STATUS.REFUNDED:
-		case CAFE24_ORDER_STATUS.EXCHANGED: // TODO: 교환도 cancel 인데 바꿔야할 듯
 			return WEBHOOK_ACTION.CANCEL;
+		case CAFE24_ORDER_STATUS.EXCHANGED:
+			return isIssued ? WEBHOOK_ACTION.REISSUE : WEBHOOK_ACTION.ISSUE;
 		default:
 			return WEBHOOK_ACTION.PASS;
 	}
