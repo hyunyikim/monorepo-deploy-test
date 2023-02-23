@@ -103,8 +103,14 @@ export class Cafe24EventService {
 			X-Trace-ID: ${traceId}
 			EventType: ${webHook.event_no}
 			OrderIDs: ${webHook.resource.order_id}
-			MallId: ${webHook.resource.mall_id}`
+			MallId: ${webHook.resource.mall_id}
+			ShopNo: ${webHook.resource.event_shop_no}
+			`
 		);
+		if (webHook.resource.event_shop_no !== '1') {
+			this.logger.log('기본 멀티몰의 주문번호가 아닙니다.');
+			return;
+		}
 
 		try {
 			const hook = await this.addInterworkInfo(webHook);
