@@ -54,7 +54,8 @@ export const orderStatus2Action = (
 	isIssued: boolean
 ) => {
 	switch (order) {
-		case (CAFE24_ORDER_STATUS.DELIVERED, CAFE24_ORDER_STATUS.CONFIRMED):
+		case CAFE24_ORDER_STATUS.DELIVERED:
+		case CAFE24_ORDER_STATUS.CONFIRMED:
 			return isIssued ? WEBHOOK_ACTION.PASS : WEBHOOK_ACTION.ISSUE;
 		case CAFE24_ORDER_STATUS.REFUNDED:
 			return WEBHOOK_ACTION.CANCEL;
