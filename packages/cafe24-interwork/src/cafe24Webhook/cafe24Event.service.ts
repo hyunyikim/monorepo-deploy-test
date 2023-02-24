@@ -3,13 +3,13 @@ import {
 	Injectable,
 	InternalServerErrorException,
 	LoggerService,
-	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
 import {
 	Cafe24Interwork,
 	EventBatchOrderShipping,
 	GuaranteeRequest,
+	IssueSetting,
 	WebHookBody,
 } from '../cafe24Interwork';
 import {Cafe24API, Order, OrderItem, Product} from '../cafe24Api';
@@ -107,18 +107,37 @@ export class Cafe24EventService {
 			ShopNo: ${webHook.resource.event_shop_no}
 			`
 		);
-		if (webHook.resource.event_shop_no !== '1') {
-			this.logger.log('기본 멀티몰의 주문번호가 아닙니다.');
-			return;
-		}
 
 		try {
-			const hook = await this.addInterworkInfo(webHook);
-			this.logger.log(`Passed auth and refreshed token`);
+			if (webHook.resource.event_shop_no !== '1') {
+				throw new WebHookError(
+					WEBHOOK_ERROR_CODE.NOT_DEFAULT_SHOP_NO,
+					'기본 멀티몰의 주문번호가 아닙니다.'
+				);
+			}
+
+			const interwork = await this.addInterworkInfo(webHook);
+
+			const mallId = interwork.mallId;
+			const accessToken = interwork.accessToken.access_token;
+			const orders = await this.addOrdersInfo(
+				mallId,
+				accessToken,
+				webHook.resource.order_id
+			);
+			const {isIssueAll, categoryIdxList} = this.filteringProductCategory(
+				interwork.issueSetting
+			);
+			const products = await this.addProductsInfo(
+				mallId,
+				accessToken,
+				orders,
+				isIssueAll,
+				categoryIdxList
+			);
+
+			const hook = {interwork, webHook, orders, products};
 			const orderItems = of(hook).pipe(
-				mergeMap((hook) => this.addOrdersInfo(hook)),
-				map((hook) => this.filteringProductCategory(hook)),
-				mergeMap((hook) => this.addProductsInfo(hook)),
 				concatMap((hook) => this.divideEachOrder(hook)),
 				mergeMap((hook) => this.addNftInfo(hook)),
 				concatMap((hook) => this.divideEachOrderItem(hook)),
@@ -145,7 +164,11 @@ export class Cafe24EventService {
 			const report = await lastValueFrom(report$);
 			this.logger.log(report);
 			return report;
-		} catch (e) {
+		} catch (error) {
+			if (error instanceof WebHookError) {
+				this.logger.log(error.toString());
+				return;
+			}
 			await this.sqsService.send({
 				MessageBody: JSON.stringify({
 					traceId,
@@ -163,7 +186,7 @@ export class Cafe24EventService {
 					},
 				},
 			});
-			throw e;
+			throw error;
 		}
 	}
 
@@ -173,16 +196,30 @@ export class Cafe24EventService {
 		let interwork = await this.interworkRepo.getInterwork(
 			webHook.resource.mall_id
 		);
-		if (!interwork || !interwork.confirmedAt || interwork.leavedAt) {
-			throw new NotFoundException('Not Found Interwork Info');
+		if (!interwork) {
+			throw new WebHookError(
+				WEBHOOK_ERROR_CODE.NOT_FOUND_INTERWORK,
+				'해당 몰의 계정정보를 찾을 수 없습니다.'
+			);
+		}
+		if (!interwork.confirmedAt) {
+			throw new WebHookError(
+				WEBHOOK_ERROR_CODE.NOT_FOUND_INTERWORK,
+				'해당 몰의 연동 작업이 완료되지 않았습니다.'
+			);
+		}
+		if (interwork.leavedAt) {
+			throw new WebHookError(
+				WEBHOOK_ERROR_CODE.NOT_FOUND_INTERWORK,
+				'해당 몰의 연동이 해제되었습니다.'
+			);
 		}
 		interwork = await this.tokenRefresher.refreshExpiredAccessToken(
 			interwork
 		);
-		return {
-			interwork,
-			webHook,
-		};
+		this.logger.log(`Passed auth and refreshed token`);
+
+		return interwork;
 	}
 
 	private async addReqInfo(hook: {
@@ -205,19 +242,17 @@ export class Cafe24EventService {
 		};
 	}
 
-	private async addOrdersInfo(hook: {
-		interwork: Cafe24Interwork;
-		webHook: WebHookBody<EventBatchOrderShipping>;
-	}) {
-		const {webHook, interwork} = hook;
-		const limit = 1000; // cafe24 api limit
-		const mallId = webHook.resource.mall_id;
-		const accessToken = interwork.accessToken.access_token;
+	private async addOrdersInfo(
+		mallId: string,
+		accessToken: string,
+		orderId: string
+	) {
+		const CAFE24_LIMIT = 1000; // cafe24 api CAFE24_LIMIT
 
-		const orderIds = webHook.resource.order_id.split(',');
+		const orderIds = orderId.split(',');
 		let orders: Array<Order> = [];
-		for (let i = orderIds.length; i > 0; i -= limit) {
-			const list = orderIds.splice(0, limit).join(',');
+		for (let i = orderIds.length; i > 0; i -= CAFE24_LIMIT) {
+			const list = orderIds.splice(0, CAFE24_LIMIT).join(',');
 			const getOrders = await this.cafe24Api.getOrderList(
 				mallId,
 				accessToken,
@@ -226,30 +261,29 @@ export class Cafe24EventService {
 			orders = [...orders, ...getOrders];
 		}
 
+		if (!orders.length) {
+			throw new WebHookError(
+				WEBHOOK_ERROR_CODE.NOT_FOUND_ORDER_IN_CAFE24,
+				'Cafe24에 일치하는 주문 정보가 없습니다.'
+			);
+		}
 		this.logger.log(`orders: ${JSON.stringify(orders)}`);
 		this.logger.log(`orders length: ${orders.length}`);
-		return {
-			orders,
-			interwork,
-			webHook,
-		};
+
+		return orders;
 	}
 
-	private filteringProductCategory(hook: {
-		orders: Array<Order>;
-		interwork: Cafe24Interwork;
-		webHook: WebHookBody<EventBatchOrderShipping>;
-	}) {
-		const setting = hook.interwork.issueSetting;
-
+	private filteringProductCategory(issueSetting: IssueSetting) {
 		this.logger.log(
-			`issueSetting issueAll => ${setting.issueAll ? 'true' : 'false'}`
+			`issueSetting issueAll => ${
+				issueSetting.issueAll ? 'true' : 'false'
+			}`
 		);
 
 		//설정한 카테고리로 필터링 생성
 		let categoryIdxList: Array<number> = [];
-		if (!setting.issueAll) {
-			categoryIdxList = setting.issueCategories.map(
+		if (!issueSetting.issueAll) {
+			categoryIdxList = issueSetting.issueCategories.map(
 				(category) => category.idx
 			);
 			this.logger.log(
@@ -258,35 +292,34 @@ export class Cafe24EventService {
 		}
 
 		return {
-			...hook,
 			categoryIdxList,
-			isIssueAll: setting.issueAll,
+			isIssueAll: issueSetting.issueAll,
 		};
 	}
 
-	private async addProductsInfo(hook: {
-		orders: Array<Order>;
-		interwork: Cafe24Interwork;
-		webHook: WebHookBody<EventBatchOrderShipping>;
-		categoryIdxList: Array<number>;
-		isIssueAll: boolean;
-	}) {
-		const {webHook, interwork, orders, categoryIdxList, isIssueAll} = hook;
-		const limit = 100; // cafe24 products api limit
-		const mallId = webHook.resource.mall_id;
-		const accessToken = interwork.accessToken.access_token;
+	private async addProductsInfo(
+		mallId: string,
+		accessToken: string,
+		orders: Array<Order>,
+		isIssueAll: boolean,
+		categoryIdxList: Array<number>
+	) {
+		const CAFE24_LIMIT = 100; // cafe24 products api CAFE24_LIMIT
 
 		let products: Array<Product> = [];
 
 		if (isIssueAll) {
 			const productNoSet = new Set(); // TODO: 중복처리를 안해도 될지,, cafe24에서는 중복되지 않고 나오고 있음.
-			orders.map((order) => {
-				order.items.map((item) => productNoSet.add(item.product_no));
+			orders.forEach((order) => {
+				order.items.forEach((item) =>
+					productNoSet.add(item.product_no)
+				);
 			});
 			const productNoList = Array.from(productNoSet);
 
-			for (let i = productNoList.length; i > 0; i -= limit) {
-				const list = productNoList.splice(0, limit).join(',');
+			// TODO: productNoList CAFE24_LIMIT씩 먼저 잘라서
+			for (let i = productNoList.length; i > 0; i -= CAFE24_LIMIT) {
+				const list = productNoList.splice(0, CAFE24_LIMIT).join(',');
 				const getProducts = await this.cafe24Api.getProductResourceList(
 					mallId,
 					accessToken,
@@ -295,12 +328,12 @@ export class Cafe24EventService {
 				products = [...products, ...getProducts];
 			}
 		} else {
-			for (let i = 0; i < categoryIdxList.length; i++) {
+			for (const categoryIdx of categoryIdxList) {
 				const getProducts =
 					await this.cafe24Api.getProductResourceListByCategory(
 						mallId,
 						accessToken,
-						categoryIdxList[i]
+						categoryIdx
 					);
 				products = [...products, ...getProducts];
 			}
@@ -311,12 +344,16 @@ export class Cafe24EventService {
 			);
 		}
 
+		if (!products.length) {
+			throw new WebHookError(
+				WEBHOOK_ERROR_CODE.NOT_FOUND_PRODUCT_IN_CAFE24,
+				'Cafe24에 일치하는 상품 정보가 없습니다.'
+			);
+		}
+
 		this.logger.log(`products: ${JSON.stringify(products)}`);
 		this.logger.log(`products length: ${products.length}`);
-		return {
-			...hook,
-			products,
-		};
+		return products;
 	}
 
 	private divideEachOrder(hook: {
@@ -482,7 +519,11 @@ export class Cafe24EventService {
 				stream
 			)
 		);
-		this.logger.log('ISSUE REQ', nftReq);
+		this.logger.log(
+			`ORDER ITEM ID [${
+				item.order_item_code
+			}], ISSUE REQ ${JSON.stringify(nftReq)}`
+		);
 
 		await this.guaranteeReqRepo
 			.putRequest({
@@ -597,11 +638,38 @@ export class Cafe24EventService {
 			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
 		}
 		if (!hook.nftReqIdx) {
-			throw new InternalServerErrorException('CANCEL_REQUEST_REJECT');
+			throw new WebHookError(
+				WEBHOOK_ERROR_CODE.CANCEL_REQUEST_REJECT,
+				'취소 대상 개런티가 존재하지 않습니다.'
+			);
 		}
 		const nftReqIdx = hook.nftReqIdx;
 		await this.vircleCoreApi.cancelGuarantee(token, nftReqIdx);
 		await this.updateOnDynamo(traceId, hook);
 		return hook;
+	}
+}
+
+enum WEBHOOK_ERROR_CODE {
+	NOT_FOUND_INTERWORK = 'NOT_FOUND_INTERWORK',
+	NOT_FOUND_ORDER_IN_CAFE24 = 'NOT_FOUND_ORDER_IN_CAFE24',
+	NOT_FOUND_PRODUCT_IN_CAFE24 = 'NOT_FOUND_PRODUCT_IN_CAFE24',
+	CANCEL_REQUEST_REJECT = 'CANCEL_REQUEST_REJECT',
+	NOT_DEFAULT_SHOP_NO = 'NOT_DEFAULT_SHOP_NO',
+}
+class WebHookError extends Error {
+	name: string;
+	code: string;
+	message: string;
+
+	constructor(errcode: string, message?: string) {
+		super(message);
+		this.name = 'WebHookError';
+		this.code = errcode;
+		this.message = message || '카페24 webhook 에러 입니다.';
+	}
+
+	toString() {
+		return `[${this.code}] ${this.message}`;
 	}
 }
