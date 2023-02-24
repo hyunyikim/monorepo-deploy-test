@@ -108,12 +108,13 @@ function BrandSettingDragDropBox({
 					<Typography
 						align="center"
 						sx={{
-							fontSize: '16px !important',
+							fontSize: '15px !important',
 							fontWeight: 600,
 							color: `grey.300`,
 							marginBottom: '52px',
 						}}>
-						(PNG,JPG,JPEG, 최대 파일 크기 2MB)
+						권장 사이즈 : 658 x 1024px / 지원파일 : jpg, jpeg, png
+						(최대 2MB)
 					</Typography>
 					<Typography
 						align="center"

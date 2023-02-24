@@ -164,7 +164,7 @@ const UlStyle = styled('ul')`
 
 const BulletListStyle = styled('li')`
 	color: #aeaeba;
-	font-size: 16px;
+	font-size: 15px;
 	font-weight: 500;
 	line-height: 1.45;
 `;
@@ -1968,12 +1968,9 @@ export function InputFormSection({
 
 								<UlStyle>
 									<BulletListStyle>
-										<b>2MB</b> 이하의 이미지 파일을 업로드
-										해주세요.
-									</BulletListStyle>
-									<BulletListStyle>
-										<b>PNG, JPG, JPEG</b> 형식의 이미지
-										파일을 업로드 해주세요.
+										권장 사이즈 : <b>658 x 1024px</b> /
+										지원파일 :{' '}
+										<b>jpg, jpeg, png (최대 2MB)</b>
 									</BulletListStyle>
 									<BulletListStyle>
 										가이드를 참고해 개런티 카드를

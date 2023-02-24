@@ -297,6 +297,35 @@ export class Cafe24EventService {
 		};
 	}
 
+	private filteringProductCategory(hook: {
+		orders: Array<Order>;
+		interwork: Cafe24Interwork;
+		webHook: WebHookBody<EventBatchOrderShipping>;
+	}) {
+		const setting = hook.interwork.issueSetting;
+
+		this.logger.log(
+			`issueSetting issueAll => ${setting.issueAll ? 'true' : 'false'}`
+		);
+
+		//설정한 카테고리로 필터링 생성
+		let categoryIdxList: Array<number> = [];
+		if (!setting.issueAll) {
+			categoryIdxList = setting.issueCategories.map(
+				(category) => category.idx
+			);
+			this.logger.log(
+				`filtering categories => ${categoryIdxList.join(',')}`
+			);
+		}
+
+		return {
+			...hook,
+			categoryIdxList,
+			isIssueAll: setting.issueAll,
+		};
+	}
+
 	private async addProductsInfo(
 		mallId: string,
 		accessToken: string,
