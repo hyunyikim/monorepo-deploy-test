@@ -165,7 +165,7 @@ export class Cafe24EventService {
 			this.logger.log(report);
 			return report;
 		} catch (error) {
-			if (error instanceof Error && error.name === 'WebHookError') {
+			if (error instanceof WebHookError) {
 				this.logger.log(error.toString());
 				return;
 			}
@@ -247,12 +247,12 @@ export class Cafe24EventService {
 		accessToken: string,
 		orderId: string
 	) {
-		const limit = 1000; // cafe24 api limit
+		const CAFE24_LIMIT = 1000; // cafe24 api CAFE24_LIMIT
 
 		const orderIds = orderId.split(',');
 		let orders: Array<Order> = [];
-		for (let i = orderIds.length; i > 0; i -= limit) {
-			const list = orderIds.splice(0, limit).join(',');
+		for (let i = orderIds.length; i > 0; i -= CAFE24_LIMIT) {
+			const list = orderIds.splice(0, CAFE24_LIMIT).join(',');
 			const getOrders = await this.cafe24Api.getOrderList(
 				mallId,
 				accessToken,
@@ -297,35 +297,6 @@ export class Cafe24EventService {
 		};
 	}
 
-	private filteringProductCategory(hook: {
-		orders: Array<Order>;
-		interwork: Cafe24Interwork;
-		webHook: WebHookBody<EventBatchOrderShipping>;
-	}) {
-		const setting = hook.interwork.issueSetting;
-
-		this.logger.log(
-			`issueSetting issueAll => ${setting.issueAll ? 'true' : 'false'}`
-		);
-
-		//설정한 카테고리로 필터링 생성
-		let categoryIdxList: Array<number> = [];
-		if (!setting.issueAll) {
-			categoryIdxList = setting.issueCategories.map(
-				(category) => category.idx
-			);
-			this.logger.log(
-				`filtering categories => ${categoryIdxList.join(',')}`
-			);
-		}
-
-		return {
-			...hook,
-			categoryIdxList,
-			isIssueAll: setting.issueAll,
-		};
-	}
-
 	private async addProductsInfo(
 		mallId: string,
 		accessToken: string,
@@ -333,19 +304,22 @@ export class Cafe24EventService {
 		isIssueAll: boolean,
 		categoryIdxList: Array<number>
 	) {
-		const limit = 100; // cafe24 products api limit
+		const CAFE24_LIMIT = 100; // cafe24 products api CAFE24_LIMIT
 
 		let products: Array<Product> = [];
 
 		if (isIssueAll) {
 			const productNoSet = new Set(); // TODO: 중복처리를 안해도 될지,, cafe24에서는 중복되지 않고 나오고 있음.
-			orders.map((order) => {
-				order.items.map((item) => productNoSet.add(item.product_no));
+			orders.forEach((order) => {
+				order.items.forEach((item) =>
+					productNoSet.add(item.product_no)
+				);
 			});
 			const productNoList = Array.from(productNoSet);
 
-			for (let i = productNoList.length; i > 0; i -= limit) {
-				const list = productNoList.splice(0, limit).join(',');
+			// TODO: productNoList CAFE24_LIMIT씩 먼저 잘라서
+			for (let i = productNoList.length; i > 0; i -= CAFE24_LIMIT) {
+				const list = productNoList.splice(0, CAFE24_LIMIT).join(',');
 				const getProducts = await this.cafe24Api.getProductResourceList(
 					mallId,
 					accessToken,
@@ -354,12 +328,12 @@ export class Cafe24EventService {
 				products = [...products, ...getProducts];
 			}
 		} else {
-			for (let i = 0; i < categoryIdxList.length; i++) {
+			for (const categoryIdx of categoryIdxList) {
 				const getProducts =
 					await this.cafe24Api.getProductResourceListByCategory(
 						mallId,
 						accessToken,
-						categoryIdxList[i]
+						categoryIdx
 					);
 				products = [...products, ...getProducts];
 			}
