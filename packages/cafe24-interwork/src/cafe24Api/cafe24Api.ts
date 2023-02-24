@@ -148,6 +148,25 @@ export class Cafe24API {
 	}
 
 	@TransformPlainToInstance(Product)
+	async getProductResourceListByCategory(
+		mallId: string,
+		accessToken: string,
+		category: number
+	) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/products?category=${category}&limit=100`;
+		const {data} = await this.httpAgent.get<{products: Array<Product>}>(
+			url,
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json',
+				},
+			}
+		);
+		return data.products;
+	}
+
+	@TransformPlainToInstance(Product)
 	async getProductByCode(
 		mallId: string,
 		accessToken: string,
