@@ -117,12 +117,12 @@ export class Cafe24EventService {
 			this.logger.log(`Passed auth and refreshed token`);
 			const orderItems = of(hook).pipe(
 				mergeMap((hook) => this.addOrdersInfo(hook)),
+				map((hook) => this.filteringProductCategory(hook)),
 				mergeMap((hook) => this.addProductsInfo(hook)),
 				concatMap((hook) => this.divideEachOrder(hook)),
 				mergeMap((hook) => this.addNftInfo(hook)),
 				concatMap((hook) => this.divideEachOrderItem(hook)),
 				map((hook) => this.categorizeAction(hook)),
-				map((hook) => this.targetCategory(hook)),
 				mergeMap((hook) => this.handleAction(hook, traceId))
 			);
 
@@ -235,31 +235,80 @@ export class Cafe24EventService {
 		};
 	}
 
-	private async addProductsInfo(hook: {
+	private filteringProductCategory(hook: {
 		orders: Array<Order>;
 		interwork: Cafe24Interwork;
 		webHook: WebHookBody<EventBatchOrderShipping>;
 	}) {
-		const {webHook, interwork, orders} = hook;
+		const setting = hook.interwork.issueSetting;
+
+		this.logger.log(
+			`issueSetting issueAll => ${setting.issueAll ? 'true' : 'false'}`
+		);
+
+		//설정한 카테고리로 필터링 생성
+		let categoryIdxList: Array<number> = [];
+		if (!setting.issueAll) {
+			categoryIdxList = setting.issueCategories.map(
+				(category) => category.idx
+			);
+			this.logger.log(
+				`filtering categories => ${categoryIdxList.join(',')}`
+			);
+		}
+
+		return {
+			...hook,
+			categoryIdxList,
+			isIssueAll: setting.issueAll,
+		};
+	}
+
+	private async addProductsInfo(hook: {
+		orders: Array<Order>;
+		interwork: Cafe24Interwork;
+		webHook: WebHookBody<EventBatchOrderShipping>;
+		categoryIdxList: Array<number>;
+		isIssueAll: boolean;
+	}) {
+		const {webHook, interwork, orders, categoryIdxList, isIssueAll} = hook;
 		const limit = 100; // cafe24 products api limit
 		const mallId = webHook.resource.mall_id;
 		const accessToken = interwork.accessToken.access_token;
 
-		const productNoSet = new Set(); // TODO: 중복처리를 안해도 될지,, cafe24에서는 중복되지 않고 나오고 있음.
-		orders.map((order) => {
-			order.items.map((item) => productNoSet.add(item.product_no));
-		});
-		const productNoList = Array.from(productNoSet);
-
 		let products: Array<Product> = [];
-		for (let i = productNoList.length; i > 0; i -= limit) {
-			const list = productNoList.splice(0, limit).join(',');
-			const getProducts = await this.cafe24Api.getProductResourceList(
-				mallId,
-				accessToken,
-				list
+
+		if (isIssueAll) {
+			const productNoSet = new Set(); // TODO: 중복처리를 안해도 될지,, cafe24에서는 중복되지 않고 나오고 있음.
+			orders.map((order) => {
+				order.items.map((item) => productNoSet.add(item.product_no));
+			});
+			const productNoList = Array.from(productNoSet);
+
+			for (let i = productNoList.length; i > 0; i -= limit) {
+				const list = productNoList.splice(0, limit).join(',');
+				const getProducts = await this.cafe24Api.getProductResourceList(
+					mallId,
+					accessToken,
+					list
+				);
+				products = [...products, ...getProducts];
+			}
+		} else {
+			for (let i = 0; i < categoryIdxList.length; i++) {
+				const getProducts =
+					await this.cafe24Api.getProductResourceListByCategory(
+						mallId,
+						accessToken,
+						categoryIdxList[i]
+					);
+				products = [...products, ...getProducts];
+			}
+			this.logger.log(
+				`category matching products => ${products
+					.map((product) => product.product_no)
+					.join(',')}`
 			);
-			products = [...products, ...getProducts];
 		}
 
 		this.logger.log(`products: ${JSON.stringify(products)}`);
@@ -296,6 +345,7 @@ export class Cafe24EventService {
 			hook.interwork.mallId
 		);
 		this.logger.log(`reqList: ${JSON.stringify(reqList)}`);
+		this.logger.log(`reqList length: ${reqList.length}`);
 
 		return {
 			...hook,
@@ -344,49 +394,14 @@ export class Cafe24EventService {
 	}) {
 		const status = hook.item.order_status as CAFE24_ORDER_STATUS;
 		const isIssued = !!hook.nftReqIdx;
+		this.logger.log(
+			`status => ${status}, isIssued => ${isIssued ? 'true' : 'false'}`
+		);
 		const action = orderStatus2Action(status, isIssued);
-
 		return {
 			...hook,
 			action,
 		};
-	}
-
-	private targetCategory(hook: {
-		order: Order;
-		item: OrderItem;
-		interwork: Cafe24Interwork;
-		productInfo: Product | undefined;
-		webHook: WebHookBody<EventBatchOrderShipping>;
-		action: WEBHOOK_ACTION;
-		nftReqIdx: number | undefined;
-	}) {
-		const setting = hook.interwork.issueSetting;
-		const productCategory = hook.productInfo?.category;
-
-		//모든 카테코리에 대해서 발행함
-		if (setting.issueAll) {
-			return hook;
-		}
-
-		if (
-			hook.action === WEBHOOK_ACTION.PASS ||
-			hook.action === WEBHOOK_ACTION.CANCEL
-		) {
-			return hook;
-		}
-
-		//설정한 카테고리와 상품의 카테코리의 포함 관계를 확인
-		const include = setting.issueCategories.some((category) => {
-			return productCategory
-				?.map((c) => c.category_no)
-				.includes(category.idx);
-		});
-
-		if (hook.action === WEBHOOK_ACTION.ISSUE && !include) {
-			hook.action = WEBHOOK_ACTION.PASS;
-		}
-		return hook;
 	}
 
 	private async handleAction(
