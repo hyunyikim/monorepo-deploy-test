@@ -242,7 +242,8 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 									)}
 							</Stack>
 						</Grid>
-						<Grid item xs={1} sm={1}>
+						{/* TODO: 임시 주석처리 */}
+						{/* <Grid item xs={1} sm={1}>
 							<Typography variant="body3" fontWeight="bold">
 								개런티 소개 알림톡 발송
 							</Typography>
@@ -259,7 +260,7 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 									}));
 								}}
 							/>
-						</Grid>
+						</Grid> */}
 					</Grid>
 				</Stack>
 				<Stack flexDirection="row" gap="8px" mb="24px">

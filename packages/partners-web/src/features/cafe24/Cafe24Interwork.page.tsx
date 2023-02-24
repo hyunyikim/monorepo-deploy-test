@@ -287,7 +287,7 @@ export default function Cafe24InterWork() {
 									{targetProduct}
 								</Typography>
 							</Grid>
-							<Grid
+							{/* <Grid
 								item
 								xs={5}
 								style={{
@@ -304,7 +304,7 @@ export default function Cafe24InterWork() {
 									marginTop: '10px',
 								}}>
 								<Typography variant="body1">발송함</Typography>
-							</Grid>
+							</Grid> */}
 						</Grid>
 					</Stack>
 				</Card>
