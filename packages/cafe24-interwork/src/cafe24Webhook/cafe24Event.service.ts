@@ -161,7 +161,10 @@ export class Cafe24EventService {
 			);
 
 			// TODO: 웹훅이니 응답을 줄 필요가 없다면 지워도 될 것 같다.
-			const report = await lastValueFrom(report$);
+			const report = await lastValueFrom(report$).catch(() => {
+				this.logger.log('개런티 발급 대상 주문이 아닙니다.');
+				return [];
+			});
 			this.logger.log(report);
 			return report;
 		} catch (error) {
@@ -409,12 +412,16 @@ export class Cafe24EventService {
 						nft.productCode === item.product_code && !nft.canceledAt
 				);
 			}
+			const productInfo = hook.products.find(
+				(product) => product.product_no === item.product_no
+			);
+			if (!productInfo) {
+				return [];
+			}
 			return [...Array(item.quantity).keys()].map((_, idx) => ({
 				...hook,
 				item,
-				productInfo: hook.products.find(
-					(product) => product.product_no === item.product_no
-				),
+				productInfo,
 				nftReqIdx: itemNftList[idx]?.reqIdx,
 			}));
 		});
