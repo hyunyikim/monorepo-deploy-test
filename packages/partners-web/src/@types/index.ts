@@ -1,3 +1,4 @@
+export * from './excel.types';
 export * from './payment.types';
 export * from './payment.ui.types';
 export * from './service-interwork.types';

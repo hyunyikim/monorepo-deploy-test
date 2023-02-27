@@ -30,12 +30,10 @@ import {
 	guaranteeRegisterInputList as inputList,
 	isPlanEnterprise,
 	PAGE_MAX_WIDTH,
+	PAYMENT_MESSAGE_MODAL,
 } from '@/data';
-import {
-	registerGuarantee,
-	deleteGuarantee,
-	deleteGuaranteeImage,
-} from '@/api/guarantee.api';
+import {registerGuarantee, deleteGuaranteeImage} from '@/api/guarantee.api';
+import {deleteGuarantee} from '@/api/guarantee-v1.api';
 import {
 	useGetPartnershipInfo,
 	useMessageDialog,
@@ -285,50 +283,13 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 					// 무료 플랜이 만료되었을때
 					if (expireDate - currentDate < 0) {
 						if (isFreeTrial) {
-							return onOpenMessageDialog({
-								title: '무료체험 기간 종료로 서비스 이용이 제한됩니다.',
-								message: (
-									<>
-										무료체험 기간이 종료되어 서비스 이용이
-										제한됩니다.
-										<br />
-										유료 플랜으로 업그레이드 후 버클을 계속
-										이용해보세요.
-									</>
-								),
-								showBottomCloseButton: true,
-								closeButtonValue: '닫기',
-								disableClickBackground: true,
-								buttons: (
-									<Button
-										color="black"
-										onClick={() => {
-											goToParentUrl(
-												'/b2b/payment/subscribe'
-											);
-										}}>
-										플랜 업그레이드
-									</Button>
-								),
-							});
+							return onOpenMessageDialog(
+								PAYMENT_MESSAGE_MODAL.TRIAL_FINISH
+							);
 						} else {
-							return onOpenMessageDialog({
-								title: '플랜 구독하고 개런티를 발급해보세요!',
-								showBottomCloseButton: true,
-								closeButtonValue: '닫기',
-								disableClickBackground: true,
-								buttons: (
-									<Button
-										color="black"
-										onClick={() => {
-											goToParentUrl(
-												'/b2b/payment/subscribe'
-											);
-										}}>
-										구독
-									</Button>
-								),
-							});
+							return onOpenMessageDialog(
+								PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE
+							);
 						}
 					}
 				}

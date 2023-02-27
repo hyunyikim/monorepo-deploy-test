@@ -78,7 +78,6 @@ export interface ProductRegisterFormData
 	brandName: string;
 	brandNameEn: string;
 }
-
 export interface ImageState {
 	file: File | string | null;
 	preview: string;
@@ -100,4 +99,36 @@ export interface ProductGuarantee {
 	ordererTel: string;
 	platformIdx: number;
 	registeredAt: string;
+}
+
+// 엑셀 대량등록
+export interface CustomFieldsInput {
+	[key: string]: any;
+}
+export interface ProductExcelUploadInput {
+	brandIdx?: number;
+	name?: string;
+	warranty?: string;
+	price?: number;
+	code?: string;
+	productImageUrl?: string;
+	categoryCode?: string;
+	modelNum?: string;
+	material?: string;
+	size?: string;
+	weight?: string;
+}
+// 엑셀 대량등록 입력시 사용
+export interface ProductExcelUploadInputWithCustomFields
+	extends ProductExcelUploadInput,
+		CustomFieldsInput {}
+
+// 엑셀 대량등록 api 요청시 사용
+export interface ProductExcelUploadRequestData
+	extends Omit<ProductExcelUploadInput, 'brandIdx' | 'name' | 'warranty'> {
+	brandIdx: number;
+	name: string;
+	warranty: string;
+	categoryName?: string; // b2b 타입 브랜드 외
+	customField?: string;
 }

@@ -1,6 +1,6 @@
 import {Box} from '@mui/material';
 
-import {sendAmplitudeLog, sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 import {IcEmptyImage} from '@/assets/icon';
 
@@ -50,7 +50,9 @@ function ImagePopup({image, alt, style = {}, onClick}: Props) {
 			sx={{
 				...imagePopupSx,
 				backgroundColor: 'grey.10',
-			}}>
+				display: 'flex',
+			}}
+			style={style}>
 			<IcEmptyImage style={{margin: 'auto'}} />
 		</Box>
 	);

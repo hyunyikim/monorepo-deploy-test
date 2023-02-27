@@ -1,4 +1,5 @@
 import {format} from 'date-fns';
+import loadImage from 'image-promise';
 
 import {DATE_FORMAT} from '@/data';
 
@@ -58,10 +59,37 @@ export const textLineChangeHelper = (_text: string) => {
 	return [_text];
 };
 
+/**
+ * http, https 프로토콜이 붙지 않은 url인지 체크
+ */
 export const linkFormChecker = (_text: string) => {
 	const urlRegExp = RegExp(
 		/^([a-zA-Z0-9]+([-.]{1}[a-zA-Z0-9]+)*\.)([a-zA-Z]{2,6})(:[0-9]+)?(\/\S*)?/
 	);
 
 	return urlRegExp.test(String(_text));
+};
+
+/**
+ * 이미지 체크
+ * @param _url
+ * @returns {Promise<boolean>}
+ */
+export const isValidWebImage = async (_url: string) => {
+	try {
+		const result = await loadImage(_url);
+		return !!result;
+	} catch (error) {
+		return false;
+	}
+};
+
+/**
+ * 마지막 글자 받침 유무 찾기
+ */
+export const isEndWithConsonant = (_str: string) => {
+	const finalCharCode = _str.charCodeAt(_str.length - 1);
+	// 0 = 받침 없음, 그 외 = 받침 있음
+	const finalConsonantCode = (finalCharCode - 44032) % 28;
+	return finalConsonantCode !== 0;
 };

@@ -66,7 +66,7 @@ import PreviewGuarantee, {
 import {
 	setGuaranteeInformation,
 	setCustomizedBrandCard,
-} from '@/api/guarantee.api';
+} from '@/api/guarantee-v1.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {
 	goToParentUrl,
@@ -76,6 +76,7 @@ import {
 } from '@/utils';
 import Header from '@/components/common/layout/Header';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
+import {useQueryClient} from '@tanstack/react-query';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -723,6 +724,8 @@ export function InputFormSection({
 
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
+	const queryClient = useQueryClient();
+
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
 	const [moveToAfterModalClose, setMoveToAfterModalClose] =
 		useState<boolean>(true);
@@ -1223,6 +1226,9 @@ export function InputFormSection({
 			} else {
 				openCompleteSettingGuaranteeModal();
 			}
+			await queryClient.invalidateQueries({
+				queryKey: ['partnershipInfo'],
+			});
 		}
 	};
 

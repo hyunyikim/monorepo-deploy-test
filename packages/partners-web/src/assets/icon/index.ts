@@ -57,6 +57,7 @@ export {default as IcPrinter} from './ic-printer.svg';
 export {default as IcAtm} from './ic-atm.svg';
 export {default as IcCalendar} from './ic-calendar.svg';
 export {default as IcReceipt} from './ic-receipt.svg';
+export {default as IcInformation} from './ic-information.svg';
 
 export {default as IcDocsInGreyBox} from './icon_docs_in_grey_box_40.png';
 export {default as IcCrossoutInRedBox} from './icon_crossout_in_red_box_40.png';
