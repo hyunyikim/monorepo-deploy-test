@@ -18,6 +18,9 @@ const Guarantee = lazy(
 const GuaranteeRegister = lazy(
 	() => import('@/features/guarantee/Register/GuaranteeRegister.page')
 );
+const GuaranteeExcelUpload = lazy(
+	() => import('@/features/guarantee/ExcelUpload/GuaranteeExcelUpload.page')
+);
 const GuaranteeDetail = lazy(
 	() => import('@/features/guarantee/Detail/GuaranteeDetail.page')
 );
@@ -27,6 +30,9 @@ const ProductDetail = lazy(
 );
 const ProductRegister = lazy(
 	() => import('@/features/product/Register/ProductRegister.page')
+);
+const ProductExcelUpload = lazy(
+	() => import('@/features/product/ExcelUpload/ProductExcelUpload.page')
 );
 const Customer = lazy(
 	() => import('@/features/customer/List/CustomerList.page')
@@ -97,10 +103,18 @@ const privateRoutes: RouteObject[] = [
 				path: '/b2b/guarantee/edit/:idx/v2',
 				element: <GuaranteeRegister />,
 			},
+			{
+				path: '/b2b/guarantee/excel-upload/v2/v2',
+				element: <GuaranteeExcelUpload />,
+			},
 			{path: '/b2b/product/v2', element: <Product />},
 			{path: '/b2b/product/:idx/v2', element: <ProductDetail />},
 			{path: '/b2b/product/register/v2', element: <ProductRegister />},
 			{path: '/b2b/product/edit/:idx/v2', element: <ProductRegister />},
+			{
+				path: '/b2b/product/excel-upload/v2/v2',
+				element: <ProductExcelUpload />,
+			},
 			{path: '/b2b/customer/v2', element: <Customer />},
 			{
 				path: '/b2b/customer/:name/:phone/v2',

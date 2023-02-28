@@ -34,11 +34,13 @@ export class TokenRefresher {
 				failedList.push(interwork.mallId);
 			}
 		}
-		this.logger.log({
-			task: 'ACCESS_TOKEN_REFRESH',
-			successMallIds: mallIdList,
-			failureMallIds: failedList,
-		});
+		this.logger.log(
+			JSON.stringify({
+				task: 'ACCESS_TOKEN_REFRESH',
+				successMallIds: mallIdList,
+				failureMallIds: failedList,
+			})
+		);
 	}
 
 	/**

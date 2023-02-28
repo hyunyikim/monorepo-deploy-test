@@ -2,7 +2,7 @@ import {useLocation} from 'react-router-dom';
 
 import {Stack} from '@mui/material';
 
-import {cancelGuarantee} from '@/api/guarantee.api';
+import {cancelGuarantee} from '@/api/guarantee-v1.api';
 import {useMessageDialog} from '@/stores';
 import {goToParentUrl} from '@/utils';
 

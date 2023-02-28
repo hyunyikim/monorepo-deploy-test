@@ -340,7 +340,7 @@ const InvalidCard = () => {
 					fontSize: 12,
 					fontWeight: 700,
 				}}>
-				<IcWarningTriangle />
+				<IcWarningTriangle color="white" />
 				유효하지 <br /> 않음
 			</Box>
 		</Box>

@@ -76,14 +76,14 @@ function ServiceInterworkCafe24IntroduceContent() {
 					[카테고리] <span className="arrow">→</span> 카페24에 등록된
 					카테고리 중에서 선택한 카테고리 상품만 개런티 발급
 				</Typography>
-				<Typography variant="h4">개런티 소개 알림톡 발송</Typography>
+				{/* <Typography variant="h4">개런티 소개 알림톡 발송</Typography>
 				<Typography>
 					[발송함] <span className="arrow">→</span> 신규 주문완료 시,
 					자동으로 고객에게 알림톡 발송
 					<br />
 					[발송안함] <span className="arrow">→</span> 신규 주문완료
 					시, 알림톡 미발송
-				</Typography>
+				</Typography> */}
 			</>
 		</ServiceInterworkDetailContent>
 	);

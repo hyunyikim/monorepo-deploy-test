@@ -9,6 +9,7 @@ import {
 	ProductGuarantee,
 	ListResponseV2,
 	ProductGuaranteeRequestParam,
+	ProductExcelUploadRequestData,
 } from '@/@types';
 
 export const getProductList = async (
@@ -50,6 +51,14 @@ export const registerProduct = async (formData: FormData) => {
 		`/v1/admin/partners-product`,
 		formData
 	);
+};
+
+export const bulkRegisterProduct = async (
+	data: ProductExcelUploadRequestData[]
+) => {
+	await instance.post(`/v1/admin/partners-product/bulk`, {
+		productList: data,
+	});
 };
 
 export const editProduct = async (idx: number, formData: FormData) => {

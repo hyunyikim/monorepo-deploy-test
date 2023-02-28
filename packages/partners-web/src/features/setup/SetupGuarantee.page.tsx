@@ -66,7 +66,7 @@ import PreviewGuarantee, {
 import {
 	setGuaranteeInformation,
 	setCustomizedBrandCard,
-} from '@/api/guarantee.api';
+} from '@/api/guarantee-v1.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
 import {
 	goToParentUrl,
@@ -76,6 +76,7 @@ import {
 } from '@/utils';
 import Header from '@/components/common/layout/Header';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
+import {useQueryClient} from '@tanstack/react-query';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -164,7 +165,7 @@ const UlStyle = styled('ul')`
 
 const BulletListStyle = styled('li')`
 	color: #aeaeba;
-	font-size: 16px;
+	font-size: 15px;
 	font-weight: 500;
 	line-height: 1.45;
 `;
@@ -723,6 +724,8 @@ export function InputFormSection({
 
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
 
+	const queryClient = useQueryClient();
+
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
 	const [moveToAfterModalClose, setMoveToAfterModalClose] =
 		useState<boolean>(true);
@@ -1223,6 +1226,9 @@ export function InputFormSection({
 			} else {
 				openCompleteSettingGuaranteeModal();
 			}
+			await queryClient.invalidateQueries({
+				queryKey: ['partnershipInfo'],
+			});
 		}
 	};
 
@@ -1968,12 +1974,9 @@ export function InputFormSection({
 
 								<UlStyle>
 									<BulletListStyle>
-										<b>2MB</b> 이하의 이미지 파일을 업로드
-										해주세요.
-									</BulletListStyle>
-									<BulletListStyle>
-										<b>PNG, JPG, JPEG</b> 형식의 이미지
-										파일을 업로드 해주세요.
+										권장 사이즈 : <b>658 x 1024px</b> /
+										지원파일 :{' '}
+										<b>jpg, jpeg, png (최대 2MB)</b>
 									</BulletListStyle>
 									<BulletListStyle>
 										가이드를 참고해 개런티 카드를

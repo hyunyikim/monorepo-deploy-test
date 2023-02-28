@@ -8,7 +8,7 @@ import {
 	OnOpenParamType,
 } from '@/@types';
 import {Button} from '@/components';
-import {openChannelTalk} from '@/utils';
+import {goToParentUrl, openChannelTalk} from '@/utils';
 import {
 	addMonths,
 	isBefore,
@@ -38,6 +38,71 @@ export const CHARGED_GROUP_PLAN = {
 export const ENTERPRISE_PLAN = {
 	PLAN_NAME: '엔터프라이즈 플랜',
 	PLAN_DESCRIPTION: '개런티 발급량 1,000개 초과',
+};
+
+export const PAYMENT_MESSAGE_MODAL: Record<
+	'TRIAL_FINISH' | 'PLAN_SUBSCRIBE' | 'LACKING_GUARANTEE',
+	OnOpenParamType
+> = {
+	TRIAL_FINISH: {
+		title: '무료체험 기간 종료로 서비스 이용이 제한됩니다.',
+		message: (
+			<>
+				무료체험 기간이 종료되어 서비스 이용이 제한됩니다.
+				<br />
+				유료 플랜으로 업그레이드 후 버클을 계속 이용해보세요.
+			</>
+		),
+		showBottomCloseButton: true,
+		closeButtonValue: '닫기',
+		disableClickBackground: true,
+		buttons: (
+			<Button
+				color="black"
+				onClick={() => {
+					goToParentUrl('/b2b/payment/subscribe');
+				}}>
+				플랜 업그레이드
+			</Button>
+		),
+	},
+	PLAN_SUBSCRIBE: {
+		title: '플랜 구독하고 개런티를 발급해보세요!',
+		showBottomCloseButton: true,
+		closeButtonValue: '닫기',
+		disableClickBackground: true,
+		buttons: (
+			<Button
+				color="black"
+				onClick={() => {
+					goToParentUrl('/b2b/payment/subscribe');
+				}}>
+				구독
+			</Button>
+		),
+	},
+	LACKING_GUARANTEE: {
+		title: '개런티 발급량이 부족합니다.',
+		message: (
+			<>
+				현재 잔여 개런티 발급량은 {0}
+				개입니다.
+				<br />
+				플랜 업그레이드하고 {0}개의 개런티를 모두 발급해보세요.
+			</>
+		),
+		showBottomCloseButton: true,
+		closeButtonValue: '닫기',
+		buttons: (
+			<Button
+				color="black"
+				onClick={() => {
+					goToParentUrl('/b2b/payment/subscribe');
+				}}>
+				플랜 업그레이드
+			</Button>
+		),
+	},
 };
 
 export const getChargedPlanDescription = (planLimit: number): string =>
