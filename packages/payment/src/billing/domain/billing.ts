@@ -81,6 +81,7 @@ export type BillingProps = TossBilling & {
  */
 export class PlanBilling extends AggregateRoot implements Billing {
 	private card?: TossBillingCard;
+	private paymentEmail?: string;
 	private orderId?: string;
 	private pausedAt?: string;
 	private deletedAt?: string;
@@ -93,7 +94,6 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	private nextPricePlan?: PricePlanProps;
 	private canceledPricePlan?: PricePlanProps;
 	private readonly usedNftCount?: number;
-	private readonly paymentEmail?: string;
 
 	constructor(private props: BillingProps) {
 		super();
