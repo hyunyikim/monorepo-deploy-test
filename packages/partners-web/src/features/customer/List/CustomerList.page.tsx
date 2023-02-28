@@ -10,6 +10,9 @@ import {
 	NftCustomerListRequestSearchType,
 	ListRequestParam,
 } from '@/@types';
+
+import {DashboardCustomersParamsType} from '@/@types/dashboard.types';
+
 import {
 	initialSearchFilter,
 	nftCustomerListSearchFilter,
@@ -19,6 +22,7 @@ import {
 	isPlanOnSubscription,
 } from '@/data';
 import {
+	dashboardDateStack,
 	formatPhoneNum,
 	getDateByUnitHour,
 	goToParentUrl,
@@ -42,6 +46,15 @@ import {
 
 import {imgBlurredCustomerList} from '@/assets/images/index';
 import {useMessageDialog} from '@/stores';
+import CustomerInfoOverview from './CustomerInfoOverview';
+import {
+	dashboardCustomerStore,
+	dashboardGuaranteeStore,
+} from '@/stores/dashboard.store';
+import {
+	getDashboardCustomerOverview,
+	getDashboardGuaranteeOverview,
+} from '@/api/dashboard';
 
 const menu = 'useradmin';
 const menuKo = '고객관리';
@@ -51,6 +64,57 @@ const {sort, ...customerInitialSearchFilter} = initialSearchFilter;
 function CustomerList() {
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const [isPlanExpired, setIsPlanExpired] = useState<boolean>(false);
+	const {previousMonth, today} = dashboardDateStack();
+
+	/* 개런티 발급 현황 데이터 */
+	const {data: guaranteeOverviewData, setData: setGuaranteeOverviewData} =
+		dashboardGuaranteeStore((state) => state);
+	/* 고객현황 데이터 */
+	const {data: customerOverviewData, setData: setCustomerOverviewData} =
+		dashboardCustomerStore((state) => state);
+
+	const getGuaranteeData = async () => {
+		try {
+			const data = await getDashboardGuaranteeOverview({
+				dateType: 'MONTHLY',
+			});
+
+			if (data) {
+				setGuaranteeOverviewData({
+					MONTHLY: data,
+				});
+			}
+		} catch (e) {
+			console.log('e', e);
+		}
+	};
+	const getCustomerData = async () => {
+		try {
+			const params: DashboardCustomersParamsType = {
+				from: previousMonth,
+				to: today,
+			};
+
+			const data = await getDashboardCustomerOverview(params);
+
+			if (data) {
+				setCustomerOverviewData({
+					MONTHLY: data,
+				});
+			}
+		} catch (e) {
+			console.log('e', e);
+		}
+	};
+
+	useEffect(() => {
+		if (!customerOverviewData['MONTHLY']) {
+			getCustomerData();
+		}
+		if (!guaranteeOverviewData['MONTHLY']) {
+			getGuaranteeData();
+		}
+	}, []);
 
 	useEffect(() => {
 		sendAmplitudeLog(`${menu}_pv`, {pv_title: '고객관리 목록 진입'});
@@ -145,6 +209,10 @@ function CustomerList() {
 		<>
 			<Box p={5}>
 				<TitleTypography title="고객관리" />
+				<CustomerInfoOverview
+					customerData={customerOverviewData?.MONTHLY}
+					linkData={guaranteeOverviewData?.MONTHLY?.walletLink}
+				/>
 				<SearchFilter
 					menu={menu}
 					menuKo={menuKo}

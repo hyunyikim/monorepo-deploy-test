@@ -1,0 +1,216 @@
+.slider-container {
+	.slider-frame {
+		.slider-list {
+			.slide {
+			}
+		}
+
+		&.brand_experience_carousel {
+			.slider-list {
+				.slide {
+					// min-height: 430px;
+					// max-height: 430px;
+					// min-width: 387px;
+					// max-width: 387px;
+					// min-width: 407px;
+					// max-width: 407px;
+					margin-right: 20px;
+				}
+			}
+		}
+	}
+
+	.slider-control-bottomcenter {
+		&.service-slide-dots-box {
+			position: absolute;
+			top: 26px;
+			right: 24px;
+
+			.paging-item {
+				button {
+					padding: 0 4px;
+					svg {
+						max-width: 8px;
+						min-width: 8px;
+						max-height: 8px;
+						min-height: 8px;
+					}
+					fill: #e2e2e9 !important;
+				}
+				&.active {
+					button {
+						fill: #222227 !important;
+					}
+				}
+			}
+		}
+
+		&.brand-story-slider-paging-box {
+			position: absolute;
+			bottom: -44px;
+
+			.paging-item {
+				button {
+					padding: 0 4px;
+					svg {
+						max-width: 8px;
+						min-width: 8px;
+						max-height: 8px;
+						min-height: 8px;
+					}
+					fill: #e2e2e9 !important;
+				}
+				&.active {
+					button {
+						fill: #222227 !important;
+					}
+				}
+			}
+		}
+	}
+
+	.slider-control-centerleft {
+		button {
+			background-image: url('../images/icon_homepage_carousel_arrow@2x.png') !important;
+		}
+		&.brand-story-slider-paging-box {
+			button {
+				background-image: url('../images/img_arrow_in_white_circle_40.png') !important;
+				background-color: #ffffff !important;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+				opacity: 1 !important;
+				left: 24px;
+			}
+		}
+
+		&.service-slide-dots-box {
+			button {
+				opacity: 0.2 !important;
+			}
+		}
+	}
+
+	.slider-control-centerright {
+		button {
+			background-image: url('../images/icon_homepage_carousel_arrow@2x.png') !important;
+		}
+		&.brand-story-slider-paging-box {
+			button {
+				background-image: url('../images/img_arrow_in_white_circle_40.png') !important;
+				background-color: #ffffff !important;
+				opacity: 1 !important;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+				right: 24px;
+			}
+		}
+
+		&.service-slide-dots-box {
+			button {
+				opacity: 0.2 !important;
+			}
+		}
+	}
+}
+
+@media (max-width: 1200px) {
+	.slider-container {
+		.slider-frame {
+			.slider-list {
+				.slide {
+				}
+			}
+
+			&.brand_experience_carousel {
+			}
+		}
+
+		.slider-control-bottomcenter {
+			&.service-slide-dots-box {
+				position: absolute;
+				top: 26px;
+				right: 24px;
+
+				.paging-item {
+					button {
+						padding: 0 4px;
+						svg {
+							max-width: 8px;
+							min-width: 8px;
+							max-height: 8px;
+							min-height: 8px;
+						}
+						fill: #e2e2e9 !important;
+					}
+					&.active {
+						button {
+							fill: #222227 !important;
+						}
+					}
+				}
+			}
+
+			&.brand-story-slider-paging-box {
+				position: absolute;
+				bottom: -44px;
+
+				.paging-item {
+					button {
+						padding: 0 4px;
+						svg {
+							max-width: 8px;
+							min-width: 8px;
+							max-height: 8px;
+							min-height: 8px;
+						}
+						fill: #e2e2e9 !important;
+					}
+					&.active {
+						button {
+							fill: #222227 !important;
+						}
+					}
+				}
+			}
+		}
+
+		.slider-control-centerleft {
+			button {
+				background-image: url('../images/icon_homepage_carousel_arrow@2x.png') !important;
+			}
+			&.brand-story-slider-paging-box {
+				button {
+					background-image: url('../images/img_arrow_in_white_circle_40.png') !important;
+					background-color: #ffffff !important;
+					box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+					opacity: 1 !important;
+				}
+			}
+
+			&.service-slide-dots-box {
+				button {
+					opacity: 0.2 !important;
+				}
+			}
+		}
+
+		.slider-control-centerright {
+			button {
+				background-image: url('../images/icon_homepage_carousel_arrow@2x.png') !important;
+			}
+			&.brand-story-slider-paging-box {
+				button {
+					background-image: url('../images/img_arrow_in_white_circle_40.png') !important;
+					background-color: #ffffff !important;
+					opacity: 1 !important;
+					box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+				}
+			}
+
+			&.service-slide-dots-box {
+				button {
+					opacity: 0.2 !important;
+				}
+			}
+		}
+	}
+}

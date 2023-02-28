@@ -244,23 +244,6 @@ function CategoryBrandSection() {
 								/>
 							))}
 						</Carousel>
-
-						{/* FIXME: swiper가 되게 만들어주세요!!! */}
-						{/* <Swiper
-							slidesOffsetBefore={24}
-							slidesOffsetAfter={24}
-							slidesPerView={screenWidth / 388}
-							spaceBetween={20}
-							modules={[Navigation, FreeMode]}
-							navigation
-							freeMode
-							className="card_slide_container">
-							{imgList.map(({img, img2x}, idx) => (
-								<SwiperSlide key={`category-${idx}`}>
-									<img src={img} srcSet={`${img} 1x, ${img2x} 2x`} alt="categoryBrandCard" className={'category_brand_card'} />
-								</SwiperSlide>
-							))}
-						</Swiper> */}
 					</div>
 				)}
 			</div>

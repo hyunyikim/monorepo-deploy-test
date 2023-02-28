@@ -68,16 +68,16 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 		preScrollPosition = liveScrollPosition;
 	};
 
-	useEffect(() => {
-		window.addEventListener('scroll', debounce(scrollHandlerDebounce, 20));
+	// useEffect(() => {
+	// 	window.addEventListener('scroll', debounce(scrollHandlerDebounce, 20));
 
-		return () => {
-			window.removeEventListener(
-				'scroll',
-				debounce(scrollHandlerDebounce, 20)
-			);
-		};
-	}, []);
+	// 	return () => {
+	// 		window.removeEventListener(
+	// 			'scroll',
+	// 			debounce(scrollHandlerDebounce, 20)
+	// 		);
+	// 	};
+	// }, []);
 
 	return (
 		<AppBar

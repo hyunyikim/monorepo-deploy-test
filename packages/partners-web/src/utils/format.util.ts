@@ -112,8 +112,16 @@ const formatDate = (value: string, separator = '-') => {
 	return pureNumber;
 };
 
-export const formatCommaNum = (value: string) => {
-	const pureNumber = Number(value.split(',').join(''));
+export const formatCommaNum = (value: string | number) => {
+	// const pureNumber = Number(value.split(',').join(''));
+	let pureNumber;
+	if (typeof value === 'number') {
+		const stringNum = String(value);
+		pureNumber = Number(stringNum.split(',').join(''));
+	} else {
+		pureNumber = Number(value.split(',').join(''));
+	}
+
 	if (isNaN(pureNumber)) {
 		return '';
 	}

@@ -88,8 +88,7 @@ const privateRoutes: RouteObject[] = [
 	{
 		element: <IframeChild />,
 		children: [
-			/* TODO: 대쉬보드 작업때 주석 제거! */
-			/* {path: '/dashboard/v2', element: <Dashboard />}, */
+			{path: '/dashboard/v2', element: <Dashboard />},
 			{path: '/b2b/guarantee/v2', element: <Guarantee />},
 			{
 				path: '/b2b/guarantee/register/v2',

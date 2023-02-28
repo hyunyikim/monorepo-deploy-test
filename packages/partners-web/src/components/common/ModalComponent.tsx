@@ -26,6 +26,7 @@ function ModalComponent() {
 		setCloseAndReset,
 		customisedButton,
 		sx,
+		showCloseButton,
 		useBackgroundClickClose,
 		amplitudeInfo,
 	} = useModalStore((state) => state);
@@ -72,7 +73,7 @@ function ModalComponent() {
 
 				closeHandler();
 			}}
-			showCloseButton={true}
+			showCloseButton={showCloseButton}
 			titleAlign={titleAlign}
 			padding={titlePadding ? titlePadding : 32}
 			TitleComponent={

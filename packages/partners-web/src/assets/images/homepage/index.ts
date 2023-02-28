@@ -131,3 +131,5 @@ export {default as iconIndexFinger} from './inquiry/icon_inquiry_index.png';
 export {default as iconDocs} from './inquiry/icon_inquiry_docs.png';
 export {default as iconLock} from './inquiry/icon_inquiry_lock.png';
 export {default as iconClock} from './inquiry/icon_inquiry_clock.png';
+
+export {default as IcCarouselArrow} from '../icon_homepage_carousel_arrow.png';

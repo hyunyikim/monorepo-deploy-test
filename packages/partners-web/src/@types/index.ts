@@ -17,3 +17,4 @@ export * from './statstics.types';
 export * from './list.types';
 export * from './ui.types';
 export * from './axios.types';
+export * from './dashboard.types';

@@ -57,7 +57,7 @@ import {
 
 import InputWithLabel from '../../components/molecules/InputWithLabel';
 import ControlledInputComponent from '../../components/molecules/ControlledInputComponent';
-import TooltipComponent from '../../components/atoms/Tooltip';
+import TooltipComponent from '../../components/atoms/ToolTipComponent';
 import InputLabelTag from '../../components/atoms/InputLabelTag';
 import {FileData, FileDataPreview, CropPreviewData} from '@/@types';
 import PreviewGuarantee, {
@@ -524,15 +524,18 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 		<Grid
 			item
 			container
-			minWidth="622px"
-			maxWidth="622px"
-			// minWidth="662px"
-			// maxWidth="662px"
-			sx={{position: 'relative' /* zIndex : 1300 */}}>
+			minWidth="662px"
+			maxWidth="662px"
+			sx={(theme) => ({
+				position: 'relative',
+				[theme.breakpoints.down(1200)]: {
+					display: 'none',
+				},
+			})}>
 			<Box
 				sx={{
 					position: 'fixed',
-					left: 0,
+					right: 0,
 					top: 0,
 					height: '100%',
 					backgroundColor: '#08134A',
@@ -1147,10 +1150,14 @@ export function InputFormSection({
 	/* 개런티 설정완료 및 파트너스 데이터 업데이트 모달 */
 	const openCompleteSettingGuaranteeModal = () => {
 		onMessageDialogOpen({
-			title: '개런티 설정이 완료되었어요!',
+			title: '개런티 설정이 완료되었어요',
 			disableClickBackground: true,
 			useCloseIcon: true,
 			onCloseFunc: () => {
+				sendAmplitudeLog(
+					'guaranteesetting_finished_popup_close_click',
+					{button_title: '팝업 닫기'}
+				);
 				setTimeout(() => {
 					updateParentPartnershipData();
 					goToParentUrl('/dashboard');
@@ -1161,6 +1168,11 @@ export function InputFormSection({
 					<Button
 						color="black"
 						variant="outlined"
+						taxoInfo={{
+							eventName:
+								'guaranteesetting_finished_popup_cafe24_click',
+							eventPropertyValue: 'cafe24 연동하기 클릭',
+						}}
 						onClick={() => {
 							setTimeout(() => {
 								updateParentPartnershipData();
@@ -1172,6 +1184,11 @@ export function InputFormSection({
 					<Button
 						color="black"
 						variant="contained"
+						taxoInfo={{
+							eventName:
+								'guaranteesetting_finished_popup_guarantee_click',
+							eventPropertyValue: '개런티 발급하기 클릭',
+						}}
 						onClick={() => {
 							setTimeout(() => {
 								updateParentPartnershipData();
@@ -1465,25 +1482,20 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={'center'}
 			alignItems="center"
-			p={hasProfileLogo ? '40px 0px 60px 0px' : '89px 0px 60px 40px'}>
+			sx={{
+				// padding: hasProfileLogo
+				// 	? '40px 0px 60px 0px'
+				// 	: '89px 0px 60px 40px',
+				padding: hasProfileLogo
+					? '40px 0px 60px 0px'
+					: '89px 40px 40px',
+				// marginRight: '40px',
+			}}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
 				autoComplete="off">
-				{hasProfileLogo && (
-					<Stack
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: '20px',
-							marginBottom: '12px',
-						}}>
-						<Typography variant="header1">
-							안녕하세요, {data?.companyName}님!
-						</Typography>
-					</Stack>
-				)}
-
+				{/* 개런티 설정 헤더(?) 영역 */}
 				<Grid
 					display={'flex'}
 					flexWrap={'nowrap'}
@@ -1494,12 +1506,19 @@ export function InputFormSection({
 					gap="12px"
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
-					{hasProfileLogo && (
-						<Typography variant="body1" color={'grey.300'}>
-							개런티 설정을 완료하고 버클 개런티 카드를
-							발급해보세요
-						</Typography>
-					)}
+					<Typography
+						variant="h2"
+						sx={{
+							fontWeight: 700,
+							fontSize: '28px',
+							lineHeight: '145%',
+							color: 'grey.900',
+							wordBreak: 'keep-all',
+							width: '100%',
+						}}>
+						개런티 설정
+					</Typography>
+
 					<Grid
 						container
 						item
@@ -1515,10 +1534,25 @@ export function InputFormSection({
 						justifyContent={'flex-end'}>
 						<Grid item sx={{position: 'relative'}}>
 							<TooltipComponent
-								isOpen={tooltipState}
-								arrow={true}
-								onClickCloseBtn={closeTooltip}
-								title={
+								customisedButton={
+									<CapsuleButton
+										variant="outlined"
+										onClick={openExampleModal}
+										sx={{
+											padding: '4px 11px 4px 6px',
+											gap: '12px',
+										}}
+										startIcon={
+											<img
+												src={exampleBrandIcon}
+												srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
+												alt="brand-sample"
+											/>
+										}>
+										브랜드 개런티 예시보기
+									</CapsuleButton>
+								}
+								content={
 									<Typography
 										variant="caption2"
 										color={'#ffffff'}>
@@ -1526,24 +1560,15 @@ export function InputFormSection({
 										<br /> 타 브랜드의 개런티 화면을
 										참고하세요!
 									</Typography>
-								}>
-								<CapsuleButton
-									variant="outlined"
-									onClick={openExampleModal}
-									sx={{
-										padding: '4px 11px 4px 6px',
-										gap: '12px',
-									}}
-									startIcon={
-										<img
-											src={exampleBrandIcon}
-											srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
-											alt="brand-sample"
-										/>
-									}>
-									브랜드 개런티 예시보기
-								</CapsuleButton>
-							</TooltipComponent>
+								}
+								sx={{
+									left: '8px',
+									'& .MuiTooltip-arrow': {
+										left: '-104px !important',
+									},
+								}}
+								alwaysPop={true}
+							/>
 						</Grid>
 
 						<LinkStyle
@@ -2034,28 +2059,31 @@ export function InputFormSection({
 
 				{/* fixed 버튼s */}
 				<Box
-					sx={{
+					sx={(theme) => ({
 						background: 'white',
 						position: 'fixed',
 						bottom: '0',
 						left: '0',
 						right: '0',
 						zIndex: 100,
-					}}>
+					})}>
 					<Grid
 						container
 						justifyContent="center"
-						sx={{
+						sx={(theme) => ({
 							padding: hasProfileLogo
 								? '12px 40px'
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
-							marginLeft: hasProfileLogo ? 0 : '662px',
+							marginLeft: 0,
 							width: hasProfileLogo
 								? '100%'
 								: 'calc(100% - 662px)',
-						}}>
+							[theme.breakpoints.down(1200)]: {
+								width: '100%',
+							},
+						})}>
 						<Grid
 							container
 							justifyContent="space-between"
@@ -2132,14 +2160,14 @@ function SetupGuarantee() {
 
 	return (
 		<Grid container flexWrap="nowrap">
-			<Header backgroundColor="transparent" borderBottom={false} />
-			<VideoInformationSection boxIndexState={boxIndexState} />
-
+			{/* <Header backgroundColor="transparent" borderBottom={false} /> */}
+			<Header borderBottom={false} />
 			<InputFormSection
 				boxIndexState={boxIndexState}
 				boxOpenHandler={boxOpenHandler}
 				justOpenBox={justOpenBox}
 			/>
+			<VideoInformationSection boxIndexState={boxIndexState} />
 		</Grid>
 	);
 }

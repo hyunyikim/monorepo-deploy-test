@@ -63,6 +63,16 @@ export {default as IcDocsInGreyBox} from './icon_docs_in_grey_box_40.png';
 export {default as IcCrossoutInRedBox} from './icon_crossout_in_red_box_40.png';
 export {default as IcTickInBlueBox} from './icon_tick_in_blue_circle_40.png';
 export {default as IcWalletInGreen} from './icon_wallet_in_green_box_40.png';
-
+export {default as IcNewInRedCircle} from './ic-new-in-red-circle.svg';
+export {default as IcArrow} from './Ic_arrow.svg';
+export {default as IcDashBar} from './ic_dash_bar.svg';
+export {default as icRepairSiscors} from './ic_dashboard_repair_siscors.png';
+export {default as icRepairBag} from './ic_dashboard_repair_bag.png';
+export {default as icRepairCancel} from './ic_dashboard_repair_cancel.png';
+export {default as IcHelp} from './ic_help.svg';
+export {default as icGreenSend} from './icon_send_green_40.png';
+export {default as icBlueChain} from './icon_blue_chain_40.png';
+export {default as icYellowView} from './icon_yellow_view_40.png';
+export {default as icGreenTick} from './icon_green_tick_32.png';
 // Logo
 export {default as IcVircleLogo} from './ic-vircle-logo.svg';

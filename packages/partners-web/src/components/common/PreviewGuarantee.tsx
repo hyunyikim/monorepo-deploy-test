@@ -13,7 +13,7 @@ import {IcWarningTriangle} from '@/assets/icon';
 import AtagComponent from '../atoms/AtagComponent';
 import {textLineChangeHelper} from '@/utils/common.util';
 import {sendAmplitudeLog} from '@/utils';
-import {amplitudeType} from '@/@types';
+import {AmplitudeType} from '@/@types';
 
 type LogoProps = {
 	logo: string | undefined;
@@ -258,11 +258,11 @@ type ValueTypes = {
 interface GreyBoxProps {
 	title: string;
 	desc: string;
-	amplitudeInfo?: amplitudeType;
+	amplitudeInfo?: AmplitudeType;
 }
 interface GreyBoxAmplitudeProps {
-	as: amplitudeType;
-	return: amplitudeType;
+	as: AmplitudeType;
+	return: AmplitudeType;
 }
 
 interface PreviewProps {

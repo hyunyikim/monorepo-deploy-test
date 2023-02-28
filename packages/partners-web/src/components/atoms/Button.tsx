@@ -3,8 +3,8 @@ import {useMemo} from 'react';
 import {Button as MuiButton, ButtonProps, SxProps} from '@mui/material';
 
 import style from '@/assets/styles/style.module.scss';
-
-import {ColorType} from '@/@types';
+import {ColorType, AmplitudeType} from '@/@types';
+import {sendAmplitudeLog} from '@/utils';
 
 type ButtonColor =
 	| Extract<
@@ -19,6 +19,7 @@ interface Props extends Omit<ButtonProps, 'color' | 'size'> {
 	color?: ButtonColor;
 	width?: number | string;
 	height?: Height;
+	taxoInfo?: Omit<AmplitudeType, 'eventPropertyKey'>;
 }
 /**
  *
@@ -32,6 +33,7 @@ function Button({
 	sx,
 	children,
 	onClick,
+	taxoInfo,
 	...props
 }: Props) {
 	const colorSx = useMemo(() => {
@@ -148,10 +150,24 @@ function Button({
 		return sx;
 	}, [variant, color, width, height]);
 
+	const buttonClickHandler = () => {
+		if (taxoInfo) {
+			const {eventName, eventPropertyValue} = taxoInfo;
+			if (eventName && eventPropertyValue) {
+				sendAmplitudeLog(eventName, {button_title: eventPropertyValue});
+			}
+		}
+
+		if (onClick) {
+			onClick();
+		}
+	};
+
 	return (
 		<MuiButton
 			variant={variant}
-			onClick={onClick}
+			onClick={buttonClickHandler}
+			// onClick={onClick}
 			sx={{
 				...colorSx,
 				...sizeSx,
