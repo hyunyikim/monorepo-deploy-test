@@ -85,98 +85,112 @@ const Cafe24Interwork = lazy(
 
 const privateRoutes: RouteObject[] = [
 	{
-		element: (
-			<CheckAuth>
-				<Layout />
-			</CheckAuth>
-		),
+		element: <CheckAuth />,
 		children: [
-			{path: '/dashboard', element: <Dashboard />},
-			{path: '/b2b/guarantee', element: <Guarantee />},
 			{
-				path: '/b2b/guarantee/register',
-				element: <GuaranteeRegister />,
+				element: <Layout />,
+				children: [
+					{
+						path: '/dashboard',
+						element: <Dashboard />,
+					},
+					{
+						path: '/b2b/guarantee',
+						element: <Guarantee />,
+					},
+					{
+						path: '/b2b/guarantee/register',
+						element: <GuaranteeRegister />,
+					},
+					{
+						path: '/b2b/guarantee/:idx',
+						element: <GuaranteeDetail />,
+					},
+					{
+						path: '/b2b/guarantee/edit/:idx',
+						element: <GuaranteeRegister />,
+					},
+					{
+						path: '/b2b/guarantee/excel-upload',
+						element: <GuaranteeExcelUpload />,
+					},
+					{path: '/b2b/product', element: <Product />},
+					{path: '/b2b/product/:idx', element: <ProductDetail />},
+					{
+						path: '/b2b/product/register',
+						element: <ProductRegister />,
+					},
+					{
+						path: '/b2b/product/edit/:idx',
+						element: <ProductRegister />,
+					},
+					{path: '/b2b/customer', element: <Customer />},
+					{
+						path: '/b2b/product/guarantee-upload',
+						element: <GuaranteeRegister />,
+					},
+					{path: '/b2b/product', element: <Product />},
+					{path: '/b2b/product/:idx', element: <ProductDetail />},
+					{
+						path: '/b2b/product/register',
+						element: <ProductRegister />,
+					},
+					{
+						path: '/b2b/product/edit/:idx',
+						element: <ProductRegister />,
+					},
+					{
+						path: '/b2b/product/excel-upload',
+						element: <ProductExcelUpload />,
+					},
+					{path: '/b2b/customer', element: <Customer />},
+					{
+						path: '/b2b/customer/:name/:phone',
+						element: <CustomerDetail />,
+					},
+					{path: '/b2b/inspection', element: <Inspection />},
+					{path: '/b2b/repair', element: <Repair />},
+					{path: '/b2b/repair/:idx', element: <RepairDetail />},
+					{path: '/b2b/interwork', element: <ServiceInterwork />},
+					{
+						path: '/b2b/interwork/cafe24',
+						element: <ServiceInterworkCafe24 />,
+					},
+					{
+						path: '/b2b/interwork/repair',
+						element: <ServiceInterworkRepair />,
+					},
+					{
+						path: '/b2b/interwork/kakao',
+						element: <ServiceInterworkKakao />,
+					},
+					{
+						path: '/b2b/payment/subscribe',
+						element: <SubscribeManagement />,
+					},
+					{
+						path: '/b2b/payment/information',
+						element: <PaymentInformation />,
+					},
+					{path: '/setting/profile', element: <ProfileSetting />},
+					{path: '/setting/signout', element: <Signout />},
+					{path: '/setup/guarantee', element: <SetupGuarantee />},
+					{
+						path: '/re-setup/guarantee',
+						element: <ResetupGuarantee />,
+					},
+					{path: '/cafe24/interwork', element: <Cafe24Interwork />},
+				],
 			},
 			{
-				path: '/b2b/guarantee/:idx',
-				element: <GuaranteeDetail />,
+				path: '/reset/password',
+				element: <PasswordReset />,
 			},
 			{
-				path: '/b2b/guarantee/edit/:idx',
-				element: <GuaranteeRegister />,
+				path: '/signedout',
+				element: <Signedout />,
 			},
-			{
-				path: '/b2b/guarantee/excel-upload',
-				element: <GuaranteeExcelUpload />,
-			},
-			{path: '/b2b/product', element: <Product />},
-			{path: '/b2b/product/:idx', element: <ProductDetail />},
-			{path: '/b2b/product/register', element: <ProductRegister />},
-			{path: '/b2b/product/edit/:idx', element: <ProductRegister />},
-			{path: '/b2b/customer', element: <Customer />},
-			{
-				path: '/b2b/product/guarantee-upload',
-				element: <GuaranteeRegister />,
-			},
-			{path: '/b2b/product', element: <Product />},
-			{path: '/b2b/product/:idx', element: <ProductDetail />},
-			{path: '/b2b/product/register', element: <ProductRegister />},
-			{path: '/b2b/product/edit/:idx', element: <ProductRegister />},
-			{
-				path: '/b2b/product/excel-upload',
-				element: <ProductExcelUpload />,
-			},
-			{path: '/b2b/customer', element: <Customer />},
-			{
-				path: '/b2b/customer/:name/:phone',
-				element: <CustomerDetail />,
-			},
-			{path: '/b2b/inspection', element: <Inspection />},
-			{path: '/b2b/repair', element: <Repair />},
-			{path: '/b2b/repair/:idx', element: <RepairDetail />},
-			{path: '/b2b/interwork', element: <ServiceInterwork />},
-			{
-				path: '/b2b/interwork/cafe24',
-				element: <ServiceInterworkCafe24 />,
-			},
-			{
-				path: '/b2b/interwork/repair',
-				element: <ServiceInterworkRepair />,
-			},
-			{
-				path: '/b2b/interwork/kakao',
-				element: <ServiceInterworkKakao />,
-			},
-			{
-				path: '/b2b/payment/subscribe',
-				element: <SubscribeManagement />,
-			},
-			{
-				path: '/b2b/payment/information',
-				element: <PaymentInformation />,
-			},
-			{path: '/setting/profile', element: <ProfileSetting />},
-			{path: '/setting/signout', element: <Signout />},
-			{path: '/setup/guarantee', element: <SetupGuarantee />},
-			{path: '/re-setup/guarantee', element: <ResetupGuarantee />},
-			{path: '/cafe24/interwork', element: <Cafe24Interwork />},
 		],
-	},
-	{
-		path: '/reset/password',
-		element: (
-			<CheckAuth>
-				<PasswordReset />
-			</CheckAuth>
-		),
-	},
-	{
-		path: '/signedout',
-		element: (
-			<CheckAuth>
-				<Signedout />
-			</CheckAuth>
-		),
 	},
 ];
 

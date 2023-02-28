@@ -19,6 +19,7 @@ import {
 } from '@/assets/images';
 import Cafe24Logo from '@/assets/images/cafe24/cafe24_logo2.png';
 import Cafe24Logo2x from '@/assets/images/cafe24/cafe24_logo2@2x.png';
+import {ContentWrapper} from '@/components';
 
 interface InterworkItem {
 	name: 'cafe24' | 'repair' | 'kakao';
@@ -159,12 +160,7 @@ function ServiceInterworkList() {
 
 	return (
 		<>
-			<Stack
-				flexDirection="column"
-				width="100%"
-				maxWidth="800px"
-				margin="auto"
-				my={5}>
+			<ContentWrapper maxWidth="800px">
 				<Typography variant="header1" mb="8px">
 					서비스 연동 관리
 				</Typography>
@@ -199,7 +195,7 @@ function ServiceInterworkList() {
 								/>
 						  ))}
 				</Stack>
-			</Stack>
+			</ContentWrapper>
 			<Cafe24StartRobotModal cafe24State={cafe24State} />
 		</>
 	);

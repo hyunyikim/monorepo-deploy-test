@@ -9,6 +9,7 @@ import {
 	ControlledInputComponent,
 	Select,
 	Checkbox,
+	ContentWrapper,
 } from '@/components';
 import {Option} from '@/@types';
 import {useForm} from 'react-hook-form';
@@ -182,12 +183,7 @@ function Signout() {
 	}, [signoutInfo, isChecked, watch()]);
 
 	return (
-		<Stack
-			sx={{
-				gap: '40px',
-				maxWidth: '800px',
-				margin: '40px auto 130px auto',
-			}}>
+		<ContentWrapper maxWidth="800px">
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<TitleTypography title="회원 탈퇴" />
 				<Stack
@@ -372,7 +368,7 @@ function Signout() {
 					</Button>
 				</Stack>
 			</form>
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

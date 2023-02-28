@@ -1,8 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
-import {Stack} from '@mui/material';
-
 import ProductRegisterForm from '@/features/product/Register/ProductRegisterForm';
 import {ProductDetailResponse} from '@/@types';
 import {getProductDetail} from '@/api/product.api';
@@ -10,7 +8,7 @@ import {PAGE_MAX_WIDTH} from '@/data';
 import {usePageView} from '@/utils';
 import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
-import {TitleTypography} from '@/components';
+import {ContentWrapper, TitleTypography} from '@/components';
 
 function ProductRegister() {
 	usePageView('itemadmin_regist_pv', '상품등록 화면 진입');
@@ -59,19 +57,14 @@ function ProductRegister() {
 	const formControlMode = useMemo(() => (idx ? 'edit' : 'register'), [idx]);
 
 	return (
-		<Stack
-			flexDirection="column"
-			maxWidth={PAGE_MAX_WIDTH}
-			width="100%"
-			margin="auto"
-			my={5}>
+		<ContentWrapper maxWidth={PAGE_MAX_WIDTH}>
 			<TitleTypography
 				title={`상품 ${
 					formControlMode === 'register' ? '등록' : '수정'
 				}하기`}
 			/>
 			<ProductRegisterForm mode={formControlMode} initialData={data} />
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

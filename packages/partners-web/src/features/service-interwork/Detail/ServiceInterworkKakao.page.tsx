@@ -13,7 +13,12 @@ import {
 import {phoneNumberFormat} from '@/utils/regex.util';
 import {uninstallServiceInterwork} from '@/api/service-interwork.api';
 
-import {Button, CapsuleButton, InputWithLabel} from '@/components';
+import {
+	Button,
+	CapsuleButton,
+	ContentWrapper,
+	InputWithLabel,
+} from '@/components';
 import ControlledInputComponent from '@/components/molecules/ControlledInputComponent';
 
 import {
@@ -516,11 +521,7 @@ function ServiceInterworkKakao() {
 	}
 
 	return (
-		<Stack
-			flexDirection="column"
-			width="100%"
-			maxWidth="800px"
-			margin="40px auto 73px">
+		<ContentWrapper maxWidth="800px">
 			<ServiceInterworkDetailTitle
 				title="카카오 알림톡"
 				subTitle="브랜드 플러스친구 계정으로 개런티 관련 알림톡을 전송하세요."
@@ -632,7 +633,7 @@ function ServiceInterworkKakao() {
 					</Typography>
 				</>
 			</ServiceInterworkDetailContent>
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

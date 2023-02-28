@@ -7,10 +7,15 @@ import {useSidebarControlStore} from '@/stores';
 
 interface Props {
 	maxWidth?: string | ResponsiveStyleValue<any>;
+	justifyContent?: 'space-between' | 'flex-start' | 'flex-end' | 'center';
 	children: React.ReactElement;
 }
 
-function BottomNavigation({maxWidth = PAGE_MAX_WIDTH, children}: Props) {
+function BottomNavigation({
+	maxWidth = PAGE_MAX_WIDTH,
+	justifyContent = 'space-between',
+	children,
+}: Props) {
 	const isSidebarOpen = useSidebarControlStore((state) => state.isOpen);
 	const sidebarWidth = isSidebarOpen ? SIDEBAR_WIDTH : FOLDED_SIDEBAR_WIDTH;
 	return (
@@ -33,7 +38,7 @@ function BottomNavigation({maxWidth = PAGE_MAX_WIDTH, children}: Props) {
 					margin: 'auto',
 					display: 'flex',
 					flexDirection: 'row',
-					justifyContent: 'space-between',
+					justifyContent,
 					alignItems: 'center',
 				}}>
 				{children}

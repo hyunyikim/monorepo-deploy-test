@@ -1,7 +1,7 @@
 import {MenuList} from '@/@types';
 import {
-	IcConcierge,
 	IcDashboard,
+	IcLink,
 	IcRepairScissors,
 	IcShoppingBagCheck,
 	IcUsers,
@@ -82,7 +82,7 @@ export const menuList: MenuList = [
 		{
 			menu: 'interwork',
 			title: '서비스 연동 관리',
-			icon: <IcConcierge />,
+			icon: <IcLink />,
 			path: '/b2b/interwork',
 		},
 		{
@@ -102,3 +102,31 @@ export const menuList: MenuList = [
 		},
 	],
 ];
+
+export const checkDepth1MenuSelected = (pathname: string, menu: string) => {
+	if (pathname.includes('/b2b/interwork')) {
+		return menu === 'interwork';
+	}
+	return pathname.includes(menu);
+};
+
+export const checkDepth2MenuSelected = (
+	pathname: string,
+	comparePath: string
+) => {
+	// 개런티, 상품은 동등 비교 추가
+	if (pathname.includes('guarantee') || pathname.includes('product')) {
+		if (
+			pathname === '/re-setup/guarantee' &&
+			comparePath === '/setup/guarantee'
+		) {
+			return true;
+		}
+		// TODO: 상세 보기
+		return pathname === comparePath;
+	}
+	if (pathname.includes(comparePath)) {
+		return true;
+	}
+	return false;
+};

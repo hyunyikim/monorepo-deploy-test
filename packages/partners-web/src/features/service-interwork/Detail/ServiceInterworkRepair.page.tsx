@@ -2,19 +2,20 @@ import {useEffect, useMemo, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 
-import {Stack, Typography} from '@mui/material';
+import {Typography} from '@mui/material';
 
 import {
 	useGetPartnershipInfo,
 	useMessageDialog,
 	useGlobalLoading,
+	useGetGuaranteeSettingCompleted,
 } from '@/stores';
 import {
 	installServiceInterwork,
 	uninstallServiceInterwork,
 } from '@/api/service-interwork.api';
 
-import {Button} from '@/components';
+import {Button, ContentWrapper} from '@/components';
 import {
 	ImgServiceInterworkRepair,
 	ImgServiceInterworkRepair2x,
@@ -44,6 +45,8 @@ function ServiceInterworkRepair() {
 	});
 
 	const {data: partnershipData, isLoading} = useGetPartnershipInfo();
+	const {data: isGuaranteeSettingCompleted} =
+		useGetGuaranteeSettingCompleted();
 
 	const installServiceInterworkMutation = useMutation({
 		mutationFn: () => installServiceInterwork('repair'),
@@ -73,11 +76,6 @@ function ServiceInterworkRepair() {
 	]);
 
 	const installedRepair = partnershipData?.useRepair === 'Y' ? true : false;
-
-	const isAlreadySetupGuarantee = useMemo(
-		() => (partnershipData?.profileImage ? true : false),
-		[partnershipData?.profileImage]
-	);
 
 	const getCurrentPricePlanInfo = async () => {
 		try {
@@ -173,7 +171,9 @@ function ServiceInterworkRepair() {
 											color="black"
 											onClick={() => {
 												let url = '/setup/guarantee';
-												if (isAlreadySetupGuarantee) {
+												if (
+													isGuaranteeSettingCompleted
+												) {
 													url = '/re-setup/guarantee';
 												}
 												navigate(url, {
@@ -201,7 +201,7 @@ function ServiceInterworkRepair() {
 		onOpenMessageDialog,
 		onOpenError,
 		installServiceInterworkMutation,
-		isAlreadySetupGuarantee,
+		isGuaranteeSettingCompleted,
 	]);
 
 	const UninstallRepairButton = useMemo(() => {
@@ -253,12 +253,7 @@ function ServiceInterworkRepair() {
 	}
 
 	return (
-		<Stack
-			flexDirection="column"
-			width="100%"
-			maxWidth="800px"
-			margin="auto"
-			my={5}>
+		<ContentWrapper maxWidth="800px">
 			<ServiceInterworkDetailTitle
 				title="수선신청 관리"
 				subTitle="고객이 간편하게 수선신청하고, 신청 내역을 한곳에서 관리하세요."
@@ -333,7 +328,7 @@ function ServiceInterworkRepair() {
 					</Typography>
 				</>
 			</ServiceInterworkDetailContent>
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

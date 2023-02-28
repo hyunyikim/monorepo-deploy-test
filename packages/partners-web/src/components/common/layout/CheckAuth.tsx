@@ -4,13 +4,18 @@ import {
 	useLoginStore,
 } from '@/stores';
 import React, {useCallback, useEffect} from 'react';
-import {Navigate, useLocation, useNavigate} from 'react-router-dom';
+import {Navigate, Outlet, useLocation, useNavigate} from 'react-router-dom';
 
-function CheckAuth({children}: {children: React.ReactElement}) {
+/**
+ * 권한 및 로그인 관련 체크하는 컴포넌트
+ */
+function CheckAuth() {
 	return (
 		<CheckLogin>
 			<CheckSignedOut>
-				<CheckLastTimeLogin>{children}</CheckLastTimeLogin>
+				<CheckLastTimeLogin>
+					<Outlet />
+				</CheckLastTimeLogin>
 			</CheckSignedOut>
 		</CheckLogin>
 	);

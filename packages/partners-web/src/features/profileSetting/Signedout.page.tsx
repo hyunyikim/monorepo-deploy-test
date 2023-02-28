@@ -6,7 +6,7 @@ import {
 	Button,
 	InputWithLabel,
 	TitleTypography,
-	ControlledInputComponent,
+	ContentWrapper,
 } from '@/components';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -125,13 +125,8 @@ function Signedout() {
 	}, [partnershipData]);
 
 	return partnershipData && partnershipData.isLeaved === 'Y' ? (
-		<Stack
-			sx={{
-				gap: '40px',
-				maxWidth: '800px',
-				margin: '40px auto 130px auto',
-			}}>
-			<form onSubmit={handleSubmit(onSubmit)}>
+		<ContentWrapper maxWidth="800px">
+			<form onSubmit={handleSubmit(onSubmit)} noValidate>
 				<TitleTypography title="회원 탈퇴" />
 				<Stack
 					sx={{
@@ -231,6 +226,7 @@ function Signedout() {
 								maxWidth: '356px',
 							}}
 							fullWidth={false}
+							autoComplete="new-password"
 						/>
 					</Stack>
 
@@ -244,7 +240,7 @@ function Signedout() {
 					</Button>
 				</Stack>
 			</form>
-		</Stack>
+		</ContentWrapper>
 	) : (
 		<></>
 	);

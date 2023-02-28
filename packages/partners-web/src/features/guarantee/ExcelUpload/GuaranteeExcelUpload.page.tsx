@@ -1,9 +1,10 @@
-import {useCallback, useMemo} from 'react';
+import {useCallback, useEffect, useMemo} from 'react';
 
 import {Stack} from '@mui/material';
 
 import {ExcelInput, GuaranteeExcelUploadFormData} from '@/@types';
 import {
+	useGetGuaranteeSettingCompleted,
 	useGetPartnershipInfo,
 	useGetPlatformList,
 	useGetSearchBrandList,
@@ -25,15 +26,34 @@ import GuaranteeExcelSubmit from './GuaranteeExcelSubmit';
 import GuaranteeExcelFormatDownloadButton from './GuaranteeExcelFormatDownloadButton';
 import ExcelDragDropBox from '@/features/common/Excel/ExcelDragDropBox';
 import {sendAmplitudeLog, usePageView} from '@/utils';
+import {useNavigate} from 'react-router-dom';
 
 function GuaranteeExcelUpload() {
 	usePageView('guarantee_excelpublish_pv', '대량등록 진입');
 
+	const navigate = useNavigate();
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const {data: brandList} = useGetSearchBrandList();
 	const {data: platformList} = useGetPlatformList();
+	const {data: guaranteeSettingCompleted} = useGetGuaranteeSettingCompleted();
 
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+
+	useEffect(() => {
+		if (!guaranteeSettingCompleted) {
+			sendAmplitudeLog('guarantee_publish_popupview', {
+				pv_title: '개런티 미설정시 안내 팝업',
+			});
+			onOpenMessageDialog({
+				title: '개런티 설정 후 상품 등록이 가능합니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+				onCloseFunc: () => {
+					navigate('/setup/guarantee');
+				},
+			});
+		}
+	}, [partnershipData, guaranteeSettingCompleted]);
 
 	// 정보 부족 모달
 	const {

@@ -16,12 +16,19 @@ import {
 	Collapse,
 	Stack,
 	Box,
+	useMediaQuery,
 } from '@mui/material';
 
 import {IcChevronDown, IcChevronRight, IcExclamationMark} from '@/assets/icon';
 import {ImgUsageGuideRobot, ImgUsageGuideRobot2x} from '@/assets/images';
 import style from '@/assets/styles/style.module.scss';
-import {SIDEBAR_WIDTH, FOLDED_SIDEBAR_WIDTH, HEADER_HEIGHT} from '@/data';
+import {
+	SIDEBAR_WIDTH,
+	FOLDED_SIDEBAR_WIDTH,
+	HEADER_HEIGHT,
+	checkDepth2MenuSelected,
+	checkDepth1MenuSelected,
+} from '@/data';
 
 import {MenuDepth1, MenuDepth2} from '@/@types';
 import {useGetMenu, useSidebarControlStore} from '@/stores';
@@ -68,6 +75,12 @@ export default function Sidebar() {
 	const menuList = useGetMenu();
 	const isSidebarOpen = useSidebarControlStore((state) => state.isOpen);
 	const setSidebarOpen = useSidebarControlStore((state) => state.setOpen);
+	const matchUpMd = useMediaQuery((theme) => theme.breakpoints.up('md'));
+
+	useEffect(() => {
+		setSidebarOpen(matchUpMd ? true : false);
+	}, [matchUpMd]);
+
 	return (
 		<>
 			<Drawer
@@ -110,17 +123,6 @@ export default function Sidebar() {
 					open={isSidebarOpen}
 					onControlDrawer={() => setSidebarOpen(!isSidebarOpen)}
 				/>
-				{/* {['yellow', 'orange', 'blue'].map((item) => (
-					<Stack
-						key={item}
-						sx={{
-							height: '1000px',
-							minHeight: '1000px',
-							backgroundColor: item,
-						}}>
-						{item}
-					</Stack>
-				))} */}
 			</Drawer>
 		</>
 	);
@@ -213,6 +215,9 @@ const Menu = ({
 					sx={{
 						width: open ? 'calc(100% - 40px)' : 'calc(100% - 16px)',
 						m: 'auto',
+						...(!open && {
+							marginY: '8px',
+						}),
 						borderColor: style.vircleGrey100,
 					}}
 				/>
@@ -226,6 +231,17 @@ const GroupMenu = ({open, data}: {open: boolean; data: MenuDepth1}) => {
 	const [isChildrenOpen, setChildrenOpen] = useState(false);
 	const {pathname} = useLocation();
 	const navigate = useNavigate();
+
+	const isDepth1Selected = useMemo(() => {
+		return checkDepth1MenuSelected(pathname, data.menu);
+	}, [data, pathname]);
+
+	useEffect(() => {
+		// 연관된 자식 메뉴 열림
+		if (open) {
+			setChildrenOpen(isDepth1Selected ? true : false);
+		}
+	}, [open, isDepth1Selected]);
 
 	useEffect(() => {
 		if (!open) {
@@ -252,11 +268,6 @@ const GroupMenu = ({open, data}: {open: boolean; data: MenuDepth1}) => {
 	const handleControlDepth2Menu = (depth2: MenuDepth2) => {
 		navigate(depth2.path);
 	};
-
-	const isDepth1Selected = useMemo(() => {
-		const {menu} = data;
-		return pathname.includes(menu);
-	}, [data, pathname]);
 
 	return (
 		<ListItem
@@ -312,8 +323,10 @@ const GroupMenu = ({open, data}: {open: boolean; data: MenuDepth1}) => {
 				<List disablePadding className="menu-children">
 					{children?.map((child) => {
 						const {title, path, emphasis} = child;
-						const isDepth2Selected =
-							path === pathname ? true : false;
+						const isDepth2Selected = checkDepth2MenuSelected(
+							pathname,
+							path
+						);
 						return (
 							<ListItem
 								disablePadding

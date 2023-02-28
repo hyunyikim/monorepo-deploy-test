@@ -4,8 +4,10 @@ import {useNavigate} from 'react-router-dom';
 import {Stack} from '@mui/system';
 import {Typography, Grid} from '@mui/material';
 import {
+	BottomNavigation,
 	Button,
 	CapsuleButton,
+	ContentWrapper,
 	InputWithLabel,
 	TitleTypography,
 } from '@/components';
@@ -13,7 +15,6 @@ import {profileSettingSchemaShape} from '@/utils/schema';
 
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import FixedBottomNavBar from '@/components/atoms/FixedBottomNavBar';
 
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 
@@ -344,167 +345,163 @@ function ProfileSetting() {
 	// }, [errors]);
 
 	return (
-		<Stack
-			sx={{
-				gap: '40px',
-				maxWidth: '800px',
-				width: '100%',
-				margin: '40px auto 130px auto',
-			}}>
-			<form
-				onSubmit={handleSubmit(onSubmit)}
-				noValidate
-				autoComplete="off">
-				<TitleTypography title="프로필 설정" />
-				<Stack
-					sx={{
-						border: '1px solid #E2E2E9',
-						borderRadius: '16px',
-						padding: '32px',
-						gap: '60px',
-					}}>
-					<Stack>
-						<Typography
-							variant="subtitle1"
-							sx={{
-								color: 'grey.900',
-								marginBottom: '32px',
-							}}>
-							기본 정보
-						</Typography>
-
+		<>
+			<ContentWrapper
+				maxWidth="800px"
+				sx={{
+					paddingBottom: '80px',
+				}}>
+				<form onSubmit={handleSubmit(onSubmit)} noValidate>
+					<TitleTypography title="계정 설정" />
+					<Stack
+						sx={{
+							border: '1px solid #E2E2E9',
+							borderRadius: '16px',
+							padding: '32px',
+							gap: '60px',
+						}}>
 						<Stack>
-							<InputWithLabel
-								labelTitle={'이메일 주소'}
-								placeholder={''}
-								isLast={false}
-								control={control}
-								name={'email'}
-								fullWidth={true}
-								disabled={true}
-							/>
+							<Typography
+								variant="subtitle1"
+								sx={{
+									color: 'grey.900',
+									marginBottom: '32px',
+								}}>
+								기본 정보
+							</Typography>
 
-							{basicInfoInputList.map((li, idx) => {
-								const {
-									name,
-									title,
-									placeholder,
-									type,
-									...restInput
-								} = li;
-
-								return (
-									<InputWithLabel
-										key={`profile_input_${name}`}
-										labelTitle={title}
-										placeholder={placeholder}
-										type={type}
-										isLast={
-											idx ===
-											basicInfoInputList.length - 1
-												? true
-												: false
-										}
-										control={control}
-										name={name}
-										error={errors && errors[name]}
-										fullWidth={true}
-										onChange={(e) => {
-											if (
-												name === 'phoneNum' ||
-												name === 'businessNum'
-											) {
-												e.target.value =
-													handleChangeDataFormat(
-														name,
-														e
-													);
-											}
-										}}
-										{...restInput}
-									/>
-								);
-							})}
-						</Stack>
-					</Stack>
-
-					<Stack>
-						<Typography
-							variant="subtitle1"
-							sx={{
-								color: 'grey.900',
-								marginBottom: '32px',
-							}}>
-							비밀번호 변경
-						</Typography>
-
-						<Stack>
-							<Grid container sx={{maxWidth: 'calc(50% - 14px)'}}>
+							<Stack>
 								<InputWithLabel
-									type="password"
-									labelTitle={'현재 비밀번호'}
-									placeholder={'현재 비밀번호를 입력하세요'}
+									labelTitle={'이메일 주소'}
+									placeholder={''}
 									isLast={false}
 									control={control}
-									name={'currentPassword'}
-									fullWidth={false}
-									error={errors && errors.currentPassword}
+									name={'email'}
+									fullWidth={true}
+									disabled={true}
 								/>
-							</Grid>
 
-							<Grid
-								container
-								flexWrap={'nowrap'}
-								alignItems="flex-start"
-								gap="24px">
-								<InputWithLabel
-									labelTitle={'새 비밀번호'}
-									placeholder={'새 비밀번호를 입력하세요'}
-									isLast={true}
-									control={control}
-									name={'newPassword'}
-									fullWidth={true}
-									type="password"
-									error={errors && errors.newPassword}
-								/>
-								<InputWithLabel
-									labelTitle={'새 비밀번호 확인'}
-									placeholder={
-										'새 비밀번호를 다시 입력하세요'
-									}
-									isLast={true}
-									control={control}
-									name={'passwordConfirm'}
-									fullWidth={true}
-									type="password"
-									error={errors && errors.passwordConfirm}
-								/>
-							</Grid>
+								{basicInfoInputList.map((li, idx) => {
+									const {
+										name,
+										title,
+										placeholder,
+										type,
+										...restInput
+									} = li;
+
+									return (
+										<InputWithLabel
+											key={`profile_input_${name}`}
+											labelTitle={title}
+											placeholder={placeholder}
+											type={type}
+											isLast={
+												idx ===
+												basicInfoInputList.length - 1
+													? true
+													: false
+											}
+											control={control}
+											name={name}
+											error={errors && errors[name]}
+											fullWidth={true}
+											onChange={(e) => {
+												if (
+													name === 'phoneNum' ||
+													name === 'businessNum'
+												) {
+													e.target.value =
+														handleChangeDataFormat(
+															name,
+															e
+														);
+												}
+											}}
+											{...restInput}
+										/>
+									);
+								})}
+							</Stack>
+						</Stack>
+
+						<Stack>
+							<Typography
+								variant="subtitle1"
+								sx={{
+									color: 'grey.900',
+									marginBottom: '32px',
+								}}>
+								비밀번호 변경
+							</Typography>
+
+							<Stack>
+								<Grid
+									container
+									sx={{maxWidth: 'calc(50% - 14px)'}}>
+									<InputWithLabel
+										type="password"
+										labelTitle={'현재 비밀번호'}
+										placeholder={
+											'현재 비밀번호를 입력하세요'
+										}
+										isLast={false}
+										control={control}
+										name={'currentPassword'}
+										fullWidth={false}
+										error={errors && errors.currentPassword}
+										autoComplete="new-password"
+									/>
+								</Grid>
+
+								<Grid
+									container
+									flexWrap={'nowrap'}
+									alignItems="flex-start"
+									gap="24px">
+									<InputWithLabel
+										labelTitle={'새 비밀번호'}
+										placeholder={'새 비밀번호를 입력하세요'}
+										isLast={true}
+										control={control}
+										name={'newPassword'}
+										fullWidth={true}
+										type="password"
+										error={errors && errors.newPassword}
+									/>
+									<InputWithLabel
+										labelTitle={'새 비밀번호 확인'}
+										placeholder={
+											'새 비밀번호를 다시 입력하세요'
+										}
+										isLast={true}
+										control={control}
+										name={'passwordConfirm'}
+										fullWidth={true}
+										type="password"
+										error={errors && errors.passwordConfirm}
+									/>
+								</Grid>
+							</Stack>
 						</Stack>
 					</Stack>
-				</Stack>
-
-				<CapsuleButton
-					sx={{marginTop: '24px'}}
-					onClick={goToSignoutPage}>
-					회원탈퇴
-				</CapsuleButton>
-				<FixedBottomNavBar
-					sx={{
-						'& .MuiGrid-root': {
-							justifyContent: 'flex-end',
-						},
-					}}>
-					<Button
-						variant="contained"
-						color="primary"
-						type="submit"
-						height={48}>
-						저장하기
-					</Button>
-				</FixedBottomNavBar>
-			</form>
-		</Stack>
+					<CapsuleButton
+						sx={{marginTop: '24px'}}
+						onClick={goToSignoutPage}>
+						회원탈퇴
+					</CapsuleButton>
+				</form>
+			</ContentWrapper>
+			<BottomNavigation maxWidth="800px" justifyContent="flex-end">
+				<Button
+					variant="contained"
+					color="primary"
+					type="submit"
+					height={48}>
+					저장하기
+				</Button>
+			</BottomNavigation>
+		</>
 	);
 }
 

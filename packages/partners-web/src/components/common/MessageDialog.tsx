@@ -1,4 +1,5 @@
 import {useEffect, useCallback} from 'react';
+import {useLocation} from 'react-router-dom';
 
 import {
 	Dialog,
@@ -14,6 +15,8 @@ import {Button} from '@/components';
 import {IcClose} from '@/assets/icon';
 
 function MessageDialog() {
+	const location = useLocation();
+
 	const open = useMessageDialog((state) => state.open);
 	const title = useMessageDialog((state) => state.title);
 	const message = useMessageDialog((state) => state.message);
@@ -45,6 +48,12 @@ function MessageDialog() {
 			initMessageDialog();
 		}, 350);
 	}, [onClose, onCloseFunc, initMessageDialog]);
+
+	useEffect(() => {
+		console.log('location.pathname :>> ', location.pathname);
+		// 페이지 변경되면 메시지 모달 닫힘
+		handleClose();
+	}, [location.pathname]);
 
 	return (
 		<Dialog

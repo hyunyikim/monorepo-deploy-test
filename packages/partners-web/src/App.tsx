@@ -9,7 +9,7 @@ import RootRouter from '@/routes/RootRouter';
 
 import '@/assets/styles/common-style.scss';
 
-import {Loading, MessageDialog} from '@/components';
+import {Loading} from '@/components';
 import ModalComponent from '@/components/common/ModalComponent';
 import AmplitudeTrackingInterceptor from '@/components/common/layout/AmplitudeTrackingInterceptor';
 import ChannelTalk from '@/features/common/ChannelTalk';
@@ -38,7 +38,6 @@ function App() {
 						<CssBaseline />
 						<AmplitudeTrackingInterceptor>
 							<RootRouter />
-							<MessageDialog />
 							<ModalComponent />
 							<Loading />
 						</AmplitudeTrackingInterceptor>
