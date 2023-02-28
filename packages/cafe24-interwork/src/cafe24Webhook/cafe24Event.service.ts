@@ -310,6 +310,7 @@ export class Cafe24EventService {
 		const CAFE24_LIMIT = 100; // cafe24 products api CAFE24_LIMIT
 
 		let products: Array<Product> = [];
+
 		if (isIssueAll) {
 			const productNoSet = new Set(); // TODO: 중복처리를 안해도 될지,, cafe24에서는 중복되지 않고 나오고 있음.
 			orders.forEach((order) => {
