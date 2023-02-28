@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {Stack, Typography} from '@mui/material';
@@ -12,11 +13,6 @@ import {
 	installServiceInterwork,
 	uninstallServiceInterwork,
 } from '@/api/service-interwork.api';
-import {
-	goToParentUrlWithState,
-	updateParentPartnershipData,
-	goToParentUrl,
-} from '@/utils';
 
 import {Button} from '@/components';
 import {
@@ -37,6 +33,7 @@ type CurrentPlanType = {
 };
 
 function ServiceInterworkRepair() {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
@@ -143,7 +140,7 @@ function ServiceInterworkRepair() {
 					<Button
 						color="black"
 						onClick={() => {
-							goToParentUrl('/b2b/payment/subscribe');
+							navigate('/b2b/payment/subscribe');
 						}}>
 						플랜 업그레이드
 					</Button>
@@ -159,8 +156,7 @@ function ServiceInterworkRepair() {
 					} else {
 						(async () => {
 							try {
-								const res =
-									await installServiceInterworkMutation.mutateAsync();
+								await installServiceInterworkMutation.mutateAsync();
 								onOpenMessageDialog({
 									title: '수선신청 관리가 연동됐습니다.',
 									message: (
@@ -180,16 +176,16 @@ function ServiceInterworkRepair() {
 												if (isAlreadySetupGuarantee) {
 													url = '/re-setup/guarantee';
 												}
-												goToParentUrlWithState(url, {
-													'interwork-repair': true,
+												navigate(url, {
+													state: {
+														'interwork-repair':
+															true,
+													},
 												});
 											}}>
 											개런티 설정으로 이동
 										</Button>
 									),
-									onCloseFunc: () => {
-										updateParentPartnershipData();
-									},
 								});
 								// }
 							} catch (e) {
@@ -236,9 +232,6 @@ function ServiceInterworkRepair() {
 												title: '연동이 해제됐습니다.',
 												showBottomCloseButton: true,
 												closeButtonValue: '확인',
-												onCloseFunc: () => {
-													updateParentPartnershipData();
-												},
 											});
 										} catch (e) {
 											onOpenError();

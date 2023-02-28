@@ -1,10 +1,12 @@
+import {useNavigate} from 'react-router-dom';
+
 import {Stack, Typography} from '@mui/material';
 
 import {useOpen} from '@/utils/hooks';
 
 import SignUpForm from '@/features/auth/signup/SignUpForm';
 import AgreementModal from '@/features/auth/signup/AgreementModal';
-import {goToParentUrl} from '@/utils';
+
 import {SignUpRequestFormData} from '@/@types';
 
 function SignUpStep2({
@@ -17,6 +19,7 @@ function SignUpStep2({
 	formData: SignUpRequestFormData | null;
 }) {
 	const {open, modalData, onOpen, onClose, onSetModalData} = useOpen({});
+	const navigate = useNavigate();
 	return (
 		<>
 			<Stack id="justify" alignItems="center">
@@ -71,7 +74,7 @@ function SignUpStep2({
 						color="primary.main"
 						className="cursor-pointer"
 						onClick={() => {
-							goToParentUrl(loginUrl);
+							navigate(loginUrl);
 						}}>
 						&nbsp;로그인
 					</Typography>

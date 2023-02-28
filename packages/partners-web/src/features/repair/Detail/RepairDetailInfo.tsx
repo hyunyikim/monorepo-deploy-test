@@ -1,13 +1,12 @@
 import {Stack, Typography} from '@mui/material';
 
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 import {RepairDetail} from '@/@types';
 
 import {ImageModal, ImagePopup} from '@/components';
 
 function RepairDetailInfo({data}: {data: RepairDetail}) {
-	const {open, onOpen, onClose, modalData, onSetModalData} =
-		useChildModalOpen({});
+	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
 	return (
 		<>
 			<Stack

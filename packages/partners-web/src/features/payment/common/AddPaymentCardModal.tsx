@@ -21,7 +21,7 @@ import {
 	ControlledInputComponent,
 } from '@/components';
 import {RegisterCardRequestParam} from '@/@types';
-import {onChangeOnlyNumber, updateUserPricePlanData} from '@/utils';
+import {onChangeOnlyNumber} from '@/utils';
 import {emailSchemaValidation} from '@/utils/schema';
 import {registerCard} from '@/api/payment.api';
 import {useGlobalLoading, useMessageDialog} from '@/stores';
@@ -194,7 +194,6 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 		mutationFn: async (data: RegisterCardRequestParam) =>
 			registerCard(data),
 		onSuccess: async () => {
-			updateUserPricePlanData();
 			await queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});

@@ -1,6 +1,6 @@
 import {useMemo, useState, useEffect} from 'react';
 import {ButtonBase, AppBar, Toolbar} from '@mui/material';
-
+import {useNavigate} from 'react-router-dom';
 import {debounce} from 'lodash';
 import {
 	ImgLogoVirclePartners,
@@ -12,7 +12,7 @@ import {
 import HeaderProfile from '@/components/common/layout/HeaderProfile';
 
 import {HEADER_HEIGHT} from '@/data';
-import {goToParentUrl} from '@/utils';
+
 import {useGetPartnershipInfo} from '@/stores/partnership.store';
 
 interface Props {
@@ -21,6 +21,7 @@ interface Props {
 }
 
 function Header({backgroundColor = 'white', borderBottom = true}: Props) {
+	const navigate = useNavigate();
 	let preScrollPosition = 0;
 	const [headerState, setHeaderState] = useState('top');
 
@@ -109,7 +110,7 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 				<ButtonBase
 					disableRipple
 					onClick={() => {
-						goToParentUrl('/dashboard');
+						navigate('/dashboard');
 					}}>
 					<img
 						src={

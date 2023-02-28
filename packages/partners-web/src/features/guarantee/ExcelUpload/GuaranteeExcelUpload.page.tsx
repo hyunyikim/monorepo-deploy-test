@@ -15,7 +15,7 @@ import {
 	GUARANTEE_EXCEL_COLUMN,
 	GUARANTEE_EXCEL_INPUT,
 } from '@/data';
-import {useChildModalOpen, useExcelUpload} from '@/utils/hooks';
+import {useOpen, useExcelUpload} from '@/utils/hooks';
 
 import {ContentWrapper, TitleTypography, Button} from '@/components';
 import GuaranteeExcelUploadDataGrid from './GuaranteeExcelUploadDataGrid';
@@ -40,7 +40,7 @@ function GuaranteeExcelUpload() {
 		onOpen: onOpenLackExcelInformationModal,
 		onClose: onCloseLackExcelInformationModal,
 		open: openLackExcelInformationModal,
-	} = useChildModalOpen({
+	} = useOpen({
 		handleClose: () => {
 			sendAmplitudeLog(
 				'guarantee_excelpublish_infodeficiency_popupcomplete',
@@ -57,7 +57,7 @@ function GuaranteeExcelUpload() {
 		onSetModalData: setProductImgModalData,
 		modalData: productImgModalData,
 		open: openProductImgModal,
-	} = useChildModalOpen({
+	} = useOpen({
 		handleClose: () => {
 			setProductImgModalData(null);
 		},

@@ -8,13 +8,13 @@ import {
 	IcChevronRight,
 } from '@/assets/icon/index';
 import ToolTipComponent from '@/components/atoms/ToolTipComponent';
-import {goToParentUrl} from '@/utils';
 import {useGetPartnershipInfo} from '../../../stores/partnership.store';
 import {
 	DashboardCustomerOverviewType,
 	DashboardWalletOverviewType,
 } from '@/@types/dashboard.types';
 import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 interface ProgressStateProps {
 	data: {
@@ -110,6 +110,7 @@ function CustomerInfoOverview({
 	customerData,
 	linkData,
 }: CustomerInfoOverviewProps) {
+	const navigate = useNavigate();
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const [tooltipState, setTooltipState] = useState({
 		send: false,
@@ -157,7 +158,7 @@ function CustomerInfoOverview({
 	];
 
 	const goToKakaoInterwork = () => {
-		goToParentUrl('/b2b/interwork/kakao');
+		navigate('/b2b/interwork/kakao');
 	};
 
 	return (

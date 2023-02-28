@@ -1,4 +1,6 @@
 import {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {getUserPricePlan} from '@/api/payment.api';
@@ -21,13 +23,7 @@ import {
 	walletLinkOption,
 	isPlanOnSubscription,
 } from '@/data';
-import {
-	dashboardDateStack,
-	formatPhoneNum,
-	getDateByUnitHour,
-	goToParentUrl,
-	sendAmplitudeLog,
-} from '@/utils';
+import {formatPhoneNum, getDateByUnitHour, sendAmplitudeLog} from '@/utils';
 
 import {
 	TitleTypography,
@@ -62,6 +58,7 @@ const menuKo = '고객관리';
 const {sort, ...customerInitialSearchFilter} = initialSearchFilter;
 
 function CustomerList() {
+	const navigate = useNavigate();
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const [isPlanExpired, setIsPlanExpired] = useState<boolean>(false);
 	const {previousMonth, today} = dashboardDateStack();
@@ -169,7 +166,7 @@ function CustomerList() {
 				<Button
 					color="black"
 					onClick={() => {
-						goToParentUrl('/b2b/payment/subscribe');
+						navigate('/b2b/payment/subscribe');
 					}}>
 					플랜 업그레이드
 				</Button>
@@ -362,7 +359,7 @@ function CustomerList() {
 																item?.phone;
 															if (!name || !phone)
 																return;
-															goToParentUrl(
+															navigate(
 																`/b2b/customer/${name}/${phone}`
 															);
 														}}>

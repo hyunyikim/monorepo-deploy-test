@@ -127,3 +127,10 @@ export const isEndWithConsonant = (_str: string) => {
 	const finalConsonantCode = (finalCharCode - 44032) % 28;
 	return finalConsonantCode !== 0;
 };
+
+// 채널톡 오픈
+export const openChannelTalk = () => {
+	if (window?.ChannelIO) {
+		window.ChannelIO('showMessenger');
+	}
+};

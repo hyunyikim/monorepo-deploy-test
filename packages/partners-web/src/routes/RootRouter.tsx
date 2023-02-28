@@ -6,18 +6,14 @@ import privateRoutes from '@/routes/privateRoutes';
 import commonRoutes from '@/routes/commonRoutes';
 
 function RootRouter() {
-	return (
-		<RouterProvider
-			router={createBrowserRouter(
-				[...publicRoutes, ...privateRoutes, ...commonRoutes].map(
-					(route) => ({
-						...route,
-						element: <Suspense>{route.element}</Suspense>,
-					})
-				)
-			)}
-		/>
+	const router = createBrowserRouter(
+		[...privateRoutes, ...publicRoutes, ...commonRoutes].map((route) => ({
+			...route,
+			element: <Suspense>{route.element}</Suspense>,
+		}))
 	);
+
+	return <RouterProvider router={router} />;
 }
 
 export default RootRouter;

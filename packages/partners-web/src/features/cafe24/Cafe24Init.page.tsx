@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import {makeStyles} from '@mui/styles';
 import classNames from 'classnames';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {parse, stringify} from 'qs';
 import {useAsync} from 'react-use';
 
@@ -9,7 +9,7 @@ import {Grid, Theme} from '@mui/material';
 
 import {useLoginStore} from '@/stores';
 import {isConfirmedInterwork} from '@/api/cafe24.api';
-import {usePageView, goToParentUrl} from '@/utils';
+import {usePageView} from '@/utils';
 
 import cafe24WhiteLogo from '@/assets/images/cafe24/img_cafe24_logo.png';
 import cafe24WhiteLogo2x from '@/assets/images/cafe24/img_cafe24_logo@2x.png';
@@ -320,7 +320,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function Cafe24Init() {
 	usePageView('cafe24_service_pv', 'cafe24 연동 소개 화면');
-
+	const navigate = useNavigate();
 	const classes = useStyles();
 	const {search} = useLocation();
 	const isLogin = useLoginStore((state) => state.isLogin)();
@@ -338,7 +338,7 @@ function Cafe24Init() {
 		// cafe24에서 확인된 mall이고 로그인이 된 사용자라면 인터워크 페이지로 넘김
 		const result = await isConfirmedInterwork(mallId);
 		if (result && isLogin) {
-			goToParentUrl('/b2b/interwork/cafe24');
+			navigate('/b2b/interwork/cafe24');
 		}
 		return result;
 	}, [mallId, isLogin]);
@@ -361,11 +361,11 @@ function Cafe24Init() {
 	const moveSignUpPage = () => {
 		if (!mallId) {
 			window.alert('올바른 접근이 아닙니다.');
-			goToParentUrl('/');
+			navigate('/');
 			return;
 		}
 		if (isConfirmed) {
-			goToParentUrl('/');
+			navigate('/');
 			return;
 		}
 

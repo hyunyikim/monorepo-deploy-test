@@ -31,11 +31,12 @@ import {
 	imgDefaultRepair2x,
 } from '@/assets/images';
 import {Button} from '@/components';
-import {formatCommaNum, goToParentUrl, sendAmplitudeLog} from '@/utils';
+import {formatCommaNum, sendAmplitudeLog} from '@/utils';
 
 import styled from '@emotion/styled';
 import {makeStyles} from '@mui/styles';
 import TooltipComponent from '@/components/atoms/ToolTipComponent';
+import {useNavigate} from 'react-router-dom';
 
 type TopCustomerStateType = 'times' | 'amount';
 type SelectedButtonType = {
@@ -143,8 +144,10 @@ function DataWithToolTipBox({data}: WalletBoxProps) {
 }
 
 function TopBoxComponent({topData, order}: TopBoxPropsType) {
+	const navigate = useNavigate();
+
 	const goToCustomerDetailPage = (_name: string, _phone: string) => {
-		goToParentUrl(`/b2b/customer/${_name}/${_phone}`);
+		navigate(`/b2b/customer/${_name}/${_phone}`);
 	};
 
 	return (
@@ -208,6 +211,7 @@ function DashboardCustomerSection({
 	repairData,
 	partnershipData,
 }: CustomerOverviewProps) {
+	const navigate = useNavigate();
 	const [topCustomerTypeData, setTopCustomerTypeData] =
 		useState<TopCustomerStateType>('times');
 	const [topCustomerData, setTopCustomerData] = useState<
@@ -388,21 +392,21 @@ function DashboardCustomerSection({
 			}
 		);
 
-		goToParentUrl('/b2b/customer');
+		navigate('/b2b/customer');
 	};
 
 	const goToGuaranteeIssuePage = () => {
 		sendAmplitudeLog(`dashboard_topcustomer_send_guarantee_click`, {
 			pv_title: '개런티 발급으로 이동',
 		});
-		goToParentUrl('/b2b/guarantee/register');
+		navigate('/b2b/guarantee/register');
 	};
 
 	const goToServiceInterworkPage = () => {
 		sendAmplitudeLog(`dashboard_repair_install_click`, {
 			pv_title: '서비스 연동관리>수선신청 관리 상세로 이동',
 		});
-		goToParentUrl('/b2b/interwork/repair');
+		navigate('/b2b/interwork/repair');
 	};
 
 	const goToRepairListPage = (_title: string) => {
@@ -418,7 +422,7 @@ function DashboardCustomerSection({
 				pv_title: '수선 신청관리로 이동',
 			}
 		);
-		goToParentUrl('/b2b/repair');
+		navigate('/b2b/repair');
 	};
 
 	return (

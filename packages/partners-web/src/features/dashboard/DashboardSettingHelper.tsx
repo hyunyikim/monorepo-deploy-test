@@ -3,7 +3,7 @@ import {Typography} from '@mui/material';
 import {Stack, Box} from '@mui/system';
 import React, {useEffect, useState} from 'react';
 import SectionBox from './common/SectionBox';
-import {goToParentUrl, sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import {
 	imgDashboardSettingGuarantee,
 	imgDashboardSettingKakao,
@@ -13,12 +13,14 @@ import {IcClose, icGreenTick} from '@/assets/icon';
 import {PartnershipInfoResponse} from '@/@types';
 import {useCafe24GetInterworkByToken} from '@/stores';
 import {sub, differenceInDays, format} from 'date-fns';
+import {useNavigate} from 'react-router-dom';
 
 function DashboardSettingHelper({
 	partnershipData,
 }: {
 	partnershipData: PartnershipInfoResponse;
 }) {
+	const navigate = useNavigate();
 	const [stepState, setStepState] = useState<number>(0);
 	const [showSettingHelper, setShowSettingHelper] = useState<boolean>(false);
 	const {data: cafe24Interwork, isLoading} = useCafe24GetInterworkByToken();
@@ -119,7 +121,7 @@ function DashboardSettingHelper({
 	) => {
 		const {eventName, eventProperty} = taxoInfo;
 		sendAmplitudeLog(eventName, {button_title: eventProperty});
-		goToParentUrl(_url);
+		navigate(_url);
 	};
 
 	const closeHelper = () => {

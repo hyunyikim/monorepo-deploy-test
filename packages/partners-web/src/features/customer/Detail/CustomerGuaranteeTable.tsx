@@ -1,4 +1,5 @@
 import {format} from 'date-fns';
+import {useNavigate} from 'react-router-dom';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
@@ -14,7 +15,6 @@ import {
 	groupingCustomerGuaranteeRequestStates,
 	orderDirectionSearchFilter,
 } from '@/data';
-import {goToParentUrl} from '@/utils';
 
 import {
 	TableInfo,
@@ -36,6 +36,7 @@ const {
 	...customerGuaranteeInitialSearchFilter
 } = initialSearchFilter;
 function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
+	const navigate = useNavigate();
 	const {
 		isLoading,
 		data,
@@ -70,7 +71,6 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 							})
 						}
 						sx={{
-							marginRight: 1,
 							minWidth: '150px',
 						}}
 					/>
@@ -84,7 +84,6 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 							})
 						}
 						sx={{
-							marginRight: 1,
 							minWidth: '150px',
 						}}
 					/>
@@ -134,12 +133,12 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 											className="underline"
 											onClick={() => {
 												if (item.status === 'READY') {
-													goToParentUrl(
+													navigate(
 														`/b2b/guarantee/edit/${item.idx}`
 													);
 													return;
 												}
-												goToParentUrl(
+												navigate(
 													`/b2b/guarantee/${item.idx}?name=${name}&phone=${phone}`
 												);
 											}}>

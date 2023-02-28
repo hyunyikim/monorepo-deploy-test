@@ -1,10 +1,4 @@
-import React, {useState} from 'react';
-import styled from '@emotion/styled';
-import {css, keyframes} from '@emotion/react';
-
-// import {Swiper, SwiperSlide} from 'swiper/react';
-// import SwiperCore, {Navigation, FreeMode} from 'swiper';
-// import 'swiper/swiper.min.css';
+import {useNavigate} from 'react-router-dom';
 
 import Carousel from 'nuka-carousel';
 
@@ -45,17 +39,17 @@ import {
 	plusIcon2x,
 } from '@/assets/images/homepage/index';
 
-import {sendAmplitudeLog, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 function CategoryBrandSection() {
+	const navigate = useNavigate();
 	const screenWidth = window.innerWidth;
 
 	const goToSignup = () => {
 		sendAmplitudeLog('homepage_partnerssignup_click', {
 			button_title: '버클의 새로운 파트너가 되어 보세요!',
 		});
-
-		goToParentUrl('/auth/signup');
+		navigate('/auth/signup');
 	};
 
 	const newsList = [

@@ -5,6 +5,7 @@ import React, {
 	useEffect,
 	KeyboardEvent,
 } from 'react';
+import {useNavigate} from 'react-router-dom';
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
 import style from '@/assets/styles/style.module.scss';
@@ -68,12 +69,7 @@ import {
 	setCustomizedBrandCard,
 } from '@/api/guarantee-v1.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
-import {
-	goToParentUrl,
-	goToParentUrlWithState,
-	sendAmplitudeLog,
-	updateParentPartnershipData,
-} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import Header from '@/components/common/layout/Header';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
 import {useQueryClient} from '@tanstack/react-query';
@@ -663,6 +659,8 @@ export function InputFormSection({
 	const b2bType = data?.b2bType; // cooperator or brand or platform
 	const email = data?.email as string;
 	const location = useLocation();
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const {
 		handleSubmit,
@@ -726,8 +724,6 @@ export function InputFormSection({
 	const hasProfileLogo = data?.profileImage;
 
 	const maximumAdditionalCategory = b2bType === 'brand' ? 6 : 3;
-
-	const queryClient = useQueryClient();
 
 	// MessageModal 닫히고 나서, 다른 페이지로 이동할지의 여부
 	const [moveToAfterModalClose, setMoveToAfterModalClose] =
@@ -1140,8 +1136,10 @@ export function InputFormSection({
 			useCloseIcon: false,
 			onCloseFunc: () => {
 				setTimeout(() => {
-					updateParentPartnershipData();
-					goToParentUrl('/dashboard');
+					queryClient.invalidateQueries({
+						queryKey: ['partnershipInfo'],
+					});
+					navigate('/dashboard');
 				}, 200);
 			},
 		});
@@ -1159,8 +1157,10 @@ export function InputFormSection({
 					{button_title: '팝업 닫기'}
 				);
 				setTimeout(() => {
-					updateParentPartnershipData();
-					goToParentUrl('/dashboard');
+					queryClient.invalidateQueries({
+						queryKey: ['partnershipInfo'],
+					});
+					navigate('/dashboard');
 				}, 300);
 			},
 			buttons: (
@@ -1175,8 +1175,10 @@ export function InputFormSection({
 						}}
 						onClick={() => {
 							setTimeout(() => {
-								updateParentPartnershipData();
-								goToParentUrl('/b2b/interwork');
+								queryClient.invalidateQueries({
+									queryKey: ['partnershipInfo'],
+								});
+								navigate('/b2b/interwork');
 							}, 300);
 						}}>
 						Cafe24 연동하기
@@ -1191,8 +1193,10 @@ export function InputFormSection({
 						}}
 						onClick={() => {
 							setTimeout(() => {
-								updateParentPartnershipData();
-								goToParentUrl('/b2b/guarantee/register');
+								queryClient.invalidateQueries({
+									queryKey: ['partnershipInfo'],
+								});
+								navigate('/b2b/guarantee/register');
 							}, 300);
 						}}>
 						개런티 발급하기
@@ -1222,20 +1226,15 @@ export function InputFormSection({
 					isFirstTime: hasProfileLogo ? 'N' : 'Y',
 				};
 
-				updateParentPartnershipData();
-
-				goToParentUrl(
+				queryClient.invalidateQueries({
+					queryKey: ['partnershipInfo'],
+				});
+				navigate(
 					`/cafe24/interwork?${createSearchParams(
 						cafe24Query
 					).toString()}`
 				);
 				return;
-
-				/* TODO: 나중에 모노레포로 다 옮겼을때 아래 주석으로 변경 */
-				// return navigate({
-				// 	pathname: '/cafe24/interwork',
-				// 	search: `?${createSearchParams(cafe24Query)}`,
-				// });
 			}
 			// else
 			if (hasProfileLogo) {
@@ -1354,7 +1353,7 @@ export function InputFormSection({
 		}
 
 		setTimeout(() => {
-			goToParentUrl('/dashboard');
+			navigate('/dashboard');
 		}, 300);
 	};
 
@@ -1437,11 +1436,15 @@ export function InputFormSection({
 			!alreadySettingGuarantee &&
 			pathname.includes('/re-setup/guarantee')
 		) {
-			goToParentUrlWithState('/setup/guarantee', state);
+			navigate('/setup/guarantee', {
+				state,
+			});
 			return;
 		}
 		if (alreadySettingGuarantee && pathname.includes('/setup/guarantee')) {
-			goToParentUrlWithState('/re-setup/guarantee', state);
+			navigate('/re-setup/guarantee', {
+				state,
+			});
 			return;
 		}
 		// 수선신청 서비스 연동 완료 후 개런티 설정으로 넘어온 경우 추가정보 입력으로 포커스 옮김

@@ -1,6 +1,7 @@
+import {useNavigate} from 'react-router-dom';
+
 import {Stack, Typography} from '@mui/material';
 
-import {goToParentUrl} from '@/utils';
 import {ProductDetailResponse} from '@/@types';
 import {useGetPartnershipInfo} from '@/stores';
 
@@ -16,6 +17,7 @@ interface Props {
 }
 
 function ProductDetailInfo({data}: Props) {
+	const navigate = useNavigate();
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 
 	return (
@@ -46,7 +48,7 @@ function ProductDetailInfo({data}: Props) {
 						color={style.vircleGrey400}
 						className="cursor-pointer"
 						onClick={() => {
-							goToParentUrl(`/b2b/product/edit/${data.idx}`);
+							navigate(`/b2b/product/edit/${data.idx}`);
 						}}
 					/>
 				</Stack>

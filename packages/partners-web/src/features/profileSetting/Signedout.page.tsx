@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Stack} from '@mui/system';
 import {Typography, List, ListItem} from '@mui/material';
 import {
@@ -7,14 +8,16 @@ import {
 	TitleTypography,
 	ControlledInputComponent,
 } from '@/components';
-import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 import {cancleRequestSignout} from '@/api/auth.api';
+import {useQueryClient} from '@tanstack/react-query';
 
 function Signedout() {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const {
 		handleSubmit,
 		watch,
@@ -87,9 +90,12 @@ function Signedout() {
 	};
 
 	const confirmCancleSignoutHandler = () => {
-		updateParentPartnershipData();
+		queryClient.invalidateQueries({
+			queryKey: ['partnershipInfo'],
+		});
+
 		// setTimeout(() => {
-		// 	goToParentUrl('/dashboard');
+		navigate('/dashboard');
 		// }, 300);
 	};
 
@@ -112,7 +118,7 @@ function Signedout() {
 			const hasLeft = partnershipData.isLeaved;
 
 			if (hasLeft === 'N') {
-				goToParentUrl('/dashboard');
+				navigate('/dashboard');
 				return;
 			}
 		}

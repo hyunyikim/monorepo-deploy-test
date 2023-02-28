@@ -2,7 +2,7 @@ import {DialogActions, Typography, Stack} from '@mui/material';
 import {useModalStore} from '@/stores';
 import Button from '../atoms/Button';
 
-import {openChildModal, closeChildModal, sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 import {Dialog} from '@/components';
 import {useEffect} from 'react';
@@ -45,10 +45,8 @@ function ModalComponent() {
 
 	useEffect(() => {
 		if (isOpen) {
-			openChildModal();
 			return;
 		}
-		closeChildModal();
 
 		/* 모달이 닫히면 모달옵션 초기화 */
 		if (!isOpen && typeof setIsOpen === 'function') {

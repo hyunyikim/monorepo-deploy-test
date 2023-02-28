@@ -1,4 +1,6 @@
 import {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+
 import {Stack} from '@mui/system';
 import {Typography, Grid} from '@mui/material';
 import {
@@ -20,11 +22,12 @@ import {
 	handleChangeDataFormat,
 	formatPhoneNum,
 	formatBusinessNum,
-	updateParentPartnershipData,
-	goToParentUrl,
 } from '@/utils';
+import {useQueryClient} from '@tanstack/react-query';
 
 function ProfileSetting() {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const {
 		handleSubmit,
 		watch,
@@ -79,7 +82,7 @@ function ProfileSetting() {
 	];
 
 	const goToSignoutPage = () => {
-		goToParentUrl('/setting/signout');
+		navigate('/setting/signout');
 	};
 
 	/**
@@ -283,9 +286,9 @@ function ProfileSetting() {
 								title: '프로필이 수정되었습니다.',
 								showBottomCloseButton: true,
 								onCloseFunc: () => {
-									setTimeout(() => {
-										updateParentPartnershipData();
-									}, 300);
+									queryClient.invalidateQueries({
+										queryKey: ['partnershipInfo'],
+									});
 								},
 							});
 						}
@@ -299,9 +302,9 @@ function ProfileSetting() {
 							title: '프로필이 수정되었습니다.',
 							showBottomCloseButton: true,
 							onCloseFunc: () => {
-								setTimeout(() => {
-									updateParentPartnershipData();
-								}, 300);
+								queryClient.invalidateQueries({
+									queryKey: ['partnershipInfo'],
+								});
 							},
 						});
 					}
@@ -345,6 +348,7 @@ function ProfileSetting() {
 			sx={{
 				gap: '40px',
 				maxWidth: '800px',
+				width: '100%',
 				margin: '40px auto 130px auto',
 			}}>
 			<form
@@ -485,7 +489,6 @@ function ProfileSetting() {
 					onClick={goToSignoutPage}>
 					회원탈퇴
 				</CapsuleButton>
-
 				<FixedBottomNavBar
 					sx={{
 						'& .MuiGrid-root': {

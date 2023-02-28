@@ -16,13 +16,9 @@ import {
 
 import {useCheckboxList} from '@/utils/hooks';
 import {imgDefaultPieChart, imgDefaultPieChart2x} from '@/assets/images';
-import {
-	formatCommaNum,
-	goToParentUrl,
-	dashboardDateStack,
-	sendAmplitudeLog,
-} from '@/utils';
+import {formatCommaNum, dashboardDateStack, sendAmplitudeLog} from '@/utils';
 import {DashboardPeriodType} from '@/@types/dashboard.types';
+import {useNavigate} from 'react-router-dom';
 
 type OverviewBoxProps = {
 	title: string | number;
@@ -40,6 +36,7 @@ function GuaranteeOverviewBox({
 	img,
 	guaranteeVal,
 }: OverviewBoxProps) {
+	const navigate = useNavigate();
 	// const {onHandleChangeFilter} = useCheckboxList({
 	// 	idxList: [1242],
 	// });
@@ -79,7 +76,7 @@ function GuaranteeOverviewBox({
 		// 		console.log('after _value', _value);
 		// 	}, 500);
 		// }
-		goToParentUrl('/b2b/guarantee');
+		navigate('/b2b/guarantee');
 		return;
 	};
 

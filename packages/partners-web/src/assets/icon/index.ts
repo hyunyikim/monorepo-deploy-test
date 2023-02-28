@@ -38,6 +38,7 @@ export {default as IcPlus} from './ic-plus.svg';
 export {default as IcPencil} from './ic-pencil.svg';
 export {default as IcPaperPlane} from './ic-paper-plane.svg';
 export {default as IcWarningTriangle} from './ic-warning-triangle.svg';
+export {default as IcExclamationMark} from './ic-exclamation-mark.svg';
 
 export {default as exampleBrandIcon} from './icon_example_brands_icon.png';
 export {default as exampleBrandIcon2x} from './icon_example_brands_icon@2x.png';
@@ -58,6 +59,8 @@ export {default as IcAtm} from './ic-atm.svg';
 export {default as IcCalendar} from './ic-calendar.svg';
 export {default as IcReceipt} from './ic-receipt.svg';
 export {default as IcInformation} from './ic-information.svg';
+export {default as IcRepairScissors} from './ic-repair-scissors.svg';
+export {default as IcWalletList} from './ic-wallet-list.svg';
 
 export {default as IcDocsInGreyBox} from './icon_docs_in_grey_box_40.png';
 export {default as IcCrossoutInRedBox} from './icon_crossout_in_red_box_40.png';

@@ -3,7 +3,7 @@ import {Dispatch, SetStateAction, useCallback, useMemo} from 'react';
 import {Backdrop, Stack, Typography} from '@mui/material';
 
 import {PricePlan} from '@/@types';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 import style from '@/assets/styles/style.module.scss';
 import {ENTERPRISE_PLAN, getChargedPlanDescription} from '@/data';
 import {useGetPricePlanListByPlanType} from '@/stores';
@@ -31,7 +31,7 @@ function SubscribePlanSelect({
 		open: modalOpen,
 		onOpen: onModalOpen,
 		onClose: onModalClose,
-	} = useChildModalOpen({});
+	} = useOpen({});
 
 	const onSelect = useCallback(
 		(value: PricePlan) => {

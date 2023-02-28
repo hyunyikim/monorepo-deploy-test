@@ -1,4 +1,4 @@
-import {goToParentUrl} from '@/utils';
+import {useNavigate} from 'react-router-dom';
 import {Breadcrumbs as MuiBreadcrumbs, Link, Typography} from '@mui/material';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 }
 
 function Breadcrumbs({before, current}: Props) {
+	const navigate = useNavigate();
 	return (
 		<MuiBreadcrumbs
 			aria-label="breadcrumb"
@@ -35,7 +36,7 @@ function Breadcrumbs({before, current}: Props) {
 					// href={item.href}
 					className="cursor-pointer"
 					onClick={() => {
-						goToParentUrl(item.href);
+						navigate(item.href);
 					}}>
 					{item.title}
 				</Link>

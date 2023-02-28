@@ -1,12 +1,13 @@
+import {useNavigate} from 'react-router-dom';
 import {Stack, Typography} from '@mui/material';
 
 import {GuaranteeDetail} from '@/@types';
 
 import DetailInfoColumn from '@/features/common/DetailInfoColumn';
-import {goToParentUrl} from '@/utils';
 
 function RepairGuaranteeDetailInfo({data}: {data: GuaranteeDetail}) {
 	const idx = data?.idx;
+	const navigate = useNavigate();
 	return (
 		<Stack
 			flexDirection="column"
@@ -34,7 +35,7 @@ function RepairGuaranteeDetailInfo({data}: {data: GuaranteeDetail}) {
 					isLink={idx ? true : false}
 					onClick={() => {
 						if (idx) {
-							goToParentUrl(`/b2b/guarantee/${idx}`);
+							navigate(`/b2b/guarantee/${idx}`);
 						}
 					}}
 					sx={{

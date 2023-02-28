@@ -21,7 +21,7 @@ import {
 	isPlanEnterprise,
 	TRIAL_PLAN,
 } from '@/data';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 
 import ChargedSubscribePlan from './SubscribePlan/ChargedSubscribePlan';
 import SubscribeNotice from './SubscribeNotice';
@@ -46,7 +46,7 @@ function SubscribeManagementTab() {
 		open: subscribeCheckModalOpen,
 		onOpen: onSubscribeCheckModalOpen,
 		onClose: onSubscribeCheckModalClose,
-	} = useChildModalOpen({});
+	} = useOpen({});
 
 	const initialPlan = useMemo(() => {
 		if (!planList || !yearPlanList) {

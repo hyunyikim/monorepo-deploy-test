@@ -7,7 +7,6 @@ import {Stack} from '@mui/material';
 
 import {ProductDetailResponse, ProductRegisterFormData} from '@/@types';
 import {productRegisterSchemaShape} from '@/utils/schema';
-import {goToParentUrl} from '@/utils';
 
 import {Button} from '@/components';
 import {
@@ -125,7 +124,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 					title: '상품이 등록되었습니다.',
 					showBottomCloseButton: true,
 					onCloseFunc: () => {
-						goToParentUrl('/b2b/product');
+						navigate('/b2b/product');
 					},
 				});
 			} catch (e: any) {
@@ -151,7 +150,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 					title: '상품이 수정되었습니다.',
 					showBottomCloseButton: true,
 					onCloseFunc: () => {
-						goToParentUrl('/b2b/product');
+						navigate('/b2b/product');
 					},
 				});
 			} catch (e: any) {
@@ -177,7 +176,7 @@ function ProductRegisterForm({mode, initialData}: Props) {
 										title: '상품이 삭제되었습니다.',
 										showBottomCloseButton: true,
 										onCloseFunc: () => {
-											goToParentUrl('/b2b/product');
+											navigate('/b2b/product');
 										},
 									});
 								} catch (e: any) {

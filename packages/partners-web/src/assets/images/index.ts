@@ -43,6 +43,9 @@ export {default as ImgServiceInterworkKakao2x} from './img-service-interwork-kak
 export {default as ImgServiceInterworkKakaoSample1} from './img-service-interwork-kakao-sample1.png';
 export {default as ImgServiceInterworkKakaoSample2} from './img-service-interwork-kakao-sample2.png';
 export {default as ImgServiceKakaoConnectExample} from './img-kakao-connect-example.png';
+export {default as ImgUsageGuideRobot} from './img_usage_guide_robot.png';
+export {default as ImgUsageGuideRobot2x} from './img_usage_guide_robot@2x.png';
+
 export {default as imgPopupBanner} from './img_stop_paper_popup.png';
 export {default as imgPopupBanner2x} from './img_stop_paper_popup@2x.png';
 export {default as imgPopupBannerM} from './img_stop_paper_popup_m.png';

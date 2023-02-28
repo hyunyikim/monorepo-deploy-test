@@ -1,8 +1,7 @@
-import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import styled from '@emotion/styled';
-import {css, keyframes} from '@emotion/react';
 import {imgBeta, imgScissorsInGreenBox} from '@/assets/images/homepage/index';
-import {goToParentUrl, sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 const AdditionalServiceContainer = styled('section')`
 	padding: 160px 0px;
@@ -199,12 +198,13 @@ const TextGridStyle = styled('div')`
 `;
 
 function AdditionalServiceSection() {
+	const navigate = useNavigate();
 	const goToSignup = () => {
 		sendAmplitudeLog('homepage_pricing_start_trial_mid_click', {
 			button_title: '무료 체험 시작하기 클릭',
 		});
 		setTimeout(() => {
-			goToParentUrl('/auth/signup');
+			navigate('/auth/signup');
 		}, 300);
 	};
 	return (

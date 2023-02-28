@@ -18,8 +18,9 @@ import {
 	imgBrandStoryTheidentity,
 } from '@/assets/images';
 import {getNoticeTableList} from '@/api/dashboard';
-import {sendAmplitudeLog, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import AtagComponent from '@/components/atoms/AtagComponent';
+import {useNavigate} from 'react-router-dom';
 
 interface NoticeInterface {
 	Date: string;
@@ -27,6 +28,7 @@ interface NoticeInterface {
 	id: string;
 }
 function DashboardInfoCentreSection() {
+	const navigate = useNavigate();
 	const [screenWidth, setScreenWidth] = useState<number>(1201);
 	const [noticeList, setNoticeList] = useState<NoticeInterface[] | []>([]);
 
@@ -426,7 +428,7 @@ function DashboardInfoCentreSection() {
 																eventProperty,
 														}
 													);
-													goToParentUrl(link);
+													navigate(link);
 												}}>
 												<Typography
 													variant="h3"

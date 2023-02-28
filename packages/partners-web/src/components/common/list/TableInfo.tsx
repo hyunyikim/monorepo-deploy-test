@@ -1,4 +1,4 @@
-import {Box, BoxProps} from '@mui/material';
+import {Box, BoxProps, Stack} from '@mui/material';
 
 interface Props extends BoxProps {
 	info?: string;
@@ -32,14 +32,13 @@ function TableInfo({info = '전체', totalSize, unit, children, sx = {}}: Props)
 				</Box>
 				{unit}
 			</Box>
-			<Box
+			<Stack
+				flexDirection="row"
 				sx={{
-					'& > *': {
-						marginRight: '8px',
-					},
+					gap: '8px',
 				}}>
 				{children}
-			</Box>
+			</Stack>
 		</Box>
 	);
 }

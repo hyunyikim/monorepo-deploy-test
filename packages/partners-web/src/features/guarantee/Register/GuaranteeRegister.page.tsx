@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {useLocation, useParams} from 'react-router-dom';
+import {useLocation, useParams, useNavigate} from 'react-router-dom';
 import {parse} from 'qs';
 
 import {Stack} from '@mui/material';
@@ -7,7 +7,7 @@ import {Stack} from '@mui/material';
 import {GauranteeDetailResponse} from '@/@types';
 import {getGuaranteeDetail} from '@/api/guarantee.api';
 import {PAGE_MAX_WIDTH} from '@/data';
-import {goToParentUrl, usePageView} from '@/utils';
+import {usePageView} from '@/utils';
 import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
 import GuaranteeRegisterForm from '@/features/guarantee/Register/GuaranteeRegisterForm';
@@ -18,6 +18,7 @@ function GuaranteeRegister() {
 	usePageView('guarantee_publish_pv', '개런티발급 노출');
 	const params = useParams();
 	const {search} = useLocation();
+	const navigate = useNavigate();
 	const idx = params?.idx;
 	const productIdx = parse(search, {
 		ignoreQueryPrefix: true,
@@ -53,21 +54,10 @@ function GuaranteeRegister() {
 		// 개런티 최초 설정 요청
 		onOpenMessageDialog({
 			title: '개런티 설정 후 개런티 등록이 가능합니다.',
-			showBottomCloseButton: false,
-			buttons: (
-				<>
-					<Button
-						color="black"
-						variant="contained"
-						onClick={() => {
-							goToParentUrl('/setup/guarantee');
-						}}>
-						확인
-					</Button>
-				</>
-			),
+			showBottomCloseButton: true,
+			closeButtonValue: '확인',
 			onCloseFunc: () => {
-				goToParentUrl('/setup/guarantee');
+				navigate('/setup/guarantee');
 			},
 		});
 	}, [onOpenMessageDialog, partnershipInfo]);

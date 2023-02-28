@@ -10,13 +10,14 @@ import {
 	Select,
 	Checkbox,
 } from '@/components';
-import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import {Option} from '@/@types';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 import {requestSignout} from '@/api/auth.api';
+import {useQueryClient} from '@tanstack/react-query';
+import {useNavigate} from 'react-router-dom';
 
 interface SignoutInfoProps {
 	reason: Option;
@@ -24,6 +25,8 @@ interface SignoutInfoProps {
 }
 
 function Signout() {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const {
 		handleSubmit,
 		watch,
@@ -122,12 +125,14 @@ function Signout() {
 				reason: value,
 				password: values.password,
 			});
-
+			await queryClient.invalidateQueries({
+				queryKey: ['partnershipInfo'],
+			});
 			if (signoutRes && signoutRes.result === 'SUCCESS') {
 				closeMessageModal();
-				setTimeout(() => {
-					updateParentPartnershipData();
-				}, 300);
+				navigate('/signedout', {
+					replace: true,
+				});
 			}
 		} catch (e) {
 			/* FIXME: 아래 워닝 수정! */

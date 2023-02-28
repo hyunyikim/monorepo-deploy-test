@@ -3,7 +3,7 @@ import {Stack} from '@mui/material';
 
 interface Props {
 	fullWidth?: boolean;
-	maxWidth?: number;
+	maxWidth?: number | string;
 	children: React.ReactNode;
 }
 
@@ -19,7 +19,11 @@ function ContentWrapper({fullWidth, maxWidth, children}: Props) {
 				// ...(fullWidth && {}),
 				...(!fullWidth && {
 					// margin: '40px',
-					maxWidth: maxWidth ? `${maxWidth}px` : PAGE_MAX_WIDTH,
+					maxWidth: maxWidth
+						? typeof maxWidth === 'number'
+							? `${maxWidth}px`
+							: maxWidth
+						: PAGE_MAX_WIDTH,
 				}),
 			}}>
 			{children}

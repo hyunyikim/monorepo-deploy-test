@@ -14,7 +14,7 @@ import {
 	PRODUCT_EXCEL_COLUMN,
 	PRODUCT_EXCEL_INPUT,
 } from '@/data';
-import {useChildModalOpen, useExcelUpload} from '@/utils/hooks';
+import {useOpen, useExcelUpload} from '@/utils/hooks';
 
 import {ContentWrapper, TitleTypography, Button} from '@/components';
 import LackExcelInformationModal from '@/features/common/Excel/LackExcelInformationModal';
@@ -122,7 +122,7 @@ function ProductExcelUpload() {
 		onOpen: onOpenLackExcelInformationModal,
 		onClose: onCloseLackExcelInformationModal,
 		open: openLackExcelInformationModal,
-	} = useChildModalOpen({
+	} = useOpen({
 		handleClose: () => {
 			sendAmplitudeLog(
 				'itemadmin_excelpublish_infodeficiency_popupcomplete',
@@ -140,7 +140,7 @@ function ProductExcelUpload() {
 		onSetModalData: setProductImgModalData,
 		modalData: productImgModalData,
 		open: openProductImgModal,
-	} = useChildModalOpen({
+	} = useOpen({
 		handleClose: () => {
 			setProductImgModalData(null);
 		},

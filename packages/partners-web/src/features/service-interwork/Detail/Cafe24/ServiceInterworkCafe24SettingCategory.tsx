@@ -1,4 +1,4 @@
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 
 import {
 	Button,
@@ -33,7 +33,7 @@ function ServiceInterworkCafe24SettingCategory({
 		open: categoryModalOpen,
 		onOpen: onCategoryModalOpen,
 		onClose: onCategoryModalClose,
-	} = useChildModalOpen({});
+	} = useOpen({});
 	return (
 		<>
 			<Stack

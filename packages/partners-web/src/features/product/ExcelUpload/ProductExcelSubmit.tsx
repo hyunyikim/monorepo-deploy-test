@@ -1,4 +1,5 @@
 import {useMemo, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Button} from '@/components';
 import {
 	ExcelError,
@@ -12,8 +13,7 @@ import {
 	useMessageDialog,
 } from '@/stores';
 import ProgressModal from '@/features/common/ProgressModal';
-import {useChildModalOpen} from '@/utils/hooks';
-import {goToParentUrl} from '@/utils';
+import {useOpen} from '@/utils/hooks';
 import {CATEGORIES, customFieldsToJSONString} from '@/data';
 import {bulkRegisterProduct} from '@/api/product.api';
 
@@ -23,6 +23,7 @@ interface Props {
 }
 
 function ProductExcelSubmit({gridData, excelErrors}: Props) {
+	const navigate = useNavigate();
 	const [requestCount, setRequestCount] = useState(0);
 	const totalCount = useMemo(() => gridData?.length || 0, [gridData]);
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
@@ -36,7 +37,7 @@ function ProductExcelSubmit({gridData, excelErrors}: Props) {
 		open: openRegisterGuaranteeListModal,
 		onOpen: onOpenRegisterGuaranteeListModal,
 		onClose: onCloseRegisterGuaranteeListModal,
-	} = useChildModalOpen({});
+	} = useOpen({});
 
 	const handleSubmit = async () => {
 		if (!gridData || gridData?.length === 0) {
@@ -111,7 +112,7 @@ function ProductExcelSubmit({gridData, excelErrors}: Props) {
 			showBottomCloseButton: true,
 			closeButtonValue: '확인',
 			onCloseFunc: () => {
-				goToParentUrl('/b2b/product');
+				navigate('/b2b/product');
 			},
 		});
 	};

@@ -1,4 +1,4 @@
-import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import {
 	endingBg,
 	endingBg2x,
@@ -7,18 +7,19 @@ import {
 	endingTitleMobile,
 	endingTitleMobile2x,
 } from '@/assets/images/homepage/index';
-import {sendAmplitudeLog, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 // import '../../assets/scss/partnersHomepage.scss';
 
 function EndingSection() {
 	const screenWidth = window.innerWidth;
+	const navigate = useNavigate();
 	const goToSignup = () => {
 		sendAmplitudeLog(`homepage_signupbottom_click`, {
 			button_title: `무료로 시작하기`,
 		});
 
-		goToParentUrl(`/auth/signup`);
+		navigate(`/auth/signup`);
 	};
 
 	return (

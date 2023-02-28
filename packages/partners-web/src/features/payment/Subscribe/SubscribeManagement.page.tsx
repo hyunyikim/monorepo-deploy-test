@@ -12,7 +12,6 @@ import SubscribeHistoryTab from '@/features/payment/Subscribe/SubscribeHistory/S
 import {IcChevronRight} from '@/assets/icon';
 
 import style from '@/assets/styles/style.module.scss';
-import {goToParentUrl} from '@/utils';
 
 function SubscribeManagement() {
 	const location = useLocation();
@@ -60,7 +59,7 @@ function SubscribeManagement() {
 						textDecoration: 'none',
 					}}
 					onClick={() => {
-						goToParentUrl('/pricing');
+						navigate('/pricing');
 					}}>
 					자세한 가격 및 기능{' '}
 					<IcChevronRight

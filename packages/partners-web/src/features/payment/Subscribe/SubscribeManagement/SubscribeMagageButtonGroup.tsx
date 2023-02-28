@@ -20,7 +20,7 @@ import {
 	BAN_PLAN_UPGRADE_MODAL,
 } from '@/data';
 import {patchPricePlan} from '@/api/payment.api';
-import {updateUserPricePlanData, openChannelTalk} from '@/utils';
+import {openChannelTalk} from '@/utils';
 
 import {Button} from '@/components';
 import CancelSubscribe from './CancelSubscribe';
@@ -249,7 +249,6 @@ function SubscribeMagageButtonGroup({
 										setIsAvailableSelect(false);
 									},
 								});
-								updateUserPricePlanData();
 								queryClient.invalidateQueries({
 									queryKey: ['userPricePlan'],
 								});

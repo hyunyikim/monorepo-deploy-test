@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import {useMessageDialog} from '@/stores';
-import {openChildModal, closeChildModal} from '@/utils';
 
 import {Button} from '@/components';
 import {IcClose} from '@/assets/icon';
@@ -19,9 +18,6 @@ function MessageDialog() {
 	const title = useMessageDialog((state) => state.title);
 	const message = useMessageDialog((state) => state.message);
 	const useCloseIcon = useMessageDialog((state) => state.useCloseIcon);
-	const sendCloseModalControlToParent = useMessageDialog(
-		(state) => state.sendCloseModalControlToParent
-	);
 	const disableClickBackground = useMessageDialog(
 		(state) => state.disableClickBackground
 	);
@@ -37,14 +33,6 @@ function MessageDialog() {
 	const initMessageDialog = useMessageDialog(
 		(state) => state.initMessageDialog
 	);
-
-	useEffect(() => {
-		if (open) {
-			openChildModal();
-			return;
-		}
-		sendCloseModalControlToParent && closeChildModal();
-	}, [open, sendCloseModalControlToParent]);
 
 	const handleClose = useCallback(() => {
 		if (onCloseFunc) {

@@ -1,8 +1,9 @@
 import {useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {Box, Typography} from '@mui/material';
 
-import {formatPhoneNum, goToParentUrl} from '@/utils';
+import {formatPhoneNum} from '@/utils';
 
 import {Avatar} from '@/components';
 
@@ -20,6 +21,7 @@ function CustomerInfoLabel({
 	data,
 	isNameLink = false,
 }: Props) {
+	const navigate = useNavigate();
 	const purePhoneNumber = useMemo(() => {
 		const phoneNumber = data?.phoneNumber;
 		if (!phoneNumber) {
@@ -45,7 +47,7 @@ function CustomerInfoLabel({
 					{...(isNameLink && {
 						className: 'underline',
 						onClick: () => {
-							goToParentUrl(
+							navigate(
 								`/b2b/customer/${
 									data?.name || ''
 								}/${purePhoneNumber}`

@@ -1,17 +1,24 @@
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {parse} from 'qs';
 
 import {Stack, Typography} from '@mui/material';
 
 import {ImgTelegram, ImgTelegram2x} from '@/assets/images';
 import {sendEmailVerification} from '@/api/auth.api';
-import {goToParentUrl} from '@/utils';
+import {HEADER_HEIGHT} from '@/data';
 
 function EmailVerificationFail() {
 	const {search} = useLocation();
+	const navigate = useNavigate();
 
 	return (
-		<Stack justifyContent="center" alignItems="center">
+		<Stack
+			justifyContent="center"
+			alignItems="center"
+			sx={{
+				minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+				height: '100%',
+			}}>
 			<img
 				src={ImgTelegram}
 				srcSet={`${ImgTelegram2x} 2x`}
@@ -59,8 +66,7 @@ function EmailVerificationFail() {
 						const email = parsedSearch?.email;
 						if (!email) return;
 						await sendEmailVerification(email);
-						// navigate('/');
-						goToParentUrl('/');
+						navigate('/');
 					} catch (e) {
 						console.log('e :>> ', e);
 					}

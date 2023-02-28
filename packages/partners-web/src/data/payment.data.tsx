@@ -8,7 +8,7 @@ import {
 	OnOpenParamType,
 } from '@/@types';
 import {Button} from '@/components';
-import {goToParentUrl, openChannelTalk} from '@/utils';
+import {openChannelTalk} from '@/utils';
 import {
 	addMonths,
 	isBefore,
@@ -56,30 +56,12 @@ export const PAYMENT_MESSAGE_MODAL: Record<
 		showBottomCloseButton: true,
 		closeButtonValue: '닫기',
 		disableClickBackground: true,
-		buttons: (
-			<Button
-				color="black"
-				onClick={() => {
-					goToParentUrl('/b2b/payment/subscribe');
-				}}>
-				플랜 업그레이드
-			</Button>
-		),
 	},
 	PLAN_SUBSCRIBE: {
 		title: '플랜 구독하고 개런티를 발급해보세요!',
 		showBottomCloseButton: true,
 		closeButtonValue: '닫기',
 		disableClickBackground: true,
-		buttons: (
-			<Button
-				color="black"
-				onClick={() => {
-					goToParentUrl('/b2b/payment/subscribe');
-				}}>
-				구독
-			</Button>
-		),
 	},
 	LACKING_GUARANTEE: {
 		title: '개런티 발급량이 부족합니다.',
@@ -93,15 +75,6 @@ export const PAYMENT_MESSAGE_MODAL: Record<
 		),
 		showBottomCloseButton: true,
 		closeButtonValue: '닫기',
-		buttons: (
-			<Button
-				color="black"
-				onClick={() => {
-					goToParentUrl('/b2b/payment/subscribe');
-				}}>
-				플랜 업그레이드
-			</Button>
-		),
 	},
 };
 
