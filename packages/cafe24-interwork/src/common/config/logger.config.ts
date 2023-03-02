@@ -7,6 +7,7 @@ import {
 import {ConfigService} from '@nestjs/config';
 import * as winston from 'winston';
 import * as WinstonCloudwatch from 'winston-cloudwatch';
+import {DateTime} from 'luxon';
 
 @Injectable()
 export class WinstonLoggerService implements WinstonModuleOptionsFactory {
@@ -23,9 +24,7 @@ export class WinstonLoggerService implements WinstonModuleOptionsFactory {
 			logGroupName: this.configService.getOrThrow(
 				'AWS_CLOUDWATCH_LOG_GROUP'
 			),
-			logStreamName: this.configService.getOrThrow(
-				'AWS_CLOUDWATCH_LOG_STREAM'
-			),
+			logStreamName: () => DateTime.now().toFormat('yyyy-MM-dd'),
 			jsonMessage: true,
 			awsRegion: this.configService.getOrThrow('AWS_CLOUDWATCH_REGION'),
 		});
