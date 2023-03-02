@@ -1,12 +1,4 @@
-import React from 'react';
-import {
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-	ReactElement,
-	ReactNode,
-} from 'react';
+import {ReactNode} from 'react';
 
 import {
 	Box,
@@ -32,6 +24,8 @@ function SectionBox({children, sx}: SectionBoxProps) {
 				boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 				borderRadius: '8px',
 				padding: '24px',
+				minHeight: '400px',
+				maxHeight: '400px',
 				...sx,
 			}}>
 			{children}

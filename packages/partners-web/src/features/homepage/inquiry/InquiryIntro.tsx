@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import {goToParentUrl, sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 import {
 	imgInquiryBg,

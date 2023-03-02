@@ -1,8 +1,9 @@
 import React, {useState, useEffect, useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
-import {formatCommaNum, goToParentUrl, sendAmplitudeLog} from '@/utils';
+import {formatCommaNum, sendAmplitudeLog} from '@/utils';
 import {
 	imgBlueCheckTick,
 	imgBlueCheckTick2x,
@@ -624,6 +625,7 @@ interface openEmailModalProps {
 type PricePlanListProps = PricePlan;
 
 function PriceIntroSection({openEmailModal}: openEmailModalProps) {
+	const navigate = useNavigate();
 	const [pricePlanPeriodState, setPricePlanPeriodState] =
 		useState<PricePlanPeriodProps>('YEAR');
 	const [priceClickState, setPriceClickState] = useState<number>(0);
@@ -669,7 +671,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 		sendAmplitudeLog('homepage_pricing_start_trial_top_click', {
 			button_title: '무료 체험 시작하기 클릭',
 		});
-		goToParentUrl('/auth/signup');
+		navigate('/auth/signup');
 	};
 	const openIntroductionInquiryModal = (_location: string) => {
 		if (_location) {
@@ -677,7 +679,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 				button_title: '도입문의 버튼 클릭',
 			});
 			setTimeout(() => {
-				goToParentUrl('/inquiry');
+				navigate('/inquiry');
 			}, 200);
 		}
 	};

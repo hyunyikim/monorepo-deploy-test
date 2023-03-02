@@ -1,4 +1,4 @@
-import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Controller, Scene} from 'react-scrollmagic';
 import {Tween, Timeline} from 'react-gsap';
 import {
@@ -15,7 +15,7 @@ import {
 	headphone,
 } from '@/assets/images/homepage/index';
 
-import {sendAmplitudeLog, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 interface openEmailModalProps {
 	openEmailModal(): void;
@@ -23,21 +23,20 @@ interface openEmailModalProps {
 
 function IntroSection({openEmailModal}: openEmailModalProps) {
 	const screenWidth = window.innerWidth;
+	const navigate = useNavigate();
 
 	const goToSignup = () => {
 		sendAmplitudeLog('homepage_signuptop_click', {
 			button_title: '30일 무료 체험 시작하기',
 		});
-
-		goToParentUrl(`/auth/signup`);
+		navigate(`/auth/signup`);
 	};
 
 	const goToInquiry = () => {
 		sendAmplitudeLog('homepage_introductiontop_click', {
 			button_title: '도입문의 클릭',
 		});
-
-		goToParentUrl(`/inquiry`);
+		navigate(`/inquiry`);
 	};
 
 	return (

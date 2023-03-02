@@ -1,20 +1,19 @@
 import {useEffect, useMemo, useState} from 'react';
-import {useParams} from 'react-router-dom';
-
-import {Stack} from '@mui/material';
+import {useParams, useNavigate} from 'react-router-dom';
 
 import ProductRegisterForm from '@/features/product/Register/ProductRegisterForm';
 import {ProductDetailResponse} from '@/@types';
 import {getProductDetail} from '@/api/product.api';
 import {PAGE_MAX_WIDTH} from '@/data';
-import {goToParentUrl, usePageView} from '@/utils';
+import {usePageView} from '@/utils';
 import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
 
-import {Button, TitleTypography, TitleTypography} from '@/components';
+import {ContentWrapper, TitleTypography} from '@/components';
 
 function ProductRegister() {
 	usePageView('itemadmin_regist_pv', '상품등록 화면 진입');
 	const params = useParams();
+	const navigate = useNavigate();
 	const idx = params?.idx;
 
 	const [data, setData] = useState<ProductDetailResponse | null>(null);
@@ -47,21 +46,10 @@ function ProductRegister() {
 		// 개런티 최초 설정 요청
 		onOpenMessageDialog({
 			title: '개런티 설정 후 상품 등록이 가능합니다.',
-			showBottomCloseButton: false,
-			buttons: (
-				<>
-					<Button
-						color="black"
-						variant="contained"
-						onClick={() => {
-							goToParentUrl('/setup/guarantee');
-						}}>
-						확인
-					</Button>
-				</>
-			),
+			showBottomCloseButton: true,
+			closeButtonValue: '확인',
 			onCloseFunc: () => {
-				goToParentUrl('/setup/guarantee');
+				navigate('/setup/guarantee');
 			},
 		});
 	}, [onOpenMessageDialog, partnershipInfo]);
@@ -69,18 +57,14 @@ function ProductRegister() {
 	const formControlMode = useMemo(() => (idx ? 'edit' : 'register'), [idx]);
 
 	return (
-		<Stack
-			flexDirection="column"
-			maxWidth={PAGE_MAX_WIDTH}
-			margin="auto"
-			my={5}>
+		<ContentWrapper maxWidth={PAGE_MAX_WIDTH}>
 			<TitleTypography
 				title={`상품 ${
 					formControlMode === 'register' ? '등록' : '수정'
 				}하기`}
 			/>
 			<ProductRegisterForm mode={formControlMode} initialData={data} />
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

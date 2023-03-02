@@ -1,17 +1,18 @@
 import {useCallback, useMemo, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {ButtonBase, Typography, MenuItem, Menu, Stack} from '@mui/material';
 
 import {Avatar} from '@/components';
 import {PartnershipInfoResponse} from '@/@types';
 import {useLoginStore} from '@/stores';
-import {goToParentUrl} from '@/utils';
 
 interface Props {
 	data: PartnershipInfoResponse;
 }
 
 function HeaderProfile({data}: Props) {
+	const navigate = useNavigate();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const setLogout = useLoginStore((state) => state.setLogout);
 
@@ -28,7 +29,9 @@ function HeaderProfile({data}: Props) {
 
 	const handleLogout = useCallback(() => {
 		setLogout();
-		goToParentUrl('/auth/logout');
+		navigate('/', {
+			replace: true,
+		});
 	}, [setLogout]);
 
 	const isOpen = useMemo(() => Boolean(anchorEl), [anchorEl]);
@@ -89,10 +92,18 @@ function HeaderProfile({data}: Props) {
 						boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 						transform: 'translateY(10px) !important',
 						'& .MuiMenuItem-root': {
-							fontSize: '13px',
+							fontSize: '14px',
+							height: '40px',
 						},
 					},
 				}}>
+				<MenuItem
+					onClick={() => {
+						navigate('/setting/profile');
+						handleClose();
+					}}>
+					계정 설정
+				</MenuItem>
 				<MenuItem onClick={handleLogout}>로그아웃</MenuItem>
 			</Menu>
 		</Stack>

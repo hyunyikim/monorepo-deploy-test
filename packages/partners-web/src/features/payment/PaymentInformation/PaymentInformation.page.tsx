@@ -4,7 +4,7 @@ import {parse, stringify} from 'qs';
 
 import {Typography, Stack} from '@mui/material';
 
-import {useChildModalOpen, useTabQueryParam} from '@/utils/hooks';
+import {useOpen, useTabQueryParam} from '@/utils/hooks';
 
 import {Button, ContentWrapper, Tab} from '@/components';
 import PaymentCardTab from './PaymentCard/PaymentCardTab';
@@ -26,7 +26,7 @@ function PaymentInformation() {
 	});
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const {data: partnershipData} = useGetPartnershipInfo();
-	const {open, onOpen, onClose} = useChildModalOpen({});
+	const {open, onOpen, onClose} = useOpen({});
 
 	const {data: userPlan} = useGetUserPricePlan();
 

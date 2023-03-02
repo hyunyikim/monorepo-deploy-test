@@ -1,7 +1,6 @@
 import {useMemo, useState, useEffect} from 'react';
-import {ButtonBase, AppBar, Toolbar} from '@mui/material';
-
-import {debounce} from 'lodash';
+import {ButtonBase, AppBar, Toolbar, Stack} from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 import {
 	ImgLogoVirclePartners,
 	ImgLogoVirclePartners2x,
@@ -10,10 +9,12 @@ import {
 } from '@/assets/images';
 
 import HeaderProfile from '@/components/common/layout/HeaderProfile';
+import GuaranteeCheckTooltip from '@/components/common/layout/GuaranteeCheckTooltip';
 
 import {HEADER_HEIGHT} from '@/data';
-import {goToParentUrl} from '@/utils';
+
 import {useGetPartnershipInfo} from '@/stores/partnership.store';
+import GuaranteeInfoBox from './GuaranteeInfoBox';
 
 interface Props {
 	backgroundColor?: 'white' | 'transparent';
@@ -21,6 +22,7 @@ interface Props {
 }
 
 function Header({backgroundColor = 'white', borderBottom = true}: Props) {
+	const navigate = useNavigate();
 	let preScrollPosition = 0;
 	const [headerState, setHeaderState] = useState('top');
 
@@ -68,16 +70,16 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 		preScrollPosition = liveScrollPosition;
 	};
 
-	useEffect(() => {
-		window.addEventListener('scroll', debounce(scrollHandlerDebounce, 20));
+	// useEffect(() => {
+	// 	window.addEventListener('scroll', debounce(scrollHandlerDebounce, 20));
 
-		return () => {
-			window.removeEventListener(
-				'scroll',
-				debounce(scrollHandlerDebounce, 20)
-			);
-		};
-	}, []);
+	// 	return () => {
+	// 		window.removeEventListener(
+	// 			'scroll',
+	// 			debounce(scrollHandlerDebounce, 20)
+	// 		);
+	// 	};
+	// }, []);
 
 	return (
 		<AppBar
@@ -109,7 +111,7 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 				<ButtonBase
 					disableRipple
 					onClick={() => {
-						goToParentUrl('/dashboard');
+						navigate('/dashboard');
 					}}>
 					<img
 						src={
@@ -126,7 +128,11 @@ function Header({backgroundColor = 'white', borderBottom = true}: Props) {
 						width={100}
 					/>
 				</ButtonBase>
-				{data && <HeaderProfile data={data} />}
+				<Stack flexDirection="row" alignItems="center">
+					<GuaranteeCheckTooltip />
+					<GuaranteeInfoBox />
+					{data && <HeaderProfile data={data} />}
+				</Stack>
 			</Toolbar>
 		</AppBar>
 	);

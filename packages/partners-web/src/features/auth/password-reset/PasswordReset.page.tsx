@@ -10,7 +10,8 @@ import {changePassword} from '@/api/auth.api';
 import {useMessageDialog} from '@/stores';
 
 import {Button, InputWithLabel} from '@/components';
-import {replaceToParentUrl} from '@/utils';
+import {useNavigate} from 'react-router-dom';
+import {HEADER_HEIGHT} from '@/data';
 
 const inputList = [
 	{
@@ -59,6 +60,7 @@ function PasswordReset() {
 		resolver: yupResolver(changePasswordShape),
 		mode: 'onChange',
 	});
+	const navigate = useNavigate();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
@@ -89,7 +91,9 @@ function PasswordReset() {
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
 				onCloseFunc: () => {
-					replaceToParentUrl('/dashboard');
+					navigate('/dashboard', {
+						replace: true,
+					});
 				},
 			});
 		} catch (e: unknown) {
@@ -112,6 +116,9 @@ function PasswordReset() {
 			onSubmit={handleSubmit(onSubmit)}
 			style={{
 				width: '100%',
+				minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+				display: 'flex',
+				alignItems: 'center',
 			}}>
 			<Stack
 				flexDirection="column"
@@ -165,7 +172,9 @@ function PasswordReset() {
 					color="grey.400"
 					mt="24px"
 					onClick={() => {
-						replaceToParentUrl('/dashboard');
+						navigate('/dashboard', {
+							replace: true,
+						});
 					}}>
 					다음에 설정하기
 				</Typography>

@@ -13,7 +13,7 @@ import RepairDetailControl from '@/features/repair/Detail/RepairDetailControl';
 import RepairGuaranteeDetailInfo from '@/features/repair/Detail/RepairGuaranteeDetailInfo';
 import GuaranteeDetailCustomerInfo from '@/features/guarantee/common/GuaranteeDetailCustomerInfo';
 import GuaranteeDetailProductInfo from '@/features/guarantee/common/GuaranteeDetailProductInfo';
-import {TitleTypography} from '@/components';
+import {ContentWrapper, TitleTypography} from '@/components';
 
 function RepairDetail() {
 	usePageView('repair_detail_pv', '수선신청 상세 진입');
@@ -37,7 +37,7 @@ function RepairDetail() {
 	if (!data) return null;
 
 	return (
-		<Stack flexDirection="column" m="auto" my={5} maxWidth={PAGE_MAX_WIDTH}>
+		<ContentWrapper maxWidth={PAGE_MAX_WIDTH}>
 			<TitleTypography title="수선신청 상세" />
 			<Stack flexDirection="row" justifyContent="space-between" mb="20px">
 				<Stack
@@ -98,7 +98,7 @@ function RepairDetail() {
 			{status && ['ready', 'request'].includes(status) && (
 				<RepairDetailControl idx={data.idx} />
 			)}
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

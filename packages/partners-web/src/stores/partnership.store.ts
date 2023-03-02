@@ -11,6 +11,17 @@ export const useGetPartnershipInfo = () => {
 	});
 };
 
+export const useGetGuaranteeSettingCompleted = () => {
+	const token = useLoginStore().token;
+	return useQuery({
+		queryKey: ['partnershipInfo', token],
+		queryFn: async () => (token ? await getPartnershipInfo() : null),
+		select: (data) => {
+			return data?.profileImage ? true : false;
+		},
+	});
+};
+
 export const useGetSearchBrandList = () => {
 	const token = useLoginStore().token;
 	return useQuery({

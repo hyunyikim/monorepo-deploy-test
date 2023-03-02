@@ -5,7 +5,7 @@ import {Box, Stack, Typography} from '@mui/material';
 import style from '@/assets/styles/style.module.scss';
 import {IcWarningTriangle} from '@/assets/icon';
 import {isValidWebImage} from '@/utils';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 
 import {
 	Dialog,
@@ -33,7 +33,7 @@ function ExcelUploadProductImageModal({
 		open: openImageModal,
 		onOpen: onOpenImageModal,
 		onClose: onCloseImageModal,
-	} = useChildModalOpen({});
+	} = useOpen({});
 
 	useEffect(() => {
 		setLink(modalData?.link || '');

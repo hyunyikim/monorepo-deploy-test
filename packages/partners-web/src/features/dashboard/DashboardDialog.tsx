@@ -20,7 +20,7 @@ import {
 
 interface Props {
 	open: boolean;
-	onClose: () => void;
+	onClose?: () => void;
 }
 
 function DashboardDialog({open, onClose}: Props) {

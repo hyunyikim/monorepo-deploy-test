@@ -1,6 +1,7 @@
 import {useMemo} from 'react';
 import {useAsync} from 'react-use';
-import {usePageView, goToParentUrl} from '@/utils';
+import {useNavigate} from 'react-router-dom';
+import {usePageView} from '@/utils';
 
 import {Box, Stack, Typography} from '@mui/material';
 
@@ -18,6 +19,7 @@ import {
 } from '@/assets/images';
 import Cafe24Logo from '@/assets/images/cafe24/cafe24_logo2.png';
 import Cafe24Logo2x from '@/assets/images/cafe24/cafe24_logo2@2x.png';
+import {ContentWrapper} from '@/components';
 
 interface InterworkItem {
 	name: 'cafe24' | 'repair' | 'kakao';
@@ -105,6 +107,7 @@ const interworkList: InterworkItem[] = [
 
 function ServiceInterworkList() {
 	usePageView('serviceadmin_pv', '서비스연동 관리 진입');
+	const navigate = useNavigate();
 
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const cafe24State = useAsync(async () => {
@@ -133,21 +136,21 @@ function ServiceInterworkList() {
 			if (item?.name === 'cafe24') {
 				return {
 					...item,
-					onClick: () => goToParentUrl('/b2b/interwork/cafe24'),
+					onClick: () => navigate('/b2b/interwork/cafe24'),
 					isLinked: isCafe24Linked,
 				};
 			}
 			if (item?.name === 'repair') {
 				return {
 					...item,
-					onClick: () => goToParentUrl('/b2b/interwork/repair'),
+					onClick: () => navigate('/b2b/interwork/repair'),
 					isLinked: isPartnershipLinked,
 				};
 			}
 			if (item?.name === 'kakao') {
 				return {
 					...item,
-					onClick: () => goToParentUrl('/b2b/interwork/kakao'),
+					onClick: () => navigate('/b2b/interwork/kakao'),
 					isLinked: isKakaoAlramLinked,
 				};
 			}
@@ -157,12 +160,7 @@ function ServiceInterworkList() {
 
 	return (
 		<>
-			<Stack
-				flexDirection="column"
-				width="100%"
-				maxWidth="800px"
-				margin="auto"
-				my={5}>
+			<ContentWrapper maxWidth="800px">
 				<Typography variant="header1" mb="8px">
 					서비스 연동 관리
 				</Typography>
@@ -197,7 +195,7 @@ function ServiceInterworkList() {
 								/>
 						  ))}
 				</Stack>
-			</Stack>
+			</ContentWrapper>
 			<Cafe24StartRobotModal cafe24State={cafe24State} />
 		</>
 	);

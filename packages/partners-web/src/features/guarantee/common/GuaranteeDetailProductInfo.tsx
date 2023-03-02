@@ -4,7 +4,7 @@ import {Stack, Typography} from '@mui/material';
 
 import {GuaranteeDetail} from '@/@types';
 import {useGetPartnershipInfo} from '@/stores';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 
 import {IcChevronDown20} from '@/assets/icon';
 import {ImageModal} from '@/components';
@@ -22,8 +22,7 @@ function GuaranteeDetailProductInfo({data}: {data: GuaranteeDetail}) {
 		return Object.entries(data?.customField).map((item) => item);
 	}, [data]);
 
-	const {open, onOpen, onClose, modalData, onSetModalData} =
-		useChildModalOpen({});
+	const {open, onOpen, onClose, modalData, onSetModalData} = useOpen({});
 
 	const [openBox, setOpenBox] = useState(false);
 

@@ -70,11 +70,45 @@ export const linkFormChecker = (_text: string) => {
 	return urlRegExp.test(String(_text));
 };
 
+export const dashboardDateStack = () => {
+	const day = 24;
+	const hour = 60;
+	const min = 60;
+	const ms = 1000;
+	const todayTimeStamp = new Date().getTime() - hour * min * ms;
+	// const yesterdayTimeStamp = new Date().getTime() - day * hour * min * ms;
+	const previousWeekTimeStamp =
+		new Date().getTime() - 7 * day * hour * min * ms;
+	const previousMonthTimeStamp =
+		new Date().getTime() - 28 * day * hour * min * ms;
+
+	const today = new Date(todayTimeStamp).toISOString().split('T', 1)[0];
+	// const yesterday = new Date(yesterdayTimeStamp)
+	// 	.toISOString()
+	// 	.split('T', 1)[0];
+	const previousWeek = new Date(previousWeekTimeStamp)
+		.toISOString()
+		.split('T', 1)[0];
+	const previousMonth = new Date(previousMonthTimeStamp)
+		.toISOString()
+		.split('T', 1)[0];
+
+	return {
+		today,
+		todayTimeStamp,
+		previousWeek,
+		previousWeekTimeStamp,
+		previousMonth,
+		previousMonthTimeStamp,
+	};
+};
+
 /**
  * 이미지 체크
  * @param _url
  * @returns {Promise<boolean>}
  */
+
 export const isValidWebImage = async (_url: string) => {
 	try {
 		const result = await loadImage(_url);
@@ -92,4 +126,11 @@ export const isEndWithConsonant = (_str: string) => {
 	// 0 = 받침 없음, 그 외 = 받침 있음
 	const finalConsonantCode = (finalCharCode - 44032) % 28;
 	return finalConsonantCode !== 0;
+};
+
+// 채널톡 오픈
+export const openChannelTalk = () => {
+	if (window?.ChannelIO) {
+		window.ChannelIO('showMessenger');
+	}
 };

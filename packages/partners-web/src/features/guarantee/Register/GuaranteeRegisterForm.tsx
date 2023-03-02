@@ -17,13 +17,7 @@ import {
 	AutocompleteInputType,
 } from '@/@types';
 import {guaranteeRegisterSchemaShape} from '@/utils/schema';
-import {
-	goToParentUrl,
-	replaceToParentUrl,
-	handleChangeDataFormat,
-	sendAmplitudeLog,
-	updateUserPricePlanData,
-} from '@/utils';
+import {handleChangeDataFormat, sendAmplitudeLog} from '@/utils';
 import {
 	convertProductRegisterFormData,
 	getProductCustomFieldValue,
@@ -42,7 +36,7 @@ import {
 	useGetPlatformList,
 } from '@/stores';
 import {getProductDetail, registerProduct} from '@/api/product.api';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 
 import {
 	Button,
@@ -75,12 +69,12 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 		open: newProductModalOpen,
 		onOpen: onNewProductModalOpen,
 		onClose: onNewProductModalClose,
-	} = useChildModalOpen({});
+	} = useOpen({});
 	const {
 		open: selectProductModalOpen,
 		onOpen: onSelectProductModalOpen,
 		onClose: onSelectProductModalClose,
-	} = useChildModalOpen({});
+	} = useOpen({});
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const {
@@ -283,13 +277,31 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 					// 무료 플랜이 만료되었을때
 					if (expireDate - currentDate < 0) {
 						if (isFreeTrial) {
-							return onOpenMessageDialog(
-								PAYMENT_MESSAGE_MODAL.TRIAL_FINISH
-							);
+							return onOpenMessageDialog({
+								...PAYMENT_MESSAGE_MODAL.TRIAL_FINISH,
+								buttons: (
+									<Button
+										color="black"
+										onClick={() => {
+											navigate('/b2b/payment/subscribe');
+										}}>
+										플랜 업그레이드
+									</Button>
+								),
+							});
 						} else {
-							return onOpenMessageDialog(
-								PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE
-							);
+							return onOpenMessageDialog({
+								...PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE,
+								buttons: (
+									<Button
+										color="black"
+										onClick={() => {
+											navigate('/b2b/payment/subscribe');
+										}}>
+										구독
+									</Button>
+								),
+							});
 						}
 					}
 				}
@@ -306,7 +318,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 							<Button
 								color="black"
 								onClick={() => {
-									goToParentUrl('/b2b/payment/subscribe');
+									navigate('/b2b/payment/subscribe');
 								}}>
 								플랜 업그레이드
 							</Button>
@@ -540,7 +552,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 							: '개런티 발급 정보를 임시저장했습니다.',
 					showBottomCloseButton: true,
 					onCloseFunc: () => {
-						goToParentUrl('/b2b/guarantee');
+						navigate('/b2b/guarantee');
 					},
 				});
 
@@ -550,7 +562,6 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 				if (registerType === 'temperary') {
 					sendAmplitudeLog('guarantee_publish_saved');
 				}
-				updateUserPricePlanData();
 				queryClient.invalidateQueries({
 					queryKey: ['userPricePlan'],
 				});
@@ -607,7 +618,9 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 									title: '개런티를 삭제했습니다',
 									showBottomCloseButton: true,
 									onCloseFunc: () => {
-										replaceToParentUrl('/b2b/guarantee');
+										navigate('/b2b/guarantee', {
+											replace: true,
+										});
 									},
 								});
 							} catch (e: any) {

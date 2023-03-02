@@ -1,12 +1,15 @@
+import {useNavigate} from 'react-router-dom';
+
 import {Stack, Typography} from '@mui/material';
 
-import {goToParentUrl, usePageView} from '@/utils';
+import {usePageView} from '@/utils';
 
 import {ImgLogoVirclePartners, ImgLogoVirclePartners2x} from '@/assets/images';
 import SignInForm from '@/features/auth/signin/SignInForm';
 
 function SignIn() {
 	usePageView('partners_login_pv', '로그인 진입');
+	const navigate = useNavigate();
 	return (
 		<Stack
 			sx={{
@@ -55,7 +58,7 @@ function SignIn() {
 						variant="body1"
 						color="grey.700"
 						className="cursor-pointer"
-						onClick={() => goToParentUrl('/reset/request/password')}
+						onClick={() => navigate('/reset/request/password')}
 						data-tracking={`partners_login,{'login_password_click': '비밀번호 찾기 화면 노출'}`}>
 						비밀번호 찾기
 					</Typography>
@@ -68,7 +71,7 @@ function SignIn() {
 						<Typography
 							color="primary.main"
 							className="cursor-pointer"
-							onClick={() => goToParentUrl('/auth/signup')}
+							onClick={() => navigate('/auth/signup')}
 							data-tracking={`partners_login,{'login_signup_click': '회원가입 화면 노출'}`}>
 							회원가입
 						</Typography>

@@ -1,4 +1,5 @@
 import React, {useMemo, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {useQueryClient} from '@tanstack/react-query';
 
 import {Button} from '@/components';
@@ -8,13 +9,12 @@ import {
 	useMessageDialog,
 	useGetUserPricePlan,
 } from '@/stores';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 import {
 	bulkIssueGuarantee,
 	bulkCancelGuarantee,
 	bulkDeleteGuarantee,
 } from '@/api/guarantee-v1.api';
-import {updateUserPricePlanData} from '@/utils';
 import ProgressModal from '@/features/common/ProgressModal';
 import {isPlanEnterprise, PAYMENT_MESSAGE_MODAL} from '@/data';
 
@@ -35,6 +35,7 @@ function GuaranteeCheckboxButton({
 	onSearch,
 	isCheckedItemsExisted,
 }: Props) {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const totalCount = useMemo(() => checkedItems.length, [checkedItems]);
 	const [requestCount, setRequestCount] = useState(0);
@@ -44,7 +45,7 @@ function GuaranteeCheckboxButton({
 		open: openRegisterGuaranteeListModal,
 		onOpen: onOpenRegisterGuaranteeListModal,
 		onClose: onCloseRegisterGuaranteeListModal,
-	} = useChildModalOpen({});
+	} = useOpen({});
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
@@ -126,7 +127,6 @@ function GuaranteeCheckboxButton({
 					});
 				},
 			});
-			updateUserPricePlanData();
 			queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});
@@ -202,13 +202,46 @@ function GuaranteeCheckboxButton({
 	const expireDate = userPlan?.planExpireDate
 		? new Date(userPlan?.planExpireDate).getTime()
 		: null;
+	const modalConfirmButton = (_text: string) => {
+		return (
+			<Button
+				color="black"
+				onClick={() => {
+					navigate('/b2b/payment/subscribe');
+				}}>
+				{_text}
+			</Button>
+		);
+	};
 
 	const freeTrialExpiredModal = () => {
-		return onOpenMessageDialog(PAYMENT_MESSAGE_MODAL.TRIAL_FINISH);
+		return onOpenMessageDialog({
+			...PAYMENT_MESSAGE_MODAL.TRIAL_FINISH,
+			buttons: (
+				<Button
+					color="black"
+					onClick={() => {
+						navigate('/b2b/payment/subscribe');
+					}}>
+					플랜 업그레이드
+				</Button>
+			),
+		});
 	};
 
 	const expiredPricePlanModal = () => {
-		return onOpenMessageDialog(PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE);
+		return onOpenMessageDialog({
+			...PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE,
+			buttons: (
+				<Button
+					color="black"
+					onClick={() => {
+						navigate('/b2b/payment/subscribe');
+					}}>
+					구독
+				</Button>
+			),
+		});
 	};
 
 	const notEnoughGuaranteeBalanceModal = () => {
@@ -225,6 +258,15 @@ function GuaranteeCheckboxButton({
 						플랜 업그레이드하고 {totalCount}개의 개런티를 모두
 						발급해보세요.
 					</>
+				),
+				buttons: (
+					<Button
+						color="black"
+						onClick={() => {
+							navigate('/b2b/payment/subscribe');
+						}}>
+						플랜 업그레이드
+					</Button>
 				),
 			});
 		}
@@ -272,7 +314,6 @@ function GuaranteeCheckboxButton({
 											</Button>
 										</>
 									),
-									sendCloseModalControlToParent: false,
 								});
 							}}>
 							선택 삭제
@@ -338,7 +379,6 @@ function GuaranteeCheckboxButton({
 											</Button>
 										</>
 									),
-									sendCloseModalControlToParent: false,
 								});
 							}}
 							sx={{

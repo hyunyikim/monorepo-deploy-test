@@ -44,7 +44,6 @@ export const useGetPricePlanListByPlanType = (planType: PlanType) => {
 	});
 };
 
-// TODO: 토큰 없는채로 조회되면서 suspense 에러 떨어짐
 export const useGetUserPricePlan = (
 	{
 		suspense,

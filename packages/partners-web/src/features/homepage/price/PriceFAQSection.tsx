@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styled from '@emotion/styled';
-import {css, keyframes} from '@emotion/react';
+import {useNavigate} from 'react-router-dom';
 import {greyArrow2x, greyArrow} from '@/assets/images/homepage/index';
 import {
 	imgEndingBg2x,
@@ -9,7 +9,7 @@ import {
 	imgEndingTitle2x,
 } from '@/assets/images/homepage/index';
 
-import {sendAmplitudeLog, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 type IsOpenProps = {
 	isOpen: boolean;
@@ -288,6 +288,7 @@ const EndingSignupTitleBoxStyle = styled('div')`
 `;
 
 function PriceFAQSection() {
+	const navigate = useNavigate();
 	const [faqState, setFaqState] = useState<string>('0');
 	const faqList = [
 		{
@@ -323,7 +324,7 @@ function PriceFAQSection() {
 		});
 
 		setTimeout(() => {
-			goToParentUrl(`/auth/signup`);
+			navigate(`/auth/signup`);
 		}, 400);
 	};
 

@@ -8,7 +8,7 @@ export {default as Table} from '@/components/atoms/Table';
 export {default as Pagination} from '@/components/atoms/Pagination';
 export {default as Avatar} from '@/components/atoms/Avatar';
 export {default as TitleTypography} from '@/components/common/TitleTypography';
-export {default as Tooltip} from '@/components/atoms/Tooltip';
+export {default as ToolTipComponent} from '@/components/atoms/ToolTipComponent';
 export {default as InputLabelTag} from '@/components/atoms/InputLabelTag';
 export {default as InputComponent} from '@/components/atoms/InputComponent';
 export {default as CapsuleButton} from '@/components/atoms/CapsuleButton';

@@ -7,7 +7,7 @@ import {sendSlack} from '@/api/common.api';
 
 import {useMessageDialog} from '@/stores';
 
-import {goToParentUrl, sendAmplitudeLog, handleChangeDataFormat} from '@/utils';
+import {sendAmplitudeLog, handleChangeDataFormat} from '@/utils';
 
 import {iconIndexFinger, iconDocs} from '@/assets/images/homepage/index';
 import {ControlledInputComponent, Checkbox, Button} from '@/components';

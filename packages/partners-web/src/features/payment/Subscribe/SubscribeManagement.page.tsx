@@ -12,7 +12,7 @@ import SubscribeHistoryTab from '@/features/payment/Subscribe/SubscribeHistory/S
 import {IcChevronRight} from '@/assets/icon';
 
 import style from '@/assets/styles/style.module.scss';
-import {goToParentUrl} from '@/utils';
+import {HEADER_HEIGHT} from '@/data';
 
 function SubscribeManagement() {
 	const location = useLocation();
@@ -22,7 +22,11 @@ function SubscribeManagement() {
 		defaultValue: 'management',
 	});
 	return (
-		<ContentWrapper fullWidth={true}>
+		<ContentWrapper
+			fullWidth={true}
+			sx={{
+				minHeight: `calc(100vh - ${HEADER_HEIGHT} - 80px)`,
+			}}>
 			<Typography variant="header1">서비스 구독 관리</Typography>
 			<Tab
 				tabLabel="subscribe"
@@ -60,7 +64,7 @@ function SubscribeManagement() {
 						textDecoration: 'none',
 					}}
 					onClick={() => {
-						goToParentUrl('/pricing');
+						navigate('/pricing');
 					}}>
 					자세한 가격 및 기능{' '}
 					<IcChevronRight

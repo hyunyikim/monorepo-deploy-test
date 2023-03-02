@@ -25,8 +25,6 @@ useLoginStore.subscribe((state) => {
 authInstance.interceptors.request.use(
 	(config: AxiosRequestConfig) => {
 		if (!config.headers || !token) {
-			// window.location.replace('/auth/signin');
-			// return;
 			throw new Error('');
 		}
 		config.headers['token'] = token;

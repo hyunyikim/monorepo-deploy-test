@@ -1,210 +1,472 @@
-import {Fragment, useCallback, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useState, useMemo, useEffect} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+
+import {SxProps} from '@mui/system';
+import {styled, Theme, CSSObject} from '@mui/material/styles';
 import {
-	Drawer,
-	Divider,
+	Drawer as MuiDrawer,
 	List,
-	ListItemButton,
+	Typography,
+	Divider,
+	IconButton,
+	ListItem,
 	ListItemIcon,
 	ListItemText,
-	ListSubheader,
+	ListItemButton,
 	Collapse,
-	useTheme,
+	Stack,
+	Box,
 	useMediaQuery,
 } from '@mui/material';
 
-import {useViewMenuStore, useOpenMenuStore} from '@/stores';
-import {MenuName} from '@/@types';
-import {sidebarWidth} from '@/data';
+import {IcChevronDown, IcChevronRight, IcExclamationMark} from '@/assets/icon';
+import {ImgUsageGuideRobot, ImgUsageGuideRobot2x} from '@/assets/images';
+import style from '@/assets/styles/style.module.scss';
+import {
+	SIDEBAR_WIDTH,
+	FOLDED_SIDEBAR_WIDTH,
+	HEADER_HEIGHT,
+	checkDepth2MenuSelected,
+	checkDepth1MenuSelected,
+} from '@/data';
 
-import {IcChevronUp, IcChevronDown} from '@/assets/icon';
+import {MenuDepth1, MenuDepth2} from '@/@types';
+import {useGetMenu, useSidebarControlStore} from '@/stores';
 
-function Sidebar() {
-	const navigate = useNavigate();
-	const theme = useTheme();
-	const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
+const openedMixin = (theme: Theme): CSSObject => ({
+	width: SIDEBAR_WIDTH,
+	transition: theme.transitions.create('width', {
+		easing: theme.transitions.easing.sharp,
+		duration: theme.transitions.duration.enteringScreen,
+	}),
+	overflowX: 'hidden',
+});
 
-	const {open, setOpen} = useOpenMenuStore();
-	const menuList = useViewMenuStore((state) => state.menuList());
-	const currentMenu = useViewMenuStore((state) => state.currentMenu());
-	const [spreadMenu, setSpreadMenu] = useState<MenuName[]>([
-		currentMenu.menu,
-	]);
+const closedMixin = (theme: Theme): CSSObject => ({
+	transition: theme.transitions.create('width', {
+		easing: theme.transitions.easing.sharp,
+		duration: theme.transitions.duration.leavingScreen,
+	}),
+	overflowX: 'hidden',
+	width: `calc(${FOLDED_SIDEBAR_WIDTH} + 1px)`,
+	[theme.breakpoints.up('sm')]: {
+		width: `calc(${FOLDED_SIDEBAR_WIDTH} + 1px)`,
+	},
+});
 
-	const handleOpenMenu = useCallback((menu: MenuName) => {
-		setSpreadMenu((prev) =>
-			prev.includes(menu)
-				? prev.filter((item) => item !== menu)
-				: [...prev, menu]
-		);
-	}, []);
+const Drawer = styled(MuiDrawer, {
+	shouldForwardProp: (prop) => prop !== 'open',
+})(({theme, open}) => ({
+	width: SIDEBAR_WIDTH,
+	flexShrink: 0,
+	whiteSpace: 'nowrap',
+	boxSizing: 'border-box',
+	...(open && {
+		...openedMixin(theme),
+		'& .MuiDrawer-paper': openedMixin(theme),
+	}),
+	...(!open && {
+		...closedMixin(theme),
+		'& .MuiDrawer-paper': closedMixin(theme),
+	}),
+}));
 
-	// TODO: icon color set
+export default function Sidebar() {
+	const menuList = useGetMenu();
+	const isSidebarOpen = useSidebarControlStore((state) => state.isOpen);
+	const setSidebarOpen = useSidebarControlStore((state) => state.setOpen);
+	const matchUpMd = useMediaQuery((theme) => theme.breakpoints.up('md'));
+
+	useEffect(() => {
+		setSidebarOpen(matchUpMd ? true : false);
+	}, [matchUpMd]);
+
 	return (
-		<Drawer
-			style={{
-				background: 'transparent',
-			}}
-			variant={matchUpMd ? 'persistent' : 'temporary'}
-			anchor="left"
-			open={false}
-			onClose={() => setOpen(false)}
-			sx={(theme) => ({
-				...(open && {
-					width: sidebarWidth,
-				}),
-				flexShrink: 0,
-				'& .MuiDrawer-paper': {
-					width: 'inherit',
-					boxSizing: 'border-box',
-					background: theme.palette.background.default,
-					[theme.breakpoints.up('md')]: {
-						top: '60px',
-					},
-					// scroll styling
-					overflowY: 'overlay',
-					'&::-webkit-scrollbar, &::-webkit-scrollbar-thumb': {
-						backgroundColor: 'transparent',
-					},
-					'&:hover': {
-						overflowY: 'overlay',
+		<>
+			<Drawer
+				variant="permanent"
+				open={isSidebarOpen}
+				sx={{
+					zIndex: 1,
+					'& .MuiDrawer-paper': {
+						top: HEADER_HEIGHT,
+						height: `calc(100% - ${HEADER_HEIGHT})`,
+
+						// scroll
+						overflowY: 'hidden',
+						'&:hover': {
+							overflowY: 'overlay',
+						},
 						'&::-webkit-scrollbar': {
-							width: '5px',
+							width: '4px',
 						},
 						'&::-webkit-scrollbar-thumb': {
-							backgroundColor: '#9e9e9e66',
-							borderRadius: '6px',
+							background: 'rgba(230, 233, 236, 0.6)',
+							borderRadius: '4px',
+						},
+						'&::-webkit-scrollbar-track': {
+							background: 'rgba(255, 255, 255, 0)',
 						},
 					},
-				},
-				fontWeight: 500,
-				fontSize: '14px',
-				color: theme.palette.grey['900'],
-				'& .MuiListItemText-root > span': {
-					fontWeight: 500,
-				},
-				'& .MuiListItemButton-root': {
-					padding: '14px 20px',
-					borderRadius: '8px',
-					'&.Mui-selected .MuiTypography-root': {
-						fontWeight: 700,
-					},
-				},
-				// 2 depth
-				'& .MuiCollapse-root .MuiListItemButton-root': {
-					paddingLeft: '52px',
-					'&.Mui-selected': {
-						fontWeight: 500,
-						background: theme.palette.background.paper,
-						'& .MuiTypography-root': {
-							fontWeight: 500,
-						},
-					},
-				},
-			})}>
-			{menuList?.map((group, idx) => (
-				<Fragment key={`menu-group-${idx}`}>
-					<List
-						component="nav"
-						disablePadding
-						// caption
-						{...(group.caption && {
-							subheader: (
-								<ListSubheader
-									component="div"
-									sx={(theme) => ({
-										padding: '16px',
-										paddingBottom: '4px',
-										lineHeight: 'inherit',
-										fontSize: '14px',
-										color: theme.palette.grey['900'],
-									})}>
-									{group.caption}
-								</ListSubheader>
-							),
-						})}>
-						{group.list.map((item) => {
-							// 직접 선택 되거나, 자식이 선택 되거나
-							const selected =
-								item?.num === currentMenu.num ||
-								item.menu === currentMenu.menu;
-							const spreaded = spreadMenu.includes(item.menu);
-							return (
-								<Fragment key={item.menu}>
-									<ListItemButton
-										selected={selected}
-										onClick={() => {
-											const path = item?.path;
-											if (path) {
-												navigate(path);
-												return;
-											}
-											handleOpenMenu(item.menu);
-										}}>
-										<ListItemIcon>
-											{item?.icon ?? <></>}
-										</ListItemIcon>
-										<ListItemText primary={item.title} />
-										{item?.children &&
-											(spreaded ? (
-												<IcChevronUp
-													width="16"
-													height="16"
-													viewBox="0 0 24 24"
-													{...(selected && {
-														stroke: theme.palette
-															.primary.main,
-													})}
-												/>
-											) : (
-												<IcChevronDown
-													width="16"
-													height="16"
-													viewBox="0 0 24 24"
-												/>
-											))}
-									</ListItemButton>
-									{/* 2 depth */}
-									{item?.children &&
-										item?.children.map((child) => {
-											const childSelected =
-												child?.num === currentMenu.num;
-											return (
-												<Collapse
-													key={child.title}
-													in={spreaded}
-													timeout="auto">
-													<List
-														component="div"
-														disablePadding>
-														<ListItemButton
-															selected={
-																childSelected
-															}
-															onClick={() =>
-																navigate(
-																	child.path
-																)
-															}>
-															<ListItemText
-																primary={
-																	child.title
-																}
-															/>
-														</ListItemButton>
-													</List>
-												</Collapse>
-											);
-										})}
-								</Fragment>
-							);
-						})}
-					</List>
-					<Divider />
-				</Fragment>
-			))}
-		</Drawer>
+					position: 'fixed',
+				}}>
+				{menuList.map((menu, idx) => (
+					<Menu
+						key={idx}
+						open={isSidebarOpen}
+						data={menu}
+						isLast={menuList.length - 1 === idx}
+					/>
+				))}
+				{isSidebarOpen && <UsageGuide />}
+				<ControlDrawerButton
+					open={isSidebarOpen}
+					onControlDrawer={() => setSidebarOpen(!isSidebarOpen)}
+				/>
+			</Drawer>
+		</>
 	);
 }
 
-export default Sidebar;
+const selectedListItemButtonSxProps: SxProps<Theme> = {
+	'& > .MuiListItemButton-root': {
+		'& .MuiListItemText-root .MuiTypography-root': {
+			color: 'primary.main',
+			fontWeight: 'bold',
+		},
+		'& .MuiListItemIcon-root svg': {
+			color: 'primary.main',
+		},
+	},
+};
+
+const Menu = ({
+	open,
+	data,
+	isLast,
+}: {
+	open: boolean;
+	data: MenuDepth1[];
+	isLast: boolean;
+}) => {
+	return (
+		<Stack
+			sx={{
+				p: '0',
+			}}>
+			<List
+				sx={{
+					p: open ? '8px 0' : 0,
+					transition: 'padding 100ms ease-in-out',
+					'& .MuiListItem-root': {
+						display: 'block',
+						'& .MuiListItemButton-root': {
+							justifyContent: 'center',
+							height: open ? '48px' : '40px',
+							padding: open ? '0 16px 0 20px' : '8px 24px',
+							'& .MuiListItemIcon-root': {
+								justifyContent: 'center',
+								minWidth: '0',
+								mr: open ? '8px' : 'auto',
+								'& svg': {
+									color: 'grey.900',
+									width: 24,
+									height: 24,
+								},
+							},
+							'& .MuiListItemText-root': {
+								opacity: open ? 1 : 0,
+								m: 0,
+							},
+						},
+						// 자식메뉴
+						'& .menu-children': {
+							'& .MuiListItemButton-root': {
+								height: '40px',
+								p: 0,
+								paddingLeft: '52px',
+							},
+						},
+					},
+					// 메뉴 선택됨
+					'& > .MuiListItem-root.selected': {
+						'&.menu-parent': {
+							backgroundColor: 'primary.50',
+						},
+						...(!open && {
+							'&.menu-parent-children': {
+								backgroundColor: 'primary.50',
+							},
+						}),
+						...selectedListItemButtonSxProps,
+					},
+					// 자식 메뉴 선택됨
+					'& .menu-children .MuiListItem-root.selected': {
+						backgroundColor: 'primary.50',
+						...selectedListItemButtonSxProps,
+					},
+				}}>
+				{data.map((groupMenu, idx) => {
+					return <GroupMenu key={idx} open={open} data={groupMenu} />;
+				})}
+			</List>
+			{!isLast && (
+				<Divider
+					sx={{
+						width: open ? 'calc(100% - 40px)' : 'calc(100% - 16px)',
+						m: 'auto',
+						...(!open && {
+							marginY: '8px',
+						}),
+						borderColor: style.vircleGrey100,
+					}}
+				/>
+			)}
+		</Stack>
+	);
+};
+
+const GroupMenu = ({open, data}: {open: boolean; data: MenuDepth1}) => {
+	const {title, icon, path, emphasis, children} = data;
+	const [isChildrenOpen, setChildrenOpen] = useState(false);
+	const {pathname} = useLocation();
+	const navigate = useNavigate();
+
+	const isDepth1Selected = useMemo(() => {
+		return checkDepth1MenuSelected(pathname, data.menu);
+	}, [data, pathname]);
+
+	useEffect(() => {
+		// 연관된 자식 메뉴 열림
+		if (open) {
+			setChildrenOpen(isDepth1Selected ? true : false);
+		}
+	}, [open, isDepth1Selected]);
+
+	useEffect(() => {
+		if (!open) {
+			setChildrenOpen(false);
+		}
+	}, [open]);
+
+	const handleControlDepth1Menu = () => {
+		// 사이드바 닫혀 있을 때(아이콘만 보일 때)
+		if (!open && children && children?.length > 0) {
+			const firstChildMenu = children[0].path;
+			navigate(firstChildMenu);
+			return;
+		}
+
+		// 사이드바 열렸을 때
+		if (path) {
+			navigate(path);
+			return;
+		}
+		setChildrenOpen((prev) => !prev);
+	};
+
+	const handleControlDepth2Menu = (depth2: MenuDepth2) => {
+		navigate(depth2.path);
+	};
+
+	return (
+		<ListItem
+			key={title}
+			disablePadding
+			className={[
+				isDepth1Selected ? 'selected' : '',
+				children ? 'menu-parent-children' : 'menu-parent',
+			].join(' ')}
+			onClick={handleControlDepth1Menu}>
+			<ListItemButton
+				sx={{
+					...(emphasis && {
+						'&::before': {
+							content: `'⦁'`,
+							color: 'red.main',
+							fontSize: '16px',
+							position: 'absolute',
+							left: '8px',
+						},
+					}),
+				}}>
+				<ListItemIcon>{icon}</ListItemIcon>
+				<ListItemText
+					primary={
+						<Stack
+							flexDirection="row"
+							justifyContent="space-between"
+							alignItems="center">
+							<Typography
+								variant="body3"
+								color={style.vircleGrey900}>
+								{title}
+							</Typography>
+							{children && (
+								<IcChevronDown
+									width={16}
+									height={16}
+									color={style.vircleGrey300}
+									style={{
+										transform: isChildrenOpen
+											? 'rotate(180deg)'
+											: 'rotate(0deg)',
+									}}
+								/>
+							)}
+						</Stack>
+					}
+				/>
+			</ListItemButton>
+			{/* 자식 메뉴 */}
+			<Collapse in={children && isChildrenOpen} unmountOnExit>
+				<List disablePadding className="menu-children">
+					{children?.map((child) => {
+						const {title, path, emphasis} = child;
+						const isDepth2Selected = checkDepth2MenuSelected(
+							pathname,
+							path
+						);
+						return (
+							<ListItem
+								disablePadding
+								key={title}
+								className={isDepth2Selected ? 'selected' : ''}
+								onClick={(e) => {
+									e.stopPropagation();
+									handleControlDepth2Menu(child);
+								}}>
+								<ListItemButton key={title}>
+									<ListItemText
+										primary={
+											<>
+												<Typography
+													component="span"
+													variant="caption1"
+													color="grey.900">
+													{title}
+												</Typography>
+												{emphasis && (
+													<IcExclamationMark
+														width={13}
+														height={13}
+														color={
+															style.vircleRed500
+														}
+														style={{
+															marginLeft: '4px',
+															position:
+																'relative',
+															top: '2px',
+														}}
+													/>
+												)}
+											</>
+										}
+									/>
+								</ListItemButton>
+							</ListItem>
+						);
+					})}
+				</List>
+			</Collapse>
+		</ListItem>
+	);
+};
+
+const ControlDrawerButton = ({
+	open,
+	onControlDrawer,
+}: {
+	open: boolean;
+	onControlDrawer: () => void;
+}) => {
+	return (
+		<IconButton
+			onClick={onControlDrawer}
+			sx={{
+				position: 'absolute',
+				bottom: '16px',
+				right: open ? '16px' : '22px',
+				backgroundColor: 'primary.50',
+				borderRadius: '7px',
+				width: '28px',
+				height: '28px',
+			}}>
+			<IcChevronRight
+				color={style.vircleBlue500}
+				width={16}
+				height={16}
+				style={{
+					transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+				}}
+			/>
+		</IconButton>
+	);
+};
+
+const UsageGuide = () => {
+	return (
+		<Stack
+			sx={{
+				position: 'relative',
+				margin: '16px',
+				marginTop: '40px',
+			}}>
+			<Typography variant="subtitle1" zIndex={1}>
+				버클 이용가이드
+			</Typography>
+			<Typography variant="caption1" zIndex={1}>
+				10분만에 마스터하기!
+			</Typography>
+			<Stack
+				className="cursor-pointer"
+				flexDirection="row"
+				zIndex={1}
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					paddingX: '10px',
+					width: '78px',
+					height: '34px',
+					marginTop: '16px',
+					borderRadius: '34px',
+					backgroundColor: 'grey.900',
+				}}
+				data-tracking={`dashboard_left_banner_click,{'button_title': '이용가이드 배너'}`}
+				onClick={() => {
+					window.open(VIRCLE_GUIDE_URL);
+				}}>
+				<Box
+					sx={{
+						fontSize: '14px',
+						fontWeight: 'bold',
+						color: 'white',
+					}}>
+					GO!
+				</Box>
+				<Box
+					className="flex-center"
+					width={14}
+					height={14}
+					sx={{
+						borderRadius: '50%',
+						border: '1px solid #FFF',
+					}}>
+					<IcChevronRight width={10} height={10} color="#FFF" />
+				</Box>
+			</Stack>
+			<img
+				src={ImgUsageGuideRobot}
+				srcSet={`${ImgUsageGuideRobot} 1x, ${ImgUsageGuideRobot2x} 2x`}
+				alt="usage guide"
+				width={176}
+				style={{
+					position: 'absolute',
+					right: 0,
+				}}
+			/>
+		</Stack>
+	);
+};

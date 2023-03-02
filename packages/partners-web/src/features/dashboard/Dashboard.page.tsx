@@ -1,52 +1,39 @@
-import {
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-	ReactElement,
-	ReactNode,
-} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {addDays, format, lastDayOfMonth} from 'date-fns';
 
-import DashboardSection from '@/features/dashboard/common/DashboardSection';
-import SectionBox from '@/features/dashboard/common/SectionBox';
 import DashboardGuaranteeSection from '@/features/dashboard/DashboardGuaranteeSection';
 
-import {
-	Box,
-	Stack,
-	Typography,
-	Grid,
-	Card,
-	useTheme,
-	SxProps,
-} from '@mui/material';
+import {Box, Stack, useTheme, SelectChangeEvent} from '@mui/material';
 import Chart from 'react-apexcharts';
 import {ApexOptions} from 'apexcharts';
-
-import {getNftStatistics} from '@/api/statistics.api';
 import {StatisticsResponse} from '@/@types';
-import useDashboardStyles from './useDashboardStyles';
-import {useBackground} from '@/utils/hooks';
-import {useOpen} from '@/utils/hooks';
+import DashboardCustomerSection from './DashboardCustomerSection';
+import DashboardInfoCentreSection from './DashboardInfoCentreSection';
+import DashboardDialog from '@/features/dashboard/DashboardDialog';
 
-import NoticeSlider from './NoticeSlider';
-import DashboardGuaranteeCard from './DashboardGuaranteeCard';
-import DashboardDialog from './DashboardDialog';
+import {Select} from '@/components';
 import {
-	IcGuaranteeIssuePending,
-	IcGuaranteeIssueSuccess,
-	IcGuaranteeIssueCancel,
-} from '@/assets/icon';
+	getDashboardGuaranteeOverview,
+	getDashboardCustomerOverview,
+	getDashboardRepairOverview,
+} from '@/api/dashboard';
 import {
-	ImgBgCards,
-	ImgBgCards2x,
-	ImgConnectService,
-	ImgConnectService2x,
-	ImgConnectServiceButton,
-	ImgConnectServiceButton2x,
-} from '@/assets/images';
+	dashboardGuaranteeStore,
+	dashboardCustomerStore,
+	dashboardRepairStore,
+} from '../../stores/dashboard.store';
+import {
+	DashboardPeriodType,
+	DashboardGuranteeParamsType,
+	DashboardCustomersParamsType,
+	DashboardCustomerOverviewType,
+} from '../../@types/dashboard.types';
+
+import {useGetPartnershipInfo, useModalStore} from '@/stores';
+import NoticeModal from './common/NoticeModal';
+import {dashboardDateStack, sendAmplitudeLog} from '@/utils';
+import DashboardSettingHelper from '@/features/dashboard/DashboardSettingHelper';
 
 const getChartOption = (daily: StatisticsResponse) => ({
 	type: 'bar',
@@ -168,351 +155,242 @@ const getChartOption = (daily: StatisticsResponse) => ({
 	],
 });
 
-// TODO: skeleton
-// TODO: 렌더링 2번
-
 function Dashboard() {
+	const theme = useTheme();
+	const {data: partnershipData} = useGetPartnershipInfo();
+	const setModal = useModalStore((state) => state.setModalOption);
+	const resetModal = useModalStore((state) => state.setIsOpen);
+	const {previousWeek, previousMonth, today} = dashboardDateStack();
+	const [periodState, setPeriodState] =
+		useState<DashboardPeriodType>('WEEKLY');
+
+	/* 개런티 발급 현황 데이터 */
+	const {data: guaranteeOverviewData, setData: setGuaranteeOverviewData} =
+		dashboardGuaranteeStore((state) => state);
+	/* 고객현황 데이터 */
+	const {data: customerOverviewData, setData: setCustomerOverviewData} =
+		dashboardCustomerStore((state) => state);
+	/* 수선현황 데이터 */
+	const {data: repairOverviewData, setData: setRepairOverviewData} =
+		dashboardRepairStore((state) => state);
+
+	const getGuaranteeData = async (_type: DashboardPeriodType) => {
+		try {
+			const data = await getDashboardGuaranteeOverview({
+				dateType: _type,
+			});
+
+			if (data) {
+				setGuaranteeOverviewData({
+					[_type]: data,
+				});
+			}
+		} catch (e) {
+			console.log('e', e);
+		}
+	};
+
+	const getCustomerData = async (_type: DashboardPeriodType) => {
+		try {
+			const params: DashboardCustomersParamsType = {
+				from: _type === 'WEEKLY' ? previousWeek : previousMonth,
+				to: today,
+			};
+
+			const data = await getDashboardCustomerOverview(params);
+
+			if (data) {
+				setCustomerOverviewData({
+					[_type]: data,
+				});
+			}
+		} catch (e) {
+			console.log('e', e);
+		}
+	};
+	const getRepairData = async (_type: DashboardPeriodType) => {
+		try {
+			const params: DashboardCustomersParamsType = {
+				from: _type === 'WEEKLY' ? previousWeek : previousMonth,
+				to: today,
+			};
+
+			const data = await getDashboardRepairOverview(params);
+
+			if (data) {
+				setRepairOverviewData({
+					[_type]: data,
+				});
+			}
+		} catch (e) {
+			console.log('e', e);
+		}
+	};
+
+	const selectBoxHandler = (e: SelectChangeEvent<unknown>) => {
+		const value = e.target.value as DashboardPeriodType;
+		sendAmplitudeLog(
+			value === 'WEEKLY'
+				? 'dashboard_filter_week_click'
+				: 'dashboard_filter_month_click',
+			{
+				pv_title: `대시보드 데이터 ${
+					value === 'WEEKLY' ? '주' : '월'
+				}간 기준으로 표시`,
+			}
+		);
+		setPeriodState(value);
+	};
+
+	useEffect(() => {
+		if (!guaranteeOverviewData[periodState]) {
+			getGuaranteeData(periodState);
+		}
+		if (!customerOverviewData[periodState]) {
+			getCustomerData(periodState);
+		}
+		if (!repairOverviewData[periodState]) {
+			if (partnershipData?.useRepair === 'Y') {
+				getRepairData(periodState);
+			} else {
+				setRepairOverviewData({WEEKLY: null, MONTHLY: null});
+			}
+		}
+	}, [periodState, partnershipData]);
+
+	useEffect(() => {
+		if (partnershipData && partnershipData?.companyName) {
+			const noMoreNoticePopup = localStorage.getItem(
+				`230213_notice_${partnershipData?.companyName}`
+			);
+
+			if (!noMoreNoticePopup || noMoreNoticePopup !== 'true') {
+				setModal({
+					isOpen: true,
+					title: '버클 서비스 이용약관 및 개인정보처리방침 개정 안내',
+					titlePadding: '40px 32px',
+					children: <NoticeModal closeModal={closeNoticeModal} />,
+					buttonTitle: '',
+					maxWidth: '900px',
+					width: '100%',
+					align: 'center',
+					titleAlign: 'left',
+					showCloseButton: false,
+					sx: {
+						'& .MuiDialog-container': {
+							'& .MuiPaper-root': {
+								height: '600px',
+								'& .MuiDialogContent-root': {
+									paddingTop: {
+										xs: '0px !important',
+										sm: '4px !important',
+									},
+								},
+							},
+							'& .MuiDialogContent-root': {
+								paddingBottom: '32px',
+								padding: {xs: '0px 20px 24px 20px', sm: '32px'},
+								'> div': {
+									height: '100%',
+								},
+							},
+						},
+					},
+					useBackgroundClickClose: false,
+					amplitudeInfo: {},
+				});
+			}
+		}
+	}, [partnershipData]);
+
+	const closeNoticeModal = () => {
+		resetModal(false);
+
+		if (partnershipData && partnershipData?.companyName) {
+			localStorage.setItem(
+				`230213_notice_${partnershipData.companyName}`,
+				'true'
+			);
+		}
+	};
+
+	useEffect(() => {
+		sendAmplitudeLog('dashboard_pv', {pv_title: '대시보드 노출'});
+	}, []);
+
 	return (
-		<Box p={5}>
-			{/* TODO: 데이터 기간 셀렉트 박스 필요 */}
-			{/* <Box></Box> */}
+		<Stack p={5} gap="20px">
+			{/* 개런티 세팅, 카카오연동, 카페24연동 유도 섹션 */}
+			<DashboardSettingHelper partnershipData={partnershipData} />
 
-			<DashboardGuaranteeSection />
+			{/* 데이터 기간 조희 셀렉트 */}
+			<Stack
+				sx={{
+					flexDirection: 'row',
+					gap: '8px',
+					marginBottom: '40px',
+					maxWidth: '1200px',
+					margin: 'auto',
+					width: '100%',
+					[theme.breakpoints.down(1280)]: {
+						width: '590px',
+						margin: 'auto',
+					},
+				}}>
+				<Select
+					height={40}
+					value={periodState}
+					options={[
+						{
+							label: '주간',
+							value: 'WEEKLY',
+						},
+						{
+							label: '월간',
+							value: 'MONTHLY',
+						},
+					]}
+					onChange={selectBoxHandler}
+					sx={{
+						minWidth: '150px',
+						marginRight: '8px',
+					}}
+				/>
 
-			{/*  */}
-			{/*  */}
-			{/*  */}
-			{/*  */}
-			{/*  */}
-			{/*  */}
-			{/* <DashboardSection sectionTitle="고객현황">
-				<SectionBox>
-					<div>hi</div>
-				</SectionBox>
-			</DashboardSection>
+				<Box
+					sx={{
+						height: '40px',
+						background: '#FFFFFF',
+						padding: '9px 16px 8px',
+						border: '1px solid',
+						borderColor: 'grey.100',
+						borderRadius: '4px',
+						fontWeight: 500,
+						fontSize: '16px',
+						lineHeight: '145%',
+						color: 'grey.500',
+					}}>
+					{periodState === 'WEEKLY' ? previousWeek : previousMonth} ~{' '}
+					{today}
+				</Box>
+			</Stack>
 
-			<DashboardSection sx={{marginBottom: '60px'}}>
-				<SectionBox>
-					<div>hi</div>
-				</SectionBox>
-			</DashboardSection>
+			<DashboardGuaranteeSection
+				period={periodState}
+				guaranteeData={guaranteeOverviewData}
+				date={periodState === 'WEEKLY' ? previousWeek : previousMonth}
+			/>
 
-			<DashboardSection sx={{marginBottom: '60px'}}>
-				<SectionBox>
-					<div>hi</div>
-				</SectionBox>
-			</DashboardSection> */}
-		</Box>
+			<DashboardCustomerSection
+				period={periodState}
+				guaranteeData={guaranteeOverviewData}
+				customerData={customerOverviewData}
+				repairData={repairOverviewData}
+				partnershipData={partnershipData}
+			/>
+			<DashboardInfoCentreSection />
+		</Stack>
 	);
 }
 
 export default Dashboard;
-
-// const navigate = useNavigate();
-// 	const theme = useTheme();
-// 	const classes = useDashboardStyles();
-// 	const [updatedDate, setUpdatedDate] = useState<string | null>(null);
-// 	const [daily, setDaily] = useState<StatisticsResponse | null>(null);
-// 	const [weekly, setWeekly] = useState<StatisticsResponse | null>(null);
-// 	const [monthly, setMonthly] = useState<StatisticsResponse | null>(null);
-
-// 	useBackground(theme.palette.grey[50]);
-// 	const {open, onClose} = useOpen({
-// 		initialOpen: true,
-// 	});
-
-// 	useEffect(() => {
-// 		// const today = new Date();
-// 		// const firstDate = format(today, 'yyyy-MM-01');
-// 		// const lastDate = format(lastDayOfMonth(today), 'yyyy-MM-dd');
-// 		// const tomorrow = addDays(today, 1);
-// 		// const before14day = addDays(today, -13);
-// 		// setUpdatedDate(
-// 		// 	today.toLocaleString('ko-KR', {
-// 		// 		year: 'numeric',
-// 		// 		month: 'long',
-// 		// 		day: 'numeric',
-// 		// 		hour: 'numeric',
-// 		// 		minute: 'numeric',
-// 		// 	})
-// 		// );
-// 		// (async () => {
-// 		// 	const [monthly, weekly, daily] = await Promise.all([
-// 		// 		getNftStatistics({
-// 		// 			from: firstDate,
-// 		// 			to: lastDate,
-// 		// 			groupBy: 'MONTH',
-// 		// 			groupSize: 1,
-// 		// 		}),
-// 		// 		getNftStatistics({
-// 		// 			from: format(before14day, 'yyyy-MM-dd'),
-// 		// 			to: format(tomorrow, 'yyyy-MM-dd'),
-// 		// 			groupBy: 'DAY',
-// 		// 			groupSize: 1,
-// 		// 		}),
-// 		// 		getNftStatistics({
-// 		// 			from: format(before14day, 'yyyy-MM-dd'),
-// 		// 			to: format(tomorrow, 'yyyy-MM-dd'),
-// 		// 			groupBy: 'DAY',
-// 		// 			groupSize: 1,
-// 		// 		}),
-// 		// 	]);
-// 		// 	console.log(
-// 		// 		'monthly, weekly, daily :>> ',
-// 		// 		monthly.data,
-// 		// 		weekly.data,
-// 		// 		daily.data
-// 		// 	);
-// 		// 	setMonthly(monthly.data);
-// 		// 	setWeekly(weekly.data);
-// 		// 	setDaily(daily.data);
-// 		// })();
-// 	}, []);
-
-// 	const chartOption = useMemo(() => {
-// 		if (!daily) return;
-// 		return getChartOption(daily);
-// 	}, [daily]);
-
-// 	const handleDataClick = useCallback((_type: any) => {
-// 		let val;
-// 		switch (_type) {
-// 			case 'ready':
-// 				val = '1';
-// 				break;
-// 			case 'completed':
-// 				val = '2,3,4';
-// 				break;
-// 			case 'canceled':
-// 				val = '9';
-// 				break;
-// 			default:
-// 				break;
-// 		}
-
-// 		// TODO: query string 함께 보내기
-// 		navigate('/guarantee');
-// 		// history.push({
-// 		// 	pathname: '/b2b/guarantee',
-// 		// 	search: queryToString({nft_req_state: val}),
-// 		// });
-// 	}, []);
-
-// 	// TODO:
-// 	const goToConnectPage = useCallback(() => {
-// 		// history.push({pathname: '/b2b/interwork'});
-// 		// navigate('/b2b/interwork')
-// 	}, []);
-
-// 	// TODO:
-// 	// 모달 닫기
-// 	// const onClose = () => {
-// 	// 	// dispatch(setClose());
-// 	// 	// dispatch(clearError());
-// 	// };
-
-// <>
-// 			<Box
-// 				sx={{
-// 					width: '100%',
-// 					marginTop: 2,
-// 					'& .MuiCard-root': {
-// 						boxShadow: 'none',
-// 					},
-// 				}}>
-// 				<Stack alignItems="flex-start" spacing={2} sx={{mb: 5}}>
-// 					<Typography variant="h2">오늘 현황</Typography>
-// 					<Typography variant="subtitle2">
-// 						{updatedDate} 기준
-// 					</Typography>
-// 				</Stack>
-// 				<NoticeSlider />
-// 				<Grid container spacing={5}>
-// 					<Grid item xs={12} md={9}>
-// 						<Card className={classes.chartCard}>
-// 							<Box
-// 								sx={{
-// 									p: 4,
-// 								}}>
-// 								<Typography
-// 									variant="h3"
-// 									sx={{mb: 2, fontSize: '20px'}}>
-// 									개런티 발행현황
-// 								</Typography>
-// 								<Grid
-// 									container
-// 									flexWrap="nowrap"
-// 									direction="row">
-// 									<Grid
-// 										item
-// 										container
-// 										direction="column"
-// 										sx={{maxWidth: '220px'}}>
-// 										<dl className="data-dl">
-// 											<dd className="value">
-// 												<strong>
-// 													{`${
-// 														daily
-// 															? daily.reduce(
-// 																	(
-// 																		sum,
-// 																		day
-// 																	) =>
-// 																		Number(
-// 																			sum
-// 																		) +
-// 																		Number(
-// 																			day.requested
-// 																		) +
-// 																		Number(
-// 																			day.confirmed
-// 																		) +
-// 																		Number(
-// 																			day.completed
-// 																		),
-// 																	0
-// 															  )
-// 															: 0
-// 													}`.toLocaleString()}
-// 												</strong>
-// 												건
-// 											</dd>
-// 											<dt className="title">
-// 												지난 14일 개런티 발급건수
-// 											</dt>
-// 										</dl>
-// 									</Grid>
-// 									{chartOption && (
-// 										<Grid item className="chart-wrap">
-// 											<Chart
-// 												type="bar"
-// 												height={250}
-// 												options={chartOption.options}
-// 												series={chartOption.series}
-// 											/>
-// 										</Grid>
-// 									)}
-// 								</Grid>
-// 							</Box>
-// 						</Card>
-// 					</Grid>
-// 					<Grid item xs={12} md={3}>
-// 						<Card
-// 							sx={{
-// 								p: 4,
-// 							}}
-// 							className={classes.totalMonthlyCard}>
-// 							<dl className="data-dl">
-// 								<dt className="title">
-// 									{new Date().getMonth() + 1}월 디지털 개런티
-// 									발급건수
-// 								</dt>
-// 								<dd className="value">
-// 									<strong>
-// 										{monthly &&
-// 											`${
-// 												Number(
-// 													monthly[0]?.requested || 0
-// 												) +
-// 												Number(
-// 													monthly[0]?.confirmed || 0
-// 												) +
-// 												Number(
-// 													monthly[0]?.completed || 0
-// 												)
-// 											}`.toLocaleString()}
-// 									</strong>
-// 								</dd>
-// 							</dl>
-// 							<img
-// 								src={`${ImgBgCards}`}
-// 								srcSet={`${ImgBgCards} 1x, ${ImgBgCards2x} 2x`}
-// 								alt="cards"
-// 								className={classes.cardsImg}
-// 							/>
-// 						</Card>
-// 					</Grid>
-// 					<DashboardGuaranteeCard
-// 						title="신청대기"
-// 						value={
-// 							weekly
-// 								? weekly.reduce(
-// 										(sum, day) =>
-// 											Number(sum) + Number(day.ready),
-// 										0
-// 								  )
-// 								: 0
-// 						}
-// 						handleClick={() => handleDataClick('ready')}
-// 						style={classes.statusWeeklyCard}
-// 						icon={<IcGuaranteeIssuePending />}
-// 					/>
-// 					<DashboardGuaranteeCard
-// 						title="발급완료"
-// 						value={
-// 							weekly
-// 								? weekly.reduce(
-// 										(sum, day) =>
-// 											Number(sum) +
-// 											Number(day.requested) +
-// 											Number(day.confirmed) +
-// 											Number(day.completed),
-// 										0
-// 								  )
-// 								: 0
-// 						}
-// 						handleClick={() => handleDataClick('completed')}
-// 						style={classes.statusWeeklyCard}
-// 						icon={<IcGuaranteeIssueSuccess />}
-// 					/>
-// 					<DashboardGuaranteeCard
-// 						title="발급취소"
-// 						value={
-// 							weekly
-// 								? weekly.reduce(
-// 										(sum, day) =>
-// 											Number(sum) + Number(day.canceled),
-// 										0
-// 								  )
-// 								: 0
-// 						}
-// 						handleClick={() => handleDataClick('canceled')}
-// 						style={classes.statusWeeklyCard}
-// 						icon={<IcGuaranteeIssueCancel />}
-// 					/>
-
-// 					<Grid item xs={12} md={3}>
-// 						<Card
-// 							sx={{
-// 								cursor: 'pointer',
-// 								backgroundColor: '#D6DCFF',
-// 								':hover': {
-// 									boxShadow:
-// 										'0 2px 14px 0 rgb(32 40 45 / 8%)',
-// 								},
-// 							}}
-// 							onClick={goToConnectPage}>
-// 							<Box
-// 								sx={{
-// 									p: 3,
-// 								}}
-// 								className={classes.connectServiceCard}>
-// 								<div
-// 									style={{
-// 										background: `-webkit-image-set(url(${ImgConnectService}) 1x, url(${ImgConnectService2x}) 2x)`,
-// 									}}
-// 									className={classes.connectServiceButton}
-// 								/>
-// 								<img
-// 									className={classes.btnConnect}
-// 									src={`${ImgConnectServiceButton}`}
-// 									srcSet={`${ImgConnectServiceButton} 1x, ${ImgConnectServiceButton2x} 2x`}
-// 									alt="icon"
-// 								/>
-// 							</Box>
-// 						</Card>
-// 					</Grid>
-// 				</Grid>
-// 			</Box>
-// 			<DashboardDialog open={open} onClose={onClose} />
-// 		</>

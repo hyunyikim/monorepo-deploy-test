@@ -1,4 +1,5 @@
 import {useEffect, useCallback} from 'react';
+import {useLocation} from 'react-router-dom';
 
 import {
 	Dialog,
@@ -9,19 +10,17 @@ import {
 } from '@mui/material';
 
 import {useMessageDialog} from '@/stores';
-import {openChildModal, closeChildModal} from '@/utils';
 
 import {Button} from '@/components';
 import {IcClose} from '@/assets/icon';
 
 function MessageDialog() {
+	const location = useLocation();
+
 	const open = useMessageDialog((state) => state.open);
 	const title = useMessageDialog((state) => state.title);
 	const message = useMessageDialog((state) => state.message);
 	const useCloseIcon = useMessageDialog((state) => state.useCloseIcon);
-	const sendCloseModalControlToParent = useMessageDialog(
-		(state) => state.sendCloseModalControlToParent
-	);
 	const disableClickBackground = useMessageDialog(
 		(state) => state.disableClickBackground
 	);
@@ -38,14 +37,6 @@ function MessageDialog() {
 		(state) => state.initMessageDialog
 	);
 
-	useEffect(() => {
-		if (open) {
-			openChildModal();
-			return;
-		}
-		sendCloseModalControlToParent && closeChildModal();
-	}, [open, sendCloseModalControlToParent]);
-
 	const handleClose = useCallback(() => {
 		if (onCloseFunc) {
 			onCloseFunc();
@@ -57,6 +48,12 @@ function MessageDialog() {
 			initMessageDialog();
 		}, 350);
 	}, [onClose, onCloseFunc, initMessageDialog]);
+
+	useEffect(() => {
+		console.log('location.pathname :>> ', location.pathname);
+		// 페이지 변경되면 메시지 모달 닫힘
+		handleClose();
+	}, [location.pathname]);
 
 	return (
 		<Dialog

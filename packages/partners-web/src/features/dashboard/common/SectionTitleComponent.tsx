@@ -1,31 +1,26 @@
 import React from 'react';
-import {
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-	ReactElement,
-	ReactNode,
-} from 'react';
 
-import {
-	Box,
-	Stack,
-	Typography,
-	Grid,
-	Card,
-	useTheme,
-	SxProps,
-} from '@mui/material';
+import {Box, Typography} from '@mui/material';
 
 interface SectionTitleProps {
 	boxTitle: string | JSX.Element;
-	boxSubtitle?: string;
+	boxSubtitle?: string | JSX.Element;
+	BoxMarginBottom?: string;
+	sx: SxProps;
 }
 
-function SectionTitleComponent({boxTitle, boxSubtitle}: SectionTitleProps) {
+function SectionTitleComponent({
+	boxTitle,
+	boxSubtitle,
+	BoxMarginBottom,
+	sx,
+}: SectionTitleProps) {
 	return (
-		<Box sx={{marginBottom: '20px'}}>
+		<Box
+			sx={{
+				marginBottom: BoxMarginBottom ? BoxMarginBottom : '20px',
+				...sx,
+			}}>
 			{typeof boxTitle === 'string' ? (
 				<Typography
 					variant="h3"
@@ -41,19 +36,22 @@ function SectionTitleComponent({boxTitle, boxSubtitle}: SectionTitleProps) {
 				<>{boxTitle}</>
 			)}
 
-			{boxSubtitle && (
-				<Typography
-					variant="h4"
-					sx={{
-						fontWeight: 500,
-						fontSize: '15px',
-						lineHeight: '145%',
-						color: 'grey.600',
-						marginTop: '4px',
-					}}>
-					{boxSubtitle}
-				</Typography>
-			)}
+			{boxSubtitle &&
+				(typeof boxTitle === 'string' ? (
+					<Typography
+						variant="h4"
+						sx={{
+							fontWeight: 500,
+							fontSize: '15px',
+							lineHeight: '145%',
+							color: 'grey.600',
+							marginTop: '4px',
+						}}>
+						{boxSubtitle}
+					</Typography>
+				) : (
+					<Box mt={'4px'}>{boxSubtitle}</Box>
+				))}
 		</Box>
 	);
 }

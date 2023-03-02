@@ -1,4 +1,5 @@
 import {useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
@@ -16,12 +17,7 @@ import {
 	repairListSearchFilter,
 	getRepairStatusChip,
 } from '@/data';
-import {
-	formatPhoneNum,
-	goToParentUrl,
-	sendAmplitudeLog,
-	usePageView,
-} from '@/utils';
+import {formatPhoneNum, sendAmplitudeLog, usePageView} from '@/utils';
 
 import {
 	TitleTypography,
@@ -44,6 +40,7 @@ const menuKo = '수선';
 
 function RepairList() {
 	usePageView('repair_pv', '수선신청목록 진입');
+	const navigate = useNavigate();
 
 	const {
 		isLoading,
@@ -198,9 +195,7 @@ function RepairList() {
 										variant="body3"
 										className="underline"
 										onClick={() => {
-											goToParentUrl(
-												`/b2b/repair/${item.idx}`
-											);
+											navigate(`/b2b/repair/${item.idx}`);
 										}}>
 										{item.repairNum}
 									</Typography>
@@ -213,7 +208,7 @@ function RepairList() {
 											const name = item?.ordererName;
 											const phone = item?.ordererTel;
 											if (!name || !phone) return;
-											goToParentUrl(
+											navigate(
 												`/b2b/customer/${name}/${phone}`
 											);
 										}}>

@@ -1,4 +1,5 @@
 import {useMemo, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Button} from '@/components';
 import {ExcelError, GuaranteeExcelUploadFormData} from '@/@types';
 import {
@@ -11,9 +12,8 @@ import {
 	useMessageDialog,
 } from '@/stores';
 import ProgressModal from '@/features/common/ProgressModal';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 import {registerBulkGuarantee} from '@/api/guarantee.api';
-import {goToParentUrl, updateUserPricePlanData} from '@/utils';
 import {customFieldsToJSONString, PAYMENT_MESSAGE_MODAL} from '@/data';
 import {useQueryClient} from '@tanstack/react-query';
 
@@ -23,6 +23,7 @@ interface Props {
 }
 
 function GuaranteeExcelSubmit({gridData, errors}: Props) {
+	const navigate = useNavigate();
 	const [requestCount, setRequestCount] = useState(0);
 	const totalCount = useMemo(() => gridData?.length || 0, [gridData]);
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
@@ -41,7 +42,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 		open: openRegisterGuaranteeListModal,
 		onOpen: onOpenRegisterGuaranteeListModal,
 		onClose: onCloseRegisterGuaranteeListModal,
-	} = useChildModalOpen({});
+	} = useOpen({});
 
 	const handleSubmit = async () => {
 		if (!gridData || gridData?.length === 0) {
@@ -88,7 +89,6 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 				failCount += 1;
 			}
 		}
-		updateUserPricePlanData();
 		queryClient.invalidateQueries({
 			queryKey: ['userPricePlan'],
 		});
@@ -119,7 +119,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 			showBottomCloseButton: true,
 			closeButtonValue: '확인',
 			onCloseFunc: () => {
-				goToParentUrl('/b2b/guarantee');
+				navigate('/b2b/guarantee');
 			},
 		});
 	};
@@ -132,12 +132,34 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 		if (!isOnSubscription) {
 			// 무료체험 종료
 			if (isTrialPlan) {
-				onOpenMessageDialog(PAYMENT_MESSAGE_MODAL.TRIAL_FINISH);
+				onOpenMessageDialog({
+					...PAYMENT_MESSAGE_MODAL.TRIAL_FINISH,
+					buttons: (
+						<Button
+							color="black"
+							onClick={() => {
+								navigate('/b2b/payment/subscribe');
+							}}>
+							플랜 업그레이드
+						</Button>
+					),
+				});
 				return false;
 			}
 
 			// 유료플랜 종료
-			onOpenMessageDialog(PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE);
+			onOpenMessageDialog({
+				...PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE,
+				buttons: (
+					<Button
+						color="black"
+						onClick={() => {
+							navigate('/b2b/payment/subscribe');
+						}}>
+						구독
+					</Button>
+				),
+			});
 			return false;
 		}
 
@@ -158,6 +180,15 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 						{willIssueGuaranteeCount.toLocaleString()}개의 개런티를
 						모두 발급해보세요.
 					</>
+				),
+				buttons: (
+					<Button
+						color="black"
+						onClick={() => {
+							navigate('/b2b/payment/subscribe');
+						}}>
+						플랜 업그레이드
+					</Button>
 				),
 			});
 			return false;

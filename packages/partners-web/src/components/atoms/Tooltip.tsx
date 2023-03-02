@@ -1,5 +1,11 @@
 import React, {ReactElement} from 'react';
-import {Box, Typography, Tooltip, TooltipProps} from '@mui/material';
+import {
+	Box,
+	Typography,
+	Tooltip,
+	TooltipProps,
+	createStyles,
+} from '@mui/material';
 import styled from '@emotion/styled';
 
 import whiteClose from '@/assets/icon/ic_close_white_16.png';
@@ -87,7 +93,7 @@ function TooltipComponent({
 			open={isOpen}
 			describeChild={true}
 			arrow={false}
-			placement={'bottom-start'}
+			// placement={'bottom-start'}
 			{...props}>
 			{children && <Box>{children}</Box>}
 		</Tooltip>

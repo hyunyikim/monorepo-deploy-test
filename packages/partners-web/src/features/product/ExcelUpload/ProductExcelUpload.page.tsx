@@ -1,9 +1,11 @@
-import {useCallback, useMemo} from 'react';
+import {useCallback, useEffect, useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {Stack} from '@mui/material';
 
 import {ExcelInput, ProductExcelUploadInput} from '@/@types';
 import {
+	useGetGuaranteeSettingCompleted,
 	useGetPartnershipInfo,
 	useGetSearchBrandList,
 	useMessageDialog,
@@ -14,7 +16,7 @@ import {
 	PRODUCT_EXCEL_COLUMN,
 	PRODUCT_EXCEL_INPUT,
 } from '@/data';
-import {useChildModalOpen, useExcelUpload} from '@/utils/hooks';
+import {useOpen, useExcelUpload} from '@/utils/hooks';
 
 import {ContentWrapper, TitleTypography, Button} from '@/components';
 import LackExcelInformationModal from '@/features/common/Excel/LackExcelInformationModal';
@@ -28,10 +30,28 @@ import {sendAmplitudeLog, usePageView} from '@/utils';
 function ProductExcelUpload() {
 	usePageView('itemadmin_excel_regist_pv', '대량등록 진입');
 
+	const navigate = useNavigate();
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const {data: brandList} = useGetSearchBrandList();
+	const {data: guaranteeSettingCompleted} = useGetGuaranteeSettingCompleted();
 
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+
+	useEffect(() => {
+		if (!guaranteeSettingCompleted) {
+			sendAmplitudeLog('guarantee_publish_popupview', {
+				pv_title: '개런티 미설정시 안내 팝업',
+			});
+			onOpenMessageDialog({
+				title: '개런티 설정 후 상품 등록이 가능합니다.',
+				showBottomCloseButton: true,
+				closeButtonValue: '확인',
+				onCloseFunc: () => {
+					navigate('/setup/guarantee');
+				},
+			});
+		}
+	}, [partnershipData, guaranteeSettingCompleted]);
 
 	// 필수/옵션 필드들
 	const fields = useMemo(() => {
@@ -122,7 +142,7 @@ function ProductExcelUpload() {
 		onOpen: onOpenLackExcelInformationModal,
 		onClose: onCloseLackExcelInformationModal,
 		open: openLackExcelInformationModal,
-	} = useChildModalOpen({
+	} = useOpen({
 		handleClose: () => {
 			sendAmplitudeLog(
 				'itemadmin_excelpublish_infodeficiency_popupcomplete',
@@ -140,7 +160,7 @@ function ProductExcelUpload() {
 		onSetModalData: setProductImgModalData,
 		modalData: productImgModalData,
 		open: openProductImgModal,
-	} = useChildModalOpen({
+	} = useOpen({
 		handleClose: () => {
 			setProductImgModalData(null);
 		},

@@ -1,5 +1,6 @@
+import {FOLDED_SIDEBAR_WIDTH, SIDEBAR_WIDTH} from '@/data';
+import {useSidebarControlStore} from '@/stores';
 import {Box, Grid, SxProps} from '@mui/material';
-import React from 'react';
 
 function FixedBottomNavBar({
 	children,
@@ -10,6 +11,8 @@ function FixedBottomNavBar({
 	sx?: SxProps;
 	maxWidth?: string;
 }) {
+	const isSidebarOpen = useSidebarControlStore((state) => state.isOpen);
+	const sidebarWidth = isSidebarOpen ? SIDEBAR_WIDTH : FOLDED_SIDEBAR_WIDTH;
 	return (
 		<Box
 			sx={{
@@ -18,6 +21,8 @@ function FixedBottomNavBar({
 				bottom: '0',
 				left: '0',
 				right: '0',
+				marginLeft: `calc(${sidebarWidth} + 1px)`,
+				width: `calc(100% - ${sidebarWidth} - 1px)`,
 				zIndex: 100,
 				...sx,
 			}}>
