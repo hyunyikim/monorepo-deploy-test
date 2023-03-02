@@ -19,3 +19,6 @@ node_modules
 # coverage
 
 .eslintcache
+
+!/packages/payment/.env.stage
+!/packages/payment/.env
