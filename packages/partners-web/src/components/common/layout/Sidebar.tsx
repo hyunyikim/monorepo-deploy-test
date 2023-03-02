@@ -1,4 +1,4 @@
-import {useState, useMemo, useEffect} from 'react';
+import {useState, useMemo, useEffect, useCallback} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 
 import {SxProps} from '@mui/system';
@@ -27,11 +27,12 @@ import {
 	FOLDED_SIDEBAR_WIDTH,
 	HEADER_HEIGHT,
 	checkDepth2MenuSelected,
-	checkDepth1MenuSelected,
+	getSelectedDepth1Menu,
 } from '@/data';
 
-import {MenuDepth1, MenuDepth2} from '@/@types';
+import {Menu, MenuDepth1, MenuDepth2} from '@/@types';
 import {useGetMenu, useSidebarControlStore} from '@/stores';
+import {sendAmplitudeLog} from '@/utils';
 
 const openedMixin = (theme: Theme): CSSObject => ({
 	width: SIDEBAR_WIDTH,
@@ -149,6 +150,38 @@ const Menu = ({
 	data: MenuDepth1[];
 	isLast: boolean;
 }) => {
+	const {pathname} = useLocation();
+	// 선택된 depth1 메뉴
+	const [selectedDepth1Menu, setSelectedDepth1Menu] = useState<Menu | null>(
+		null
+	);
+	// 열려있는 depth1 메뉴
+	const [openedChildrenMenu, setOpenedChildrenMenu] = useState<Menu | null>(
+		null
+	);
+
+	const selectedMenu = useMemo(() => {
+		return getSelectedDepth1Menu(pathname);
+	}, [pathname]);
+
+	// 초기 세팅
+	useEffect(() => {
+		setSelectedDepth1Menu(selectedMenu);
+	}, [selectedMenu]);
+
+	useEffect(() => {
+		// 닫혔을 때 자식 메뉴 닫힘 처리
+		if (!open) {
+			setOpenedChildrenMenu(null);
+			return;
+		}
+		setOpenedChildrenMenu(selectedMenu);
+	}, [open, selectedMenu]);
+
+	const onOpenChildrenMenu = useCallback((value: Menu) => {
+		setOpenedChildrenMenu((prev) => (prev === value ? null : value));
+	}, []);
+
 	return (
 		<Stack
 			sx={{
@@ -156,7 +189,7 @@ const Menu = ({
 			}}>
 			<List
 				sx={{
-					p: open ? '8px 0' : 0,
+					p: '8px 0',
 					transition: 'padding 100ms ease-in-out',
 					'& .MuiListItem-root': {
 						display: 'block',
@@ -207,7 +240,16 @@ const Menu = ({
 					},
 				}}>
 				{data.map((groupMenu, idx) => {
-					return <GroupMenu key={idx} open={open} data={groupMenu} />;
+					return (
+						<GroupMenu
+							key={idx}
+							isSidebarOpen={open}
+							selectedDepth1Menu={selectedDepth1Menu}
+							openedChildrenMenu={openedChildrenMenu}
+							onOpenChildrenMenu={onOpenChildrenMenu}
+							data={groupMenu}
+						/>
+					);
 				})}
 			</List>
 			{!isLast && (
@@ -215,9 +257,6 @@ const Menu = ({
 					sx={{
 						width: open ? 'calc(100% - 40px)' : 'calc(100% - 16px)',
 						m: 'auto',
-						...(!open && {
-							marginY: '8px',
-						}),
 						borderColor: style.vircleGrey100,
 					}}
 				/>
@@ -226,46 +265,58 @@ const Menu = ({
 	);
 };
 
-const GroupMenu = ({open, data}: {open: boolean; data: MenuDepth1}) => {
-	const {title, icon, path, emphasis, children} = data;
-	const [isChildrenOpen, setChildrenOpen] = useState(false);
+const GroupMenu = ({
+	isSidebarOpen,
+	selectedDepth1Menu,
+	openedChildrenMenu,
+	onOpenChildrenMenu,
+	data,
+}: {
+	isSidebarOpen: boolean;
+	selectedDepth1Menu: Menu | null;
+	openedChildrenMenu: Menu | null;
+	onOpenChildrenMenu: (value: Menu) => void;
+	data: MenuDepth1;
+}) => {
 	const {pathname} = useLocation();
 	const navigate = useNavigate();
+	const {menu, title, icon, path, emphasis, children, event} = data;
 
 	const isDepth1Selected = useMemo(() => {
-		return checkDepth1MenuSelected(pathname, data.menu);
-	}, [data, pathname]);
+		return menu === selectedDepth1Menu;
+	}, [menu, selectedDepth1Menu]);
 
-	useEffect(() => {
-		// 연관된 자식 메뉴 열림
-		if (open) {
-			setChildrenOpen(isDepth1Selected ? true : false);
-		}
-	}, [open, isDepth1Selected]);
-
-	useEffect(() => {
-		if (!open) {
-			setChildrenOpen(false);
-		}
-	}, [open]);
+	const isChildrenOpen = useMemo(() => {
+		return menu === openedChildrenMenu;
+	}, [menu, openedChildrenMenu]);
 
 	const handleControlDepth1Menu = () => {
+		if (event) {
+			sendAmplitudeLog(event[0], {
+				button_title: event[1],
+			});
+		}
 		// 사이드바 닫혀 있을 때(아이콘만 보일 때)
-		if (!open && children && children?.length > 0) {
+		if (!isSidebarOpen && children && children?.length > 0) {
 			const firstChildMenu = children[0].path;
 			navigate(firstChildMenu);
 			return;
 		}
-
 		// 사이드바 열렸을 때
+		onOpenChildrenMenu(menu);
+
 		if (path) {
 			navigate(path);
 			return;
 		}
-		setChildrenOpen((prev) => !prev);
 	};
 
 	const handleControlDepth2Menu = (depth2: MenuDepth2) => {
+		if (depth2.event) {
+			sendAmplitudeLog(depth2.event[0], {
+				button_title: depth2.event[1],
+			});
+		}
 		navigate(depth2.path);
 	};
 

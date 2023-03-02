@@ -64,6 +64,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 	const {data: userPlan} = useGetUserPricePlan();
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
 	const {
 		open: newProductModalOpen,
@@ -284,6 +285,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 										color="black"
 										onClick={() => {
 											navigate('/b2b/payment/subscribe');
+											onCloseMessageDialog();
 										}}>
 										플랜 업그레이드
 									</Button>
@@ -297,6 +299,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 										color="black"
 										onClick={() => {
 											navigate('/b2b/payment/subscribe');
+											onCloseMessageDialog();
 										}}>
 										구독
 									</Button>
@@ -319,6 +322,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 								color="black"
 								onClick={() => {
 									navigate('/b2b/payment/subscribe');
+									onCloseMessageDialog();
 								}}>
 								플랜 업그레이드
 							</Button>

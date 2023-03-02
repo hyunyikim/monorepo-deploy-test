@@ -29,7 +29,7 @@ function HeaderProfile({data}: Props) {
 
 	const handleLogout = useCallback(() => {
 		setLogout();
-		navigate('/', {
+		navigate('/auth/login', {
 			replace: true,
 		});
 	}, [setLogout]);

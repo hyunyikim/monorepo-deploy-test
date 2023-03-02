@@ -53,7 +53,7 @@ function GuaranteeExcelUpload() {
 				},
 			});
 		}
-	}, [partnershipData, guaranteeSettingCompleted]);
+	}, [guaranteeSettingCompleted]);
 
 	// 정보 부족 모달
 	const {

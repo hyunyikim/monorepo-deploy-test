@@ -72,7 +72,7 @@ const GuaranteeCheckTooltip = () => {
 			// 이용중
 			return {
 				content: [
-					`무료 체험 기간이 ${expireDate}일에 종료됩니다. 체험 기간이 종료되면 기능이 제한돼요.`,
+					`무료 체험 기간이 ${expireDate}에 종료됩니다. 체험 기간이 종료되면 기능이 제한돼요.`,
 				],
 				color: 'red.50',
 				icColor: '#F8434E',

@@ -1,4 +1,4 @@
-import {MenuList} from '@/@types';
+import {Menu, MenuList} from '@/@types';
 import {
 	IcDashboard,
 	IcLink,
@@ -20,6 +20,10 @@ export const menuList: MenuList = [
 			icon: <IcDashboard />,
 			title: '대시보드',
 			path: '/dashboard',
+			event: [
+				'dashboard_left_dashboard_click',
+				'대시보드로 화면으로 이동',
+			],
 		},
 		{
 			menu: 'guarantee',
@@ -28,18 +32,34 @@ export const menuList: MenuList = [
 			children: [
 				{
 					title: '개런티 목록',
+					event: [
+						'dashboard_left_guaranteelist_click',
+						'개런티 목륵으로 이동',
+					],
 					path: '/b2b/guarantee',
 				},
 				{
 					title: '개런티 발급',
+					event: [
+						'dashboard_left_guaranteepublish_click',
+						'개런티 발급으로 이동',
+					],
 					path: '/b2b/guarantee/register',
 				},
 				{
 					title: '개런티 대량발급',
+					event: [
+						'dashboard_left_guaranteeexcel_click',
+						'개런티 대량(엑셀)등록으로 이동',
+					],
 					path: '/b2b/guarantee/excel-upload',
 				},
 				{
 					title: '개런티 설정',
+					event: [
+						'dashboard_left_guaranteesetting_click',
+						'개런티 설정 화면으로 이동',
+					],
 					path: '/setup/guarantee',
 				},
 			],
@@ -51,10 +71,18 @@ export const menuList: MenuList = [
 			children: [
 				{
 					title: '상품 목록',
+					event: [
+						'dashboard_left_itemlist_click',
+						'상품목록으로 이동',
+					],
 					path: '/b2b/product',
 				},
 				{
 					title: '상품 등록',
+					event: [
+						'dashboard_left_itempublish_click',
+						'상품등록으로 이동',
+					],
 					path: '/b2b/product/register',
 				},
 				{
@@ -66,6 +94,7 @@ export const menuList: MenuList = [
 		{
 			menu: 'customer',
 			title: '고객 관리',
+			event: ['dashboard_left_userlist_click', '고객관리로 이동'],
 			icon: <IcUsers />,
 			path: '/b2b/customer',
 		},
@@ -74,6 +103,7 @@ export const menuList: MenuList = [
 		{
 			menu: 'repair',
 			title: '수선신청 관리',
+			event: ['dashboard_left_repairlist_click', '수선 신청관리로 이동'],
 			icon: <IcRepairScissors />,
 			path: '/b2b/repair',
 		},
@@ -82,6 +112,10 @@ export const menuList: MenuList = [
 		{
 			menu: 'interwork',
 			title: '서비스 연동 관리',
+			event: [
+				'dashboard_left_serviceinterlock_click',
+				'서비스 연동관리로 이동',
+			],
 			icon: <IcLink />,
 			path: '/b2b/interwork',
 		},
@@ -103,11 +137,20 @@ export const menuList: MenuList = [
 	],
 ];
 
-export const checkDepth1MenuSelected = (pathname: string, menu: string) => {
+export const getSelectedDepth1Menu = (pathname: string): Menu | null => {
+	const menuList: Menu[] = [
+		'dashboard',
+		'guarantee',
+		'product',
+		'customer',
+		'repair',
+		'interwork',
+		'payment',
+	];
 	if (pathname.includes('/b2b/interwork')) {
-		return menu === 'interwork';
+		return 'interwork';
 	}
-	return pathname.includes(menu);
+	return menuList.find((menu) => pathname.includes(menu)) || null;
 };
 
 export const checkDepth2MenuSelected = (
@@ -122,7 +165,22 @@ export const checkDepth2MenuSelected = (
 		) {
 			return true;
 		}
-		// TODO: 상세 보기
+		// 상세 페이지는 목록 메뉴로 지정
+		const isDetailPage = /\/[\w]+\/[\w]+\/[\d]+/g.test(pathname);
+		if (isDetailPage) {
+			if (
+				pathname.includes('guarantee') &&
+				comparePath === '/b2b/guarantee'
+			) {
+				return true;
+			}
+			if (
+				pathname.includes('product') &&
+				comparePath === '/b2b/product'
+			) {
+				return true;
+			}
+		}
 		return pathname === comparePath;
 	}
 	if (pathname.includes(comparePath)) {
