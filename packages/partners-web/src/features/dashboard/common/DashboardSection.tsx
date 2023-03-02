@@ -35,7 +35,7 @@ function DashboardSection({
 						fontSize: '18px',
 						lineHeight: '145%',
 						color: 'grey.700',
-						[theme.breakpoints.down(1280)]: {
+						[theme.breakpoints.down(1330)]: {
 							width: '590px',
 							margin: 'auto',
 						},

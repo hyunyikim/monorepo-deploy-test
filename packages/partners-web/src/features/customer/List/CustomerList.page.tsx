@@ -65,6 +65,7 @@ const {sort, ...customerInitialSearchFilter} = initialSearchFilter;
 function CustomerList() {
 	const navigate = useNavigate();
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const onMessageDialogClose = useMessageDialog((state) => state.onClose);
 	const [isPlanExpired, setIsPlanExpired] = useState<boolean>(false);
 	const {previousMonth, today} = dashboardDateStack();
 
@@ -172,6 +173,7 @@ function CustomerList() {
 					color="black"
 					onClick={() => {
 						navigate('/b2b/payment/subscribe');
+						onMessageDialogClose();
 					}}>
 					플랜 업그레이드
 				</Button>

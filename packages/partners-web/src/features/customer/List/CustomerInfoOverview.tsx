@@ -53,6 +53,7 @@ function ProgressStateBox({data}: ProgressStateProps) {
 							fontSize: '13px',
 							lineHeight: '145%',
 							color: 'grey.500',
+							whiteSpace: 'nowrap',
 						}}>
 						{title}&nbsp;
 					</Typography>
@@ -165,10 +166,10 @@ function CustomerInfoOverview({
 		<Stack flexDirection={'row'} gap="20px" flexWrap={'wrap'} mb="40px">
 			<SectionBox
 				sx={{
-					minWidth: '800px',
+					// minWidth: '800px',
 					maxWidth: '800px',
 					minHeight: '150px',
-					maxHeight: '150px',
+					// maxHeight: '150px',
 				}}>
 				<Stack
 					flexDirection={'row'}
@@ -197,7 +198,11 @@ function CustomerInfoOverview({
 					</Typography>
 				</Stack>
 
-				<Stack flexDirection={'row'} gap="46px" alignItems={'center'}>
+				<Stack
+					flexDirection={'row'}
+					flexWrap="wrap"
+					gap="46px"
+					alignItems={'center'}>
 					<Box
 						sx={{
 							display: 'flex',

@@ -2,9 +2,8 @@ import {lazy} from 'react';
 import {RouteObject} from 'react-router-dom';
 
 import Layout from '@/components/common/layout/Layout';
+import CheckUnAuth from '@/components/common/layout/CheckUnAuth';
 
-const AboutPrice = lazy(() => import('@/features/homepage/AboutPrice.page'));
-const Inquiry = lazy(() => import('@/features/homepage/Inquiry.page'));
 const SignIn = lazy(() => import('@/features/auth/signin/SignIn.page'));
 const SignUp = lazy(() => import('@/features/auth/signup/SignUp.page'));
 const EmailVerificationFail = lazy(
@@ -16,34 +15,30 @@ const PasswordResetRequest = lazy(
 
 const publicRoutes: RouteObject[] = [
 	{
-		element: <Layout hasSidebar={false} hasHeader={true} />,
+		element: <CheckUnAuth />,
 		children: [
 			{
-				path: '/auth/signup',
-				element: <SignUp />,
+				element: <Layout hasSidebar={false} hasHeader={true} />,
+				children: [
+					{
+						path: '/auth/signup',
+						element: <SignUp />,
+					},
+					{
+						path: '/reset/request/password',
+						element: <PasswordResetRequest />,
+					},
+					{
+						path: '/auth/verification/fail',
+						element: <EmailVerificationFail />,
+					},
+				],
 			},
 			{
-				path: '/reset/request/password',
-				element: <PasswordResetRequest />,
-			},
-			{
-				path: '/auth/verification/fail',
-				element: <EmailVerificationFail />,
+				path: '/auth/login',
+				element: <SignIn />,
 			},
 		],
-	},
-	{
-		path: '/auth/login',
-		element: <SignIn />,
-	},
-
-	{
-		path: '/pricing',
-		element: <AboutPrice />,
-	},
-	{
-		path: '/inquiry',
-		element: <Inquiry />,
 	},
 ];
 

@@ -38,6 +38,7 @@ function ServiceInterworkRepair() {
 	const queryClient = useQueryClient();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
 	const [currentPlan, setCurrentPlan] = useState<CurrentPlanType>({
 		isExpired: false,
@@ -139,6 +140,7 @@ function ServiceInterworkRepair() {
 						color="black"
 						onClick={() => {
 							navigate('/b2b/payment/subscribe');
+							onCloseMessageDialog();
 						}}>
 						플랜 업그레이드
 					</Button>
@@ -182,6 +184,7 @@ function ServiceInterworkRepair() {
 															true,
 													},
 												});
+												onCloseMessageDialog();
 											}}>
 											개런티 설정으로 이동
 										</Button>

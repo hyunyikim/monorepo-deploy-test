@@ -202,17 +202,6 @@ function GuaranteeCheckboxButton({
 	const expireDate = userPlan?.planExpireDate
 		? new Date(userPlan?.planExpireDate).getTime()
 		: null;
-	const modalConfirmButton = (_text: string) => {
-		return (
-			<Button
-				color="black"
-				onClick={() => {
-					navigate('/b2b/payment/subscribe');
-				}}>
-				{_text}
-			</Button>
-		);
-	};
 
 	const freeTrialExpiredModal = () => {
 		return onOpenMessageDialog({
@@ -222,6 +211,7 @@ function GuaranteeCheckboxButton({
 					color="black"
 					onClick={() => {
 						navigate('/b2b/payment/subscribe');
+						onCloseMessageDialog();
 					}}>
 					플랜 업그레이드
 				</Button>
@@ -237,6 +227,7 @@ function GuaranteeCheckboxButton({
 					color="black"
 					onClick={() => {
 						navigate('/b2b/payment/subscribe');
+						onCloseMessageDialog();
 					}}>
 					구독
 				</Button>
@@ -264,6 +255,7 @@ function GuaranteeCheckboxButton({
 						color="black"
 						onClick={() => {
 							navigate('/b2b/payment/subscribe');
+							onCloseMessageDialog();
 						}}>
 						플랜 업그레이드
 					</Button>

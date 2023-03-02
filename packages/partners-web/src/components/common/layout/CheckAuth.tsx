@@ -29,7 +29,7 @@ const CheckLogin = ({children}: {children: React.ReactElement}) => {
 	if (isLogin) {
 		return children;
 	}
-	return <Navigate to="/" />;
+	return <Navigate to="/auth/login" />;
 };
 
 /**

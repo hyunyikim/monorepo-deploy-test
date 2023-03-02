@@ -150,14 +150,27 @@ function DashboardSettingHelper({
 		}
 	};
 
-	useEffect(() => {
-		stepList.forEach((step, idx) => {
-			if (step.isCompleted) {
+	const initialStepHandler = () => {
+		stepList.reverse().forEach((step, idx) => {
+			if (step.isCompleted || step.isCompleted === 'Y') {
 				return;
 			} else {
-				return setStepState(idx);
+				switch (idx) {
+					case 0:
+						return setStepState(2);
+					case 1:
+						return setStepState(1);
+					case 2:
+						return setStepState(0);
+					default:
+						return setStepState(2);
+				}
 			}
 		});
+	};
+
+	useEffect(() => {
+		initialStepHandler();
 	}, []);
 
 	useEffect(() => {
@@ -191,7 +204,7 @@ function DashboardSettingHelper({
 					버클, 디지털 개런티 서비스에 오신걸 환영합니다.
 				</Typography>
 
-				<SectionBox sx={{minHeight: '100%'}}>
+				<SectionBox sx={{minHeight: 'none'}}>
 					<Stack
 						flexDirection={'row'}
 						justifyContent={'space-between'}>

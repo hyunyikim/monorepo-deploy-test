@@ -1,14 +1,7 @@
 import React, {ReactNode, useState, useEffect} from 'react';
 import {makeStyles} from '@mui/styles';
-
-import {
-	Box,
-	Typography,
-	Tooltip,
-	createStyles,
-	Stack,
-	SxProps,
-} from '@mui/material';
+import createStyles from '@mui/styles/createStyles';
+import {Box, Typography, Tooltip, Stack, SxProps} from '@mui/material';
 import {IcHelp, IcClose} from '@/assets/icon';
 
 interface ToolTipProps {

@@ -23,6 +23,7 @@ import {Box, Typography, Grid, Divider, Stack} from '@mui/material';
 import CapsuleButton from '@/components/atoms/CapsuleButton';
 import InputComponent from '@/components/atoms/InputComponent';
 
+import {useSidebarControlStore} from '@/stores';
 import {Button} from '@/components';
 
 import {
@@ -661,6 +662,7 @@ export function InputFormSection({
 	const location = useLocation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const isSidebarOpen = useSidebarControlStore((state) => state.isOpen);
 
 	const {
 		handleSubmit,
@@ -1139,7 +1141,7 @@ export function InputFormSection({
 					queryClient.invalidateQueries({
 						queryKey: ['partnershipInfo'],
 					});
-					navigate('/dashboard');
+					// navigate('/dashboard');
 				}, 200);
 			},
 		});
@@ -1160,7 +1162,7 @@ export function InputFormSection({
 					queryClient.invalidateQueries({
 						queryKey: ['partnershipInfo'],
 					});
-					navigate('/dashboard');
+					// navigate('/dashboard');
 				}, 300);
 			},
 			buttons: (
@@ -2068,7 +2070,7 @@ export function InputFormSection({
 						bottom: '0',
 						left: '0',
 						right: '0',
-						zIndex: 100,
+						zIndex: 1,
 					})}>
 					<Grid
 						container
@@ -2079,9 +2081,15 @@ export function InputFormSection({
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
-							marginLeft: 0,
+							marginLeft: hasProfileLogo
+								? isSidebarOpen
+									? 'auto'
+									: 0
+								: 0,
 							width: hasProfileLogo
-								? '100%'
+								? isSidebarOpen
+									? 'calc(100% - 240px)'
+									: 'calc(100% + 72px)'
 								: 'calc(100% - 662px)',
 							[theme.breakpoints.down(1200)]: {
 								width: '100%',
@@ -2163,8 +2171,6 @@ function SetupGuarantee() {
 
 	return (
 		<Grid container flexWrap="nowrap">
-			{/* <Header backgroundColor="transparent" borderBottom={false} /> */}
-			<Header borderBottom={false} />
 			<InputFormSection
 				boxIndexState={boxIndexState}
 				boxOpenHandler={boxOpenHandler}

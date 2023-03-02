@@ -27,7 +27,11 @@ type OverviewBoxProps = {
 	count: string | number;
 	img: HTMLImageElement | string;
 	guaranteeVal: string;
+	period: DashboardPeriodType;
 };
+
+const {today, previousWeek, previousMonth} = dashboardDateStack();
+
 function GuaranteeOverviewBox({
 	title = '0',
 	difference = '0',
@@ -35,23 +39,24 @@ function GuaranteeOverviewBox({
 	count = '0',
 	img,
 	guaranteeVal,
+	period,
 }: OverviewBoxProps) {
 	const navigate = useNavigate();
-	// const {onHandleChangeFilter} = useCheckboxList({
-	// 	idxList: [1242],
-	// });
-
 	const goToGuaranteeListPage = (/* _value: string */) => {
 		let status = '';
+		let statusCode = '';
 		switch (title) {
 			case '신청대기':
 				status = 'waiting';
+				statusCode = '1';
 				break;
 			case '발급완료':
 				status = 'success';
+				statusCode = '2%2C3%2C4';
 				break;
 			case '발급취소':
 				status = 'cancel';
+				statusCode = '9';
 				break;
 			default:
 				break;
@@ -61,22 +66,14 @@ function GuaranteeOverviewBox({
 			pv_title: '개런티 목록으로 이동',
 		});
 
-		/* TODO: url에 값을 넣어서 변경해주기 */
-		// {value: '', label: '전체'},
-		// {value: '1', label: '신청대기'},
-		// {value: '2,3,4', label: '발급완료'},
-		// {value: '9', label: '발급취소'},
-		// if (_value) {
-		// 	goToParentUrl('/b2b/guarantee');
-		// 	return setTimeout(() => {
-		// 		onHandleChangeFilter({
-		// 			nft_req_state: _value,
-		// 		});
-		// 		goToParentUrl('/b2b/guarantee');
-		// 		console.log('after _value', _value);
-		// 	}, 500);
-		// }
-		navigate('/b2b/guarantee');
+		const from = period === 'WEEKLY' ? previousWeek : previousMonth;
+		const to = today;
+
+		navigate({
+			pathname: '/b2b/guarantee',
+			search: `?searchType=all&searchText=&startDate=${from}&endDate=${to}&sort=latest&currentPage=1&pageMaxNum=25&nft_req_state=${statusCode}&platform=`,
+		});
+
 		return;
 	};
 
@@ -187,7 +184,7 @@ function DashboardGuaranteeSection({
 	guaranteeData,
 	date,
 }: GuaranteeOverviewProps) {
-	const {previousWeek, previousMonth, today} = dashboardDateStack();
+	// const {previousWeek, previousMonth, today} = dashboardDateStack();
 	let currentPeriod;
 
 	if (guaranteeData) {
@@ -267,6 +264,7 @@ function DashboardGuaranteeSection({
 	const hour = 60;
 	const min = 60;
 	const ms = 1000;
+
 	function getWeekDateList(_date: string) {
 		const result = [];
 		for (let i = 0; i < 7; i++) {
@@ -275,15 +273,23 @@ function DashboardGuaranteeSection({
 					date: transformDate(
 						new Date(_date)?.toISOString().split('T', 1)[0]
 					),
+					xDate: transformDate(
+						new Date(today)?.toISOString().split('T', 1)[0]
+					),
 					rawDate: _date,
 				});
 			} else {
 				const timeStamp =
 					new Date(_date).getTime() - i * day * hour * min * ms;
+				const todayTimeStamp =
+					new Date(today).getTime() - i * day * hour * min * ms;
 
 				result.push({
 					date: transformDate(
 						new Date(timeStamp).toISOString().split('T', 1)[0]
+					),
+					xDate: transformDate(
+						new Date(todayTimeStamp)?.toISOString().split('T', 1)[0]
 					),
 					rawDate: new Date(timeStamp).toISOString().split('T', 1)[0],
 				});
@@ -299,11 +305,16 @@ function DashboardGuaranteeSection({
 		for (let i = 0; i < 4; i++) {
 			const timeStamp =
 				new Date(_startDate).getTime() - i * 7 * day * hour * min * ms;
+			const todayTimeStamp =
+				new Date(today).getTime() - i * day * hour * min * ms;
 
 			if (i === 0) {
 				result.push({
 					date: transformDate(
 						new Date(_startDate)?.toISOString().split('T', 1)[0]
+					),
+					xDate: transformDate(
+						new Date(today)?.toISOString().split('T', 1)[0]
 					),
 					rawDate: _startDate,
 				});
@@ -311,6 +322,9 @@ function DashboardGuaranteeSection({
 				result.push({
 					date: transformDate(
 						new Date(timeStamp).toISOString().split('T', 1)[0]
+					),
+					xDate: transformDate(
+						new Date(todayTimeStamp)?.toISOString().split('T', 1)[0]
 					),
 					rawDate: new Date(timeStamp).toISOString().split('T', 1)[0],
 				});
@@ -320,20 +334,18 @@ function DashboardGuaranteeSection({
 		return result.reverse();
 	}
 
-	const lineDataGenerator = (_period: string, startDate: string) => {
-		const rawData = currentPeriod?.issuedGraph;
-
-		if (rawData && startDate) {
-			const AllPeriodData = {...rawData?.current, ...rawData?.last};
-
+	const generateDefaultData = (
+		_period: DashboardPeriodType,
+		startDate: string
+	) => {
+		if (_period) {
 			if (_period === 'WEEKLY') {
 				/* 주간 데이터 */
 				const weekDateList = getWeekDateList(startDate);
-
 				return weekDateList.map((data, idx) => {
 					return {
 						x: data.date,
-						y: AllPeriodData[data.rawDate] || 0,
+						y: 0,
 					};
 				});
 			} else {
@@ -342,10 +354,44 @@ function DashboardGuaranteeSection({
 				return monthDateList.map((data) => {
 					return {
 						x: data.date,
+						y: 0,
+					};
+				});
+			}
+		}
+	};
+
+	const lineDataGenerator = (
+		_period: DashboardPeriodType,
+		startDate: string
+	) => {
+		const rawData = currentPeriod?.issuedGraph;
+
+		if (rawData && startDate) {
+			const AllPeriodData = {...rawData?.current, ...rawData?.last};
+
+			if (_period === 'WEEKLY') {
+				/* 주간 데이터 */
+				const weekDateList = getWeekDateList(startDate);
+				return weekDateList.map((data, idx) => {
+					return {
+						x: data.xDate,
+						y: AllPeriodData[data.rawDate] || 0,
+					};
+				});
+			} else {
+				/* 월간 데이터 */
+				const monthDateList = getMonthDateList(startDate);
+				console.log('getMonthDateList', getMonthDateList(startDate));
+				return monthDateList.map((data) => {
+					return {
+						x: data.xDate,
 						y: AllPeriodData[data.rawDate] || 0,
 					};
 				});
 			}
+		} else {
+			return generateDefaultData(_period, startDate);
 		}
 	};
 
@@ -405,6 +451,7 @@ function DashboardGuaranteeSection({
 				},
 			},
 			colors: ['#CACAD3', '#526EFF'],
+			// colors: ['#526EFF', '#CACAD3'],
 		},
 	};
 
@@ -492,7 +539,7 @@ function DashboardGuaranteeSection({
 											currentPeriod?.issuedGraph
 												?.totalCount
 										)
-									)}
+									) || 0}
 								</Typography>
 								건의
 								<br /> 개런티를 발급완료 했습니다.
@@ -577,6 +624,7 @@ function DashboardGuaranteeSection({
 					<Stack sx={{gap: '32px', minWidth: '285px'}}>
 						{overviewDataList.map((li, idx) => (
 							<GuaranteeOverviewBox
+								period={period}
 								title={li.title}
 								difference={li.difference}
 								rate={li.rate}
@@ -640,7 +688,10 @@ function DashboardGuaranteeSection({
 								? `지난 ${getPeriodText()}${
 										getPeriodText() === '주' ? '와' : '과'
 								  } 동일합니다.`
-								: `지난 ${getPeriodText()}에는 {판매처_nm}에서 많이 발급했어요.`
+								: `지난 ${getPeriodText()}에는 ${
+										currentPeriod?.issuedFrom
+											?.lastMost as string
+								  }에서 많이 발급했어요.`
 						}
 					/>
 
