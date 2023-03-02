@@ -174,12 +174,17 @@ const privateRoutes: RouteObject[] = [
 					},
 					{path: '/setting/profile', element: <ProfileSetting />},
 					{path: '/setting/signout', element: <Signout />},
-					{path: '/setup/guarantee', element: <SetupGuarantee />},
 					{
 						path: '/re-setup/guarantee',
 						element: <ResetupGuarantee />,
 					},
 					{path: '/cafe24/interwork', element: <Cafe24Interwork />},
+				],
+			},
+			{
+				element: <Layout hasHeader={false} hasSidebar={false} />,
+				children: [
+					{path: '/setup/guarantee', element: <SetupGuarantee />},
 				],
 			},
 			{

@@ -88,7 +88,7 @@ export default function Sidebar() {
 				variant="permanent"
 				open={isSidebarOpen}
 				sx={{
-					zIndex: 1,
+					zIndex: 100,
 					'& .MuiDrawer-paper': {
 						top: HEADER_HEIGHT,
 						height: `calc(100% - ${HEADER_HEIGHT})`,

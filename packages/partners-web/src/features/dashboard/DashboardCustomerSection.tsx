@@ -31,7 +31,7 @@ import {
 	imgDefaultRepair2x,
 } from '@/assets/images';
 import {Button} from '@/components';
-import {formatCommaNum, sendAmplitudeLog} from '@/utils';
+import {formatCommaNum, sendAmplitudeLog, dashboardDateStack} from '@/utils';
 
 import styled from '@emotion/styled';
 import {makeStyles} from '@mui/styles';
@@ -137,7 +137,7 @@ function DataWithToolTipBox({data}: WalletBoxProps) {
 					textAlign: 'center',
 					color: 'grey.900',
 				}}>
-				{count}명
+				{count || 0}명
 			</Typography>
 		</Stack>
 	);
@@ -238,7 +238,7 @@ function DashboardCustomerSection({
 
 	const barChartData = {
 		type: 'bar',
-		height: 240,
+		height: 210,
 		series: [
 			{
 				name: 'total',
@@ -383,6 +383,8 @@ function DashboardCustomerSection({
 	};
 
 	const goToCustomerListPage = () => {
+		const {today, previousWeek, previousMonth} = dashboardDateStack();
+
 		sendAmplitudeLog(
 			`dashboard_topcustomer_${
 				topCustomerTypeData === 'times' ? 'frequency' : 'price'
@@ -392,7 +394,19 @@ function DashboardCustomerSection({
 			}
 		);
 
-		navigate('/b2b/customer');
+		const from = period === 'WEEKLY' ? previousWeek : previousMonth;
+		const to = today;
+		if (topCustomerTypeData === 'times') {
+			navigate({
+				pathname: '/b2b/customer',
+				search: `?searchType=all&searchText=&startDate=${from}&endDate=${to}&currentPage=1&pageMaxNum=25&wallet=ALL&orderBy=NO_OF_GUARANTEE&orderDirection=DESC`,
+			});
+		} else {
+			navigate({
+				pathname: '/b2b/customer',
+				search: `?searchType=all&searchText=&startDate=${from}&endDate=${to}&currentPage=1&pageMaxNum=25&wallet=ALL&orderBy=TOTAL_PRICE&orderDirection=DESC`,
+			});
+		}
 	};
 
 	const goToGuaranteeIssuePage = () => {
@@ -410,19 +424,31 @@ function DashboardCustomerSection({
 	};
 
 	const goToRepairListPage = (_title: string) => {
-		sendAmplitudeLog(
-			`dashboard_repair_${
-				_title === '신규접수'
-					? 'new'
-					: _title === '수선완료'
-					? 'finished'
-					: 'cancel'
-			}_click`,
-			{
-				pv_title: '수선 신청관리로 이동',
-			}
-		);
-		navigate('/b2b/repair');
+		const {today, previousWeek, previousMonth} = dashboardDateStack();
+		let currentStatus = '';
+
+		switch (_title) {
+			case '신규접수':
+				currentStatus = 'request';
+				break;
+			case '수선완료':
+				currentStatus = 'complete';
+				break;
+			case '신청취소':
+				currentStatus = 'cancel';
+				break;
+		}
+
+		sendAmplitudeLog(`dashboard_repair_${currentStatus}_click`, {
+			pv_title: '수선 신청관리로 이동',
+		});
+
+		const from = period === 'WEEKLY' ? previousWeek : previousMonth;
+		const to = today;
+		navigate({
+			pathname: '/b2b/repair',
+			search: `?searchType=all&searchText=&startDate=${from}&endDate=${to}&sort=latest&currentPage=1&pageMaxNum=25&status=${currentStatus}`,
+		});
 	};
 
 	return (
@@ -525,7 +551,81 @@ function DashboardCustomerSection({
 					}
 				/>
 
-				{guaranteeData[period] && guaranteeData[period]?.walletLink ? (
+				<Box
+					sx={{
+						margin: 'auto',
+						marginTop: '4px',
+						paddingRight: '24px',
+						paddingLeft: '4px',
+
+						img: {margin: 'auto', maxWidth: '80px'},
+						position: 'relative',
+					}}>
+					<Stack
+						sx={{
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+							maxWidth: '374px',
+							minWidth: '374px',
+							margin: 'auto',
+							marginLeft: '113px',
+							marginBottom: '12px',
+						}}>
+						<DataWithToolTipBox
+							data={{
+								title: '발송',
+								content:
+									'개런티 알림톡을 발송한 고객 수 입니다.',
+								count: guaranteeData[period]?.walletLink
+									?.confirmCount,
+								openState: tooltipState.send,
+								toolTipHandler: () => toolTipHandler('send'),
+							}}
+						/>
+
+						<IcChevronRight color="#8E8E98" />
+						<DataWithToolTipBox
+							data={{
+								title: '조회',
+								content:
+									'개런티 알림톡을 클릭해서 조회한 고객 수 입니다.',
+								count: guaranteeData[period]?.walletLink
+									?.viewCount,
+								openState: tooltipState.view,
+								toolTipHandler: () => toolTipHandler('view'),
+							}}
+						/>
+						<IcChevronRight color="#8E8E98" />
+						<DataWithToolTipBox
+							data={{
+								title: '연동',
+								content:
+									'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객 수 입니다.',
+								count: guaranteeData[period]?.walletLink
+									?.linked,
+								openState: tooltipState.link,
+								toolTipHandler: () => toolTipHandler('link'),
+							}}
+						/>
+					</Stack>
+
+					{/* TODO: ui 맞추기용 박스, 삭제예정 */}
+					{/* <Box
+						sx={{
+							position: 'absolute',
+							bottom: '0px',
+							left: '0',
+							width: '560px',
+							height: '230px',
+							backgroundColor: 'blue',
+							opacity: 0.3,
+						}}
+					/> */}
+
+					<Chart {...barChartData} />
+				</Box>
+				{/* {guaranteeData[period] && guaranteeData[period]?.walletLink ? (
 					<Box
 						sx={{
 							margin: 'auto',
@@ -597,7 +697,7 @@ function DashboardCustomerSection({
 						}}>
 						<img src={imgDefaultBarChart2x} alt="bar chart" />
 					</Box>
-				)}
+				)} */}
 			</SectionBox>
 
 			<Stack flexDirection={'row'} gap="20px">
@@ -751,10 +851,9 @@ function DashboardCustomerSection({
 										color: 'grey.900',
 										display: 'inline-block',
 									}}>
-									수선신청 관리 연동하고
-									<br />
 									고객 수선 신청 접수를
-									<br /> 관리하세요!
+									<br />
+									한곳에서 관리하세요!
 								</Typography>
 							)
 						}
@@ -787,7 +886,7 @@ function DashboardCustomerSection({
 						<Box
 							sx={{
 								margin: 'auto',
-								padding: '40px 0px 14px',
+								padding: '28px 0px 0px',
 							}}>
 							{repairStateList.map((state, idx) => (
 								<Stack
@@ -865,10 +964,19 @@ function DashboardCustomerSection({
 					) : (
 						<Box
 							sx={{
-								width: '80px',
+								minWidth: '219px',
+								minHeight: '200px',
+								maxWidth: '219px',
+								maxHeight: '200px',
 								margin: 'auto',
-								marginTop: '52px',
-								img: {margin: 'auto', maxWidth: '80px'},
+								marginTop: '41px',
+								img: {
+									margin: 'auto',
+									minWidth: '219px',
+									minHeight: '200px',
+									maxWidth: '219px',
+									maxHeight: '200px',
+								},
 							}}>
 							<img src={imgDefaultRepair2x} alt="repair tool" />
 						</Box>

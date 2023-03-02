@@ -35,126 +35,6 @@ import NoticeModal from './common/NoticeModal';
 import {dashboardDateStack, sendAmplitudeLog} from '@/utils';
 import DashboardSettingHelper from '@/features/dashboard/DashboardSettingHelper';
 
-const getChartOption = (daily: StatisticsResponse) => ({
-	type: 'bar',
-	height: 250,
-	options: {
-		chart: {
-			id: 'main-chart',
-			stacked: true,
-			sparkline: {
-				enabled: true,
-			},
-			toolbar: {
-				show: false,
-			},
-			style: {
-				paddingLeft: '10px',
-			},
-		},
-		stroke: {
-			curve: 'smooth',
-			width: 0,
-		},
-		dataLabels: {
-			enabled: false,
-		},
-		grid: {
-			show: true,
-			borderColor: '#E2E2E9',
-			strokeDashArray: 3,
-			position: 'back',
-			yaxis: {
-				lines: {
-					show: true,
-				},
-			},
-		},
-		colors: ['#bdc7ff', '#98A8FF', '#526eff'],
-		xaxis: {
-			labels: {
-				show: true,
-				style: {
-					colors: Array(15)
-						.fill(null)
-						.map(() => '#8E8E98'),
-				},
-			},
-		},
-		yaxis: {
-			min: 0,
-			//max: 200,
-			logBase: 10,
-			tickAmount: 3,
-			labels: {
-				show: true,
-				maxWidth: 58,
-				formatter: (val: number) => val.toFixed(0),
-				style: {
-					colors: Array(4)
-						.fill(null)
-						.map(() => '#8E8E98'),
-				},
-			},
-		},
-		legend: {
-			show: false,
-		},
-		plotOptions: {
-			bar: {
-				horizontal: false,
-				columnWidth: '55%',
-			},
-		},
-		tooltip: {
-			fixed: {
-				enabled: false,
-			},
-			x: {
-				show: false,
-			},
-			y: {
-				show: false,
-			},
-			marker: {
-				show: false,
-			},
-		},
-	} as ApexOptions,
-	series: [
-		{
-			name: '발급취소',
-			data: daily.map((day) => {
-				return {
-					x: format(new Date(day.reference.from), 'M.d'),
-					y: Number(day.canceled),
-				};
-			}),
-		},
-		{
-			name: '신청대기',
-			data: daily.map((day) => {
-				return {
-					x: format(new Date(day.reference.from), 'M.d'),
-					y: Number(day.ready),
-				};
-			}),
-		},
-		{
-			name: '발급완료',
-			data: daily.map((day) => {
-				return {
-					x: format(new Date(day.reference.from), 'M.d'),
-					y:
-						Number(day.requested) +
-						Number(day.confirmed) +
-						Number(day.completed),
-				};
-			}),
-		},
-	],
-});
-
 function Dashboard() {
 	const theme = useTheme();
 	const {data: partnershipData} = useGetPartnershipInfo();
@@ -243,18 +123,12 @@ function Dashboard() {
 	};
 
 	useEffect(() => {
-		if (!guaranteeOverviewData[periodState]) {
-			getGuaranteeData(periodState);
-		}
-		if (!customerOverviewData[periodState]) {
-			getCustomerData(periodState);
-		}
-		if (!repairOverviewData[periodState]) {
-			if (partnershipData?.useRepair === 'Y') {
-				getRepairData(periodState);
-			} else {
-				setRepairOverviewData({WEEKLY: null, MONTHLY: null});
-			}
+		getGuaranteeData(periodState);
+		getCustomerData(periodState);
+		if (partnershipData?.useRepair === 'Y') {
+			getRepairData(periodState);
+		} else {
+			setRepairOverviewData({WEEKLY: null, MONTHLY: null});
 		}
 	}, [periodState, partnershipData]);
 
@@ -332,7 +206,7 @@ function Dashboard() {
 					maxWidth: '1200px',
 					margin: 'auto',
 					width: '100%',
-					[theme.breakpoints.down(1280)]: {
+					[theme.breakpoints.down(1330)]: {
 						width: '590px',
 						margin: 'auto',
 					},

@@ -243,7 +243,18 @@ function DashboardInfoCentreSection() {
 									alignItems={'center'}
 									flexDirection="row"
 									sx={{
-										svg: {cursor: 'pointer'},
+										display: 'inline-flex',
+										cursor: 'pointer',
+									}}
+									onClick={() => {
+										goToNoticeList();
+										sendAmplitudeLog(
+											'dashboard_noticeerrow_click',
+											{
+												button_title:
+													'공지사항 전체리스트로 이동',
+											}
+										);
 									}}>
 									<Typography
 										variant="h3"
@@ -256,20 +267,7 @@ function DashboardInfoCentreSection() {
 										공지사항
 									</Typography>
 
-									<IcChevronRight
-										width="17"
-										height="24"
-										onClick={() => {
-											goToNoticeList();
-											sendAmplitudeLog(
-												'dashboard_noticeerrow_click',
-												{
-													button_title:
-														'공지사항 전체리스트로 이동',
-												}
-											);
-										}}
-									/>
+									<IcChevronRight width="17" height="24" />
 								</Stack>
 							}
 						/>
@@ -345,6 +343,9 @@ function DashboardInfoCentreSection() {
 							<Stack>
 								<Carousel
 									slidesToShow={1}
+									autoplay
+									autoplayInterval={2000}
+									wrapAround={true}
 									defaultControlsConfig={{
 										containerClassName:
 											'service-slide-dots-box',
@@ -580,64 +581,68 @@ function DashboardInfoCentreSection() {
 										// marginRight: '20px',
 										boxShadow: 'none',
 									}}>
-									<Stack>
-										<Typography
-											variant="h3"
-											sx={{
-												fontWeight: 700,
-												fontSize: '18px',
-												lineHeight: '145%',
-												color: 'primary.main',
-												marginBottom: '4px',
-											}}>
-											브랜드 경험
-										</Typography>
-										<Typography
-											variant="h3"
-											sx={{
-												fontWeight: 700,
-												fontSize: '24px',
-												lineHeight: '145%',
-												color: 'grey.900',
-												marginBottom: '6px',
-											}}>
-											{title}
-										</Typography>
-										<Typography
-											variant="h3"
-											sx={{
-												fontWeight: 500,
-												fontSize: '15px',
-												lineHeight: '145%',
-												color: 'grey.600',
-												marginBottom: '8px',
-											}}>
-											{subtitle}
-										</Typography>
-										<AtagComponent url={link}>
+									<Stack
+										// justifyContent={'space-between'}
+										sx={{height: '100%'}}>
+										<Stack>
 											<Typography
-												onClick={() => {
-													sendAmplitudeLog(
-														eventName,
-														{
-															button_title:
-																eventProperty,
-														}
-													);
-												}}
+												variant="h3"
+												sx={{
+													fontWeight: 700,
+													fontSize: '18px',
+													lineHeight: '145%',
+													color: 'primary.main',
+													marginBottom: '4px',
+												}}>
+												브랜드 경험
+											</Typography>
+											<Typography
+												variant="h3"
+												sx={{
+													fontWeight: 700,
+													fontSize: '24px',
+													lineHeight: '145%',
+													color: 'grey.900',
+													marginBottom: '6px',
+												}}>
+												{title}
+											</Typography>
+											<Typography
 												variant="h3"
 												sx={{
 													fontWeight: 500,
 													fontSize: '15px',
 													lineHeight: '145%',
-													cursor: 'pointer',
-													color: 'primary.main',
-													marginBottom: '39px',
-													display: 'inline-block',
+													color: 'grey.600',
+													marginBottom: '8px',
 												}}>
-												자세히 보기
+												{subtitle}
 											</Typography>
-										</AtagComponent>
+											<AtagComponent url={link}>
+												<Typography
+													onClick={() => {
+														sendAmplitudeLog(
+															eventName,
+															{
+																button_title:
+																	eventProperty,
+															}
+														);
+													}}
+													variant="h3"
+													sx={{
+														fontWeight: 500,
+														fontSize: '15px',
+														lineHeight: '145%',
+														cursor: 'pointer',
+														color: 'primary.main',
+														// marginBottom: '39px',
+														display: 'inline-block',
+													}}>
+													자세히 보기
+												</Typography>
+											</AtagComponent>
+										</Stack>
 
 										<Stack
 											sx={{
