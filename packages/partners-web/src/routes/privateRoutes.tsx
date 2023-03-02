@@ -182,7 +182,7 @@ const privateRoutes: RouteObject[] = [
 				],
 			},
 			{
-				element: <Layout hasHeader={false} hasSidebar={false} />,
+				element: <Layout hasHeader={true} hasSidebar={false} />,
 				children: [
 					{path: '/setup/guarantee', element: <SetupGuarantee />},
 				],

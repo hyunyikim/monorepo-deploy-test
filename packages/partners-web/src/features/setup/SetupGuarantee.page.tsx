@@ -2081,7 +2081,11 @@ export function InputFormSection({
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
-							marginLeft: isSidebarOpen ? 'auto' : 0,
+							marginLeft: hasProfileLogo
+								? isSidebarOpen
+									? 'auto'
+									: 0
+								: 0,
 							width: hasProfileLogo
 								? isSidebarOpen
 									? 'calc(100% - 240px)'
@@ -2168,7 +2172,7 @@ function SetupGuarantee() {
 	return (
 		<Grid container flexWrap="nowrap">
 			{/* <Header backgroundColor="transparent" borderBottom={false} /> */}
-			<Header borderBottom={false} />
+			{/* <Header borderBottom={false} /> */}
 			<InputFormSection
 				boxIndexState={boxIndexState}
 				boxOpenHandler={boxOpenHandler}
