@@ -79,9 +79,6 @@ const PaymentInformation = lazy(
 	() =>
 		import('@/features/payment/PaymentInformation/PaymentInformation.page')
 );
-const Cafe24Interwork = lazy(
-	() => import('@/features/cafe24/Cafe24Interwork.page')
-);
 
 const privateRoutes: RouteObject[] = [
 	{
@@ -178,7 +175,6 @@ const privateRoutes: RouteObject[] = [
 						path: '/re-setup/guarantee',
 						element: <ResetupGuarantee />,
 					},
-					{path: '/cafe24/interwork', element: <Cafe24Interwork />},
 				],
 			},
 			{
