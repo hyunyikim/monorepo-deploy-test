@@ -2171,8 +2171,6 @@ function SetupGuarantee() {
 
 	return (
 		<Grid container flexWrap="nowrap">
-			{/* <Header backgroundColor="transparent" borderBottom={false} /> */}
-			{/* <Header borderBottom={false} /> */}
 			<InputFormSection
 				boxIndexState={boxIndexState}
 				boxOpenHandler={boxOpenHandler}

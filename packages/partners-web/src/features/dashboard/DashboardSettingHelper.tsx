@@ -171,7 +171,7 @@ function DashboardSettingHelper({
 
 	useEffect(() => {
 		initialStepHandler();
-	}, [stepList]);
+	}, []);
 
 	useEffect(() => {
 		settingHelperHandler();
