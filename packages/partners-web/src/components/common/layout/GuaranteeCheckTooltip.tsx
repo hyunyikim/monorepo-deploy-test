@@ -191,6 +191,7 @@ const GuaranteeCheckTooltip = () => {
 					minWidth: '16px',
 					minHeight: '16px',
 				}}
+				className="cursor-pointer"
 				onClick={closeHandler}
 			/>
 		</Box>
