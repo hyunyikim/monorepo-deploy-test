@@ -62,7 +62,6 @@ function SubscribeHistoryList() {
 						}}
 						sx={{
 							minWidth: '150px',
-							marginRight: '8px',
 						}}
 					/>
 					<PageSelect

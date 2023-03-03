@@ -78,7 +78,6 @@ function PaymentReceiptList() {
 						}}
 						sx={{
 							minWidth: '150px',
-							marginRight: '8px',
 						}}
 					/>
 					<Select
@@ -92,7 +91,6 @@ function PaymentReceiptList() {
 						}}
 						sx={{
 							minWidth: '150px',
-							marginRight: '8px',
 						}}
 					/>
 					<PageSelect

@@ -131,7 +131,9 @@ function CustomerInfoOverview({
 		{
 			title: '전송',
 			tooltipText: '개런티 알림톡을 발송한 고객 수 입니다.',
-			rate: '',
+			rate: Math.round(
+				(linkData?.confirmCount / linkData?.lastConfirmCount) * 100
+			),
 			count: linkData?.confirmCount,
 			icon: icGreenSend,
 			openState: tooltipState.send,
@@ -140,7 +142,8 @@ function CustomerInfoOverview({
 		{
 			title: '조회',
 			tooltipText: '개런티 알림톡을 클릭해서 조회한 고객 수 입니다.',
-			rate: '',
+			rate:
+				Math.round(linkData?.viewCount / linkData?.lastViewCount) * 100,
 			count: linkData?.viewCount,
 			icon: icYellowView,
 			openState: tooltipState.view,
@@ -150,7 +153,7 @@ function CustomerInfoOverview({
 			title: '연동',
 			tooltipText:
 				'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객 수 입니다.',
-			rate: '',
+			rate: Math.round((linkData?.linked / linkData?.lastLinked) * 100),
 			count: linkData?.linked,
 			icon: icBlueChain,
 			openState: tooltipState.link,

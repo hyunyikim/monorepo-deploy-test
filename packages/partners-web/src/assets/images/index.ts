@@ -4,10 +4,6 @@ export {default as ImgConnectServiceButton} from './img-connect-service-button.p
 export {default as ImgConnectServiceButton2x} from './img-connect-service-button@2x.png';
 export {default as ImgBgCards} from './img-bg-cards.png';
 export {default as ImgBgCards2x} from './img-bg-cards@2x.png';
-export {default as ImgRobotWelcoming} from './img-robot-welcoming.png';
-export {default as ImgRobotWelcoming2x} from './img-robot-welcoming@2x.png';
-export {default as ImgRobitWithPencil} from './img-robot-with-pencil.png';
-export {default as ImgRobitWithPencil2x} from './img-robot-with-pencil@2x.png';
 export {default as ImgLogoVirclePartners} from './logo-vircle.png';
 export {default as ImgLogoVirclePartners2x} from './logo-vircle@2x.png';
 export {default as ImgLogoVirclePartnersWhite} from './logo-vircle-white.png';

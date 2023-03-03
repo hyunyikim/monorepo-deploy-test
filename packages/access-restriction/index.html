@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>버클 Vircle ⎮ 새로운 브랜드 개런티의 시작</title>
+		<!-- 채널톡 -->
+		<script>
+			(function () {
+				var w = window;
+				if (w.ChannelIO) {
+					return w.console.error('ChannelIO script included twice.');
+				}
+				var ch = function () {
+					ch.c(arguments);
+				};
+				ch.q = [];
+				ch.c = function (args) {
+					ch.q.push(args);
+				};
+				w.ChannelIO = ch;
+				function l() {
+					if (w.ChannelIOInitialized) {
+						return;
+					}
+					w.ChannelIOInitialized = true;
+					var s = document.createElement('script');
+					s.type = 'text/javascript';
+					s.async = true;
+					s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+					var x = document.getElementsByTagName('script')[0];
+					if (x.parentNode) {
+						x.parentNode.insertBefore(s, x);
+					}
+				}
+				if (document.readyState === 'complete') {
+					l();
+				} else {
+					w.addEventListener('DOMContentLoaded', l);
+					w.addEventListener('load', l);
+				}
+				window.ChannelIO('boot', {
+					pluginKey: 'bcc797ee-e039-4bda-ab7d-4c5f5dc4cefb',
+					// "hideChannelButtonOnBoot": true
+				});
+			})();
+		</script>
+		<link
+			href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css"
+			rel="stylesheet" />
+		<style>
+			* {
+				font-family: -apple-system, 'SUIT';
+				line-height: 1.45em;
+			}
+			body {
+				margin: 0;
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+			img {
+				margin: 24px 0;
+			}
+			h1 {
+				font-size: 36px;
+				font-weight: 700;
+				color: #222227;
+			}
+			section .description {
+				font-size: 16px;
+				font-weight: 500;
+				color: #7b7b86;
+				text-align: center;
+			}
+			section .sub-description {
+				font-size: 14px;
+				font-weight: 500;
+				color: #aeaeba;
+				text-align: center;
+				margin-top: 32px;
+			}
+		</style>
+	</head>
+	<body>
+		<img
+			src="./assets/img-tool.png"
+			srcset="./assets/img-tool@2x.png 2x"
+			alt="점검중" />
+		<h1>버클 서비스 점검중!</h1>
+		<section>
+			<div class="description">
+				서비스 이용에 불편을 드려서 죄송합니다.<br />
+				더욱 안정적인 서비스를 제공하기 위해 시스템 점검을 진행하고
+				있습니다.<br />
+				잠시 후 다시 이용해주세요.
+			</div>
+			<br />
+			<div class="description">
+				점검시간: 2023년 3월 3일 17:00 ~ 18:00
+			</div>
+			<div class="sub-description">
+				상황에 따라 시간 변경될 수 있습니다.
+			</div>
+		</section>
+	</body>
+</html>

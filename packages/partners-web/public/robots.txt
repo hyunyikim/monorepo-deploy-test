@@ -1,0 +1,11 @@
+User-agent: *
+Allow:/
+Disallow: /dashboard/
+Disallow: /b2b/
+Disallow: /setting/
+Disallow: /setup/
+Disallow: /re-setup/
+Disallow: /cafe24/
+Disallow: /reset/
+
+Sitemap: https://partners.vircle.co.kr/sitemap.xml

@@ -22,6 +22,7 @@ import cafe24Logo from '@/assets/images/cafe24/cafe24_logo.png';
 import cafe24Logo2x from '@/assets/images/cafe24/cafe24_logo@2x.png';
 import cafe24AvatarLogo from '@/assets/images/cafe24/cafe24_avatar.png';
 import {Cafe24Interwork} from '@/@types';
+import {HEADER_HEIGHT} from '@/data';
 
 const title = '카페24';
 const subtitle = '연동완료';
@@ -136,14 +137,7 @@ export default function Cafe24InterWork() {
 	};
 
 	if (loading || !value) {
-		return (
-			<Stack
-				direction="column"
-				justifyContent="center"
-				alignItems="center"
-				spacing={2}
-				height="100vh"></Stack>
-		);
+		return <></>;
 	}
 
 	return (
@@ -152,7 +146,9 @@ export default function Cafe24InterWork() {
 			justifyContent="center"
 			alignItems="center"
 			spacing={2}
-			height="100vh">
+			sx={{
+				minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+			}}>
 			<Stack
 				direction="column"
 				alignItems="center"

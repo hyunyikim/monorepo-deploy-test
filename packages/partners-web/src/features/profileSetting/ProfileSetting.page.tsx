@@ -351,7 +351,7 @@ function ProfileSetting() {
 				sx={{
 					paddingBottom: '80px',
 				}}>
-				<form onSubmit={handleSubmit(onSubmit)} noValidate>
+				<form noValidate>
 					<TitleTypography title="계정 설정" />
 					<Stack
 						sx={{
@@ -497,7 +497,10 @@ function ProfileSetting() {
 					variant="contained"
 					color="primary"
 					type="submit"
-					height={48}>
+					height={48}
+					onClick={() => {
+						handleSubmit(onSubmit)();
+					}}>
 					저장하기
 				</Button>
 			</BottomNavigation>

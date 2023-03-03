@@ -681,6 +681,7 @@ export function InputFormSection({
 				: yupResolver(cooperatorGuaranteeSchemaShape),
 		mode: 'onChange',
 	});
+	const [stay, setStay] = useState(false);
 	const [searchParams] = useSearchParams();
 	const queryData = Object.fromEntries([...searchParams]);
 
@@ -722,6 +723,7 @@ export function InputFormSection({
 
 	const {setIsOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const closeMessageDialog = useMessageDialog((state) => state.onClose);
 	const nftCustomFields: string[] | undefined = data?.nftCustomFields;
 	const hasProfileLogo = data?.profileImage;
 
@@ -1141,6 +1143,7 @@ export function InputFormSection({
 					queryClient.invalidateQueries({
 						queryKey: ['partnershipInfo'],
 					});
+					closeMessageDialog();
 					// navigate('/dashboard');
 				}, 200);
 			},
@@ -1162,7 +1165,8 @@ export function InputFormSection({
 					queryClient.invalidateQueries({
 						queryKey: ['partnershipInfo'],
 					});
-					// navigate('/dashboard');
+					closeMessageDialog();
+					navigate('/dashboard');
 				}, 300);
 			},
 			buttons: (
@@ -1180,6 +1184,7 @@ export function InputFormSection({
 								queryClient.invalidateQueries({
 									queryKey: ['partnershipInfo'],
 								});
+								closeMessageDialog();
 								navigate('/b2b/interwork');
 							}, 300);
 						}}>
@@ -1198,6 +1203,7 @@ export function InputFormSection({
 								queryClient.invalidateQueries({
 									queryKey: ['partnershipInfo'],
 								});
+								closeMessageDialog();
 								navigate('/b2b/guarantee/register');
 							}, 300);
 						}}>
@@ -1242,6 +1248,7 @@ export function InputFormSection({
 			if (hasProfileLogo) {
 				openEditSettingGuaranteeModal();
 			} else {
+				setStay(true);
 				openCompleteSettingGuaranteeModal();
 			}
 			await queryClient.invalidateQueries({
@@ -1438,12 +1445,18 @@ export function InputFormSection({
 			!alreadySettingGuarantee &&
 			pathname.includes('/re-setup/guarantee')
 		) {
+			console.log('1');
 			navigate('/setup/guarantee', {
 				state,
 			});
 			return;
 		}
+
 		if (alreadySettingGuarantee && pathname.includes('/setup/guarantee')) {
+			console.log('22');
+			if (stay) {
+				return;
+			}
 			navigate('/re-setup/guarantee', {
 				state,
 			});
@@ -1538,42 +1551,61 @@ export function InputFormSection({
 						alignItems={'center'}
 						justifyContent={'flex-end'}>
 						<Grid item sx={{position: 'relative'}}>
-							<TooltipComponent
-								customisedButton={
-									<CapsuleButton
-										variant="outlined"
-										onClick={openExampleModal}
-										sx={{
-											padding: '4px 11px 4px 6px',
-											gap: '12px',
-										}}
-										startIcon={
-											<img
-												src={exampleBrandIcon}
-												srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
-												alt="brand-sample"
-											/>
-										}>
-										브랜드 개런티 예시보기
-									</CapsuleButton>
-								}
-								content={
-									<Typography
-										variant="caption2"
-										color={'#ffffff'}>
-										어떤 정보를 노출 할지 고민 된다면
-										<br /> 타 브랜드의 개런티 화면을
-										참고하세요!
-									</Typography>
-								}
-								sx={{
-									left: '8px',
-									'& .MuiTooltip-arrow': {
-										left: '-104px !important',
-									},
-								}}
-								alwaysPop={true}
-							/>
+							{hasProfileLogo ? (
+								<CapsuleButton
+									variant="outlined"
+									onClick={openExampleModal}
+									sx={{
+										padding: '4px 11px 4px 6px',
+										gap: '12px',
+									}}
+									startIcon={
+										<img
+											src={exampleBrandIcon}
+											srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
+											alt="brand-sample"
+										/>
+									}>
+									브랜드 개런티 예시보기
+								</CapsuleButton>
+							) : (
+								<TooltipComponent
+									customisedButton={
+										<CapsuleButton
+											variant="outlined"
+											onClick={openExampleModal}
+											sx={{
+												padding: '4px 11px 4px 6px',
+												gap: '12px',
+											}}
+											startIcon={
+												<img
+													src={exampleBrandIcon}
+													srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
+													alt="brand-sample"
+												/>
+											}>
+											브랜드 개런티 예시보기
+										</CapsuleButton>
+									}
+									content={
+										<Typography
+											variant="caption2"
+											color={'#ffffff'}>
+											어떤 정보를 노출 할지 고민 된다면
+											<br /> 타 브랜드의 개런티 화면을
+											참고하세요!
+										</Typography>
+									}
+									sx={{
+										left: '8px',
+										'& .MuiTooltip-arrow': {
+											left: '-96px !important',
+										},
+									}}
+									alwaysPop={true}
+								/>
+							)}
 						</Grid>
 
 						<LinkStyle

@@ -45,7 +45,7 @@ function GuaranteeExcelUpload() {
 				pv_title: '개런티 미설정시 안내 팝업',
 			});
 			onOpenMessageDialog({
-				title: '개런티 설정 후 상품 등록이 가능합니다.',
+				title: '개런티 설정 후 개런티 발급이 가능합니다.',
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
 				onCloseFunc: () => {
