@@ -15,12 +15,14 @@ export const useGetMenu = () => {
 				suspense: true,
 			},
 			{
-				queryKey: ['partnershipInfo', token],
+				queryKey: ['repairList', token],
 				queryFn: () =>
 					getRepairList({
 						...initialSearchFilter,
 						searchType: 'all',
 						status: '',
+						startDate: '',
+						endDate: '',
 					}),
 				suspense: true,
 			},
