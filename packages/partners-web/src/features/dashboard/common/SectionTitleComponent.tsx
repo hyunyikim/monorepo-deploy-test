@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {Box, Typography} from '@mui/material';
+import {Box, Typography, SxProps} from '@mui/material';
 
 interface SectionTitleProps {
 	boxTitle: string | JSX.Element;
 	boxSubtitle?: string | JSX.Element;
 	BoxMarginBottom?: string;
-	sx: SxProps;
+	sx?: SxProps;
 }
 
 function SectionTitleComponent({
@@ -50,7 +50,16 @@ function SectionTitleComponent({
 						{boxSubtitle}
 					</Typography>
 				) : (
-					<Box mt={'4px'}>{boxSubtitle}</Box>
+					<Box
+						mt={'4px'}
+						sx={{
+							fontSize: '15px',
+							lineHeight: '145%',
+							color: 'grey.600',
+							fontWeight: 500,
+						}}>
+						{boxSubtitle}
+					</Box>
 				))}
 		</Box>
 	);

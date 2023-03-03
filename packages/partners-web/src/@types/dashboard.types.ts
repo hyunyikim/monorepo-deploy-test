@@ -15,6 +15,31 @@ export interface DashboardIssuedGuranteeOverviewType {
 	issueStatusCount: any;
 	issuedFrom: any;
 }
+export interface IssueStatusType {
+	'1': string | number;
+	'3': string | number;
+	'9': string | number;
+}
+export interface IssuedFromType {
+	count: any;
+	lastMost: string;
+	most: string;
+}
+export interface IssuedGraphType {
+	averageCount: string;
+	current: any;
+	last: any;
+	rate: number;
+	totalCount: number;
+}
+export interface WalletLinkType {
+	confirmCount: number;
+	lastConfirmCount: number;
+	lastLinked: number;
+	lastViewCount: number;
+	linked: number;
+	viewCount: number;
+}
 
 /* 고객관련 타입 */
 export interface TopIssuedCustomerOverviewType {
@@ -38,7 +63,7 @@ export interface DashboardCustomerOverviewType {
 
 /* 수선관련 타입 */
 export interface DashboardRepairOverviewType {
-	ready: number;
+	request: number;
 	complete: number;
 	cancel: number;
 }

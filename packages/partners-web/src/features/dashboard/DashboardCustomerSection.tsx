@@ -53,6 +53,7 @@ export interface TopDataType {
 type TopBoxPropsType = {
 	topData: TopDataType;
 	order: number;
+	type: string;
 };
 
 const ButtonStyle = styled('div')<SelectedButtonType>`
@@ -143,7 +144,7 @@ function DataWithToolTipBox({data}: WalletBoxProps) {
 	);
 }
 
-function TopBoxComponent({topData, order}: TopBoxPropsType) {
+function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 	const navigate = useNavigate();
 
 	const goToCustomerDetailPage = (_name: string, _phone: string) => {
@@ -151,56 +152,131 @@ function TopBoxComponent({topData, order}: TopBoxPropsType) {
 	};
 
 	return (
-		<Stack
-			flexDirection="row"
-			alignItems="center"
-			justifyContent="space-between"
-			sx={{width: '100%'}}>
-			<Box display="flex" gap="20px" alignItems={'center'}>
-				<Typography
-					variant="h4"
-					sx={{
-						fontWeight: 500,
-						fontSize: '16px',
-						lineHeight: '145%',
-						color: 'grey.900',
-					}}>
-					{order + 1}
-				</Typography>
-				<Typography
-					variant="h4"
-					sx={{
-						fontWeight: 500,
-						fontSize: '14px',
-						lineHeight: '14px',
-						textDecoration: 'underline',
-						color: 'grey.900',
-						cursor: 'pointer',
-					}}
-					onClick={() =>
-						goToCustomerDetailPage(topData.name, topData.tel)
-					}>
-					{topData.name}
-				</Typography>
-			</Box>
+		<>
+			{type === 'times'
+				? topData.issued &&
+				  Number(topData.issued) > 0 && (
+						<Stack
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="space-between"
+							sx={{width: '100%'}}>
+							<Box
+								display="flex"
+								gap="20px"
+								alignItems={'center'}>
+								<Typography
+									variant="h4"
+									sx={{
+										fontWeight: 500,
+										fontSize: '16px',
+										lineHeight: '145%',
+										color: 'grey.900',
+									}}>
+									{order + 1}
+								</Typography>
+								<Typography
+									variant="h4"
+									sx={{
+										fontWeight: 500,
+										fontSize: '14px',
+										lineHeight: '14px',
+										textDecoration: 'underline',
+										color: 'grey.900',
+										cursor: 'pointer',
+									}}
+									onClick={() =>
+										goToCustomerDetailPage(
+											topData.name,
+											topData.tel
+										)
+									}>
+									{topData.name}
+								</Typography>
+							</Box>
 
-			<Box
-				sx={{
-					height: '20px',
-					padding: '0 6.5px',
-					lineHeight: '20px',
-					background: '#EDF0FF',
-					borderRadius: '64px',
-					fontWeight: 500,
-					fontSize: '14px',
-					color: '#526EFF',
-				}}>
-				{topData && topData.paid && `${formatCommaNum(topData.paid)}원`}
-				{topData &&
-					topData.issued &&
-					`${formatCommaNum(topData.issued)}회`}
-			</Box>
-		</Stack>
+							<Box
+								sx={{
+									height: '20px',
+									padding: '0 6.5px',
+									lineHeight: '20px',
+									background: '#EDF0FF',
+									borderRadius: '64px',
+									fontWeight: 500,
+									fontSize: '14px',
+									color: '#526EFF',
+								}}>
+								{topData &&
+									topData.paid &&
+									`${formatCommaNum(topData.paid)}원`}
+								{topData &&
+									topData.issued &&
+									`${formatCommaNum(topData.issued)}회`}
+							</Box>
+						</Stack>
+				  )
+				: topData.paid &&
+				  Number(topData.paid) > 0 && (
+						<Stack
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="space-between"
+							sx={{width: '100%'}}>
+							<Box
+								display="flex"
+								gap="20px"
+								alignItems={'center'}>
+								<Typography
+									variant="h4"
+									sx={{
+										fontWeight: 500,
+										fontSize: '16px',
+										lineHeight: '145%',
+										color: 'grey.900',
+									}}>
+									{order + 1}
+								</Typography>
+								<Typography
+									variant="h4"
+									sx={{
+										fontWeight: 500,
+										fontSize: '14px',
+										lineHeight: '14px',
+										textDecoration: 'underline',
+										color: 'grey.900',
+										cursor: 'pointer',
+									}}
+									onClick={() =>
+										goToCustomerDetailPage(
+											topData.name,
+											topData.tel
+										)
+									}>
+									{topData.name}
+								</Typography>
+							</Box>
+
+							<Box
+								sx={{
+									height: '20px',
+									padding: '0 6.5px',
+									lineHeight: '20px',
+									background: '#EDF0FF',
+									borderRadius: '64px',
+									fontWeight: 500,
+									fontSize: '14px',
+									color: '#526EFF',
+								}}>
+								{topData &&
+									topData.paid &&
+									`${formatCommaNum(topData.paid)}원`}
+								{topData &&
+									topData.issued &&
+									`${formatCommaNum(topData.issued)}회`}
+							</Box>
+						</Stack>
+				  )}
+		</>
 	);
 }
 
@@ -508,10 +584,10 @@ function DashboardCustomerSection({
 							<Typography
 								variant="h3"
 								sx={{
-									fontWeight: 700,
-									fontSize: '21px',
+									fontWeight: 500,
+									fontSize: '15px',
 									lineHeight: '145%',
-									color: 'grey.900',
+									color: 'grey.600',
 									display: 'inline-block',
 								}}>
 								지난 주 대비 개런티 연동한 고객이&nbsp;
@@ -519,8 +595,8 @@ function DashboardCustomerSection({
 									<Typography
 										variant="h3"
 										sx={{
-											fontWeight: 700,
-											fontSize: '21px',
+											fontWeight: 500,
+											fontSize: '15px',
 											lineHeight: '145%',
 											color: 'primary.main',
 											display: 'inline-block',
@@ -538,8 +614,8 @@ function DashboardCustomerSection({
 									<Typography
 										variant="h3"
 										sx={{
-											fontWeight: 700,
-											fontSize: '21px',
+											fontWeight: 500,
+											fontSize: '15px',
 											lineHeight: '145%',
 											color: '#F8434E',
 											display: 'inline-block',
@@ -687,6 +763,7 @@ function DashboardCustomerSection({
 										(info, idx) =>
 											idx + 1 < 6 && (
 												<TopBoxComponent
+													type={topCustomerTypeData}
 													topData={info}
 													order={idx}
 													key={`top-customers-info-box-${idx}`}
