@@ -301,6 +301,30 @@ function DashboardGuaranteeSection({
 		}
 	};
 
+	const getMaxCount = () => {
+		const lastRawData = currentPeriod?.issuedGraph?.last;
+		const currentRawData = currentPeriod?.issuedGraph?.current;
+		let maxCount = 1;
+
+		if (lastRawData && currentRawData) {
+			const allData = {...lastRawData, ...currentRawData};
+			const lastDataArr = Object.keys(lastRawData);
+			const currentDataArr = Object.keys(currentRawData);
+
+			const dataArr = [...lastDataArr, ...currentDataArr];
+
+			dataArr.forEach((date) => {
+				if (allData[date] >= 5) {
+					maxCount = 5;
+				} else if (allData[date] > maxCount) {
+					maxCount = allData[date];
+				}
+			});
+		}
+
+		return maxCount;
+	};
+
 	const lineDataGenerator = (
 		_period: DashboardPeriodType,
 		startDate: string,
@@ -391,15 +415,13 @@ function DashboardGuaranteeSection({
 				width: 3,
 			},
 			yaxis: {
-				tickAmount: 5,
+				tickAmount: getMaxCount(),
 				min: 0,
 				logBase: 10,
 				labels: {
 					formatter: (value: number) =>
 						value > 0 ? value.toFixed(0) : 0,
 				},
-				// forceNiceScale: true,
-				// logarithmic: true,
 			},
 			colors: ['#CACAD3', '#526EFF'],
 		},

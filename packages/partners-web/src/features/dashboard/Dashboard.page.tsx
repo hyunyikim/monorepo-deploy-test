@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
 import {addDays, format, lastDayOfMonth} from 'date-fns';
 
 import DashboardGuaranteeSection from '@/features/dashboard/DashboardGuaranteeSection';
@@ -34,6 +34,7 @@ import DashboardSettingHelper from '@/features/dashboard/DashboardSettingHelper'
 
 function Dashboard() {
 	const theme = useTheme();
+	// const location = useLocation();
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const setModal = useModalStore((state) => state.setModalOption);
 	const resetModal = useModalStore((state) => state.setIsOpen);
@@ -123,12 +124,13 @@ function Dashboard() {
 	useEffect(() => {
 		getGuaranteeData(periodState);
 		getCustomerData(periodState);
+
 		if (partnershipData?.useRepair === 'Y') {
 			getRepairData(periodState);
 		} else {
 			setRepairOverviewData({WEEKLY: null, MONTHLY: null});
 		}
-	}, [periodState, partnershipData]);
+	}, [periodState, partnershipData /* location */]);
 
 	useEffect(() => {
 		if (partnershipData && partnershipData?.companyName) {
