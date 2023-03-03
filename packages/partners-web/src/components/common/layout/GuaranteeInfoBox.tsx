@@ -1,12 +1,12 @@
 import {isPlanEnterprise} from '@/data';
 import {useGetUserPricePlan, useIsPlanOnSubscription} from '@/stores';
 
-import iconFree from '@/assets/images/icon_price_plan_free.png';
-import iconXs from '@/assets/images/icon_price_plan_xs.png';
-import iconS from '@/assets/images/icon_price_plan_s.png';
-import iconM from '@/assets/images/icon_price_plan_m.png';
-import iconL from '@/assets/images/icon_price_plan_l.png';
-import iconE from '@/assets/images/icon_price_plan_e.png';
+import iconFree from '@/assets/icon/icon_price_plan_free.svg';
+import iconXs from '@/assets/icon/icon_price_plan_xs.svg';
+import iconS from '@/assets/icon/icon_price_plan_s.svg';
+import iconM from '@/assets/icon/icon_price_plan_m.svg';
+import iconL from '@/assets/icon/icon_price_plan_l.svg';
+import iconE from '@/assets/icon/icon_price_plan_e.svg';
 import {useMemo} from 'react';
 import {Stack, Typography} from '@mui/material';
 
@@ -15,7 +15,7 @@ function GuaranteeInfoBox() {
 	const {data: isOnSubscription} = useIsPlanOnSubscription();
 	const isEnterprise = isPlanEnterprise(userPricePlan?.pricePlan?.planType);
 
-	const getPricePlanInfo = () => {
+	const pricePlanInfo = useMemo(() => {
 		if (!userPricePlan || !userPricePlan?.pricePlan) {
 			return null;
 		}
@@ -58,8 +58,7 @@ function GuaranteeInfoBox() {
 			};
 		}
 		return null;
-	};
-	const pricePlanInfo = getPricePlanInfo();
+	}, [userPricePlan, isEnterprise]);
 
 	const leftNftCount = useMemo(() => {
 		const pricePlan = userPricePlan?.pricePlan;
@@ -89,16 +88,7 @@ function GuaranteeInfoBox() {
 						gap: '9px',
 						position: 'relative',
 					}}>
-					<Stack
-						sx={{
-							backgroundImage: `url(${pricePlanInfo.icon})`,
-							backgroundSize: 'cover',
-							minWidth: '24.5px',
-							minHeight: '24.5px',
-							maxWidth: '24.5px',
-							maxHeight: '24.5px',
-						}}
-					/>
+					<pricePlanInfo.icon width={24} height={24} />
 					{isEnterprise ? (
 						<Typography
 							sx={{

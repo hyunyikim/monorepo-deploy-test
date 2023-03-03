@@ -59,7 +59,7 @@ function SignIn() {
 						color="grey.700"
 						className="cursor-pointer"
 						onClick={() => navigate('/reset/request/password')}
-						data-tracking={`partners_login,{'login_password_click': '비밀번호 찾기 화면 노출'}`}>
+						data-tracking={`login_password_click,{'button_title': '비밀번호 찾기 화면 노출'}`}>
 						비밀번호 찾기
 					</Typography>
 					<Stack
@@ -72,7 +72,7 @@ function SignIn() {
 							color="primary.main"
 							className="cursor-pointer"
 							onClick={() => navigate('/auth/signup')}
-							data-tracking={`partners_login,{'login_signup_click': '회원가입 화면 노출'}`}>
+							data-tracking={`login_signup_click,{'button_title': '회원가입 화면 노출'}`}>
 							회원가입
 						</Typography>
 					</Stack>

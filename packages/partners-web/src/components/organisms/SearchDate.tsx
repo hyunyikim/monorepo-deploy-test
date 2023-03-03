@@ -1,9 +1,9 @@
-import {useState, useCallback} from 'react';
+import {useCallback, useMemo} from 'react';
 import {parse, format} from 'date-fns';
 
 import {Grid, InputLabel, Box} from '@mui/material';
 
-import {periods, calculatePeriod, defaultPeriodIdx, DATE_FORMAT} from '@/data';
+import {periods, calculatePeriod, DATE_FORMAT} from '@/data';
 
 import {Button, DatePicker} from '@/components';
 import {PeriodType} from '@/@types';
@@ -30,7 +30,18 @@ function SearchDate({
 	periodIdx,
 	onChange,
 }: Props) {
-	const [selected, setSelected] = useState<number | null>(periodIdx);
+	const dateList = useMemo(() => {
+		return periods.map((period) =>
+			calculatePeriod(period.type, period.value)
+		);
+	}, []);
+
+	const sameDateIndex = dateList.findIndex((date) => {
+		if (date[0] === startDate && date[1] === endDate) {
+			return true;
+		}
+		return false;
+	});
 
 	const handleClickDateButton = useCallback(
 		(type: PeriodType, value: number, idx: number) => {
@@ -39,8 +50,6 @@ function SearchDate({
 				startDate,
 				endDate,
 			});
-			setSelected(idx);
-
 			const periodLabel =
 				periods.find((item) => item.type === type)?.label ?? '';
 			sendAmplitudeLog(`${menu}_period_click`, {
@@ -52,7 +61,6 @@ function SearchDate({
 
 	const handleClickCalander = useCallback(
 		(type: 'startDate' | 'endDate', value: Date) => {
-			setSelected(null);
 			onChange({
 				[type]: format(value, DATE_FORMAT),
 			});
@@ -76,7 +84,11 @@ function SearchDate({
 				{periods.map((item, idx) => (
 					<Grid item minWidth="fit-content" key={`date-term-${idx}`}>
 						<Button
-							color={selected === idx ? 'primary-50' : 'grey-100'}
+							color={
+								idx === sameDateIndex
+									? 'primary-50'
+									: 'grey-100'
+							}
 							variant="outlined"
 							width={54}
 							height={32}

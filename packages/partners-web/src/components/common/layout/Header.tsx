@@ -1,4 +1,4 @@
-import {useMemo, useState, useEffect} from 'react';
+import {useMemo, useState} from 'react';
 import {ButtonBase, AppBar, Toolbar, Stack} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 import {

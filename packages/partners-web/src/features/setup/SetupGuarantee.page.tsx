@@ -1748,6 +1748,14 @@ export function InputFormSection({
 								labelTitle={'고객센터'}
 								linkUrl={watch()?.customerCenterUrl}
 								linkTitle={'연결 확인하기'}
+								onLinkClick={() => {
+									sendAmplitudeLog(
+										'guaranteesetting_cs_click',
+										{
+											button_title: '고객센터로 이동',
+										}
+									);
+								}}
 							/>
 						</Grid>
 
