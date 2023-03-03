@@ -322,20 +322,26 @@ function DashboardCustomerSection({
 					{
 						x: '전송',
 						y:
-							guaranteeData[period]?.walletLink?.confirmCount *
-								standardRate || 0,
+							Math.round(
+								guaranteeData[period]?.walletLink
+									?.confirmCount * standardRate
+							) || 0,
 					},
 					{
 						x: '조회',
 						y:
-							guaranteeData[period]?.walletLink?.viewCount *
-								standardRate || 0,
+							Math.round(
+								guaranteeData[period]?.walletLink?.viewCount *
+									standardRate
+							) || 0,
 					},
 					{
 						x: '연동',
 						y:
-							guaranteeData[period]?.walletLink?.linked *
-								standardRate || 0,
+							Math.round(
+								guaranteeData[period]?.walletLink?.linked *
+									standardRate
+							) || 0,
 					},
 				],
 			},
@@ -734,7 +740,7 @@ function DashboardCustomerSection({
 							<button
 								data-customer="times"
 								onClick={customerStateHandler}>
-								구매회수
+								구매수량
 							</button>
 						</ButtonStyle>
 						<ButtonStyle

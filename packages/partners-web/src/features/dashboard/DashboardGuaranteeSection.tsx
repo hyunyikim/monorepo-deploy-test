@@ -266,6 +266,14 @@ function DashboardGuaranteeSection({
 				position: 'bottom',
 			},
 			colors: ['#526eff', '#98A8FF', '#D6DCFF', '#E2E2E9'],
+			states: {
+				hover: {
+					filter: {
+						type: 'darken',
+						value: 0.7,
+					},
+				},
+			},
 		},
 	};
 
@@ -715,6 +723,7 @@ function DashboardGuaranteeSection({
 										lineHeight: '145%',
 										color: 'grey.900',
 										display: 'inline-block',
+										wordBreak: 'keep-all',
 									}}>
 									한 {getPeriodText()}간&nbsp;
 									<Typography
@@ -728,8 +737,7 @@ function DashboardGuaranteeSection({
 										}}>
 										{currentPeriod?.issuedFrom.most}
 									</Typography>
-									에서
-									<br /> 가장 많이 발급했어요.
+									에서 가장 많이 발급했어요.
 								</Typography>
 							) : (
 								<Typography

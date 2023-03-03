@@ -296,7 +296,7 @@ function CustomerList() {
 										전화번호
 									</HeadTableCell>
 									<TableSellWithSort
-										label="구매회수"
+										label="구매수량"
 										name="NO_OF_GUARANTEE"
 										orderBy={filter.orderBy}
 										orderDirection={filter.orderDirection}
