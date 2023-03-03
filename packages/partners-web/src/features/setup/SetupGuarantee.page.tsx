@@ -1445,7 +1445,6 @@ export function InputFormSection({
 			!alreadySettingGuarantee &&
 			pathname.includes('/re-setup/guarantee')
 		) {
-			console.log('1');
 			navigate('/setup/guarantee', {
 				state,
 			});
@@ -1453,7 +1452,6 @@ export function InputFormSection({
 		}
 
 		if (alreadySettingGuarantee && pathname.includes('/setup/guarantee')) {
-			console.log('22');
 			if (stay) {
 				return;
 			}

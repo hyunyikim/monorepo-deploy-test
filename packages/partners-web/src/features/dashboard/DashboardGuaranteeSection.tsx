@@ -17,7 +17,13 @@ import {
 import {useCheckboxList} from '@/utils/hooks';
 import {imgDefaultPieChart, imgDefaultPieChart2x} from '@/assets/images';
 import {formatCommaNum, dashboardDateStack, sendAmplitudeLog} from '@/utils';
-import {DashboardPeriodType} from '@/@types/dashboard.types';
+import {
+	DashboardPeriodType,
+	IssueStatusType,
+	IssuedFromType,
+	IssuedGraphType,
+	WalletLinkType,
+} from '@/@types/dashboard.types';
 import {useNavigate} from 'react-router-dom';
 import {format, subDays, subWeeks} from 'date-fns';
 
@@ -110,7 +116,7 @@ function GuaranteeOverviewBox({
 
 					<Box display={'flex'} alignItems="center" gap="4px">
 						{difference > 0 ? (
-							<IcArrow />
+							<IcArrow color="#00C29F" />
 						) : difference < 0 ? (
 							<IcArrow transform="rotate(180)" color="#F8434E" />
 						) : (
@@ -190,7 +196,13 @@ function DashboardGuaranteeSection({
 	date,
 }: GuaranteeOverviewProps) {
 	// const {previousWeek, previousMonth, today} = dashboardDateStack();
-	let currentPeriod;
+	let currentPeriod: {
+		dateType: DashboardPeriodType;
+		issueStatusCount: IssueStatusType;
+		issuedFrom: IssuedFromType;
+		issuedGraph: IssuedGraphType;
+		walletLink: WalletLinkType;
+	};
 
 	if (guaranteeData) {
 		currentPeriod =
@@ -294,19 +306,28 @@ function DashboardGuaranteeSection({
 		startDate: string,
 		time: 'current' | 'last'
 	) => {
-		const rawData =
-			time === 'current'
-				? currentPeriod?.issuedGraph?.current
-				: currentPeriod?.issuedGraph?.last;
+		const rawData = currentPeriod?.issuedGraph[time];
+		const currentRawData = currentPeriod?.issuedGraph?.current;
+		const currentRawDataArr: string[] = currentRawData
+			? Object.keys(currentRawData).reverse()
+			: [];
 
-		if (rawData && Object.keys(rawData).length > 0) {
+		if (
+			rawData &&
+			Object.keys(rawData).length > 0 &&
+			currentRawDataArr &&
+			currentRawDataArr.length > 0
+		) {
 			if (_period === 'WEEKLY') {
 				/* 주간 데이터 */
 				return Object.keys(rawData)
 					.reverse()
-					.map((date: string) => {
+					.map((date: string, idx: number) => {
 						return {
-							x: format(new Date(date), 'MM/dd'),
+							x: format(
+								new Date(currentRawDataArr[idx]),
+								'MM/dd'
+							),
 							y: rawData[date],
 						};
 					});
@@ -314,9 +335,12 @@ function DashboardGuaranteeSection({
 				/* 월간 데이터 */
 				return Object.keys(rawData)
 					.reverse()
-					.map((date: string) => {
+					.map((date: string, idx: number) => {
 						return {
-							x: format(new Date(date), 'MM/dd'),
+							x: format(
+								new Date(currentRawDataArr[idx]),
+								'MM/dd'
+							),
 							y: rawData[date],
 						};
 					});
@@ -383,7 +407,6 @@ function DashboardGuaranteeSection({
 				},
 			},
 			colors: ['#CACAD3', '#526EFF'],
-			// colors: ['#526EFF', '#CACAD3'],
 		},
 	};
 
@@ -549,7 +572,6 @@ function DashboardGuaranteeSection({
 			</SectionBox>
 
 			<Stack flexDirection={'row'} gap="20px" justifyContent={'center'}>
-				{/* const { '1', '3', '9', totalPrice } = issueStatusCount */}
 				<SectionBox sx={{minWidth: '285px', maxWidth: '285px'}}>
 					<SectionTitleComponent boxTitle={'개런티 발급 요약'} />
 
@@ -620,8 +642,7 @@ function DashboardGuaranteeSection({
 										getPeriodText() === '주' ? '와' : '과'
 								  } 동일합니다.`
 								: `지난 ${getPeriodText()}에는 ${
-										currentPeriod?.issuedFrom
-											?.lastMost as string
+										currentPeriod?.issuedFrom?.lastMost
 								  }에서 많이 발급했어요.`
 						}
 					/>

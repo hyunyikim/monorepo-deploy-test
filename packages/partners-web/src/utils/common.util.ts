@@ -78,9 +78,9 @@ export const dashboardDateStack = () => {
 	const todayTimeStamp = new Date().getTime() - hour * min * ms;
 	// const yesterdayTimeStamp = new Date().getTime() - day * hour * min * ms;
 	const previousWeekTimeStamp =
-		new Date().getTime() - 7 * day * hour * min * ms;
+		new Date().getTime() - 6 * day * hour * min * ms;
 	const previousMonthTimeStamp =
-		new Date().getTime() - 28 * day * hour * min * ms;
+		new Date().getTime() - 21 * day * hour * min * ms;
 
 	const today = new Date(todayTimeStamp).toISOString().split('T', 1)[0];
 	// const yesterday = new Date(yesterdayTimeStamp)
