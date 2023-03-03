@@ -111,12 +111,8 @@ function CustomerList() {
 	};
 
 	useEffect(() => {
-		if (!customerOverviewData['MONTHLY']) {
-			getCustomerData();
-		}
-		if (!guaranteeOverviewData['MONTHLY']) {
-			getGuaranteeData();
-		}
+		getCustomerData();
+		getGuaranteeData();
 	}, []);
 
 	useEffect(() => {
