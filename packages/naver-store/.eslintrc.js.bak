@@ -1,0 +1,63 @@
+const path = require("path");
+
+module.exports = {
+  extends: ["prettier"],
+  parser: "@typescript-eslint/parser",
+  root: true,
+  overrides: [
+    {
+      plugins: [
+        "prettier",
+        "jest",
+        "@typescript-eslint",
+        "@typescript-eslint/eslint-plugin",
+        "import",
+      ],
+      extends: [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended",
+        "plugin:import/typescript",
+        "plugin:import/recommended",
+      ],
+      parserOptions: {
+        project: "./tsconfig.json",
+        sourceType: "module",
+      },
+      env: {
+        browser: true,
+        jest: true,
+        es6: true,
+        node: true,
+      },
+      settings: {
+        "import/parsers": { "@typescript-eslint/parser": [".ts"] },
+        "import/resolver": {
+          typescript: {
+            alwaysTryTypes: true,
+            project: "./tsconfig.json",
+          },
+        },
+      },
+      rules: {
+        "prettier/prettier": "warn",
+        "import/order": [
+          "warn",
+          {
+            groups: [
+              ["builtin", "external"],
+              "internal",
+              ["parent", "sibling"],
+              "index",
+            ],
+            alphabetize: {
+              caseInsensitive: true,
+            },
+            "newlines-between": "always",
+          },
+        ],
+      },
+      files: ["./**/*.ts?(x)"],
+      //TODO: 각 프로젝트의 file로 빼고싶다.
+    },
+  ],
+};

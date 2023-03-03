@@ -51,5 +51,10 @@
 		"@storybook/core-common/webpack": "^5",
 		"@storybook/core-server/webpack": "^5",
 		"@storybook/react/webpack": "^5"
+	},
+	"dependenciesMeta": {
+		"winston-sentry-log@1.0.26": {
+			"unplugged": true
+		}
 	}
 }

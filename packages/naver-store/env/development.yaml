@@ -1,0 +1,16 @@
+naver:
+  auth:
+    id: 6s8pCrYL8amvvX8gIIx0eC
+    name: S-PTNR-AGENCY-매스어답션-A001
+    secret: $2a$04$Zynf7UcJxQp47NF2FNKyc.
+    accountId: "ncp_1njkqz_02"
+  http:
+    baseURL: https://sandbox-api.commerce.naver.com/partner
+aws:
+  region: ap-northeast-2
+sentry:
+  dsn: https://7bbe13b070864e0e8d62e60a1b405bc1@o1107902.ingest.sentry.io/4504734609571840
+  serverName: naver-store
+talktalk:
+  http:
+    baseURL: https://talk.naver.com

@@ -10,6 +10,7 @@ module.exports = {
 		es6: true,
 		node: true,
 	},
+	root: true,
 	rules: {
 		'prettier/prettier': 'warn',
 		'react-hooks/rules-of-hooks': 'error',
@@ -20,6 +21,57 @@ module.exports = {
 	},
 	overrides: [
 		{
+			files: ['./packages/naver-store/**/*.ts?(x)'],
+			//TODO: 각 프로젝트의 file로 빼고싶다.
+			parser: '@typescript-eslint/parser',
+			parserOptions: {
+				project: path.resolve(
+					__dirname + '/packages/naver-store/tsconfig.json'
+				),
+				sourceType: 'module',
+			},
+			plugins: ['@typescript-eslint/eslint-plugin', 'import'],
+			extends: [
+				'plugin:@typescript-eslint/recommended',
+				'plugin:prettier/recommended',
+				'plugin:import/typescript',
+				'plugin:import/recommended',
+			],
+			env: {
+				node: true,
+				jest: true,
+			},
+			settings: {
+				'import/parsers': {'@typescript-eslint/parser': ['.ts']},
+				'import/resolver': {
+					typescript: {
+						alwaysTryTypes: true,
+						project: path.resolve(
+							__dirname + '/packages/naver-store/tsconfig.json'
+						),
+					},
+				},
+			},
+			rules: {
+				'import/order': [
+					'warn',
+					{
+						groups: [
+							['builtin', 'external'],
+							'internal',
+							['parent', 'sibling'],
+							'index',
+						],
+						pathGroups: [],
+						alphabetize: {
+							caseInsensitive: true,
+						},
+						'newlines-between': 'always',
+					},
+				],
+			},
+		},
+		{
 			files: ['**/*.ts?(x)'],
 			parser: '@typescript-eslint/parser',
 			extends: [
@@ -27,6 +79,7 @@ module.exports = {
 				'plugin:@typescript-eslint/recommended-requiring-type-checking',
 			],
 			rules: {
+				'@typescript-eslint/require-await': 'off',
 				'@typescript-eslint/no-unused-vars': ['warn'],
 				'react/prop-types': 'off',
 				'react/require-default-props': 'off',
