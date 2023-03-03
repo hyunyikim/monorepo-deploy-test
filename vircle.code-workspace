@@ -35,6 +35,10 @@
 		{
 			"path": "packages/payment",
 			"name": "@vircle/payment"
+		},
+		{
+			"path": "packages/naver-store",
+			"name": "@vircle/naver-store"
 		}
 	],
 	"settings": {

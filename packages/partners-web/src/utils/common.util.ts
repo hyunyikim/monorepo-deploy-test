@@ -1,4 +1,5 @@
 import {format} from 'date-fns';
+import loadImage from 'image-promise';
 
 import {DATE_FORMAT} from '@/data';
 
@@ -58,10 +59,78 @@ export const textLineChangeHelper = (_text: string) => {
 	return [_text];
 };
 
+/**
+ * http, https 프로토콜이 붙지 않은 url인지 체크
+ */
 export const linkFormChecker = (_text: string) => {
 	const urlRegExp = RegExp(
 		/^([a-zA-Z0-9]+([-.]{1}[a-zA-Z0-9]+)*\.)([a-zA-Z]{2,6})(:[0-9]+)?(\/\S*)?/
 	);
 
 	return urlRegExp.test(String(_text));
+};
+
+export const dashboardDateStack = () => {
+	const day = 24;
+	const hour = 60;
+	const min = 60;
+	const ms = 1000;
+	const todayTimeStamp = new Date().getTime() - hour * min * ms;
+	// const yesterdayTimeStamp = new Date().getTime() - day * hour * min * ms;
+	const previousWeekTimeStamp =
+		new Date().getTime() - 6 * day * hour * min * ms;
+	const previousMonthTimeStamp =
+		new Date().getTime() - 21 * day * hour * min * ms;
+
+	const today = new Date(todayTimeStamp).toISOString().split('T', 1)[0];
+	// const yesterday = new Date(yesterdayTimeStamp)
+	// 	.toISOString()
+	// 	.split('T', 1)[0];
+	const previousWeek = new Date(previousWeekTimeStamp)
+		.toISOString()
+		.split('T', 1)[0];
+	const previousMonth = new Date(previousMonthTimeStamp)
+		.toISOString()
+		.split('T', 1)[0];
+
+	return {
+		today,
+		todayTimeStamp,
+		previousWeek,
+		previousWeekTimeStamp,
+		previousMonth,
+		previousMonthTimeStamp,
+	};
+};
+
+/**
+ * 이미지 체크
+ * @param _url
+ * @returns {Promise<boolean>}
+ */
+
+export const isValidWebImage = async (_url: string) => {
+	try {
+		const result = await loadImage(_url);
+		return !!result;
+	} catch (error) {
+		return false;
+	}
+};
+
+/**
+ * 마지막 글자 받침 유무 찾기
+ */
+export const isEndWithConsonant = (_str: string) => {
+	const finalCharCode = _str.charCodeAt(_str.length - 1);
+	// 0 = 받침 없음, 그 외 = 받침 있음
+	const finalConsonantCode = (finalCharCode - 44032) % 28;
+	return finalConsonantCode !== 0;
+};
+
+// 채널톡 오픈
+export const openChannelTalk = () => {
+	if (window?.ChannelIO) {
+		window.ChannelIO('showMessenger');
+	}
 };

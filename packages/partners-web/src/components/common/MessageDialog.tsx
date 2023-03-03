@@ -1,4 +1,4 @@
-import {useEffect, useCallback} from 'react';
+import {useCallback} from 'react';
 
 import {
 	Dialog,
@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import {useMessageDialog} from '@/stores';
-import {openChildModal, closeChildModal} from '@/utils';
 
 import {Button} from '@/components';
 import {IcClose} from '@/assets/icon';
@@ -19,9 +18,6 @@ function MessageDialog() {
 	const title = useMessageDialog((state) => state.title);
 	const message = useMessageDialog((state) => state.message);
 	const useCloseIcon = useMessageDialog((state) => state.useCloseIcon);
-	const sendCloseModalControlToParent = useMessageDialog(
-		(state) => state.sendCloseModalControlToParent
-	);
 	const disableClickBackground = useMessageDialog(
 		(state) => state.disableClickBackground
 	);
@@ -38,25 +34,12 @@ function MessageDialog() {
 		(state) => state.initMessageDialog
 	);
 
-	useEffect(() => {
-		if (open) {
-			openChildModal();
-			return;
-		}
-		sendCloseModalControlToParent && closeChildModal();
-	}, [open, sendCloseModalControlToParent]);
-
 	const handleClose = useCallback(() => {
 		if (onCloseFunc) {
 			onCloseFunc();
 		}
 		onClose();
-
-		// 모달 닫히는데 0.3초 정도 걸리기 때문에, 0.3초 후에 모달 데이터 초기화 되도록 처리
-		setTimeout(() => {
-			initMessageDialog();
-		}, 350);
-	}, [onClose, onCloseFunc, initMessageDialog]);
+	}, [onClose, onCloseFunc]);
 
 	return (
 		<Dialog

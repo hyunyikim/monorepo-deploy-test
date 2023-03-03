@@ -5,6 +5,7 @@ import React, {
 	useEffect,
 	KeyboardEvent,
 } from 'react';
+import {useNavigate} from 'react-router-dom';
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
 import style from '@/assets/styles/style.module.scss';
@@ -22,6 +23,7 @@ import {Box, Typography, Grid, Divider, Stack} from '@mui/material';
 import CapsuleButton from '@/components/atoms/CapsuleButton';
 import InputComponent from '@/components/atoms/InputComponent';
 
+import {useSidebarControlStore} from '@/stores';
 import {Button} from '@/components';
 
 import {
@@ -57,7 +59,7 @@ import {
 
 import InputWithLabel from '../../components/molecules/InputWithLabel';
 import ControlledInputComponent from '../../components/molecules/ControlledInputComponent';
-import TooltipComponent from '../../components/atoms/Tooltip';
+import TooltipComponent from '../../components/atoms/ToolTipComponent';
 import InputLabelTag from '../../components/atoms/InputLabelTag';
 import {FileData, FileDataPreview, CropPreviewData} from '@/@types';
 import PreviewGuarantee, {
@@ -66,16 +68,12 @@ import PreviewGuarantee, {
 import {
 	setGuaranteeInformation,
 	setCustomizedBrandCard,
-} from '@/api/guarantee.api';
+} from '@/api/guarantee-v1.api';
 import {CARD_DESIGN_GUIDE_LINK} from '@/data';
-import {
-	goToParentUrl,
-	goToParentUrlWithState,
-	sendAmplitudeLog,
-	updateParentPartnershipData,
-} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import Header from '@/components/common/layout/Header';
 import CustomiseBrandCard from './CustomiseBrandCard.modal';
+import {useQueryClient} from '@tanstack/react-query';
 
 type BoldTextProps = {
 	underline?: boolean | undefined;
@@ -523,15 +521,18 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 		<Grid
 			item
 			container
-			minWidth="622px"
-			maxWidth="622px"
-			// minWidth="662px"
-			// maxWidth="662px"
-			sx={{position: 'relative' /* zIndex : 1300 */}}>
+			minWidth="662px"
+			maxWidth="662px"
+			sx={(theme) => ({
+				position: 'relative',
+				[theme.breakpoints.down(1200)]: {
+					display: 'none',
+				},
+			})}>
 			<Box
 				sx={{
 					position: 'fixed',
-					left: 0,
+					right: 0,
 					top: 0,
 					height: '100%',
 					backgroundColor: '#08134A',
@@ -659,6 +660,9 @@ export function InputFormSection({
 	const b2bType = data?.b2bType; // cooperator or brand or platform
 	const email = data?.email as string;
 	const location = useLocation();
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const isSidebarOpen = useSidebarControlStore((state) => state.isOpen);
 
 	const {
 		handleSubmit,
@@ -677,6 +681,7 @@ export function InputFormSection({
 				: yupResolver(cooperatorGuaranteeSchemaShape),
 		mode: 'onChange',
 	});
+	const [stay, setStay] = useState(false);
 	const [searchParams] = useSearchParams();
 	const queryData = Object.fromEntries([...searchParams]);
 
@@ -718,6 +723,7 @@ export function InputFormSection({
 
 	const {setIsOpen, setModalOption} = useModalStore((state) => state);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
+	const closeMessageDialog = useMessageDialog((state) => state.onClose);
 	const nftCustomFields: string[] | undefined = data?.nftCustomFields;
 	const hasProfileLogo = data?.profileImage;
 
@@ -1134,8 +1140,11 @@ export function InputFormSection({
 			useCloseIcon: false,
 			onCloseFunc: () => {
 				setTimeout(() => {
-					updateParentPartnershipData();
-					goToParentUrl('/dashboard');
+					queryClient.invalidateQueries({
+						queryKey: ['partnershipInfo'],
+					});
+					closeMessageDialog();
+					// navigate('/dashboard');
 				}, 200);
 			},
 		});
@@ -1144,13 +1153,20 @@ export function InputFormSection({
 	/* 개런티 설정완료 및 파트너스 데이터 업데이트 모달 */
 	const openCompleteSettingGuaranteeModal = () => {
 		onMessageDialogOpen({
-			title: '개런티 설정이 완료되었어요!',
+			title: '개런티 설정이 완료되었어요',
 			disableClickBackground: true,
 			useCloseIcon: true,
 			onCloseFunc: () => {
+				sendAmplitudeLog(
+					'guaranteesetting_finished_popup_close_click',
+					{button_title: '팝업 닫기'}
+				);
 				setTimeout(() => {
-					updateParentPartnershipData();
-					goToParentUrl('/dashboard');
+					queryClient.invalidateQueries({
+						queryKey: ['partnershipInfo'],
+					});
+					closeMessageDialog();
+					navigate('/dashboard');
 				}, 300);
 			},
 			buttons: (
@@ -1158,10 +1174,18 @@ export function InputFormSection({
 					<Button
 						color="black"
 						variant="outlined"
+						taxoInfo={{
+							eventName:
+								'guaranteesetting_finished_popup_cafe24_click',
+							eventPropertyValue: 'cafe24 연동하기 클릭',
+						}}
 						onClick={() => {
 							setTimeout(() => {
-								updateParentPartnershipData();
-								goToParentUrl('/b2b/interwork');
+								queryClient.invalidateQueries({
+									queryKey: ['partnershipInfo'],
+								});
+								closeMessageDialog();
+								navigate('/b2b/interwork');
 							}, 300);
 						}}>
 						Cafe24 연동하기
@@ -1169,10 +1193,18 @@ export function InputFormSection({
 					<Button
 						color="black"
 						variant="contained"
+						taxoInfo={{
+							eventName:
+								'guaranteesetting_finished_popup_guarantee_click',
+							eventPropertyValue: '개런티 발급하기 클릭',
+						}}
 						onClick={() => {
 							setTimeout(() => {
-								updateParentPartnershipData();
-								goToParentUrl('/b2b/guarantee/register');
+								queryClient.invalidateQueries({
+									queryKey: ['partnershipInfo'],
+								});
+								closeMessageDialog();
+								navigate('/b2b/guarantee/register');
 							}, 300);
 						}}>
 						개런티 발급하기
@@ -1202,27 +1234,26 @@ export function InputFormSection({
 					isFirstTime: hasProfileLogo ? 'N' : 'Y',
 				};
 
-				updateParentPartnershipData();
-
-				goToParentUrl(
+				queryClient.invalidateQueries({
+					queryKey: ['partnershipInfo'],
+				});
+				navigate(
 					`/cafe24/interwork?${createSearchParams(
 						cafe24Query
 					).toString()}`
 				);
 				return;
-
-				/* TODO: 나중에 모노레포로 다 옮겼을때 아래 주석으로 변경 */
-				// return navigate({
-				// 	pathname: '/cafe24/interwork',
-				// 	search: `?${createSearchParams(cafe24Query)}`,
-				// });
 			}
 			// else
 			if (hasProfileLogo) {
 				openEditSettingGuaranteeModal();
 			} else {
+				setStay(true);
 				openCompleteSettingGuaranteeModal();
 			}
+			await queryClient.invalidateQueries({
+				queryKey: ['partnershipInfo'],
+			});
 		}
 	};
 
@@ -1331,7 +1362,7 @@ export function InputFormSection({
 		}
 
 		setTimeout(() => {
-			goToParentUrl('/dashboard');
+			navigate('/dashboard');
 		}, 300);
 	};
 
@@ -1414,11 +1445,19 @@ export function InputFormSection({
 			!alreadySettingGuarantee &&
 			pathname.includes('/re-setup/guarantee')
 		) {
-			goToParentUrlWithState('/setup/guarantee', state);
+			navigate('/setup/guarantee', {
+				state,
+			});
 			return;
 		}
+
 		if (alreadySettingGuarantee && pathname.includes('/setup/guarantee')) {
-			goToParentUrlWithState('/re-setup/guarantee', state);
+			if (stay) {
+				return;
+			}
+			navigate('/re-setup/guarantee', {
+				state,
+			});
 			return;
 		}
 		// 수선신청 서비스 연동 완료 후 개런티 설정으로 넘어온 경우 추가정보 입력으로 포커스 옮김
@@ -1459,25 +1498,20 @@ export function InputFormSection({
 			position="relative"
 			justifyContent={'center'}
 			alignItems="center"
-			p={hasProfileLogo ? '40px 0px 60px 0px' : '89px 0px 60px 40px'}>
+			sx={{
+				// padding: hasProfileLogo
+				// 	? '40px 0px 60px 0px'
+				// 	: '89px 0px 60px 40px',
+				padding: hasProfileLogo
+					? '40px 0px 60px 0px'
+					: '89px 40px 40px',
+				// marginRight: '40px',
+			}}>
 			<FullFormStyled
 				onSubmit={handleSubmit(onSubmit)}
 				noValidate
 				autoComplete="off">
-				{hasProfileLogo && (
-					<Stack
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: '20px',
-							marginBottom: '12px',
-						}}>
-						<Typography variant="header1">
-							안녕하세요, {data?.companyName}님!
-						</Typography>
-					</Stack>
-				)}
-
+				{/* 개런티 설정 헤더(?) 영역 */}
 				<Grid
 					display={'flex'}
 					flexWrap={'nowrap'}
@@ -1488,12 +1522,19 @@ export function InputFormSection({
 					gap="12px"
 					mb="32px"
 					sx={{maxWidth: '800px'}}>
-					{hasProfileLogo && (
-						<Typography variant="body1" color={'grey.300'}>
-							개런티 설정을 완료하고 버클 개런티 카드를
-							발급해보세요
-						</Typography>
-					)}
+					<Typography
+						variant="h2"
+						sx={{
+							fontWeight: 700,
+							fontSize: '28px',
+							lineHeight: '145%',
+							color: 'grey.900',
+							wordBreak: 'keep-all',
+							width: '100%',
+						}}>
+						개런티 설정
+					</Typography>
+
 					<Grid
 						container
 						item
@@ -1508,19 +1549,7 @@ export function InputFormSection({
 						alignItems={'center'}
 						justifyContent={'flex-end'}>
 						<Grid item sx={{position: 'relative'}}>
-							<TooltipComponent
-								isOpen={tooltipState}
-								arrow={true}
-								onClickCloseBtn={closeTooltip}
-								title={
-									<Typography
-										variant="caption2"
-										color={'#ffffff'}>
-										어떤 정보를 노출 할지 고민 된다면
-										<br /> 타 브랜드의 개런티 화면을
-										참고하세요!
-									</Typography>
-								}>
+							{hasProfileLogo ? (
 								<CapsuleButton
 									variant="outlined"
 									onClick={openExampleModal}
@@ -1537,7 +1566,44 @@ export function InputFormSection({
 									}>
 									브랜드 개런티 예시보기
 								</CapsuleButton>
-							</TooltipComponent>
+							) : (
+								<TooltipComponent
+									customisedButton={
+										<CapsuleButton
+											variant="outlined"
+											onClick={openExampleModal}
+											sx={{
+												padding: '4px 11px 4px 6px',
+												gap: '12px',
+											}}
+											startIcon={
+												<img
+													src={exampleBrandIcon}
+													srcSet={`${exampleBrandIcon} 1x, ${exampleBrandIcon2x} 2x`}
+													alt="brand-sample"
+												/>
+											}>
+											브랜드 개런티 예시보기
+										</CapsuleButton>
+									}
+									content={
+										<Typography
+											variant="caption2"
+											color={'#ffffff'}>
+											어떤 정보를 노출 할지 고민 된다면
+											<br /> 타 브랜드의 개런티 화면을
+											참고하세요!
+										</Typography>
+									}
+									sx={{
+										left: '8px',
+										'& .MuiTooltip-arrow': {
+											left: '-96px !important',
+										},
+									}}
+									alwaysPop={true}
+								/>
+							)}
 						</Grid>
 
 						<LinkStyle
@@ -2028,28 +2094,37 @@ export function InputFormSection({
 
 				{/* fixed 버튼s */}
 				<Box
-					sx={{
+					sx={(theme) => ({
 						background: 'white',
 						position: 'fixed',
 						bottom: '0',
 						left: '0',
 						right: '0',
-						zIndex: 100,
-					}}>
+						zIndex: 1,
+					})}>
 					<Grid
 						container
 						justifyContent="center"
-						sx={{
+						sx={(theme) => ({
 							padding: hasProfileLogo
 								? '12px 40px'
 								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
-							marginLeft: hasProfileLogo ? 0 : '662px',
+							marginLeft: hasProfileLogo
+								? isSidebarOpen
+									? 'auto'
+									: 0
+								: 0,
 							width: hasProfileLogo
-								? '100%'
+								? isSidebarOpen
+									? 'calc(100% - 240px)'
+									: 'calc(100% + 72px)'
 								: 'calc(100% - 662px)',
-						}}>
+							[theme.breakpoints.down(1200)]: {
+								width: '100%',
+							},
+						})}>
 						<Grid
 							container
 							justifyContent="space-between"
@@ -2126,14 +2201,12 @@ function SetupGuarantee() {
 
 	return (
 		<Grid container flexWrap="nowrap">
-			<Header backgroundColor="transparent" borderBottom={false} />
-			<VideoInformationSection boxIndexState={boxIndexState} />
-
 			<InputFormSection
 				boxIndexState={boxIndexState}
 				boxOpenHandler={boxOpenHandler}
 				justOpenBox={justOpenBox}
 			/>
+			<VideoInformationSection boxIndexState={boxIndexState} />
 		</Grid>
 	);
 }

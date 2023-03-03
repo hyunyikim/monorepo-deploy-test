@@ -1,20 +1,23 @@
 import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Stack} from '@mui/system';
 import {Typography, List, ListItem} from '@mui/material';
 import {
 	Button,
 	InputWithLabel,
 	TitleTypography,
-	ControlledInputComponent,
+	ContentWrapper,
 } from '@/components';
-import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 import {cancleRequestSignout} from '@/api/auth.api';
+import {useQueryClient} from '@tanstack/react-query';
 
 function Signedout() {
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const {
 		handleSubmit,
 		watch,
@@ -87,9 +90,12 @@ function Signedout() {
 	};
 
 	const confirmCancleSignoutHandler = () => {
-		updateParentPartnershipData();
+		queryClient.invalidateQueries({
+			queryKey: ['partnershipInfo'],
+		});
+
 		// setTimeout(() => {
-		// 	goToParentUrl('/dashboard');
+		navigate('/dashboard');
 		// }, 300);
 	};
 
@@ -112,20 +118,15 @@ function Signedout() {
 			const hasLeft = partnershipData.isLeaved;
 
 			if (hasLeft === 'N') {
-				goToParentUrl('/dashboard');
+				navigate('/dashboard');
 				return;
 			}
 		}
 	}, [partnershipData]);
 
 	return partnershipData && partnershipData.isLeaved === 'Y' ? (
-		<Stack
-			sx={{
-				gap: '40px',
-				maxWidth: '800px',
-				margin: '40px auto 130px auto',
-			}}>
-			<form onSubmit={handleSubmit(onSubmit)}>
+		<ContentWrapper maxWidth="800px">
+			<form onSubmit={handleSubmit(onSubmit)} noValidate>
 				<TitleTypography title="회원 탈퇴" />
 				<Stack
 					sx={{
@@ -225,6 +226,7 @@ function Signedout() {
 								maxWidth: '356px',
 							}}
 							fullWidth={false}
+							autoComplete="new-password"
 						/>
 					</Stack>
 
@@ -238,7 +240,7 @@ function Signedout() {
 					</Button>
 				</Stack>
 			</form>
-		</Stack>
+		</ContentWrapper>
 	) : (
 		<></>
 	);

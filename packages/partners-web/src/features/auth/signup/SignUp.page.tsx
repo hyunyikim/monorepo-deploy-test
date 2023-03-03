@@ -9,6 +9,7 @@ import SignUpStep2 from '@/features/auth/signup/SignUpStep2';
 import SignUpStep3 from '@/features/auth/signup/SignUpStep3';
 import {sendAmplitudeLog} from '@/utils';
 import {SignUpRequestFormData} from '@/@types';
+import {HEADER_HEIGHT} from '@/data';
 
 function SignUp() {
 	const [step, setStep] = useState(1);
@@ -52,7 +53,12 @@ function SignUp() {
 	}, [search]);
 
 	return (
-		<Stack justifyContent="center" alignItems="center">
+		<Stack
+			justifyContent="center"
+			alignItems="center"
+			sx={{
+				minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+			}}>
 			{step === 1 ? (
 				<SignUpStep1 setStep={setStep} />
 			) : step === 2 ? (

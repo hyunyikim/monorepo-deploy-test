@@ -1,4 +1,5 @@
 import {useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {Box, TableRow, Typography} from '@mui/material';
 
@@ -16,7 +17,7 @@ import {
 	productListSearchFilter,
 	sortSearchFilter,
 } from '@/data';
-import {goToParentUrl, sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import {
 	useGetPartnershipInfo,
 	useGlobalLoading,
@@ -42,6 +43,7 @@ const menu = 'itemadmin';
 const menuKo = '상품';
 
 function ProductList() {
+	const navigate = useNavigate();
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const b2bType = useGetPartnershipInfo()?.data?.b2bType;
 	const useFieldModelNum = useMemo(() => {
@@ -154,7 +156,7 @@ function ProductList() {
 								color="grey-100"
 								height={32}
 								onClick={() => {
-									goToParentUrl('/b2b/product/excel-upload');
+									navigate('/b2b/product/excel-upload');
 								}}>
 								대량 등록
 							</Button>
@@ -168,7 +170,7 @@ function ProductList() {
 											button_title: `신규등록 클릭`,
 										}
 									);
-									goToParentUrl('/b2b/product/register');
+									navigate('/b2b/product/register');
 								}}>
 								상품 등록
 							</Button>
@@ -301,7 +303,7 @@ function ProductList() {
 											variant="body3"
 											className="underline"
 											onClick={() => {
-												goToParentUrl(
+												navigate(
 													`/b2b/product/${item.idx}`
 												);
 											}}>
@@ -319,7 +321,7 @@ function ProductList() {
 										variant="body3"
 										className="underline"
 										onClick={() => {
-											goToParentUrl(
+											navigate(
 												`/b2b/product/${item.idx}`
 											);
 										}}>

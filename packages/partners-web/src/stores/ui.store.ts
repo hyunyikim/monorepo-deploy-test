@@ -14,7 +14,6 @@ interface MessageDialogState {
 	showBottomCloseButton: boolean;
 	closeButtonValue: CloseButtonValueType;
 	buttons: React.ReactElement | null;
-	sendCloseModalControlToParent: boolean;
 	onCloseFunc: (() => void) | null;
 	onOpen: (value: string | OnOpenParamType) => void;
 	onOpenError: (error?: {
@@ -57,7 +56,6 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 	disableClickBackground: false,
 	disableScroll: false,
 	useCloseIcon: true,
-	sendCloseModalControlToParent: true,
 	onOpen: (value: string | OnOpenParamType) => {
 		// 메시지만 바뀜
 		if (typeof value === 'string') {
@@ -80,8 +78,6 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			useCloseIcon: value?.useCloseIcon,
 			open: true,
 			onCloseFunc: value?.onCloseFunc ?? null,
-			sendCloseModalControlToParent:
-				value?.sendCloseModalControlToParent ?? true,
 		}));
 	},
 	onOpenError: (error?: {e: unknown; title?: string; message?: string}) => {
@@ -128,11 +124,20 @@ export const useMessageDialog = create<MessageDialogState>((set, get) => ({
 			disableClickBackground: false,
 			disableScroll: false,
 			useCloseIcon: true,
-			sendCloseModalControlToParent: true,
 		})),
 	setOnCloseFunc: (func: () => void) => {
 		set(() => ({
 			onCloseFunc: func,
 		}));
 	},
+}));
+
+interface SidebarControl {
+	isOpen: boolean;
+	setOpen: (value: boolean) => void;
+}
+
+export const useSidebarControlStore = create<SidebarControl>((set, get) => ({
+	isOpen: true,
+	setOpen: (value: boolean) => set(() => ({isOpen: value})),
 }));

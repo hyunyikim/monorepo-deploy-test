@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {format} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
@@ -16,7 +17,7 @@ import {
 	getGuaranteeStatusChip,
 	sortSearchFilter,
 } from '@/data';
-import {formatPhoneNum, goToParentUrl} from '@/utils';
+import {formatPhoneNum} from '@/utils';
 
 import {
 	TableInfo,
@@ -34,6 +35,7 @@ import {getProductGuaranteeList} from '@/api/product.api';
 
 const {sort, pageMaxNum, currentPage} = initialSearchFilter;
 function ProductGuaranteeTable({idx}: {idx: number}) {
+	const navigate = useNavigate();
 	const [value, setValue] = useState(0);
 	const {
 		isLoading,
@@ -108,7 +110,7 @@ function ProductGuaranteeTable({idx}: {idx: number}) {
 								marginLeft: '8px',
 							}}
 							onClick={() => {
-								goToParentUrl(
+								navigate(
 									`/b2b/guarantee/register?productIdx=${idx}`
 								);
 							}}>
@@ -158,11 +160,11 @@ function ProductGuaranteeTable({idx}: {idx: number}) {
 													Number(item.nftStatusCode) <
 													3
 												) {
-													goToParentUrl(
+													navigate(
 														`/b2b/guarantee/edit/${item.idx}`
 													);
 												} else {
-													goToParentUrl(
+													navigate(
 														`/b2b/guarantee/${item.idx}`
 													);
 												}
@@ -181,7 +183,7 @@ function ProductGuaranteeTable({idx}: {idx: number}) {
 													const phone =
 														item?.ordererTel;
 													if (!name || !phone) return;
-													goToParentUrl(
+													navigate(
 														`/b2b/customer/${name}/${phone}`
 													);
 												}}>

@@ -1,44 +1,30 @@
 import React from 'react';
 
-export type MenuName =
+export type Menu =
 	| 'dashboard'
 	| 'guarantee'
 	| 'product'
 	| 'customer'
-	| 'inspection'
 	| 'repair'
 	| 'interwork'
-	| 'guarantee-setting'
-	| 'profile-setting'
-	| 'settlement-inspection'
-	| 'settlement-repair';
+	| 'payment';
 
-export type MenuList = Menu[];
+export type MenuList = MenuDepth1[][];
 
-interface Menu {
-	caption?: string;
-	list: OneDepthMenu[];
-}
-
-interface OneDepthMenu extends MenuItem {
-	menu: MenuName;
+// TODO: A or B 타입 둘 중 선택
+export interface MenuDepth1 {
+	menu: Menu;
 	icon: React.ReactNode;
-	children?: TwoDepthMenu[];
-}
-
-interface TwoDepthMenu extends MenuItem {
-	num: number;
-	path: string;
-}
-
-interface MenuItem {
-	num?: number;
 	title: string;
+	event?: [string, string]; // amplitude event
 	path?: string;
+	emphasis?: boolean;
+	children?: MenuDepth2[];
 }
 
-export interface CurrentMenu {
-	num: number;
-	menu: MenuName;
+export interface MenuDepth2 {
 	title: string;
+	path: string;
+	emphasis?: boolean;
+	event?: [string, string]; // amplitude event
 }

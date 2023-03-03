@@ -5,6 +5,7 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
+import {SxProps} from '@mui/system';
 
 import {IcChevronDown} from '@/assets/icon';
 import {TextField} from '@/components';
@@ -18,6 +19,7 @@ interface Props {
 	width?: 300 | 150 | number | '100%';
 	value: string;
 	onChange: (value: any) => void;
+	sx?: SxProps;
 }
 
 // 제어 컴포넌트
@@ -28,6 +30,7 @@ function Autocomplete({
 	width = 300,
 	value,
 	onChange,
+	sx = {},
 }: Props) {
 	const [text, setText] = useState<string>('');
 	const trimedText = useMemo(() => text.trim(), [text]);
@@ -113,37 +116,40 @@ function Autocomplete({
 					</li>
 				);
 			}}
-			sx={{
-				width: 'inherit',
-				'& .MuiFormControl-root': {
-					height: `${height}px`,
-					width: typeof width === 'number' ? `${width}px` : width,
-					// mui 기본 라벨
-					'& .MuiFormLabel-root, & .MuiOutlinedInput-notchedOutline legend':
-						{
-							display: 'none',
+			sx={[
+				{
+					width: 'inherit',
+					'& .MuiFormControl-root': {
+						height: `${height}px`,
+						width: typeof width === 'number' ? `${width}px` : width,
+						// mui 기본 라벨
+						'& .MuiFormLabel-root, & .MuiOutlinedInput-notchedOutline legend':
+							{
+								display: 'none',
+							},
+						// 우측 화살표
+						'& .MuiAutocomplete-endAdornment': {
+							right: height === 48 ? '16px' : '12px',
 						},
-					// 우측 화살표
-					'& .MuiAutocomplete-endAdornment': {
-						right: height === 48 ? '16px' : '12px',
-					},
-					// input
-					'& .MuiAutocomplete-inputRoot': {
-						padding: `${
-							height === 48 ? '14px 16px' : '12px 6px'
-						} !important`,
-						'& .MuiInputBase-input': {
-							padding: 0,
-							'&::placeholder': {
-								color: `${style.vircleGrey300} !important`,
+						// input
+						'& .MuiAutocomplete-inputRoot': {
+							padding: `${
+								height === 48 ? '14px 16px' : '12px 6px'
+							} !important`,
+							'& .MuiInputBase-input': {
+								padding: 0,
+								'&::placeholder': {
+									color: `${style.vircleGrey300} !important`,
+								},
 							},
 						},
-					},
-					'& .MuiOutlinedInput-notchedOutline': {
-						top: 0,
+						'& .MuiOutlinedInput-notchedOutline': {
+							top: 0,
+						},
 					},
 				},
-			}}
+				...(Array.isArray(sx) ? sx : [sx]),
+			]}
 		/>
 	);
 }

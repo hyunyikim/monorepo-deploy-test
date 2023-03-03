@@ -4,10 +4,6 @@ export {default as ImgConnectServiceButton} from './img-connect-service-button.p
 export {default as ImgConnectServiceButton2x} from './img-connect-service-button@2x.png';
 export {default as ImgBgCards} from './img-bg-cards.png';
 export {default as ImgBgCards2x} from './img-bg-cards@2x.png';
-export {default as ImgRobotWelcoming} from './img-robot-welcoming.png';
-export {default as ImgRobotWelcoming2x} from './img-robot-welcoming@2x.png';
-export {default as ImgRobitWithPencil} from './img-robot-with-pencil.png';
-export {default as ImgRobitWithPencil2x} from './img-robot-with-pencil@2x.png';
 export {default as ImgLogoVirclePartners} from './logo-vircle.png';
 export {default as ImgLogoVirclePartners2x} from './logo-vircle@2x.png';
 export {default as ImgLogoVirclePartnersWhite} from './logo-vircle-white.png';
@@ -43,10 +39,28 @@ export {default as ImgServiceInterworkKakao2x} from './img-service-interwork-kak
 export {default as ImgServiceInterworkKakaoSample1} from './img-service-interwork-kakao-sample1.png';
 export {default as ImgServiceInterworkKakaoSample2} from './img-service-interwork-kakao-sample2.png';
 export {default as ImgServiceKakaoConnectExample} from './img-kakao-connect-example.png';
+export {default as ImgUsageGuideRobot} from './img_usage_guide_robot.png';
+export {default as ImgUsageGuideRobot2x} from './img_usage_guide_robot@2x.png';
 
 export {default as imgPopupBanner} from './img_stop_paper_popup.png';
 export {default as imgPopupBanner2x} from './img_stop_paper_popup@2x.png';
 export {default as imgPopupBannerM} from './img_stop_paper_popup_m.png';
 export {default as imgPopupBannerM2x} from './img_stop_paper_popup_m@2x.png';
-
 export {default as imgBlurredCustomerList} from './img_blurred_customers_list.png';
+export {default as imgDefaultPieChart} from './img_default_pie_chart.png';
+export {default as imgDefaultPieChart2x} from './img_default_pie_chart@2x.png';
+export {default as imgDefaultBarChart} from './img_default_bar_chart.png';
+export {default as imgDefaultBarChart2x} from './img_default_bar_chart@2x.png';
+export {default as imgDefaultRepair} from './img_default_repair.png';
+export {default as imgDefaultRepair2x} from './img_default_repair@2x.png';
+export {default as imgKakaoTip} from './img_kakao_tip.png';
+export {default as imgRepairTip} from './img_repair_tip.png';
+export {default as imgCafe24Tip} from './img_cafe24_tip.png';
+export {default as imgBrandStoryString925} from './img_brand_story_sting925.png';
+export {default as imgBrandStoryButti} from './img_brand_story_butti.png';
+export {default as imgBrandStoryTheidentity} from './img_brand_story_theidentity.png';
+export {default as imgBrandStoryFotton} from './img_brand_story_fotton.png';
+export {default as imgVipStar} from './img_vip_star.png';
+export {default as imgDashboardSettingGuarantee} from './img_dashboard_setting_guarantee.png';
+export {default as imgDashboardSettingKakao} from './img_dashboard_setting_kakao.png';
+export {default as imgDashboardSettingCafe24} from './img_dashboard_setting_cafe24.png';

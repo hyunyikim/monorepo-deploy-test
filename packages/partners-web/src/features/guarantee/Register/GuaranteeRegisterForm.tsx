@@ -17,25 +17,17 @@ import {
 	AutocompleteInputType,
 } from '@/@types';
 import {guaranteeRegisterSchemaShape} from '@/utils/schema';
-import {
-	goToParentUrl,
-	replaceToParentUrl,
-	handleChangeDataFormat,
-	sendAmplitudeLog,
-	updateUserPricePlanData,
-} from '@/utils';
+import {handleChangeDataFormat, sendAmplitudeLog} from '@/utils';
 import {
 	convertProductRegisterFormData,
 	getProductCustomFieldValue,
 	guaranteeRegisterInputList as inputList,
 	isPlanEnterprise,
 	PAGE_MAX_WIDTH,
+	PAYMENT_MESSAGE_MODAL,
 } from '@/data';
-import {
-	registerGuarantee,
-	deleteGuarantee,
-	deleteGuaranteeImage,
-} from '@/api/guarantee.api';
+import {registerGuarantee, deleteGuaranteeImage} from '@/api/guarantee.api';
+import {deleteGuarantee} from '@/api/guarantee-v1.api';
 import {
 	useGetPartnershipInfo,
 	useMessageDialog,
@@ -44,7 +36,7 @@ import {
 	useGetPlatformList,
 } from '@/stores';
 import {getProductDetail, registerProduct} from '@/api/product.api';
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 
 import {
 	Button,
@@ -72,17 +64,18 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 	const {data: userPlan} = useGetUserPricePlan();
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
+	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
 	const {
 		open: newProductModalOpen,
 		onOpen: onNewProductModalOpen,
 		onClose: onNewProductModalClose,
-	} = useChildModalOpen({});
+	} = useOpen({});
 	const {
 		open: selectProductModalOpen,
 		onOpen: onSelectProductModalOpen,
 		onClose: onSelectProductModalClose,
-	} = useChildModalOpen({});
+	} = useOpen({});
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const {
@@ -286,26 +279,13 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 					if (expireDate - currentDate < 0) {
 						if (isFreeTrial) {
 							return onOpenMessageDialog({
-								title: '무료체험 기간 종료로 서비스 이용이 제한됩니다.',
-								message: (
-									<>
-										무료체험 기간이 종료되어 서비스 이용이
-										제한됩니다.
-										<br />
-										유료 플랜으로 업그레이드 후 버클을 계속
-										이용해보세요.
-									</>
-								),
-								showBottomCloseButton: true,
-								closeButtonValue: '닫기',
-								disableClickBackground: true,
+								...PAYMENT_MESSAGE_MODAL.TRIAL_FINISH,
 								buttons: (
 									<Button
 										color="black"
 										onClick={() => {
-											goToParentUrl(
-												'/b2b/payment/subscribe'
-											);
+											navigate('/b2b/payment/subscribe');
+											onCloseMessageDialog();
 										}}>
 										플랜 업그레이드
 									</Button>
@@ -313,17 +293,13 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 							});
 						} else {
 							return onOpenMessageDialog({
-								title: '플랜 구독하고 개런티를 발급해보세요!',
-								showBottomCloseButton: true,
-								closeButtonValue: '닫기',
-								disableClickBackground: true,
+								...PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE,
 								buttons: (
 									<Button
 										color="black"
 										onClick={() => {
-											goToParentUrl(
-												'/b2b/payment/subscribe'
-											);
+											navigate('/b2b/payment/subscribe');
+											onCloseMessageDialog();
 										}}>
 										구독
 									</Button>
@@ -345,7 +321,8 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 							<Button
 								color="black"
 								onClick={() => {
-									goToParentUrl('/b2b/payment/subscribe');
+									navigate('/b2b/payment/subscribe');
+									onCloseMessageDialog();
 								}}>
 								플랜 업그레이드
 							</Button>
@@ -579,7 +556,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 							: '개런티 발급 정보를 임시저장했습니다.',
 					showBottomCloseButton: true,
 					onCloseFunc: () => {
-						goToParentUrl('/b2b/guarantee');
+						navigate('/b2b/guarantee');
 					},
 				});
 
@@ -589,7 +566,6 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 				if (registerType === 'temperary') {
 					sendAmplitudeLog('guarantee_publish_saved');
 				}
-				updateUserPricePlanData();
 				queryClient.invalidateQueries({
 					queryKey: ['userPricePlan'],
 				});
@@ -646,7 +622,9 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 									title: '개런티를 삭제했습니다',
 									showBottomCloseButton: true,
 									onCloseFunc: () => {
-										replaceToParentUrl('/b2b/guarantee');
+										navigate('/b2b/guarantee', {
+											replace: true,
+										});
 									},
 								});
 							} catch (e: any) {

@@ -185,8 +185,25 @@ export interface GuaranteeRegisterProductRequestParam
 	cate_cd?: number;
 	warranty_dt: string;
 	model_num?: string;
-	custom_field?: Record<string, string>;
+	custom_field?: string;
 	product_img?: string[];
+}
+
+export interface GuaranteeExcelUploadFormData
+	extends Pick<
+		GuaranteeRegisterProductRequestParam,
+		| 'orderer_nm'
+		| 'orderer_tel'
+		| 'warranty_dt'
+		| 'pro_nm'
+		| 'price'
+		| 'product_img'
+		| 'order_dt'
+		| 'platform_nm'
+		| 'ref_order_id'
+		| 'custom_field'
+	> {
+	[key: string]: any; // customFields
 }
 
 // 개런티 발급시, 입력되는 폼 데이터 타입

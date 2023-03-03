@@ -1,7 +1,7 @@
 import create from 'zustand';
 import {useQuery} from '@tanstack/react-query';
 
-import {getPlatformList} from '@/api/guarantee.api';
+import {getPlatformList} from '@/api/guarantee-v1.api';
 import {useLoginStore} from './auth.store';
 
 interface GuaranteePreviewState {

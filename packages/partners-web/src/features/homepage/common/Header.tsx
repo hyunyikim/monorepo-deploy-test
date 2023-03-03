@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {debounce} from 'lodash';
 import {useLoginStore} from '@/stores';
-import {goToParentUrl, sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 import {Dialog} from '@mui/material';
 
 // import img
@@ -34,12 +35,13 @@ function HomepageHeader({
 	const [headerState, setHeaderState] = useState('top');
 	const isLogin = useLoginStore((state) => state.isLogin)();
 	const token = useLoginStore((state) => state.token);
+	const navigate = useNavigate();
 
 	const clickLogo = () => {
 		sendAmplitudeLog('homepage_logo_click', {
 			button_title: '버클 로고 클릭',
 		});
-		goToParentUrl('/');
+		navigate('/');
 		window.scrollTo(0, 0);
 	};
 
@@ -76,9 +78,8 @@ function HomepageHeader({
 			default:
 				break;
 		}
-
 		if (typeof path === 'string') {
-			goToParentUrl(path);
+			navigate(`/${path}`);
 		}
 	};
 

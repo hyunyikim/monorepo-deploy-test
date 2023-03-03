@@ -13,7 +13,6 @@ import {IcLogin} from '@/assets/icon';
 import style from '@/assets/styles/style.module.scss';
 import {Button} from '@/components';
 import {cancelPricePlan} from '@/api/payment.api';
-import {updateUserPricePlanData} from '@/utils';
 
 function CancelSubscribe({}) {
 	const queryClient = useQueryClient();
@@ -37,7 +36,6 @@ function CancelSubscribe({}) {
 		},
 		mutationFn: cancelPricePlan,
 		onSuccess: async () => {
-			updateUserPricePlanData();
 			await queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});

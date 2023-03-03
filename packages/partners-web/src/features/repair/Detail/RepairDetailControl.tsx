@@ -1,12 +1,14 @@
+import {useNavigate} from 'react-router-dom';
+
 import {useGlobalLoading, useMessageDialog} from '@/stores';
 
 import {Stack} from '@mui/material';
 
 import {Button} from '@/components';
 import {cancelRepair, completeRepair} from '@/api/repair.api';
-import {goToParentUrl} from '@/utils';
 
 function RepairDetailControl({idx}: {idx: number}) {
+	const navigate = useNavigate();
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
@@ -28,7 +30,7 @@ function RepairDetailControl({idx}: {idx: number}) {
 									title: '수선신청이 취소됐습니다.',
 									showBottomCloseButton: true,
 									onCloseFunc: () => {
-										goToParentUrl('/b2b/repair');
+										navigate('/b2b/repair');
 									},
 								});
 							} catch (e) {
@@ -61,7 +63,7 @@ function RepairDetailControl({idx}: {idx: number}) {
 									title: '수선완료 처리됐습니다.',
 									showBottomCloseButton: true,
 									onCloseFunc: () => {
-										goToParentUrl('/b2b/repair');
+										navigate('/b2b/repair');
 									},
 								});
 							} catch (e) {

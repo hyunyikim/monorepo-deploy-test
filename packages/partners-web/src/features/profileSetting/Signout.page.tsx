@@ -9,14 +9,16 @@ import {
 	ControlledInputComponent,
 	Select,
 	Checkbox,
+	ContentWrapper,
 } from '@/components';
-import {goToParentUrl, updateParentPartnershipData} from '@/utils';
 import {Option} from '@/@types';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {useMessageDialog, useGetPartnershipInfo} from '@/stores';
 import {requestSignout} from '@/api/auth.api';
+import {useQueryClient} from '@tanstack/react-query';
+import {useNavigate} from 'react-router-dom';
 
 interface SignoutInfoProps {
 	reason: Option;
@@ -24,6 +26,8 @@ interface SignoutInfoProps {
 }
 
 function Signout() {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const {
 		handleSubmit,
 		watch,
@@ -122,12 +126,14 @@ function Signout() {
 				reason: value,
 				password: values.password,
 			});
-
+			await queryClient.invalidateQueries({
+				queryKey: ['partnershipInfo'],
+			});
 			if (signoutRes && signoutRes.result === 'SUCCESS') {
 				closeMessageModal();
-				setTimeout(() => {
-					updateParentPartnershipData();
-				}, 300);
+				navigate('/signedout', {
+					replace: true,
+				});
 			}
 		} catch (e) {
 			/* FIXME: 아래 워닝 수정! */
@@ -177,12 +183,7 @@ function Signout() {
 	}, [signoutInfo, isChecked, watch()]);
 
 	return (
-		<Stack
-			sx={{
-				gap: '40px',
-				maxWidth: '800px',
-				margin: '40px auto 130px auto',
-			}}>
+		<ContentWrapper maxWidth="800px">
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<TitleTypography title="회원 탈퇴" />
 				<Stack
@@ -367,7 +368,7 @@ function Signout() {
 					</Button>
 				</Stack>
 			</form>
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

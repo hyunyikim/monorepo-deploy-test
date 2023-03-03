@@ -1,8 +1,8 @@
 import {lazy} from 'react';
 import {RouteObject} from 'react-router-dom';
 
-import IframeChild from '@/components/common/layout/IframeChild';
 import Layout from '@/components/common/layout/Layout';
+import CheckAuth from '@/components/common/layout/CheckAuth';
 import ServiceInterworkKakao from '@/features/service-interwork/Detail/ServiceInterworkKakao.page';
 
 const Dashboard = lazy(() => import('@/features/dashboard/Dashboard.page'));
@@ -18,6 +18,9 @@ const Guarantee = lazy(
 const GuaranteeRegister = lazy(
 	() => import('@/features/guarantee/Register/GuaranteeRegister.page')
 );
+const GuaranteeExcelUpload = lazy(
+	() => import('@/features/guarantee/ExcelUpload/GuaranteeExcelUpload.page')
+);
 const GuaranteeDetail = lazy(
 	() => import('@/features/guarantee/Detail/GuaranteeDetail.page')
 );
@@ -27,6 +30,9 @@ const ProductDetail = lazy(
 );
 const ProductRegister = lazy(
 	() => import('@/features/product/Register/ProductRegister.page')
+);
+const ProductExcelUpload = lazy(
+	() => import('@/features/product/ExcelUpload/ProductExcelUpload.page')
 );
 const Customer = lazy(
 	() => import('@/features/customer/List/CustomerList.page')
@@ -73,80 +79,116 @@ const PaymentInformation = lazy(
 	() =>
 		import('@/features/payment/PaymentInformation/PaymentInformation.page')
 );
-const Cafe24Interwork = lazy(
-	() => import('@/features/cafe24/Cafe24Interwork.page')
-);
 
 const privateRoutes: RouteObject[] = [
-	// 기존 VP 안에 iframe 형태로 들어갈 컴포넌트
 	{
-		element: <IframeChild />,
+		element: <CheckAuth />,
 		children: [
-			/* TODO: 대쉬보드 작업때 주석 제거! */
-			/* {path: '/dashboard/v2', element: <Dashboard />}, */
-			{path: '/b2b/guarantee/v2', element: <Guarantee />},
 			{
-				path: '/b2b/guarantee/register/v2',
-				element: <GuaranteeRegister />,
+				element: <Layout />,
+				children: [
+					{
+						path: '/dashboard',
+						element: <Dashboard />,
+					},
+					{
+						path: '/b2b/guarantee',
+						element: <Guarantee />,
+					},
+					{
+						path: '/b2b/guarantee/register',
+						element: <GuaranteeRegister />,
+					},
+					{
+						path: '/b2b/guarantee/:idx',
+						element: <GuaranteeDetail />,
+					},
+					{
+						path: '/b2b/guarantee/edit/:idx',
+						element: <GuaranteeRegister />,
+					},
+					{
+						path: '/b2b/guarantee/excel-upload',
+						element: <GuaranteeExcelUpload />,
+					},
+					{path: '/b2b/product', element: <Product />},
+					{path: '/b2b/product/:idx', element: <ProductDetail />},
+					{
+						path: '/b2b/product/register',
+						element: <ProductRegister />,
+					},
+					{
+						path: '/b2b/product/edit/:idx',
+						element: <ProductRegister />,
+					},
+					{path: '/b2b/customer', element: <Customer />},
+					{
+						path: '/b2b/product/guarantee-upload',
+						element: <GuaranteeRegister />,
+					},
+					{path: '/b2b/product', element: <Product />},
+					{path: '/b2b/product/:idx', element: <ProductDetail />},
+					{
+						path: '/b2b/product/register',
+						element: <ProductRegister />,
+					},
+					{
+						path: '/b2b/product/edit/:idx',
+						element: <ProductRegister />,
+					},
+					{
+						path: '/b2b/product/excel-upload',
+						element: <ProductExcelUpload />,
+					},
+					{path: '/b2b/customer', element: <Customer />},
+					{
+						path: '/b2b/customer/:name/:phone',
+						element: <CustomerDetail />,
+					},
+					{path: '/b2b/inspection', element: <Inspection />},
+					{path: '/b2b/repair', element: <Repair />},
+					{path: '/b2b/repair/:idx', element: <RepairDetail />},
+					{path: '/b2b/interwork', element: <ServiceInterwork />},
+					{
+						path: '/b2b/interwork/cafe24',
+						element: <ServiceInterworkCafe24 />,
+					},
+					{
+						path: '/b2b/interwork/repair',
+						element: <ServiceInterworkRepair />,
+					},
+					{
+						path: '/b2b/interwork/kakao',
+						element: <ServiceInterworkKakao />,
+					},
+					{
+						path: '/b2b/payment/subscribe',
+						element: <SubscribeManagement />,
+					},
+					{
+						path: '/b2b/payment/information',
+						element: <PaymentInformation />,
+					},
+					{path: '/setting/profile', element: <ProfileSetting />},
+					{path: '/setting/signout', element: <Signout />},
+					{
+						path: '/re-setup/guarantee',
+						element: <ResetupGuarantee />,
+					},
+				],
 			},
 			{
-				path: '/b2b/guarantee/:idx/v2',
-				element: <GuaranteeDetail />,
+				element: <Layout hasHeader={true} hasSidebar={false} />,
+				children: [
+					{path: '/setup/guarantee', element: <SetupGuarantee />},
+				],
 			},
 			{
-				path: '/b2b/guarantee/edit/:idx/v2',
-				element: <GuaranteeRegister />,
-			},
-			{path: '/b2b/product/v2', element: <Product />},
-			{path: '/b2b/product/:idx/v2', element: <ProductDetail />},
-			{path: '/b2b/product/register/v2', element: <ProductRegister />},
-			{path: '/b2b/product/edit/:idx/v2', element: <ProductRegister />},
-			{path: '/b2b/customer/v2', element: <Customer />},
-			{
-				path: '/b2b/customer/:name/:phone/v2',
-				element: <CustomerDetail />,
-			},
-			{path: '/b2b/inspection/v2', element: <Inspection />},
-			{path: '/b2b/repair/v2', element: <Repair />},
-			{path: '/b2b/repair/:idx/v2', element: <RepairDetail />},
-			{path: '/b2b/interwork/v2', element: <ServiceInterwork />},
-			{
-				path: '/b2b/interwork/cafe24/v2',
-				element: <ServiceInterworkCafe24 />,
+				path: '/reset/password',
+				element: <PasswordReset />,
 			},
 			{
-				path: '/b2b/interwork/repair/v2',
-				element: <ServiceInterworkRepair />,
-			},
-			{
-				path: '/b2b/interwork/kakao/v2',
-				element: <ServiceInterworkKakao />,
-			},
-			{
-				path: '/b2b/payment/subscribe/v2',
-				element: <SubscribeManagement />,
-			},
-			{
-				path: '/b2b/payment/information/v2',
-				element: <PaymentInformation />,
-			},
-			{path: '/setting/profile/v2', element: <ProfileSetting />},
-			{path: '/setting/signout/v2', element: <Signout />},
-			{path: '/setup/guarantee/v2', element: <SetupGuarantee />},
-			{path: '/re-setup/guarantee/v2', element: <ResetupGuarantee />},
-			{path: '/cafe24/interwork/v2', element: <Cafe24Interwork />},
-		],
-	},
-	{
-		element: (
-			<IframeChild>
-				<Layout hasSidebar={false} />
-			</IframeChild>
-		),
-		children: [
-			{path: '/reset/password/v2', element: <PasswordReset />},
-			{
-				path: '/signedout/v2',
+				path: '/signedout',
 				element: <Signedout />,
 			},
 		],

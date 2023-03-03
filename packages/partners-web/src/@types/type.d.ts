@@ -26,6 +26,9 @@ declare module '*.png' {
 }
 
 declare global {
+	interface Window {
+		ChannelIO: any;
+	}
 	declare module '@mui/material' {
 		interface Color {
 			10?: string;

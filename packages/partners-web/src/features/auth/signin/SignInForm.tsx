@@ -1,8 +1,8 @@
 import {useEffect, useRef} from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {useQueryClient} from '@tanstack/react-query';
 import {AxiosError} from 'axios';
-import {parse} from 'qs';
+import {parse, stringify} from 'qs';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -15,7 +15,7 @@ import {partnershipSignInSchemaShape} from '@/utils/schema';
 import {SignInRequestRequestParam} from '@/@types';
 import {signIn} from '@/api/auth.api';
 import {getPartnershipInfo} from '@/api/partnership.api';
-import {loginToParent, setTrackingUser} from '@/utils';
+import {setTrackingUser} from '@/utils';
 import {useLoginStore} from '@/stores';
 
 const inputList = [
@@ -38,6 +38,7 @@ const inputList = [
 function SignInForm() {
 	const queryClient = useQueryClient();
 	const location = useLocation();
+	const navigate = useNavigate();
 	const parsedQuery = parse(location.search, {
 		ignoreQueryPrefix: true,
 	});
@@ -81,17 +82,14 @@ function SignInForm() {
 
 			// cafe24 설치 중 로그인한 경우
 			if (parsedQuery?.context === 'cafe24') {
-				loginToParent(token, {
-					isDuringInstallCafe24: true,
+				navigate(`/cafe24/interwork?${stringify(parsedQuery)}`, {
+					replace: true,
 				});
 				return;
 			}
-			await queryClient.invalidateQueries({
-				queryKey: ['partnershipInfo'],
-			});
+			setLogin(token);
 
 			const partnershipData = await getPartnershipInfo();
-
 			if (!partnershipData) {
 				throw new Error('로그인에 실패했습니다. 다시 시도해주세요.');
 			}
@@ -102,22 +100,30 @@ function SignInForm() {
 				partnershipData.companyName
 			);
 
-			// 이메일로 발급 받은 임시 비밀번호로 로그인 했는지 여부 체크
-			// 값이 없으면 임시 비밀번호로 로그인한 것임
+			// // 이메일로 발급 받은 임시 비밀번호로 로그인 했는지 여부 체크
+			// // 값이 없으면 임시 비밀번호로 로그인한 것임
 			const isTempPasswordLogin = partnershipData.passwordChangedAt
 				? false
 				: true;
 			if (isTempPasswordLogin) {
-				// 페이지 이동을 부모창에서 수행
-				// replaceToParentUrl('/reset/password');
-				loginToParent(token, {
-					isTempPasswordLogin: true,
+				navigate('/reset/password', {
+					replace: true,
 				});
+				return;
 			}
 
-			// 위 작업 모두 마무리 후 부모창으로 로그인 완료 신호 보냄
-			// 부모창에서 로그인 여부에 따라 public/private routes를 결정하기 때문에 해당 작업을 로그인 로직의 가장 마지막에 실행함
-			loginToParent(token, {});
+			// // 개런티 세팅 완료 전이라면 개런티 설정 페이지로 이동
+			const finishedGuaranteeSetting = partnershipData?.profileImage
+				? true
+				: false;
+			if (!finishedGuaranteeSetting) {
+				navigate('/setup/guarantee');
+				return;
+			}
+
+			navigate('/dashboard', {
+				replace: true,
+			});
 		} catch (e: unknown | AxiosError) {
 			if (e instanceof AxiosError) {
 				const message: string =

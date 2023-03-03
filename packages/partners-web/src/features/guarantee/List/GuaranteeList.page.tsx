@@ -1,4 +1,5 @@
-import {useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {useCheckboxList, useList} from '@/utils/hooks';
@@ -16,13 +17,7 @@ import {
 	getGuaranteeStatusChip,
 	groupingGuaranteeRequestStates,
 } from '@/data';
-import {
-	formatPhoneNum,
-	goToParentUrl,
-	sendAmplitudeLog,
-	goToGuaranteeExcelUploadPage,
-	usePageView,
-} from '@/utils';
+import {formatPhoneNum, sendAmplitudeLog, usePageView} from '@/utils';
 
 import {
 	TitleTypography,
@@ -46,6 +41,7 @@ const menuKo = '개런티';
 function GuaranteeList() {
 	usePageView('guarantee_pv', '개런티목록 노출');
 	const {data: platformList} = useGetPlatformList();
+	const navigate = useNavigate();
 
 	const {
 		isLoading,
@@ -146,7 +142,10 @@ function GuaranteeList() {
 								color="grey-100"
 								variant="outlined"
 								height={32}
-								onClick={goToGuaranteeExcelUploadPage}>
+								onClick={() => {
+									navigate('/b2b/guarantee/excel-upload');
+								}}
+								data-tracking={`guarantee_list_excelregistration_click,{'button_title': '엑셀등록 클릭'}`}>
 								대량발급
 							</Button>
 							<Button
@@ -154,7 +153,7 @@ function GuaranteeList() {
 								variant="outlined"
 								height={32}
 								onClick={() => {
-									goToParentUrl('/b2b/interwork');
+									navigate('/b2b/interwork');
 								}}>
 								쇼핑몰 주문 연동하기
 							</Button>
@@ -166,7 +165,7 @@ function GuaranteeList() {
 										'guarantee_list_firstexcelregistration_click',
 										{button_title: `신규등록 클릭`}
 									);
-									goToParentUrl('/b2b/guarantee/register');
+									navigate('/b2b/guarantee/register');
 								}}>
 								신규등록
 							</Button>
@@ -265,11 +264,11 @@ function GuaranteeList() {
 													Number(item.nft_req_state) <
 													3
 												) {
-													goToParentUrl(
+													navigate(
 														`/b2b/guarantee/edit/${item.nft_req_idx}`
 													);
 												} else {
-													goToParentUrl(
+													navigate(
 														`/b2b/guarantee/${item.nft_req_idx}`
 													);
 												}
@@ -293,7 +292,7 @@ function GuaranteeList() {
 											const name = item?.orderer_nm;
 											const phone = item?.orderer_tel;
 											if (!name || !phone) return;
-											goToParentUrl(
+											navigate(
 												`/b2b/customer/${name}/${phone}`
 											);
 										}}>

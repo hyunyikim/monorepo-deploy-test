@@ -16,7 +16,7 @@ import {IcChevronDown} from '@/assets/icon';
 
 import style from '@/assets/styles/style.module.scss';
 
-type Height = 48 | 32;
+type Height = 48 | 32 | 40;
 
 export interface Props<T> extends Omit<SelectProps, 'error'> {
 	width?: number | 'auto' | '100%';

@@ -9,6 +9,7 @@ import {
 import {PlanType, UserPricePlanWithDate} from '@/@types';
 import {isPlanOnSubscription, TRIAL_PLAN} from '@/data';
 import {delay as delayFunc} from '@/utils';
+import {useLoginStore} from './auth.store';
 
 export const useGetPricePlanList = (
 	{
@@ -44,7 +45,6 @@ export const useGetPricePlanListByPlanType = (planType: PlanType) => {
 	});
 };
 
-// TODO: 토큰 없는채로 조회되면서 suspense 에러 떨어짐
 export const useGetUserPricePlan = (
 	{
 		suspense,
@@ -52,8 +52,9 @@ export const useGetUserPricePlan = (
 		suspense: boolean;
 	} = {suspense: false}
 ) => {
+	const token = useLoginStore().token;
 	return useQuery({
-		queryKey: ['userPricePlan'],
+		queryKey: ['userPricePlan', token],
 		queryFn: getUserPricePlan,
 		suspense,
 		refetchOnMount: false,

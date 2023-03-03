@@ -1,4 +1,5 @@
 import {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {format, parse} from 'date-fns';
 
 import {Box, TableRow, Typography} from '@mui/material';
@@ -16,12 +17,7 @@ import {
 	getInspectionStatusChip,
 	inspectionListSearchFilter,
 } from '@/data';
-import {
-	formatPhoneNum,
-	goToParentUrl,
-	openParantModal,
-	sendAmplitudeLog,
-} from '@/utils';
+import {formatPhoneNum, sendAmplitudeLog} from '@/utils';
 
 import {
 	TitleTypography,
@@ -42,6 +38,7 @@ const menu = 'appraisal';
 const menuKo = '감정';
 
 function InspectionList() {
+	const navigate = useNavigate();
 	useEffect(() => {
 		sendAmplitudeLog(`${menu}_pv`, {pv_title: '감정신청목록 진입'});
 	}, []);
@@ -162,7 +159,7 @@ function InspectionList() {
 											fontSize={14}
 											className="underline"
 											onClick={() => {
-												goToParentUrl(
+												navigate(
 													`/b2b/inspection/detail/${item.inspct_idx}`
 												);
 											}}>
@@ -185,10 +182,10 @@ function InspectionList() {
 											alt={item?.pro_nm}
 											onClick={(value) => {
 												// 부모창 이미지 모달 오픈
-												openParantModal({
-													title: '이미지',
-													content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
-												});
+												// openParantModal({
+												// 	title: '이미지',
+												// 	content: `<img src=${value.imgSrc} alt=${value.imgAlt} style={maxHeight: '70vh'} />`,
+												// });
 												// onSetModalData(value);
 												// onOpen();
 											}}

@@ -5,7 +5,6 @@ import {Box, Stack, Typography} from '@mui/material';
 import {ImgTelegram, ImgTelegram2x} from '@/assets/images';
 import {sendEmailVerification} from '@/api/auth.api';
 import {useEffect} from 'react';
-import {goToParentUrl} from '@/utils';
 
 function SignUpStep3() {
 	const navigate = useNavigate();
@@ -13,10 +12,9 @@ function SignUpStep3() {
 
 	useEffect(() => {
 		if (!email) {
-			// navigate('/', {
-			// 	replace: true,
-			// });/
-			goToParentUrl('/');
+			navigate('/', {
+				replace: true,
+			});
 		}
 	}, [email]);
 
@@ -82,8 +80,7 @@ function SignUpStep3() {
 					onClick={async () => {
 						try {
 							await sendEmailVerification(email as string);
-							// navigate('/');
-							goToParentUrl('/');
+							navigate('/');
 						} catch (e) {
 							console.log('e :>> ', e);
 							navigate(

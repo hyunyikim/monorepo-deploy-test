@@ -4,6 +4,7 @@ import ServiceInterworkCafe24Title from '@/features/service-interwork/Detail/Caf
 import ServiceInterworkCafe24SettingForm from '@/features/service-interwork/Detail/Cafe24/ServiceInterworkCafe24SettingForm';
 import ServiceInterworkCafe24IntroduceContent from '@/features/service-interwork/Detail/Cafe24/ServiceInterworkCafe24IntroduceContent';
 import {Cafe24Interwork} from '@/@types';
+import {ContentWrapper} from '@/components';
 
 interface Props {
 	data?: Cafe24Interwork;
@@ -11,17 +12,12 @@ interface Props {
 
 function ServiceInterworkCafe24Setting({data}: Props) {
 	return (
-		<Stack
-			flexDirection="column"
-			width="100%"
-			maxWidth="800px"
-			margin="auto"
-			my={5}>
+		<ContentWrapper maxWidth="800px">
 			<ServiceInterworkCafe24Title data={data} />
 			<ServiceInterworkCafe24SettingForm data={data} />
 			<Cafe24InterworkSettingGuide />
 			<ServiceInterworkCafe24IntroduceContent />
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

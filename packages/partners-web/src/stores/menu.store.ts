@@ -1,47 +1,63 @@
-import create from 'zustand';
+import {useQueries} from '@tanstack/react-query';
 
-import {MenuList, PartnershipViewMenuYN, CurrentMenu} from '@/@types';
-import {matchViewMenu, getCurrentMenu} from '@/data';
+import {menuList, initialSearchFilter} from '@/data';
+import {useLoginStore} from './auth.store';
+import {getPartnershipInfo} from '@/api/partnership.api';
+import {getRepairList} from '@/api/repair.api';
 
-export const VIEW_MENU_KEY = 'viewMenu';
+export const useGetMenu = () => {
+	const token = useLoginStore().token;
+	const [data1, data2] = useQueries({
+		queries: [
+			{
+				queryKey: ['partnershipInfo', token],
+				queryFn: getPartnershipInfo,
+				suspense: true,
+			},
+			{
+				queryKey: ['repairList', token],
+				queryFn: () =>
+					getRepairList({
+						...initialSearchFilter,
+						searchType: 'all',
+						status: '',
+						startDate: '',
+						endDate: '',
+					}),
+				suspense: true,
+			},
+		],
+	});
+	const useMenuRepair = data1?.data?.useRepair === 'Y' ? true : false;
+	const isRepairDataExisted = data2?.data?.total || 0 > 0 ? true : false;
+	const showMenuRepair = useMenuRepair || isRepairDataExisted;
+	const finishedGuaranteeSetting = data1?.data?.profileImage ? true : false;
 
-interface OpenMenuProps {
-	open: boolean;
-	setOpen: (value: boolean) => void;
-}
+	return menuList
+		.map((groupMenu) => {
+			const filteredGroupMenu = groupMenu.filter((menu) => {
+				if (menu.menu === 'repair' && !showMenuRepair) {
+					return false;
+				}
+				return true;
+			});
 
-interface ViewMenuStroe {
-	viewMenu: PartnershipViewMenuYN | null;
-	setViewMenu: (value: PartnershipViewMenuYN) => void;
-	menuList: () => MenuList | null;
-	currentMenu: () => CurrentMenu;
-}
-
-interface BackgroundColorStore {
-	backgroundColor: string | null;
-	setBackgroundColor: (value: string) => void;
-	resetBackgroundColor: () => void;
-}
-
-export const useOpenMenuStore = create<OpenMenuProps>((set) => ({
-	open: true,
-	setOpen: (value: boolean) => set({open: value}),
-}));
-
-export const useViewMenuStore = create<ViewMenuStroe>((set, get) => ({
-	viewMenu: JSON.parse(
-		localStorage.getItem(VIEW_MENU_KEY) ?? 'null'
-	) as PartnershipViewMenuYN | null,
-	setViewMenu: (value) =>
-		set({
-			viewMenu: value,
-		}),
-	menuList: () => matchViewMenu(get().viewMenu),
-	currentMenu: () => getCurrentMenu(),
-}));
-
-export const useBackgroundColorStore = create<BackgroundColorStore>((set) => ({
-	backgroundColor: null,
-	setBackgroundColor: (value: string) => set({backgroundColor: value}),
-	resetBackgroundColor: () => set({backgroundColor: null}),
-}));
+			const res = filteredGroupMenu.map((menu) => ({
+				...menu,
+				emphasis:
+					menu.menu === 'guarantee' && !finishedGuaranteeSetting
+						? true
+						: false,
+				children: menu.children?.map((child) => ({
+					...child,
+					emphasis:
+						child.path === '/setup/guarantee' &&
+						!finishedGuaranteeSetting
+							? true
+							: false,
+				})),
+			}));
+			return res;
+		})
+		.filter((groupMenu) => groupMenu && groupMenu.length > 0);
+};

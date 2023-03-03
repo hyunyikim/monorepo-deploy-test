@@ -1,10 +1,4 @@
-import React, {useState} from 'react';
-import styled from '@emotion/styled';
-import {css, keyframes} from '@emotion/react';
-
-// import {Swiper, SwiperSlide} from 'swiper/react';
-// import SwiperCore, {Navigation, FreeMode} from 'swiper';
-// import 'swiper/swiper.min.css';
+import {useNavigate} from 'react-router-dom';
 
 import Carousel from 'nuka-carousel';
 
@@ -45,17 +39,17 @@ import {
 	plusIcon2x,
 } from '@/assets/images/homepage/index';
 
-import {sendAmplitudeLog, goToParentUrl} from '@/utils';
+import {sendAmplitudeLog} from '@/utils';
 
 function CategoryBrandSection() {
+	const navigate = useNavigate();
 	const screenWidth = window.innerWidth;
 
 	const goToSignup = () => {
 		sendAmplitudeLog('homepage_partnerssignup_click', {
 			button_title: '버클의 새로운 파트너가 되어 보세요!',
 		});
-
-		goToParentUrl('/auth/signup');
+		navigate('/auth/signup');
 	};
 
 	const newsList = [
@@ -244,23 +238,6 @@ function CategoryBrandSection() {
 								/>
 							))}
 						</Carousel>
-
-						{/* FIXME: swiper가 되게 만들어주세요!!! */}
-						{/* <Swiper
-							slidesOffsetBefore={24}
-							slidesOffsetAfter={24}
-							slidesPerView={screenWidth / 388}
-							spaceBetween={20}
-							modules={[Navigation, FreeMode]}
-							navigation
-							freeMode
-							className="card_slide_container">
-							{imgList.map(({img, img2x}, idx) => (
-								<SwiperSlide key={`category-${idx}`}>
-									<img src={img} srcSet={`${img} 1x, ${img2x} 2x`} alt="categoryBrandCard" className={'category_brand_card'} />
-								</SwiperSlide>
-							))}
-						</Swiper> */}
 					</div>
 				)}
 			</div>

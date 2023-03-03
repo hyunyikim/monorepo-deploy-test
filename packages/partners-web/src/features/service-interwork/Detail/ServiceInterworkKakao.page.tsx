@@ -11,13 +11,14 @@ import {
 } from '@/stores';
 
 import {phoneNumberFormat} from '@/utils/regex.util';
-import {
-	installServiceInterwork,
-	uninstallServiceInterwork,
-} from '@/api/service-interwork.api';
-import {updateParentPartnershipData} from '@/utils';
+import {uninstallServiceInterwork} from '@/api/service-interwork.api';
 
-import {Button, CapsuleButton, InputWithLabel} from '@/components';
+import {
+	Button,
+	CapsuleButton,
+	ContentWrapper,
+	InputWithLabel,
+} from '@/components';
 import ControlledInputComponent from '@/components/molecules/ControlledInputComponent';
 
 import {
@@ -46,6 +47,7 @@ import {
 } from '@/api/service-interwork.api';
 
 function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
+	const queryClient = useQueryClient();
 	const {
 		handleSubmit,
 		control,
@@ -153,7 +155,9 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 							message: '',
 							showBottomCloseButton: true,
 							onCloseFunc: () => {
-								updateParentPartnershipData();
+								queryClient.invalidateQueries({
+									queryKey: ['partnershipInfo'],
+								});
 							},
 						});
 					}, 300);
@@ -481,7 +485,13 @@ function ServiceInterworkKakao() {
 												showBottomCloseButton: true,
 												closeButtonValue: '확인',
 												onCloseFunc: () => {
-													updateParentPartnershipData();
+													queryClient.invalidateQueries(
+														{
+															queryKey: [
+																'partnershipInfo',
+															],
+														}
+													);
 												},
 											});
 										} catch (e) {
@@ -511,11 +521,7 @@ function ServiceInterworkKakao() {
 	}
 
 	return (
-		<Stack
-			flexDirection="column"
-			width="100%"
-			maxWidth="800px"
-			margin="40px auto 73px">
+		<ContentWrapper maxWidth="800px">
 			<ServiceInterworkDetailTitle
 				title="카카오 알림톡"
 				subTitle="브랜드 플러스친구 계정으로 개런티 관련 알림톡을 전송하세요."
@@ -627,7 +633,7 @@ function ServiceInterworkKakao() {
 					</Typography>
 				</>
 			</ServiceInterworkDetailContent>
-		</Stack>
+		</ContentWrapper>
 	);
 }
 

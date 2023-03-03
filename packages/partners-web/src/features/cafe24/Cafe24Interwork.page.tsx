@@ -1,5 +1,5 @@
 import {useMemo, useState} from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {parse, ParsedQs, stringify} from 'qs';
 import {useAsyncFn, useAsync} from 'react-use';
 
@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 import {useLoginStore, useGetPartnershipInfo} from '@/stores';
-import {goToParentUrl, goToParentUrlWithState, usePageView} from '@/utils';
+import {usePageView} from '@/utils';
 import {confirmInterwork, requestInterwork} from '@/api/cafe24.api';
 
 import {Button} from '@/components';
@@ -22,6 +22,7 @@ import cafe24Logo from '@/assets/images/cafe24/cafe24_logo.png';
 import cafe24Logo2x from '@/assets/images/cafe24/cafe24_logo@2x.png';
 import cafe24AvatarLogo from '@/assets/images/cafe24/cafe24_avatar.png';
 import {Cafe24Interwork} from '@/@types';
+import {HEADER_HEIGHT} from '@/data';
 
 const title = '카페24';
 const subtitle = '연동완료';
@@ -43,6 +44,7 @@ const gridStyle = {
 export default function Cafe24InterWork() {
 	usePageView('cafe24_linkorder_pv', '주문내역 연동화면');
 
+	const navigate = useNavigate();
 	const isLogin = useLoginStore((state) => state.isLogin)();
 	const {data: partnershipData, isLoading: isPartnershipDataLoading} =
 		useGetPartnershipInfo();
@@ -112,7 +114,7 @@ export default function Cafe24InterWork() {
 			state: parsed.state,
 		};
 		const query = stringify(store);
-		goToParentUrl(`/auth/signup?${query}`);
+		navigate(`/auth/signup?${query}`);
 	};
 
 	const goToSetUpPage = (interwork: Cafe24Interwork, parsed: ParsedQs) => {
@@ -123,24 +125,19 @@ export default function Cafe24InterWork() {
 		};
 		if (query.code && query.state) {
 			const cafe24Query = stringify(query);
-			goToParentUrl(`/setup/dynamic?${cafe24Query}`);
+			navigate(`/setup/guarantee?${cafe24Query}`);
 		}
 	};
 
 	// cafe24 연동 완료 상태와 함께 서비스 연동 페이지로 이동
 	const moveToServiceInterworkPage = () => {
-		goToParentUrlWithState(`/b2b/interwork`, {connectCafe24: true});
+		navigate(`/b2b/interwork`, {
+			state: {connectCafe24: true},
+		});
 	};
 
 	if (loading || !value) {
-		return (
-			<Stack
-				direction="column"
-				justifyContent="center"
-				alignItems="center"
-				spacing={2}
-				height="100vh"></Stack>
-		);
+		return <></>;
 	}
 
 	return (
@@ -149,7 +146,9 @@ export default function Cafe24InterWork() {
 			justifyContent="center"
 			alignItems="center"
 			spacing={2}
-			height="100vh">
+			sx={{
+				minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+			}}>
 			<Stack
 				direction="column"
 				alignItems="center"

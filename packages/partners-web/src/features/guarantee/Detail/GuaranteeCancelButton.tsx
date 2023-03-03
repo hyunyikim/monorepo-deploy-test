@@ -1,15 +1,15 @@
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 import {Stack} from '@mui/material';
 
-import {cancelGuarantee} from '@/api/guarantee.api';
+import {cancelGuarantee} from '@/api/guarantee-v1.api';
 import {useMessageDialog} from '@/stores';
-import {goToParentUrl} from '@/utils';
 
 import {Button} from '@/components';
 
 function GuaranteeCancelButton({idx}: {idx: number}) {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 	const onOpenError = useMessageDialog((state) => state.onOpenError);
 
@@ -49,12 +49,12 @@ function GuaranteeCancelButton({idx}: {idx: number}) {
 																'phone'
 															)
 														) {
-															goToParentUrl(
+															navigate(
 																'/b2b/customer'
 															);
 															return;
 														}
-														goToParentUrl(
+														navigate(
 															'/b2b/guarantee'
 														);
 													},

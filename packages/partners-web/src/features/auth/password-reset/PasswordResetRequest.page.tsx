@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -7,9 +8,9 @@ import {Stack, Typography} from '@mui/material';
 
 import {checkEmailDuplicated, resetPassword} from '@/api/auth.api';
 import {useGlobalLoading} from '@/stores';
-import {goToParentUrl} from '@/utils';
 
 import {Button, ControlledInputComponent} from '@/components';
+import {HEADER_HEIGHT} from '@/data';
 
 function PasswordResetRequest() {
 	const [step, setStep] = useState(1);
@@ -19,17 +20,25 @@ function PasswordResetRequest() {
 
 	return (
 		<Stack
-			flexDirection="column"
 			justifyContent="center"
-			width="100%"
-			maxWidth="400px">
-			{step === 1 ? (
-				<PasswordResetStep1 goToNextStep={goToNextStep} />
-			) : step === 2 ? (
-				<PasswordResetStep2 />
-			) : (
-				<></>
-			)}
+			alignItems="center"
+			sx={{
+				minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+			}}>
+			<Stack
+				flexDirection="column"
+				justifyContent="center"
+				alignItems="center"
+				maxWidth="400px"
+				width="100%">
+				{step === 1 ? (
+					<PasswordResetStep1 goToNextStep={goToNextStep} />
+				) : step === 2 ? (
+					<PasswordResetStep2 />
+				) : (
+					<></>
+				)}
+			</Stack>
 		</Stack>
 	);
 }
@@ -82,7 +91,11 @@ const PasswordResetStep1 = ({goToNextStep}: {goToNextStep: () => void}) => {
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			style={{
+				width: '100%',
+			}}>
 			<Typography variant="header2" mb="40px">
 				버클 계정의 <br />
 				비밀번호를 재설정합니다.
@@ -112,12 +125,13 @@ const PasswordResetStep1 = ({goToNextStep}: {goToNextStep: () => void}) => {
 };
 
 const PasswordResetStep2 = () => {
+	const navigate = useNavigate();
 	return (
 		<>
 			<Typography variant="header2" mb="48px">
 				임시 비밀번호가 이메일로 발급됐어요.
 			</Typography>
-			<Button height={48} onClick={() => goToParentUrl('/auth/login')}>
+			<Button height={48} onClick={() => navigate('/auth/login')}>
 				로그인하기
 			</Button>
 		</>

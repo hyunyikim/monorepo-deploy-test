@@ -11,7 +11,6 @@ export interface Cafe24Interwork {
 
 export interface IssueSetting {
 	manually: boolean;
-	issueTiming: IssueTiming;
 	issueAll: boolean;
 	issueCategories: IssueCategory[];
 	issueIntro?: boolean;

@@ -107,6 +107,10 @@ export class Cafe24EventService {
 			ShopNo: ${webHook.resource.event_shop_no}
 			`
 		);
+		if (webHook.resource.event_shop_no !== '1') {
+			this.logger.log('기본 멀티몰의 주문번호가 아닙니다.');
+			return;
+		}
 
 		try {
 			if (webHook.resource.event_shop_no !== '1') {

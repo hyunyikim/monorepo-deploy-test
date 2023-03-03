@@ -15,11 +15,7 @@ import {
 	partnershipSignupEmailSchemaShape as emailSchemaShape,
 	partnershipSignUpRestSchemaShape as restFieldSchemaShape,
 } from '@/utils/schema';
-import {
-	handleChangeDataFormat,
-	openParantModal,
-	sendAmplitudeLog,
-} from '@/utils';
+import {handleChangeDataFormat, sendAmplitudeLog} from '@/utils';
 import {signUp} from '@/api/auth.api';
 
 import {Button} from '@/components';
@@ -197,7 +193,7 @@ function SignUpForm({
 				if (!formData) return;
 				await signUp(formData);
 
-				navigate('/auth/signup/v2', {
+				navigate('/auth/signup', {
 					state: data.email,
 					replace: true,
 				});

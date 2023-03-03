@@ -1,3 +1,5 @@
+import {Column} from 'exceljs';
+
 import {
 	Options,
 	ListSearchFilters,
@@ -10,8 +12,12 @@ import {
 	CustomField,
 	InputType,
 	ProductGuaranteeStatus,
+	ProductExcelUploadInput,
+	ExcelInput,
+	ExcelField,
 } from '@/@types';
-import {linkFormChecker} from '@/utils';
+import {isValidWebImage, linkFormChecker, validateRegExp} from '@/utils';
+import {CATEGORIES} from './common.data';
 
 export const productListSearchTypes: Options<ProductListRequestSearchType> = [
 	{value: 'all', label: '전체'},
@@ -363,4 +369,271 @@ export const getProductRegisterFormDataForReset = (
 		data: resetValue,
 		images: resetImages,
 	};
+};
+
+export const generateProductExcelUploadColumns = (
+	fields: ExcelField<ProductExcelUploadInput>[]
+) => {
+	const requiredColumns: Array<Partial<Column>> = [];
+	const optionalColumns: Array<Partial<Column>> = [];
+	const headers: string[] = [];
+
+	fields.forEach((field) => {
+		const excelColumn = PRODUCT_EXCEL_DOWNLOAD_FORMAT[
+			field.key as keyof ProductExcelUploadInput
+		] || {
+			key: field.key,
+		};
+		if (field.required) {
+			requiredColumns.push(excelColumn);
+		} else {
+			optionalColumns.push(excelColumn);
+		}
+		headers.push(
+			PRODUCT_EXCEL_COLUMN[field.key as keyof ProductExcelUploadInput] ||
+				field.key
+		);
+	});
+
+	return {
+		headers,
+		requiredColumns,
+		optionalColumns,
+	};
+};
+
+export const generateProductInputs = (
+	fields: ExcelField<ProductExcelUploadInput>[]
+) => {
+	return fields
+		.map((field) => PRODUCT_EXCEL_INPUT[field.key])
+		.filter((item) => !!item);
+};
+
+export const getProductExcelSampleData = (
+	partnershipData: PartnershipInfoResponse
+): ProductExcelUploadInput[] => {
+	return [
+		{
+			name: '샘플상품1',
+			price: 149000,
+			categoryCode: CATEGORIES[partnershipData?.category[0] || 1],
+			...(partnershipData.useFieldModelNum === 'Y' && {modelNum: ''}),
+			...(partnershipData.useFieldMaterial === 'Y' && {material: ''}),
+			...(partnershipData.useFieldSize === 'Y' && {size: ''}),
+			...(partnershipData.useFieldWeight === 'Y' && {weight: ''}),
+			...partnershipData.nftCustomFields?.map((field) => ({[field]: ''})),
+			...(partnershipData.useNftProdImage === 'Y' && {
+				productImageUrl: 'https://www.example.com/sample.jpg',
+			}),
+			warranty: partnershipData?.warrantyDate || '',
+		},
+	];
+};
+
+/**
+ * 엑셀 컬럼 모음
+ */
+export const PRODUCT_EXCEL_COLUMN: {
+	[K in keyof ProductExcelUploadInput]: string;
+} = {
+	brandIdx: '브랜드',
+	name: '상품명',
+	warranty: '보증기간',
+	categoryCode: '카테고리',
+	price: '상품금액',
+	code: '상품코드',
+	productImageUrl: '상품이미지',
+	modelNum: '모델번호',
+	material: '가죽',
+	size: '사이즈',
+	weight: '중량',
+};
+
+/**
+ * 엑셀 다운로드 양식 모음
+ */
+export const PRODUCT_EXCEL_DOWNLOAD_FORMAT: {
+	[K in keyof ProductExcelUploadInput]: Partial<Column>;
+} = {
+	brandIdx: {key: 'brandIdx', width: 15},
+	name: {key: 'name', width: 20},
+	warranty: {key: 'warranty', width: 30},
+	categoryCode: {key: 'categoryCode', width: 10},
+	price: {key: 'price', width: 15, style: {numFmt: '0'}},
+	code: {key: 'code', width: 10},
+	productImageUrl: {key: 'productImageUrl', width: 50},
+	modelNum: {key: 'modelNum', width: 20},
+	material: {key: 'material', width: 10},
+	size: {key: 'size', width: 10},
+	weight: {key: 'weight', width: 10},
+};
+
+/**
+ * 엑셀 input 모음
+ */
+export const PRODUCT_EXCEL_INPUT: {
+	[K in keyof ProductExcelUploadInput | string]: ExcelInput;
+} = {
+	// b2bType brand 외
+	brandIdx: {
+		type: 'select',
+		name: 'brandIdx',
+		required: true,
+	},
+	warranty: {
+		type: 'text',
+		name: 'warranty',
+		required: true,
+		width: 260,
+	},
+	name: {
+		type: 'text',
+		name: 'name',
+		required: true,
+		width: 260,
+	},
+	// b2bType brand 외
+	categoryCode: {
+		type: 'select',
+		name: 'categoryCode',
+		required: true,
+	},
+	code: {
+		type: 'text',
+		name: 'code',
+		required: false,
+	},
+	price: {
+		type: 'text',
+		name: 'price',
+		required: false,
+		width: 150,
+		parser: (val) => Number((val || '').toString().replace(/[^0-9]/g, '')),
+		renderer: (val) => Number(val || 0).toLocaleString(),
+		validator: (val) =>
+			!isNaN(Number((val || '').toString().replace(/,/g, ''))) &&
+			Number((val || '').toString().replace(/,/g, '')) >= 0,
+	},
+	modelNum: {
+		type: 'text',
+		name: 'modelNum',
+	},
+	material: {
+		type: 'text',
+		name: 'material',
+	},
+	size: {
+		type: 'text',
+		name: 'size',
+	},
+	weight: {
+		type: 'text',
+		name: 'weight',
+	},
+	productImageUrl: {
+		type: 'link',
+		name: 'productImageUrl',
+		validator: async (val) => {
+			let isValid = true;
+			if (val) {
+				isValid = validateRegExp(val, 'url');
+				if (isValid) {
+					isValid = await isValidWebImage(val);
+				}
+			}
+			return isValid;
+		},
+	},
+};
+
+/**
+ * 상품 대량등록에 필요한 필드 조회
+ */
+export const getProductExcelField = (
+	partnershipData: PartnershipInfoResponse
+): ExcelField<ProductExcelUploadInput>[] => {
+	let fields: ExcelField<ProductExcelUploadInput>[] = [];
+	const isB2bTypeBrand = partnershipData.b2bType === 'brand';
+	if (!isB2bTypeBrand) {
+		fields.push({
+			required: true,
+			key: 'brandIdx',
+		});
+	}
+	fields = [
+		...fields,
+		{required: true, key: 'name'},
+		{required: true, key: 'warranty'},
+	];
+	if (!isB2bTypeBrand) {
+		fields.push({
+			required: true,
+			key: 'categoryCode',
+		});
+	}
+	fields.push({
+		required: false,
+		key: 'price',
+	});
+	fields.push({
+		required: false,
+		key: 'code',
+	});
+	if (partnershipData.useFieldModelNum === 'Y') {
+		fields.push({
+			required: false,
+			key: 'modelNum',
+		});
+	}
+	if (partnershipData.useFieldMaterial === 'Y') {
+		fields.push({
+			required: false,
+			key: 'material',
+		});
+	}
+	if (partnershipData.useFieldSize === 'Y') {
+		fields.push({
+			required: false,
+			key: 'size',
+		});
+	}
+	if (partnershipData.useFieldWeight === 'Y') {
+		fields.push({
+			required: false,
+			key: 'weight',
+		});
+	}
+	if (partnershipData?.nftCustomFields?.length > 0) {
+		const customFields = partnershipData?.nftCustomFields.map((item) => ({
+			required: false,
+			key: item,
+		}));
+		fields.push(...customFields);
+	}
+	if (partnershipData.useNftProdImage === 'Y') {
+		fields.push({
+			required: false,
+			key: 'productImageUrl',
+		});
+	}
+	return fields;
+};
+
+export const customFieldsToJSONString = <T,>(
+	data: T,
+	customFields?: string[]
+) => {
+	if (!data || !customFields || customFields?.length < 1) {
+		return JSON.stringify({});
+	}
+	const customFieldObj: Record<string, string> = {};
+	customFields.forEach((customField) => {
+		let value = String(data[customField as keyof T] || '');
+		if (linkFormChecker(value)) {
+			value = `https://${value}`;
+		}
+		customFieldObj[customField] = value;
+	});
+	return JSON.stringify(customFieldObj);
 };

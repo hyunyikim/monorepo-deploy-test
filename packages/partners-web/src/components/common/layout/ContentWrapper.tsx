@@ -1,27 +1,38 @@
 import {PAGE_MAX_WIDTH} from '@/data';
-import {Stack} from '@mui/material';
+import {Stack, Theme} from '@mui/material';
+import {SxProps} from '@mui/system';
 
 interface Props {
 	fullWidth?: boolean;
-	maxWidth?: number;
+	maxWidth?: number | string;
+	sx?: SxProps<Theme>;
 	children: React.ReactNode;
 }
 
-function ContentWrapper({fullWidth, maxWidth, children}: Props) {
+function ContentWrapper({fullWidth, sx, maxWidth, children}: Props) {
 	return (
 		<Stack
 			flexDirection="column"
-			sx={{
-				margin: {
-					xs: '16px',
-					sm: '40px',
+			sx={[
+				{
+					margin: {
+						xs: '16px',
+						sm: '40px',
+					},
+					...(!fullWidth && {
+						width: '100%',
+						maxWidth: maxWidth
+							? typeof maxWidth === 'number'
+								? `${maxWidth}px`
+								: maxWidth
+							: PAGE_MAX_WIDTH,
+						marginX: {
+							md: 'auto !important',
+						},
+					}),
 				},
-				// ...(fullWidth && {}),
-				...(!fullWidth && {
-					// margin: '40px',
-					maxWidth: maxWidth ? `${maxWidth}px` : PAGE_MAX_WIDTH,
-				}),
-			}}>
+				...(Array.isArray(sx) ? sx : [sx]),
+			]}>
 			{children}
 		</Stack>
 	);

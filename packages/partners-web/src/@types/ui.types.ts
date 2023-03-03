@@ -17,6 +17,5 @@ export interface OnOpenParamType {
 	useCloseIcon?: boolean;
 	closeButtonValue?: CloseButtonValueType;
 	buttons?: React.ReactElement;
-	sendCloseModalControlToParent?: boolean;
 	onCloseFunc?: () => void;
 }

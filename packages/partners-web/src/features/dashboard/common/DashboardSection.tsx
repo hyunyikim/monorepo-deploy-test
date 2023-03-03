@@ -1,36 +1,30 @@
-import {
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-	ReactElement,
-	ReactNode,
-} from 'react';
+import {ReactElement} from 'react';
 
-import {
-	Box,
-	Stack,
-	Typography,
-	Grid,
-	Card,
-	useTheme,
-	SxProps,
-} from '@mui/material';
+import {Box, Typography, Grid, Card, useTheme, SxProps} from '@mui/material';
 
 interface DashboardSectionProps {
 	children: ReactElement | ReactElement[];
 	sectionTitle?: string;
 	sx?: SxProps;
+	ChildrenSx?: SxProps;
 }
 
-function DashboardSection({children, sectionTitle, sx}: DashboardSectionProps) {
+function DashboardSection({
+	children,
+	sectionTitle,
+	sx,
+	ChildrenSx,
+}: DashboardSectionProps) {
+	const theme = useTheme();
 	return (
 		<Box
 			sx={{
 				display: 'flex',
 				flexDirection: 'column',
 				gap: '12px',
-				marginBottom: '40px',
+				maxWidth: '1200px',
+				margin: '0 auto 20px',
+				width: '100%',
 				...(sx && sx),
 			}}>
 			{sectionTitle && (
@@ -41,6 +35,10 @@ function DashboardSection({children, sectionTitle, sx}: DashboardSectionProps) {
 						fontSize: '18px',
 						lineHeight: '145%',
 						color: 'grey.700',
+						[theme.breakpoints.down(1330)]: {
+							width: '590px',
+							margin: 'auto',
+						},
 					}}>
 					{sectionTitle}
 				</Typography>
@@ -50,6 +48,9 @@ function DashboardSection({children, sectionTitle, sx}: DashboardSectionProps) {
 				sx={{
 					display: 'flex',
 					gap: '20px',
+					flexWrap: 'wrap',
+					justifyContent: 'center',
+					...ChildrenSx,
 				}}>
 				{children}
 			</Box>

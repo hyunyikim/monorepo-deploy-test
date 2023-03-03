@@ -1,11 +1,12 @@
 import {useMemo, useState} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useNavigate} from 'react-router-dom';
 
 import {SelectChangeEvent, Stack, Typography} from '@mui/material';
 
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 import {updateLeaveReason} from '@/api/cafe24.api';
-import {goToParentUrl, usePageView} from '@/utils';
+import {usePageView} from '@/utils';
 import {Cafe24Interwork} from '@/@types';
 
 import {Button, Select, Dialog, TextField} from '@/components';
@@ -25,7 +26,7 @@ interface Props {
 }
 
 function ServiceInterworkCafe24Title({data: cafe24Interwork}: Props) {
-	const {open, onOpen, onClose} = useChildModalOpen({});
+	const {open, onOpen, onClose} = useOpen({});
 
 	const InstallButton = useMemo(() => {
 		return (
@@ -93,6 +94,7 @@ const UninstallModal = ({
 		'cafe24_linkservicedetail_clearcafe24_popupview',
 		'연동해제 팝업 노출'
 	);
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [reason, setReason] = useState<string>('');
 	const [reasonDetail, setReasonDetail] = useState<string>('');
@@ -120,7 +122,8 @@ const UninstallModal = ({
 			window.open(
 				`https://${mallId}.cafe24.com/disp/admin/shop1/myapps/list`
 			);
-			goToParentUrl('/b2b/interwork');
+
+			navigate('/b2b/interwork');
 		},
 		onError: () => {
 			// 예외처리

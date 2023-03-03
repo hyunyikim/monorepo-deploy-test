@@ -7,7 +7,7 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Launch via Yarn",
+			"name": "Launch cafe24-interwork via Yarn",
 			"runtimeExecutable": "yarn",
 			"cwd": "${workspaceFolder}",
 			"runtimeArgs": [
@@ -15,6 +15,15 @@
 				"@vircle/cafe24-interwork",
 				"start:debug"
 			],
+			"console": "integratedTerminal"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch naver-store via Yarn",
+			"runtimeExecutable": "yarn",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": ["workspace", "@vircle/naver-store", "start:debug"],
 			"console": "integratedTerminal"
 		}
 	]

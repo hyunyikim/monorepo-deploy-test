@@ -1,0 +1,7 @@
+naver:
+  auth:
+    id:
+    name:
+    secret:
+  http:
+    baseURL: https://api.commerce.naver.com/partner

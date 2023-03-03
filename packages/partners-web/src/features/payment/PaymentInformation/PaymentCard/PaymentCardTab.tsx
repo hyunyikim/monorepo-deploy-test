@@ -1,6 +1,6 @@
 import {Stack, Typography, TableRow, Box} from '@mui/material';
 
-import {useChildModalOpen} from '@/utils/hooks';
+import {useOpen} from '@/utils/hooks';
 
 import {IcAtm} from '@/assets/icon';
 import {Table, HeadTableCell, TableCell, Chip} from '@/components';
@@ -11,7 +11,7 @@ const totalSize = 1;
 const isLoading = false;
 
 function PaymentCardTab() {
-	const {open, onOpen, onClose} = useChildModalOpen({});
+	const {open, onOpen, onClose} = useOpen({});
 	const {data: userPlan} = useGetUserPricePlan();
 	const card = userPlan?.card;
 

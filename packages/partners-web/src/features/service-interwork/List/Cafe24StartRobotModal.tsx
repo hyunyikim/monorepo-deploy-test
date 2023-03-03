@@ -2,8 +2,8 @@ import {useEffect} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {AsyncState} from 'react-use/lib/useAsyncFn';
 
-import {sendAmplitudeLog, goToParentUrl} from '@/utils';
-import {useChildModalOpen} from '@/utils/hooks';
+import {sendAmplitudeLog} from '@/utils';
+import {useOpen} from '@/utils/hooks';
 
 import {Button} from '@/components';
 import {ImgRobotConnectCafe24, ImgRobotConnectCafe242x} from '@/assets/images';
@@ -17,7 +17,7 @@ function Cafe24StartRobotModal({cafe24State}: Props) {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	const {open, onOpen, onClose} = useChildModalOpen({
+	const {open, onOpen, onClose} = useOpen({
 		handleOpen: () => {
 			sendAmplitudeLog('cafe24_stratpopupview', {
 				pv_title: '카페24 연동시작 팝업',
@@ -50,7 +50,7 @@ function Cafe24StartRobotModal({cafe24State}: Props) {
 					width="400px"
 					data-tracking={`'cafe24_complate_setting_click', {button_title: '설정하기'}`}
 					onClick={() => {
-						goToParentUrl('/b2b/interwork/cafe24');
+						navigate('/b2b/interwork/cafe24');
 					}}>
 					설정하기
 				</Button>
