@@ -11467,6 +11467,7 @@ __metadata:
     mongoose: ^7.0.0
     nest-winston: ^1.8.0
     path: ^0.12.7
+    pm2: ^5.2.2
     prettier: ^2.3.2
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0

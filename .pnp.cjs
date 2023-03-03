@@ -6387,7 +6387,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "pm2",\
-        "npm:5.2.0"\
+        "npm:5.2.2"\
       ],\
       [\
         "pm2-axon",\
@@ -26388,6 +26388,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mongoose", "npm:7.0.0"],\
             ["nest-winston", "virtual:69be9317c653aa03a84847831a8f95fa11b84120ff7188a7e9504931f0154d27755a080dd3171cfeed292de408a1ab961fe73f37cca9dd14d23622ecf1f77c0f#npm:1.8.0"],\
             ["path", "npm:0.12.7"],\
+            ["pm2", "npm:5.2.2"],\
             ["prettier", "npm:2.7.1"],\
             ["reflect-metadata", "npm:0.1.13"],\
             ["rxjs", "npm:7.5.5"],\
