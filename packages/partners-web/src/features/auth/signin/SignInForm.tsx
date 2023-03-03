@@ -94,6 +94,12 @@ function SignInForm() {
 				throw new Error('로그인에 실패했습니다. 다시 시도해주세요.');
 			}
 
+			// 마스터 로그인 시도시, 어드민 페이지로 넘김
+			if (partnershipData.adminType === 'master') {
+				window.open(VIRCLE_ADMIN_URL);
+				return;
+			}
+
 			setTrackingUser(
 				partnershipData.email,
 				partnershipData.b2bType,

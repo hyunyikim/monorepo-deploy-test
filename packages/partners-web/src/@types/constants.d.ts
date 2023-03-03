@@ -10,3 +10,4 @@ declare const CAFE24_REDIRECT_URL: string;
 declare const CAFE24_CLIENT_ID: string;
 declare const CAFE24_SCOPE: string;
 declare const VIRCLE_GUIDE_URL: string;
+declare const VIRCLE_ADMIN_URL: string;
