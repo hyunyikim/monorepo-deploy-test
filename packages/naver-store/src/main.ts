@@ -62,6 +62,6 @@ function addSwagger(app: INestApplication) {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup("api", app, document);
+    SwaggerModule.setup("naver-store/api", app, document);
   }
 }

@@ -22,6 +22,7 @@ yarn
 
 echo ">[$(date) BUILD START]" >> $LOG_POINT
 
+rimraf dist
 yarn build
 
 echo ">[$(date)] Kill All pm2 process]" >> $LOG_POINT
