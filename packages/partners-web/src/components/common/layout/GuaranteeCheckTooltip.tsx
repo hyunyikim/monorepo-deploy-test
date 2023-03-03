@@ -160,6 +160,7 @@ const GuaranteeCheckTooltip = () => {
 					if (idx === 0) {
 						return (
 							<Typography
+								key={idx}
 								sx={{fontWeight: 500, fontSize: '13px'}}>
 								{item}
 							</Typography>
@@ -168,6 +169,7 @@ const GuaranteeCheckTooltip = () => {
 					if (idx === 1) {
 						return (
 							<Typography
+								key={idx}
 								color={headerInfo.icColor}
 								sx={{
 									fontWeight: 500,

@@ -4,22 +4,16 @@ import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {Grid, Stack, Typography} from '@mui/material';
 
 import {useMessageDialog} from '@/stores';
-import {
-	Cafe24Interwork,
-	IssueCategory,
-	IssueSetting,
-	IssueTiming,
-	Options,
-} from '@/@types';
+import {Cafe24Interwork, IssueCategory, IssueSetting, Options} from '@/@types';
 import {updateSetting} from '@/api/cafe24.api';
 import {sendAmplitudeLog} from '@/utils';
 
 import {Button, RadioGroup} from '@/components';
 import SettingCategory from '@/features/service-interwork/Detail/Cafe24/ServiceInterworkCafe24SettingCategory';
 
-const cafe24IssueTimingOptions: Options<IssueTiming> = [
-	{label: '배송완료', value: 'AFTER_DELIVERED'},
-	{label: '수동발급', value: 'AFTER_SHIPPING'},
+const cafe24IssueManuallyOptions: Options<boolean> = [
+	{label: '배송완료', value: false},
+	{label: '수동발급', value: true},
 ];
 
 const cafe24IssueAllOptions: Options<boolean> = [
@@ -40,7 +34,6 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 	const queryClient = useQueryClient();
 	const [formData, setFormData] = useState<IssueSetting>({
 		issueIntro: true,
-		issueTiming: 'AFTER_DELIVERED',
 		manually: false,
 		issueAll: true,
 		issueCategories: [],
@@ -156,30 +149,21 @@ function ServiceInterworkCafe24SettingForm({data: cafe24Interwork}: Props) {
 						<Grid item xs={1} sm={3}>
 							<RadioGroup
 								ariaLabel="issue timing label"
-								value={formData.issueTiming}
-								options={cafe24IssueTimingOptions}
-								onChange={(value) => {
-									if ('AFTER_DELIVERED' === value) {
-										sendAmplitudeLog(
-											'cafe24_linkservicedetail_delivercomplate_click',
-											{
-												button_title:
-													'개런티 자동발급 항목 선택',
-											}
-										);
-									}
-									if ('AFTER_SHIPPING' === value) {
-										sendAmplitudeLog(
-											'cafe24_linkservicedetail_directly_click',
-											{
-												button_title:
-													'개런티 자동발급 항목 선택',
-											}
-										);
-									}
+								value={formData.manually}
+								options={cafe24IssueManuallyOptions}
+								onChange={(value: string) => {
+									sendAmplitudeLog(
+										value
+											? 'cafe24_linkservicedetail_directly_click'
+											: 'cafe24_linkservicedetail_delivercomplate_click',
+										{
+											button_title:
+												'개런티 자동발급 항목 선택',
+										}
+									);
 									setFormData((prev) => ({
 										...prev,
-										issueTiming: value,
+										manually: JSON.parse(value),
 									}));
 								}}
 							/>
