@@ -447,8 +447,19 @@ function DashboardCustomerSection({
 		const to = today;
 		navigate({
 			pathname: '/b2b/repair',
-			search: `?searchType=all&searchText=&startDate=${from}&endDate=${to}&sort=latest&currentPage=1&pageMaxNum=25&status=${currentStatus}`,
+			search: `?searchType=all&searchText=&startDate=&endDate=${to}&sort=latest&currentPage=1&pageMaxNum=25&status=${currentStatus}`,
 		});
+	};
+
+	const getPeriodText = () => {
+		switch (period) {
+			case 'WEEKLY':
+				return '주';
+			case 'MONTHLY':
+				return '달';
+			default:
+				return '주';
+		}
 	};
 
 	return (
@@ -474,7 +485,7 @@ function DashboardCustomerSection({
 								color: 'grey.900',
 								display: 'inline-block',
 							}}>
-							한 주간&nbsp;
+							한 {getPeriodText()}간&nbsp;
 							<Typography
 								variant="h3"
 								sx={{
@@ -574,9 +585,8 @@ function DashboardCustomerSection({
 						}}>
 						<DataWithToolTipBox
 							data={{
-								title: '발송',
-								content:
-									'개런티 알림톡을 발송한 고객 수 입니다.',
+								title: '전송',
+								content: '고객에게 전송한 알림톡 건수 입니다.',
 								count: guaranteeData[period]?.walletLink
 									?.confirmCount,
 								openState: tooltipState.send,
@@ -589,7 +599,7 @@ function DashboardCustomerSection({
 							data={{
 								title: '조회',
 								content:
-									'개런티 알림톡을 클릭해서 조회한 고객 수 입니다.',
+									'개런티 알림톡을 클릭해서 조회한 고객의 수 입니다.',
 								count: guaranteeData[period]?.walletLink
 									?.viewCount,
 								openState: tooltipState.view,
@@ -601,7 +611,7 @@ function DashboardCustomerSection({
 							data={{
 								title: '연동',
 								content:
-									'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객 수 입니다.',
+									'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객의 수 입니다.',
 								count: guaranteeData[period]?.walletLink
 									?.linked,
 								openState: tooltipState.link,
@@ -610,94 +620,8 @@ function DashboardCustomerSection({
 						/>
 					</Stack>
 
-					{/* TODO: ui 맞추기용 박스, 삭제예정 */}
-					{/* <Box
-						sx={{
-							position: 'absolute',
-							bottom: '0px',
-							left: '0',
-							width: '560px',
-							height: '230px',
-							backgroundColor: 'blue',
-							opacity: 0.3,
-						}}
-					/> */}
-
 					<Chart {...barChartData} />
 				</Box>
-				{/* {guaranteeData[period] && guaranteeData[period]?.walletLink ? (
-					<Box
-						sx={{
-							margin: 'auto',
-							marginTop: '4px',
-							paddingRight: '24px',
-							paddingLeft: '4px',
-							img: {margin: 'auto', maxWidth: '80px'},
-						}}>
-						<Stack
-							sx={{
-								flexDirection: 'row',
-								justifyContent: 'space-between',
-								alignItems: 'center',
-								maxWidth: '374px',
-								minWidth: '374px',
-								margin: 'auto',
-								marginLeft: '113px',
-							}}>
-							<DataWithToolTipBox
-								data={{
-									title: '발송',
-									content:
-										'개런티 알림톡을 발송한 고객 수 입니다.',
-									count: guaranteeData[period]?.walletLink
-										?.confirmCount,
-									openState: tooltipState.send,
-									toolTipHandler: () =>
-										toolTipHandler('send'),
-								}}
-							/>
-
-							<IcChevronRight />
-							<DataWithToolTipBox
-								data={{
-									title: '조회',
-									content:
-										'개런티 알림톡을 클릭해서 조회한 고객 수 입니다.',
-									count: guaranteeData[period]?.walletLink
-										?.viewCount,
-									openState: tooltipState.view,
-									toolTipHandler: () =>
-										toolTipHandler('view'),
-								}}
-							/>
-							<IcChevronRight />
-							<DataWithToolTipBox
-								data={{
-									title: '연동',
-									content:
-										'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객 수 입니다.',
-									count: guaranteeData[period]?.walletLink
-										?.linked,
-									openState: tooltipState.link,
-									toolTipHandler: () =>
-										toolTipHandler('link'),
-								}}
-							/>
-						</Stack>
-
-						<Chart {...barChartData} />
-					</Box>
-				) : (
-					<Box
-						sx={{
-							width: '80px',
-							margin: 'auto',
-							marginTop: '62px',
-							img: {margin: 'auto', maxWidth: '80px'},
-						}}>
-						<img src={imgDefaultBarChart2x} alt="bar chart" />
-					</Box>
-				)} */}
 			</SectionBox>
 
 			<Stack flexDirection={'row'} gap="20px">

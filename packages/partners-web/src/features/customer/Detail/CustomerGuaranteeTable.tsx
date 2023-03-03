@@ -107,7 +107,7 @@ function CustomerGuaranteeTable({name, phone}: {name: string; phone: string}) {
 								상품 정보
 							</HeadTableCell>
 							<HeadTableCell minWidth={180}>
-								상품금액
+								결제금액
 							</HeadTableCell>
 							<HeadTableCell minWidth={180}>
 								개런티 상태

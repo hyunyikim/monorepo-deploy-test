@@ -5,12 +5,9 @@ import {addDays, format, lastDayOfMonth} from 'date-fns';
 import DashboardGuaranteeSection from '@/features/dashboard/DashboardGuaranteeSection';
 
 import {Box, Stack, useTheme, SelectChangeEvent} from '@mui/material';
-import Chart from 'react-apexcharts';
 import {ApexOptions} from 'apexcharts';
-import {StatisticsResponse} from '@/@types';
 import DashboardCustomerSection from './DashboardCustomerSection';
 import DashboardInfoCentreSection from './DashboardInfoCentreSection';
-import DashboardDialog from '@/features/dashboard/DashboardDialog';
 
 import {Select} from '@/components';
 import {
@@ -44,6 +41,7 @@ function Dashboard() {
 	const [periodState, setPeriodState] =
 		useState<DashboardPeriodType>('WEEKLY');
 
+	/* TODO: 아래 api를 리액트 쿼리로 변경해서 관리하기! */
 	/* 개런티 발급 현황 데이터 */
 	const {data: guaranteeOverviewData, setData: setGuaranteeOverviewData} =
 		dashboardGuaranteeStore((state) => state);

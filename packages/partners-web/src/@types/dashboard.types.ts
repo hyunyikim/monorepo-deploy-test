@@ -48,6 +48,9 @@ export interface DashboardRepairOverviewType {
 export interface DashboardWalletOverviewType {
 	confirmCount: number;
 	linked: number;
-	rate: number;
 	viewCount: number;
+	lastConfirmCount: number;
+	lastViewCount: number;
+	lastLinked: number;
+	rate: number;
 }

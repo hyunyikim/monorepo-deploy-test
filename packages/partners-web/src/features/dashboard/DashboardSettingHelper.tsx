@@ -204,7 +204,7 @@ function DashboardSettingHelper({
 					버클, 디지털 개런티 서비스에 오신걸 환영합니다.
 				</Typography>
 
-				<SectionBox sx={{minHeight: 'none'}}>
+				<SectionBox sx={{minHeight: '303px'}}>
 					<Stack
 						flexDirection={'row'}
 						justifyContent={'space-between'}>

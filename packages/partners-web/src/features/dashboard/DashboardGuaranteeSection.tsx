@@ -19,6 +19,7 @@ import {imgDefaultPieChart, imgDefaultPieChart2x} from '@/assets/images';
 import {formatCommaNum, dashboardDateStack, sendAmplitudeLog} from '@/utils';
 import {DashboardPeriodType} from '@/@types/dashboard.types';
 import {useNavigate} from 'react-router-dom';
+import {format, subDays, subWeeks} from 'date-fns';
 
 type OverviewBoxProps = {
 	title: string | number;
@@ -42,7 +43,11 @@ function GuaranteeOverviewBox({
 	period,
 }: OverviewBoxProps) {
 	const navigate = useNavigate();
-	const goToGuaranteeListPage = (/* _value: string */) => {
+
+	const goToGuaranteeListPage = () => {
+		if (title === '발급총액') {
+			return;
+		}
 		let status = '';
 		let statusCode = '';
 		switch (title) {
@@ -153,7 +158,7 @@ function GuaranteeOverviewBox({
 					display="flex"
 					gap="2px"
 					alignItems="center"
-					sx={{cursor: 'pointer'}}
+					sx={{cursor: title === '발급총액' ? 'auto' : 'pointer'}}
 					onClick={goToGuaranteeListPage}>
 					<Typography
 						sx={{
@@ -252,146 +257,72 @@ function DashboardGuaranteeSection({
 		},
 	};
 
-	const transformDate = (_date: string) => {
-		if (_date) {
-			const dateArry = _date.split('-');
-
-			return `${dateArry[1]}/${dateArry[2]}`;
-		}
-	};
-
-	const day = 24;
-	const hour = 60;
-	const min = 60;
-	const ms = 1000;
-
-	function getWeekDateList(_date: string) {
-		const result = [];
-		for (let i = 0; i < 7; i++) {
-			if (i === 0) {
-				result.push({
-					date: transformDate(
-						new Date(_date)?.toISOString().split('T', 1)[0]
-					),
-					xDate: transformDate(
-						new Date(today)?.toISOString().split('T', 1)[0]
-					),
-					rawDate: _date,
-				});
-			} else {
-				const timeStamp =
-					new Date(_date).getTime() - i * day * hour * min * ms;
-				const todayTimeStamp =
-					new Date(today).getTime() - i * day * hour * min * ms;
-
-				result.push({
-					date: transformDate(
-						new Date(timeStamp).toISOString().split('T', 1)[0]
-					),
-					xDate: transformDate(
-						new Date(todayTimeStamp)?.toISOString().split('T', 1)[0]
-					),
-					rawDate: new Date(timeStamp).toISOString().split('T', 1)[0],
-				});
-			}
-		}
-
-		return result.reverse();
-	}
-
-	function getMonthDateList(_startDate: string) {
-		const result = [];
-
-		for (let i = 0; i < 4; i++) {
-			const timeStamp =
-				new Date(_startDate).getTime() - i * 7 * day * hour * min * ms;
-			const todayTimeStamp =
-				new Date(today).getTime() - i * day * hour * min * ms;
-
-			if (i === 0) {
-				result.push({
-					date: transformDate(
-						new Date(_startDate)?.toISOString().split('T', 1)[0]
-					),
-					xDate: transformDate(
-						new Date(today)?.toISOString().split('T', 1)[0]
-					),
-					rawDate: _startDate,
-				});
-			} else {
-				result.push({
-					date: transformDate(
-						new Date(timeStamp).toISOString().split('T', 1)[0]
-					),
-					xDate: transformDate(
-						new Date(todayTimeStamp)?.toISOString().split('T', 1)[0]
-					),
-					rawDate: new Date(timeStamp).toISOString().split('T', 1)[0],
-				});
-			}
-		}
-
-		return result.reverse();
-	}
-
-	const generateDefaultData = (
-		_period: DashboardPeriodType,
-		startDate: string
-	) => {
+	const generateDefaultData = (_period: DashboardPeriodType) => {
 		if (_period) {
 			if (_period === 'WEEKLY') {
 				/* 주간 데이터 */
-				const weekDateList = getWeekDateList(startDate);
-				return weekDateList.map((data, idx) => {
-					return {
-						x: data.date,
-						y: 0,
-					};
-				});
+				const result = Array(7)
+					.fill('')
+					.map((el, idx) => {
+						const rawDate = subDays(new Date(today), idx);
+						return {
+							x: format(rawDate, 'MM/dd'),
+							y: 0,
+						};
+					});
+
+				return result.reverse();
 			} else {
 				/* 월간 데이터 */
-				const monthDateList = getMonthDateList(startDate);
-				return monthDateList.map((data) => {
-					return {
-						x: data.date,
-						y: 0,
-					};
-				});
+				const result = Array(4)
+					.fill('')
+					.map((el, idx) => {
+						const rawDate = subWeeks(new Date(today), idx);
+						return {
+							x: format(rawDate, 'MM/dd'),
+							y: 0,
+						};
+					});
+
+				return result.reverse();
 			}
 		}
 	};
 
 	const lineDataGenerator = (
 		_period: DashboardPeriodType,
-		startDate: string
+		startDate: string,
+		time: 'current' | 'last'
 	) => {
-		const rawData = currentPeriod?.issuedGraph;
+		const rawData =
+			time === 'current'
+				? currentPeriod?.issuedGraph?.current
+				: currentPeriod?.issuedGraph?.last;
 
-		if (rawData && startDate) {
-			const AllPeriodData = {...rawData?.current, ...rawData?.last};
-
+		if (rawData && Object.keys(rawData).length > 0) {
 			if (_period === 'WEEKLY') {
 				/* 주간 데이터 */
-				const weekDateList = getWeekDateList(startDate);
-				return weekDateList.map((data, idx) => {
-					return {
-						x: data.xDate,
-						y: AllPeriodData[data.rawDate] || 0,
-					};
-				});
+				return Object.keys(rawData)
+					.reverse()
+					.map((date: string) => {
+						return {
+							x: format(new Date(date), 'MM/dd'),
+							y: rawData[date],
+						};
+					});
 			} else {
 				/* 월간 데이터 */
-				const monthDateList = getMonthDateList(startDate);
-				console.log('getMonthDateList', getMonthDateList(startDate));
-				return monthDateList.map((data) => {
-					return {
-						x: data.xDate,
-						y: AllPeriodData[data.rawDate] || 0,
-					};
-				});
+				return Object.keys(rawData)
+					.reverse()
+					.map((date: string) => {
+						return {
+							x: format(new Date(date), 'MM/dd'),
+							y: rawData[date],
+						};
+					});
 			}
 		} else {
-			return generateDefaultData(_period, startDate);
+			return generateDefaultData(_period);
 		}
 	};
 
@@ -403,12 +334,13 @@ function DashboardGuaranteeSection({
 				name: period === 'WEEKLY' ? '지난주' : '지난달',
 				data: lineDataGenerator(
 					period,
-					period === 'WEEKLY' ? previousWeek : previousMonth
+					period === 'WEEKLY' ? previousWeek : previousMonth,
+					'last'
 				),
 			},
 			{
 				name: period === 'WEEKLY' ? '이번주' : '이번달',
-				data: lineDataGenerator(period, today),
+				data: lineDataGenerator(period, today, 'current'),
 			},
 		],
 		xaxis: {
@@ -637,7 +569,6 @@ function DashboardGuaranteeSection({
 					</Stack>
 				</SectionBox>
 
-				{/* const { count, lastMost, most } = issuedFrom */}
 				<SectionBox sx={{minWidth: '285px', maxWidth: '285px'}}>
 					<SectionTitleComponent
 						boxTitle={
@@ -675,13 +606,13 @@ function DashboardGuaranteeSection({
 										lineHeight: '145%',
 										color: 'grey.900',
 									}}>
-									한 주간 발급된
+									한 {getPeriodText()}간 발급된
 									<br /> 개런티가 없어요.
 								</Typography>
 							)
 						}
 						boxSubtitle={
-							!currentPeriod?.issuedFrom.most
+							!currentPeriod?.issuedFrom.lastMost
 								? '비교 가능한 데이터가 없습니다.'
 								: currentPeriod?.issuedFrom.most ===
 								  currentPeriod?.issuedFrom.lastMost

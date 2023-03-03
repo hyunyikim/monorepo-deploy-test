@@ -47,17 +47,17 @@ function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 								Icon={<IcWallet fill={style.vircleGrey500} />}
 							/>
 							<DetailInfoCard
-								title="총 상품금액"
+								title="결제금액"
 								value={`${(
 									data?.totalPrice ?? 0
 								).toLocaleString()}원`}
 								Icon={<IcWon fill={style.vircleGrey500} />}
 							/>
 							<DetailInfoCard
-								title="총 발급건수"
+								title="구매회수"
 								value={`${(
 									data?.amount ?? 0
-								).toLocaleString()}개`}
+								).toLocaleString()}회`}
 								Icon={<IcDoc stroke={style.vircleGrey500} />}
 							/>
 						</Grid>

@@ -300,7 +300,7 @@ function CustomerList() {
 										전화번호
 									</HeadTableCell>
 									<TableSellWithSort
-										label="총 발급건수"
+										label="구매회수"
 										name="NO_OF_GUARANTEE"
 										orderBy={filter.orderBy}
 										orderDirection={filter.orderDirection}
@@ -312,7 +312,7 @@ function CustomerList() {
 										minWidth={240}
 									/>
 									<TableSellWithSort
-										label="총 상품금액"
+										label="결제금액"
 										name="TOTAL_PRICE"
 										orderBy={filter.orderBy}
 										orderDirection={filter.orderDirection}
