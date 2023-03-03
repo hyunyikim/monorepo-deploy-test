@@ -370,12 +370,7 @@ function DashboardGuaranteeSection({
 		xaxis: {
 			type: 'category',
 		},
-		yaxis: {
-			tickAmount: 5,
-			min: 0,
-			// logarithmic: false,
-			forceNiceScale: true,
-		},
+
 		options: {
 			chart: {
 				height: 240,
@@ -387,24 +382,24 @@ function DashboardGuaranteeSection({
 					show: false,
 				},
 			},
-			dataLabels: {
-				enabled: false,
-			},
+			// dataLabels: {
+			// 	enabled: false,
+			// },
 			stroke: {
 				show: true,
 				curve: 'straight',
 				width: 3,
 			},
-			grid: {
-				show: true,
-				borderColor: '#E2E2E9',
-				strokeDashArray: 3,
-				position: 'back',
-				yaxis: {
-					lines: {
-						show: true,
-					},
+			yaxis: {
+				tickAmount: 5,
+				min: 0,
+				logBase: 10,
+				labels: {
+					formatter: (value: number) =>
+						value > 0 ? value.toFixed(0) : 0,
 				},
+				// forceNiceScale: true,
+				// logarithmic: true,
 			},
 			colors: ['#CACAD3', '#526EFF'],
 		},
@@ -513,7 +508,7 @@ function DashboardGuaranteeSection({
 										color: 'grey.600',
 										marginTop: '4px',
 									}}>
-									지난 주 대비 발급량이&nbsp;
+									지난 {getPeriodText()} 대비 발급량이&nbsp;
 									<Typography
 										variant="h3"
 										sx={{
@@ -542,7 +537,7 @@ function DashboardGuaranteeSection({
 										color: 'grey.600',
 										marginTop: '4px',
 									}}>
-									지난 주 대비 발급량이&nbsp;
+									지난 {getPeriodText()} 대비 발급량이&nbsp;
 									<Typography
 										variant="h3"
 										sx={{

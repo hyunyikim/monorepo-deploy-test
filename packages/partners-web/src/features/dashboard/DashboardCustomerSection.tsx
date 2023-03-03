@@ -590,7 +590,8 @@ function DashboardCustomerSection({
 									color: 'grey.600',
 									display: 'inline-block',
 								}}>
-								지난 주 대비 개런티 연동한 고객이&nbsp;
+								지난 {getPeriodText()} 대비 개런티 연동한
+								고객이&nbsp;
 								{guaranteeData[period]?.walletLink.rate > 0 ? (
 									<Typography
 										variant="h3"
