@@ -30,7 +30,6 @@ async function bootstrap() {
       transform: true,
     })
   );
-  app.setGlobalPrefix("naver-store");
 
   app.enableVersioning({
     type: VersioningType.URI,
