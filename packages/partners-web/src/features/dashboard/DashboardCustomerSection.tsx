@@ -172,6 +172,7 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 										fontSize: '16px',
 										lineHeight: '145%',
 										color: 'grey.900',
+										minWidth: '11px',
 									}}>
 									{order + 1}
 								</Typography>
