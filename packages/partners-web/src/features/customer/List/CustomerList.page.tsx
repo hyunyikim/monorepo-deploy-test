@@ -94,7 +94,7 @@ function CustomerList() {
 	const getCustomerData = async () => {
 		try {
 			const params: DashboardCustomersParamsType = {
-				from: previousMonth,
+				from: '1900-01-01',
 				to: today,
 			};
 
