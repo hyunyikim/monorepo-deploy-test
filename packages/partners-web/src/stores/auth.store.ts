@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-export const TOKEN_KEY = 'token';
+export const TOKEN_KEY = 'token-v2';
 export const LAST_TIME_LOGIN_KEY = 'lastTime';
 
 interface LoginState {
