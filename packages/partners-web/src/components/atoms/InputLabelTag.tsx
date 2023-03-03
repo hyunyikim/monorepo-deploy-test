@@ -1,6 +1,5 @@
 import {useMemo} from 'react';
 import {Box, InputLabel, Typography} from '@mui/material';
-import AtagComponent from './AtagComponent';
 
 interface Props {
 	required?: boolean;
@@ -9,6 +8,7 @@ interface Props {
 	labelTitle: string;
 	linkUrl?: string;
 	linkTitle?: string;
+	onLinkClick?: () => void;
 }
 
 function InputLabelTag({
@@ -18,6 +18,7 @@ function InputLabelTag({
 	labelTitle,
 	linkUrl,
 	linkTitle,
+	onLinkClick,
 }: Props) {
 	const requireSx = useMemo(() => {
 		if (!showRequiredChip) {
@@ -45,6 +46,9 @@ function InputLabelTag({
 	 * 링크 확인
 	 */
 	const linkGeneratorHelp = () => {
+		if (onLinkClick && typeof onLinkClick === 'function') {
+			onLinkClick();
+		}
 		if (linkUrl) {
 			if (linkUrl.includes('http')) {
 				window.open(linkUrl);

@@ -174,7 +174,7 @@ function SignInForm() {
 					height={48}
 					width="100%"
 					type="submit"
-					data-tracking={`partners_login,{'login_click': '로그인'}`}>
+					data-tracking={`login_click,{'button_title': '로그인 클릭'}`}>
 					로그인
 				</Button>
 			</Stack>

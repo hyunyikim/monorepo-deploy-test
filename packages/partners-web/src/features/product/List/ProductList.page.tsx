@@ -17,7 +17,7 @@ import {
 	productListSearchFilter,
 	sortSearchFilter,
 } from '@/data';
-import {sendAmplitudeLog} from '@/utils';
+import {sendAmplitudeLog, usePageView} from '@/utils';
 import {
 	useGetPartnershipInfo,
 	useGlobalLoading,
@@ -43,6 +43,7 @@ const menu = 'itemadmin';
 const menuKo = '상품';
 
 function ProductList() {
+	usePageView('itemadmin_pv', '상품목록 진입');
 	const navigate = useNavigate();
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const b2bType = useGetPartnershipInfo()?.data?.b2bType;

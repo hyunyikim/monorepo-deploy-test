@@ -561,10 +561,14 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 				});
 
 				if (registerType === 'register') {
-					sendAmplitudeLog('guarantee_publish_complete');
+					sendAmplitudeLog('guarantee_publish_complete', {
+						button_title: '',
+					});
 				}
 				if (registerType === 'temperary') {
-					sendAmplitudeLog('guarantee_publish_saved');
+					sendAmplitudeLog('guarantee_publish_saved', {
+						button_title: '',
+					});
 				}
 				queryClient.invalidateQueries({
 					queryKey: ['userPricePlan'],
