@@ -11,6 +11,7 @@ export class AppService {
       type: process.env.NODE_ENV ? type() : undefined,
       cpuArchitecture: process.env.NODE_ENV ? arch() : undefined,
       networkInterfaces: process.env.NODE_ENV ? networkInterfaces() : undefined,
+      test: true,
     };
   }
 }
