@@ -336,6 +336,10 @@ function DashboardGuaranteeSection({
 			? Object.keys(currentRawData).reverse()
 			: [];
 
+		function isValidDate(_date) {
+			return _date instanceof Date && !isNaN(_date);
+		}
+
 		if (
 			rawData &&
 			Object.keys(rawData).length > 0 &&
@@ -344,30 +348,121 @@ function DashboardGuaranteeSection({
 		) {
 			if (_period === 'WEEKLY') {
 				/* 주간 데이터 */
-				return Object.keys(rawData)
+				let result: {x: string; y: string}[] = [];
+				Object.keys(rawData)
 					.reverse()
-					.map((date: string, idx: number) => {
-						return {
-							x: format(
-								new Date(currentRawDataArr[idx]),
-								'MM/dd'
-							),
-							y: rawData[date],
-						};
+					.forEach((date: string, idx: number) => {
+						if (idx < 7) {
+							if (isValidDate(new Date(currentRawDataArr[idx]))) {
+								result = [
+									...result,
+									{
+										x: format(
+											new Date(currentRawDataArr[idx]),
+											'MM/dd'
+										),
+										y: rawData[date],
+									},
+								];
+							} else {
+								result = [
+									...result,
+									{
+										x: '-',
+										y: 0,
+									},
+								];
+							}
+						}
 					});
+
+				return result;
+
+				// return Object.keys(rawData)
+				// 	.reverse()
+				// 	.map((date: string, idx: number) => {
+				// 		console.log('date', date);
+				// 		console.log(
+				// 			'currentRawDataArr[idx]',
+				// 			currentRawDataArr[idx]
+				// 		);
+				// 		if (isValidDate(new Date(currentRawDataArr[idx]))) {
+				// 			return {
+				// 				x: format(
+				// 					new Date(currentRawDataArr[idx]),
+				// 					'MM/dd'
+				// 				),
+				// 				y: rawData[date],
+				// 			};
+				// 		} else {
+				// 			console.log('date', date);
+				// 			console.log(
+				// 				'currentRawDataArr[idx]',
+				// 				currentRawDataArr[idx]
+				// 			);
+				// 			return {
+				// 				x: '11/22',
+				// 				y: 0,
+				// 			};
+				// 		}
+				// 	});
 			} else {
 				/* 월간 데이터 */
-				return Object.keys(rawData)
+				let result: {x: string; y: string}[] = [];
+
+				Object.keys(rawData)
 					.reverse()
-					.map((date: string, idx: number) => {
-						return {
-							x: format(
-								new Date(currentRawDataArr[idx]),
-								'MM/dd'
-							),
-							y: rawData[date],
-						};
+					.forEach((date: string, idx: number) => {
+						if (idx < 4) {
+							if (isValidDate(new Date(currentRawDataArr[idx]))) {
+								result = [
+									...result,
+									{
+										x: format(
+											new Date(currentRawDataArr[idx]),
+											'MM/dd'
+										),
+										y: rawData[date],
+									},
+								];
+							} else {
+								result = [
+									...result,
+									{
+										x: '-',
+										y: 0,
+									},
+								];
+							}
+						}
 					});
+
+				return result;
+
+				// return Object.keys(rawData)
+				// 	.reverse()
+				// 	.map((date: string, idx: number) => {
+
+				// 		if (isValidDate(new Date(currentRawDataArr[idx]))) {
+				// 			return {
+				// 				x: format(
+				// 					new Date(currentRawDataArr[idx]),
+				// 					'MM/dd'
+				// 				),
+				// 				y: rawData[date],
+				// 			};
+				// 		} else {
+				// 			console.log('date222222', date);
+				// 			console.log(
+				// 				'currentRawDataArr[idx]22222222',
+				// 				currentRawDataArr[idx]
+				// 			);
+				// 			return {
+				// 				x: '11/22',
+				// 				y: 0,
+				// 			};
+				// 		}
+				// 	});
 			}
 		} else {
 			return generateDefaultData(_period);
