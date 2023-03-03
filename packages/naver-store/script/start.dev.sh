@@ -20,9 +20,12 @@ git pull >>  $LOG_POINT
 
 yarn
 
-echo ">[$(date) BUILD START]" >> $LOG_POINT
+echo ">[$(date) DELETE BUILD]" >> $LOG_POINT
 
 rimraf dist
+
+echo ">[$(date) BUILD START]" >> $LOG_POINT
+
 yarn build
 
 echo ">[$(date)] Kill All pm2 process]" >> $LOG_POINT
