@@ -131,7 +131,7 @@ function CustomerInfoOverview({
 		{
 			title: '전송',
 			tooltipText: '개런티 알림톡을 발송한 고객 수 입니다.',
-			rate: linkData?.confirmCount ? '100%' : '0%',
+			rate: linkData?.confirmCount ? '100' : '0',
 			count: linkData?.confirmCount,
 			icon: icGreenSend,
 			openState: tooltipState.send,
@@ -141,8 +141,10 @@ function CustomerInfoOverview({
 			title: '조회',
 			tooltipText: '개런티 알림톡을 클릭해서 조회한 고객 수 입니다.',
 			rate: linkData?.viewCount
-				? (linkData?.viewCount / linkData?.confirmCount) * 100
-				: '0%',
+				? Math.round(
+						(linkData?.viewCount / linkData?.confirmCount) * 100
+				  )
+				: '0',
 			count: linkData?.viewCount,
 			icon: icYellowView,
 			openState: tooltipState.view,
@@ -153,8 +155,8 @@ function CustomerInfoOverview({
 			tooltipText:
 				'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객 수 입니다.',
 			rate: linkData?.linked
-				? (linkData?.linked / linkData?.confirmCount) * 100
-				: '0%',
+				? Math.round((linkData?.linked / linkData?.confirmCount) * 100)
+				: '0',
 			count: linkData?.linked,
 			icon: icBlueChain,
 			openState: tooltipState.link,
@@ -336,7 +338,7 @@ function CustomerInfoOverview({
 							background: '#F3F3F5',
 							borderRadius: '64px',
 						}}>
-						3회 이상 구매한 고객
+						3개 이상 구매한 고객
 					</Stack>
 				</Stack>
 

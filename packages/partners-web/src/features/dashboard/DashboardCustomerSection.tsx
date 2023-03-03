@@ -172,6 +172,7 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 										fontSize: '16px',
 										lineHeight: '145%',
 										color: 'grey.900',
+										minWidth: '11px',
 									}}>
 									{order + 1}
 								</Typography>
@@ -211,7 +212,7 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 									`${formatCommaNum(topData.paid)}원`}
 								{topData &&
 									topData.issued &&
-									`${formatCommaNum(topData.issued)}회`}
+									`${formatCommaNum(topData.issued)}개`}
 							</Box>
 						</Stack>
 				  )
@@ -272,7 +273,7 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 									`${formatCommaNum(topData.paid)}원`}
 								{topData &&
 									topData.issued &&
-									`${formatCommaNum(topData.issued)}회`}
+									`${formatCommaNum(topData.issued)}개`}
 							</Box>
 						</Stack>
 				  )}
@@ -322,20 +323,26 @@ function DashboardCustomerSection({
 					{
 						x: '전송',
 						y:
-							guaranteeData[period]?.walletLink?.confirmCount *
-								standardRate || 0,
+							Math.round(
+								guaranteeData[period]?.walletLink
+									?.confirmCount * standardRate
+							) || 0,
 					},
 					{
 						x: '조회',
 						y:
-							guaranteeData[period]?.walletLink?.viewCount *
-								standardRate || 0,
+							Math.round(
+								guaranteeData[period]?.walletLink?.viewCount *
+									standardRate
+							) || 0,
 					},
 					{
 						x: '연동',
 						y:
-							guaranteeData[period]?.walletLink?.linked *
-								standardRate || 0,
+							Math.round(
+								guaranteeData[period]?.walletLink?.linked *
+									standardRate
+							) || 0,
 					},
 				],
 			},
@@ -734,7 +741,7 @@ function DashboardCustomerSection({
 							<button
 								data-customer="times"
 								onClick={customerStateHandler}>
-								구매회수
+								구매수량
 							</button>
 						</ButtonStyle>
 						<ButtonStyle
