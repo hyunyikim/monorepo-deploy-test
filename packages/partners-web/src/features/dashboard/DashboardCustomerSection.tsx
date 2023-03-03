@@ -211,7 +211,7 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 									`${formatCommaNum(topData.paid)}원`}
 								{topData &&
 									topData.issued &&
-									`${formatCommaNum(topData.issued)}회`}
+									`${formatCommaNum(topData.issued)}개`}
 							</Box>
 						</Stack>
 				  )
@@ -272,7 +272,7 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 									`${formatCommaNum(topData.paid)}원`}
 								{topData &&
 									topData.issued &&
-									`${formatCommaNum(topData.issued)}회`}
+									`${formatCommaNum(topData.issued)}개`}
 							</Box>
 						</Stack>
 				  )}

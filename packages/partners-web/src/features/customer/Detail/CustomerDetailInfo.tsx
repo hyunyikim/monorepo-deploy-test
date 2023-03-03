@@ -57,7 +57,7 @@ function CustomerDetailInfo({name, phone}: {name: string; phone: string}) {
 								title="구매수량"
 								value={`${(
 									data?.amount ?? 0
-								).toLocaleString()}회`}
+								).toLocaleString()}개`}
 								Icon={<IcDoc stroke={style.vircleGrey500} />}
 							/>
 						</Grid>
