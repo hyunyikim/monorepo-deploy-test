@@ -21,6 +21,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:."\
       },\
       {\
+        "name": "@vircle/access-restriction",\
+        "reference": "workspace:packages/access-restriction"\
+      },\
+      {\
         "name": "@vircle/admin-api",\
         "reference": "workspace:packages/admin-api"\
       },\
@@ -76,6 +80,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "enableTopLevelFallback": true,\
     "ignorePatternData": "(^(?:\\\\.yarn\\\\/sdks(?:\\\\/(?!\\\\.{1,2}(?:\\\\/|$))(?:(?:(?!(?:^|\\\\/)\\\\.{1,2}(?:\\\\/|$)).)*?)|$))$)",\
     "fallbackExclusionList": [\
+      ["@vircle/access-restriction", ["workspace:packages/access-restriction"]],\
       ["@vircle/admin-api", ["workspace:packages/admin-api"]],\
       ["@vircle/admin-web", ["workspace:packages/admin-web"]],\
       ["@vircle/api-client", ["workspace:packages/api-client"]],\
@@ -2091,6 +2096,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "@typescript-eslint/visitor-keys",\
         "npm:5.22.0"\
+      ],\
+      [\
+        "@vircle/access-restriction",\
+        "workspace:packages/access-restriction"\
       ],\
       [\
         "@vircle/admin-api",\
@@ -26147,6 +26156,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-visitor-keys", "npm:3.3.0"]\
           ],\
           "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@vircle/access-restriction", [\
+        ["workspace:packages/access-restriction", {\
+          "packageLocation": "./packages/access-restriction/",\
+          "packageDependencies": [\
+            ["@vircle/access-restriction", "workspace:packages/access-restriction"]\
+          ],\
+          "linkType": "SOFT"\
         }]\
       ]],\
       ["@vircle/admin-api", [\

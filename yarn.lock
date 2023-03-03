@@ -11254,6 +11254,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vircle/access-restriction@workspace:packages/access-restriction":
+  version: 0.0.0-use.local
+  resolution: "@vircle/access-restriction@workspace:packages/access-restriction"
+  languageName: unknown
+  linkType: soft
+
 "@vircle/admin-api@workspace:packages/admin-api":
   version: 0.0.0-use.local
   resolution: "@vircle/admin-api@workspace:packages/admin-api"
