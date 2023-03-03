@@ -125,7 +125,7 @@ jobs:
                   aws deploy create-deployment \
                     --application-name vircle \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
-                    --deployment-group-name vircle-prod-cafe24-DG \
+                    --deployment-group-name vircle-prod-naver-store-DG \
                     --s3-location bucket=deploy.vircle,bundleType=zip,key=naver-store/prod.zip \
                     --file-exists-behavior=OVERWRITE
     deploy_on_stage:
@@ -179,6 +179,6 @@ jobs:
                   aws deploy create-deployment \
                     --application-name vircle \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
-                    --deployment-group-name vircle-stage-cafe24-DG \
+                    --deployment-group-name vircle-stage-naver-store-DG \
                     --s3-location bucket=deploy.vircle,bundleType=zip,key=naver-store/stage.zip \
                     --file-exists-behavior=OVERWRITE
