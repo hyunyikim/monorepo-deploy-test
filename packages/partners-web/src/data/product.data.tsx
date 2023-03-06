@@ -118,15 +118,54 @@ export const productRegisterInputListForCooperator: InputTypeList = [
 		name: 'categoryName',
 	},
 	productRegisterProductCodeInput,
-	{
-		type: 'text',
-		name: 'modelNum',
-		placeholder: '모델번호를 입력해주세요',
-		label: '모델번호',
-		autoComplete: 'off',
-		required: false,
-	},
 ];
+
+export const getUseYNFields = (
+	partnershipInfo?: PartnershipInfoResponse | null
+) => {
+	const fields: InputTypeList = [];
+	if (partnershipInfo?.useFieldModelNum === 'Y') {
+		fields.push({
+			type: 'text',
+			name: 'modelNum',
+			placeholder: '모델번호를 입력해주세요',
+			label: '모델번호',
+			autoComplete: 'off',
+			required: false,
+		});
+	}
+	if (partnershipInfo?.useFieldMaterial === 'Y') {
+		fields.push({
+			type: 'text',
+			name: 'material',
+			placeholder: '소재를 입력해주세요',
+			label: '소재',
+			autoComplete: 'off',
+			required: false,
+		});
+	}
+	if (partnershipInfo?.useFieldSize === 'Y') {
+		fields.push({
+			type: 'text',
+			name: 'size',
+			placeholder: '사이즈를 입력해주세요',
+			label: '사이즈',
+			autoComplete: 'off',
+			required: false,
+		});
+	}
+	if (partnershipInfo?.useFieldWeight === 'Y') {
+		fields.push({
+			type: 'text',
+			name: 'weight',
+			placeholder: '중량(무게)을 입력해주세요',
+			label: '중량(무게)',
+			autoComplete: 'off',
+			required: false,
+		});
+	}
+	return fields;
+};
 
 export const getProductRegisterInputList = (
 	partnershipInfo?: PartnershipInfoResponse | null,
@@ -172,6 +211,7 @@ export const getProductRegisterInputList = (
 			...brandInputs,
 			...normalInputList,
 			productRegisterProductCodeInput,
+			...getUseYNFields(partnershipInfo),
 			...customFieldInputList,
 		];
 	}
@@ -217,6 +257,7 @@ export const getProductRegisterInputList = (
 		...brandInputs,
 		...normalInputList,
 		...cooperatorInputList,
+		...getUseYNFields(partnershipInfo),
 		...customFieldInputList,
 	];
 };
@@ -296,6 +337,7 @@ export const getProductRegisterFormDataForReset = (
 		| null,
 	images?: ImageState[]
 ): {data: ProductRegisterFormData; images: ImageState[]} => {
+	const isB2bTypeBrand = partnershipInfo.b2bType === 'brand' ? true : false;
 	const brand = partnershipInfo?.brand;
 	const customFields = partnershipInfo?.nftCustomFields;
 	let resetValue: ProductRegisterFormData = {
@@ -305,9 +347,18 @@ export const getProductRegisterFormDataForReset = (
 		code: '',
 		categoryCode: '',
 		categoryName: '',
-		brandIdx: (brand && brand?.idx) || '',
-		brandName: partnershipInfo?.brand?.name || '',
-		brandNameEn: partnershipInfo?.brand?.englishName || '',
+		...(isB2bTypeBrand
+			? {
+					brandIdx: (brand && brand?.idx) || '',
+					brandName: brand?.name || '',
+					brandNameEn: brand?.englishName || '',
+			  }
+			: {
+					// b2b 타입이 아닌 경우, 브랜드를 직접 선택함
+					brandIdx: '',
+					brandName: '',
+					brandNameEn: '',
+			  }),
 		modelNum: '',
 		warranty: partnershipInfo?.warrantyDate || '',
 		customField: (customFields || []).reduce((acc: CustomField, cur) => {
@@ -338,8 +389,6 @@ export const getProductRegisterFormDataForReset = (
 		productImage,
 	} = initialData;
 
-	const isCooperator =
-		partnershipInfo?.b2bType === 'cooperator' ? true : false;
 	resetValue = {
 		...resetValue,
 		name: name || '',
@@ -349,7 +398,7 @@ export const getProductRegisterFormDataForReset = (
 		categoryName: categoryName || '',
 		code: code || '',
 		modelNum: modelNum || '',
-		...(isCooperator && {brandIdx: brandIdx}),
+		...(!isB2bTypeBrand && {brandIdx: brandIdx}),
 		...customField,
 	};
 
@@ -636,4 +685,21 @@ export const customFieldsToJSONString = <T,>(
 		customFieldObj[customField] = value;
 	});
 	return JSON.stringify(customFieldObj);
+};
+
+/**
+ * number 타입이 아닌 경우, 모두 문자열로 변환
+ */
+export const convertProductInputNubmerToString = (data: Record<any, any>) => {
+	const numberFormatKeyList = ['idx', 'brandIdx', 'price', 'categoryCode'];
+	const formattedData: Record<any, any> = {};
+	Object.entries(data).forEach((item) => {
+		const [key, value] = item;
+		if (typeof value === 'number' && !numberFormatKeyList.includes(key)) {
+			formattedData[key] = String(value);
+		} else {
+			formattedData[key] = value;
+		}
+	});
+	return formattedData;
 };

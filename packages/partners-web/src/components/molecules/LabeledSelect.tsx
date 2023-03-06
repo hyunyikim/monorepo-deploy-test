@@ -23,7 +23,11 @@ function LabeledSelect<T>(
 			{...(ref && {
 				ref,
 			})}>
-			<InputLabelTag required={required} labelTitle={label} />
+			<InputLabelTag
+				required={required}
+				labelTitle={label}
+				showRequiredChip={true}
+			/>
 			<Select error={error} {...props} />
 		</Stack>
 	);

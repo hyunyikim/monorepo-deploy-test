@@ -14,7 +14,11 @@ import {
 } from '@/stores';
 import ProgressModal from '@/features/common/ProgressModal';
 import {useOpen} from '@/utils/hooks';
-import {CATEGORIES, customFieldsToJSONString} from '@/data';
+import {
+	CATEGORIES,
+	convertProductInputNubmerToString,
+	customFieldsToJSONString,
+} from '@/data';
 import {bulkRegisterProduct} from '@/api/product.api';
 
 interface Props {
@@ -77,6 +81,7 @@ function ProductExcelSubmit({gridData, excelErrors}: Props) {
 						delete data[customField];
 					}
 				});
+				data = convertProductInputNubmerToString(data);
 				await bulkRegisterProduct([
 					data as ProductExcelUploadRequestData,
 				]);
