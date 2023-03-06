@@ -68,6 +68,7 @@ export {default as IcTickInBlueBox} from './icon_tick_in_blue_circle_40.png';
 export {default as IcWalletInGreen} from './icon_wallet_in_green_box_40.png';
 export {default as IcNewInRedCircle} from './ic-new-in-red-circle.svg';
 export {default as IcArrow} from './Ic_arrow.svg';
+export {default as IcRedArrow} from './Ic_arrow_red_down.svg';
 export {default as IcDashBar} from './ic_dash_bar.svg';
 export {default as icRepairSiscors} from './ic_dashboard_repair_siscors.png';
 export {default as icRepairBag} from './ic_dashboard_repair_bag.png';

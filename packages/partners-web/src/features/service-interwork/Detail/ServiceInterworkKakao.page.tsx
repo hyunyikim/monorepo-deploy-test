@@ -12,7 +12,7 @@ import {
 
 import {phoneNumberFormat} from '@/utils/regex.util';
 import {uninstallServiceInterwork} from '@/api/service-interwork.api';
-
+import {sendAmplitudeLog} from '@/utils';
 import {
 	Button,
 	CapsuleButton,
@@ -72,6 +72,9 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
 	const onSubmit = () => {
+		sendAmplitudeLog('kakao_linkservicedetail_install_verify_click', {
+			button_title: '인증하기 클릭',
+		});
 		const values = getValues();
 
 		if (typeof values?.phoneNo === 'string') {
@@ -137,6 +140,9 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 
 	/* 연동 완료 이벤트 */
 	const connectKakaoHandler = async () => {
+		sendAmplitudeLog('kakao_linkservicedetail_install_complete_click', {
+			button_title: '연동 완료 클릭',
+		});
 		const {plusFriendId, token} = getValues();
 
 		try {
@@ -198,7 +204,16 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 						<AtagComponent
 							url="https://business.kakao.com/start"
 							target="_blank">
-							<CapsuleButton>
+							<CapsuleButton
+								onClick={() => {
+									sendAmplitudeLog(
+										'kakao_linkservicedetail_create_kakao_click',
+										{
+											button_title:
+												'카카오 플러스 친구 생성하기 클릭',
+										}
+									);
+								}}>
 								카카오 플러스친구 생성하기
 							</CapsuleButton>
 						</AtagComponent>
@@ -206,7 +221,17 @@ function ConnectKakaoAlramModalChild({onClose}: {onClose(): () => void}) {
 						<AtagComponent
 							url="https://guide.vircle.co.kr/kakao-msg"
 							target="_blank">
-							<CapsuleButton>사용 가이드</CapsuleButton>
+							<CapsuleButton
+								onClick={() => {
+									sendAmplitudeLog(
+										'kakao_linkservicedetail_guide_click',
+										{
+											button_title: '사용 가이드 클릭',
+										}
+									);
+								}}>
+								사용 가이드
+							</CapsuleButton>
 						</AtagComponent>
 					</Stack>
 
@@ -396,8 +421,18 @@ function ServiceInterworkKakao() {
 		return (
 			<Button
 				onClick={() => {
+					sendAmplitudeLog('kakao_linkservicedetail_install_click', {
+						button_title: '연동하기 클릭',
+					});
 					(async () => {
 						try {
+							sendAmplitudeLog(
+								'kakao_linkservicedetail_install_popupview',
+								{
+									pv_title: '카카오 알림톡 연동 팝업 노출',
+								}
+							);
+
 							setModalOption({
 								id: 'connect_kakao_alram',
 								isOpen: true,
@@ -463,6 +498,19 @@ function ServiceInterworkKakao() {
 				color="grey-100"
 				variant="outlined"
 				onClick={() => {
+					sendAmplitudeLog(
+						'kakao_linkservicedetail_uninstall_click',
+						{
+							button_title: '연동해제 클릭',
+						}
+					);
+					sendAmplitudeLog(
+						'kakao_linkservicedetail_uninstall_popupview',
+						{
+							pv_title: '연동해제 팝업 노출',
+						}
+					);
+
 					onOpenMessageDialog({
 						title: '카카오 알림톡 연동을 해지하시겠습니까?',
 						message: (
@@ -477,6 +525,12 @@ function ServiceInterworkKakao() {
 							<Button
 								color="black"
 								onClick={() => {
+									sendAmplitudeLog(
+										'kakao_linkservicedetail_uninstall_popup_confirm_click',
+										{
+											button_title: '연동해제 클릭',
+										}
+									);
 									(async () => {
 										try {
 											await uninstallServiceInterworkMutation.mutateAsync();
@@ -515,6 +569,12 @@ function ServiceInterworkKakao() {
 			</Button>
 		);
 	}, [onOpenMessageDialog, uninstallServiceInterworkMutation]);
+
+	useEffect(() => {
+		sendAmplitudeLog('kakao_linkservicedetail_pv', {
+			pv_title: '카카오 알림 상세 진입',
+		});
+	}, []);
 
 	if (isLoading) {
 		return <></>;

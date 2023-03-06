@@ -11,7 +11,7 @@ export interface DashboardCustomersParamsType {
 	to: string;
 }
 export interface DashboardIssuedGuranteeOverviewType {
-	issuedGraph: any;
+	issuedGraph: issuedGraphType;
 	issueStatusCount: any;
 	issuedFrom: any;
 }
@@ -26,9 +26,9 @@ export interface IssuedFromType {
 	most: string;
 }
 export interface IssuedGraphType {
-	averageCount: string;
-	current: any;
-	last: any;
+	averageCount: number;
+	current: {string: number};
+	last: {string: number};
 	rate: number;
 	totalCount: number;
 }

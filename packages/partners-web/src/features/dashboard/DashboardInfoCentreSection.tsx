@@ -201,11 +201,11 @@ function DashboardInfoCentreSection() {
 	);
 
 	const screenWidthHandler = () => {
-		const targetCarousel = document.querySelector(
-			'.slider-frame.brand_experience_carousel'
-		);
-
 		setTimeout(() => {
+			const targetCarousel = document.querySelector(
+				'.slider-frame.brand_experience_carousel'
+			);
+
 			setScreenWidth(
 				(targetCarousel as HTMLElement).getBoundingClientRect().width
 			);
@@ -334,8 +334,8 @@ function DashboardInfoCentreSection() {
 					<Stack flexDirection={'row'} gap="20px">
 						<SectionBox
 							sx={{
-								minWidth: '285px',
-								maxWidth: '285px',
+								minWidth: '590px',
+								maxWidth: '590px',
 								minHeight: '240px',
 								maxHeight: '240px',
 								padding: 0,
@@ -449,7 +449,7 @@ function DashboardInfoCentreSection() {
 														fontSize: '18px',
 														lineHeight: '145%',
 														color: 'grey.900',
-														marginBottom: '21px',
+														marginBottom: '1px',
 														padding: '0 24px',
 													}}>
 													{title}
@@ -460,8 +460,10 @@ function DashboardInfoCentreSection() {
 														img: {
 															width: '170px',
 															height: '120px',
+															marginRight: '40px',
 															marginLeft: 'auto',
-															marginBottom: '1px',
+															marginBottom:
+																'20px',
 														},
 													}}>
 													<img
@@ -475,15 +477,6 @@ function DashboardInfoCentreSection() {
 								</Carousel>
 							</Stack>
 						</SectionBox>
-
-						<Box
-							sx={{
-								minWidth: '285px',
-								maxWidth: '285px',
-								minHeight: '240px',
-								maxHeight: '240px',
-								padding: 0,
-							}}></Box>
 					</Stack>
 				</DashboardSection>
 

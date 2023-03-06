@@ -11,6 +11,7 @@ import {
 	IcCrossoutInRedBox,
 	IcTickInBlueBox,
 	IcArrow,
+	IcRedArrow,
 	IcDashBar,
 } from '@/assets/icon';
 
@@ -118,7 +119,7 @@ function GuaranteeOverviewBox({
 						{difference > 0 ? (
 							<IcArrow color="#00C29F" />
 						) : difference < 0 ? (
-							<IcArrow transform="rotate(180)" color="#F8434E" />
+							<IcRedArrow />
 						) : (
 							<IcDashBar />
 						)}
@@ -385,35 +386,6 @@ function DashboardGuaranteeSection({
 					});
 
 				return result;
-
-				// return Object.keys(rawData)
-				// 	.reverse()
-				// 	.map((date: string, idx: number) => {
-				// 		console.log('date', date);
-				// 		console.log(
-				// 			'currentRawDataArr[idx]',
-				// 			currentRawDataArr[idx]
-				// 		);
-				// 		if (isValidDate(new Date(currentRawDataArr[idx]))) {
-				// 			return {
-				// 				x: format(
-				// 					new Date(currentRawDataArr[idx]),
-				// 					'MM/dd'
-				// 				),
-				// 				y: rawData[date],
-				// 			};
-				// 		} else {
-				// 			console.log('date', date);
-				// 			console.log(
-				// 				'currentRawDataArr[idx]',
-				// 				currentRawDataArr[idx]
-				// 			);
-				// 			return {
-				// 				x: '11/22',
-				// 				y: 0,
-				// 			};
-				// 		}
-				// 	});
 			} else {
 				/* 월간 데이터 */
 				let result: {x: string; y: string}[] = [];
@@ -426,10 +398,10 @@ function DashboardGuaranteeSection({
 								result = [
 									...result,
 									{
-										x: format(
+										x: `~${format(
 											new Date(currentRawDataArr[idx]),
 											'MM/dd'
-										),
+										)}`,
 										y: rawData[date],
 									},
 								];
@@ -446,31 +418,6 @@ function DashboardGuaranteeSection({
 					});
 
 				return result;
-
-				// return Object.keys(rawData)
-				// 	.reverse()
-				// 	.map((date: string, idx: number) => {
-
-				// 		if (isValidDate(new Date(currentRawDataArr[idx]))) {
-				// 			return {
-				// 				x: format(
-				// 					new Date(currentRawDataArr[idx]),
-				// 					'MM/dd'
-				// 				),
-				// 				y: rawData[date],
-				// 			};
-				// 		} else {
-				// 			console.log('date222222', date);
-				// 			console.log(
-				// 				'currentRawDataArr[idx]22222222',
-				// 				currentRawDataArr[idx]
-				// 			);
-				// 			return {
-				// 				x: '11/22',
-				// 				y: 0,
-				// 			};
-				// 		}
-				// 	});
 			}
 		} else {
 			return generateDefaultData(_period);
@@ -616,7 +563,16 @@ function DashboardGuaranteeSection({
 										)
 									) || 0}
 								</Typography>
-								건의
+								{currentPeriod?.issuedGraph?.averageCount >= 1
+									? `, ${
+											period === 'WEEKLY' ? '일' : '주'
+									  } 평균 ${
+											Math.round(
+												currentPeriod?.issuedGraph
+													?.averageCount * 10
+											) / 10 || 0
+									  }건의 `
+									: '건의'}
 								<br /> 개런티를 발급완료 했습니다.
 							</Typography>
 						</>

@@ -39,6 +39,7 @@ function CustomiseBrandCard({
 	onSelectBrandImage,
 	setMoveToAfterModalClose,
 	convertToBase64,
+	hasProfileLogo,
 }: CustomiseCardProps) {
 	const [step, setStep] = useState<number>(1);
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
@@ -52,12 +53,6 @@ function CustomiseBrandCard({
 			setStep(1);
 		}
 	}, [isOpen]);
-
-	useEffect(() => {
-		sendAmplitudeLog('guaranteesetting_cardcustom_popupview', {
-			pv_title: '브랜드 카드제작 팝업 노출',
-		});
-	}, []);
 
 	/**
 	 * 최종 이미지 크롭
@@ -120,9 +115,14 @@ function CustomiseBrandCard({
 	};
 
 	const handleRefresh = useCallback(() => {
-		sendAmplitudeLog('guaranteesetting_cardcustom_popup_reset_click', {
-			button_title: '업로드한 이미지 초기화',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_cardcustom_popup_reset_click'
+				: 'guaranteesetting_cardcustom_popup_reset_click',
+			{
+				button_title: '업로드한 이미지 초기화',
+			}
+		);
 		setStep(1);
 		setCropImage(null);
 		setCropConfig(null);
@@ -130,9 +130,14 @@ function CustomiseBrandCard({
 
 	useEffect(() => {
 		if (isOpen) {
-			sendAmplitudeLog('guaranteesetting_cardcustom_popupview', {
-				pv_title: '브랜드 카드제작 팝업 노출',
-			});
+			sendAmplitudeLog(
+				!hasProfileLogo
+					? 'first_guaranteesetting_cardcustom_popupview'
+					: 'guaranteesetting_cardcustom_popupview',
+				{
+					pv_title: '브랜드 카드제작 팝업 노출',
+				}
+			);
 		}
 	}, [isOpen]);
 
@@ -168,7 +173,9 @@ function CustomiseBrandCard({
 						}}
 						onClick={() => {
 							sendAmplitudeLog(
-								'guaranteesetting_cardcustom_popup_guide_click',
+								!hasProfileLogo
+									? 'first_guaranteesetting_cardcustom_popup_guide_click'
+									: 'guaranteesetting_cardcustom_popup_guide_click',
 								{button_title: '이미지 제작 가이드 링크로 이동'}
 							);
 							openCustomizedCardDesign();
@@ -179,6 +186,7 @@ function CustomiseBrandCard({
 
 				{step === 1 && (
 					<BrandSettingSelectImage
+						hasProfileLogo={hasProfileLogo}
 						cropImage={cropImage}
 						setCropImage={setCropImage}
 						cropConfig={cropConfig}
@@ -211,7 +219,9 @@ function CustomiseBrandCard({
 						variant="contained"
 						onClick={() => {
 							sendAmplitudeLog(
-								'guaranteesetting_cardcustom_popup_imagecomplate_click',
+								!hasProfileLogo
+									? 'first_guaranteesetting_cardcustom_popup_imagecomplate_click'
+									: 'guaranteesetting_cardcustom_popup_imagecomplate_click',
 								{
 									button_title:
 										'이미지 적용클릭 시 크롭 화면으로 이동',
@@ -231,7 +241,9 @@ function CustomiseBrandCard({
 							}}
 							onClick={() => {
 								sendAmplitudeLog(
-									'guaranteesetting_cardcustom_popup_back_click',
+									!hasProfileLogo
+										? 'first_guaranteesetting_cardcustom_popup_back_click'
+										: 'guaranteesetting_cardcustom_popup_back_click',
 									{
 										button_title:
 											'완료 바로 전 화면(이미지 크롭)으로 이동',
@@ -245,7 +257,9 @@ function CustomiseBrandCard({
 							variant="contained"
 							onClick={() => {
 								sendAmplitudeLog(
-									'guaranteesetting_cardcustom_popup_confirm_click',
+									!hasProfileLogo
+										? 'first_guaranteesetting_cardcustom_popup_confirm_click'
+										: 'guaranteesetting_cardcustom_popup_confirm_click',
 									{button_title: '이미지 적용 완료'}
 								);
 								handleUploadImage();
