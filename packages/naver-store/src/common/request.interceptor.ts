@@ -14,13 +14,8 @@ export class RequestInterceptor implements NestInterceptor {
     next: CallHandler<any>
   ): Observable<any> | Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest<Request>();
-    let { url } = req;
-    const { method } = req;
+    const { method, url } = req;
 
-    const urlPaths = url.split("/");
-    if (urlPaths[1] === "naver-store" && urlPaths[2] === "naver-store") {
-      url = urlPaths.splice(1, 1).join("/");
-    }
     Logger.debug(`Incoming request - Method: ${method}, URL: ${url}`);
 
     return next.handle();
