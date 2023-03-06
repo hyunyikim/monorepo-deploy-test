@@ -11458,6 +11458,7 @@ __metadata:
     eslint-plugin-import: ^2.27.5
     eslint-plugin-jest: ^27.2.1
     eslint-plugin-prettier: ^4.0.0
+    expect-type: ^0.15.0
     fs: ^0.0.1-security
     jest: 29.3.1
     jest-pnp-resolver: ^1.2.3
@@ -18258,6 +18259,13 @@ __metadata:
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
   checksum: 1781d422e7edfa20009e2abda673cadb040a6037f0bd30fcd7357304f4f0c284afd420d7622722ca4a016f39b6d091841ab57b401c1f7e2e5131ac65b9f14fa1
+  languageName: node
+  linkType: hard
+
+"expect-type@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "expect-type@npm:0.15.0"
+  checksum: f5d3733bb593d9f7cf302b393e34b19389fb7022d72963815e9a847a9517b65201faef733dd9006bed9e200486d77204fd958c8d29ef58b466bed2da076fc0ba
   languageName: node
   linkType: hard
 

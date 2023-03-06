@@ -29,8 +29,8 @@ export class NaverStoreApi implements OnModuleInit {
   }
 
   /** 어플 실행 시 초기화 */
-  onModuleInit() {
-    this.setAccessToken();
+  async onModuleInit() {
+    await this.setAccessToken();
   }
 
   async setAccessToken() {

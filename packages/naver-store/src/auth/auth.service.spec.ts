@@ -1,6 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { expectTypeOf } from "expect-type";
 
 import { GlobalModule } from "src/global.module";
+import { GetAccessTokenResponse } from "src/naver-api/interfaces/naver-store-api.interface";
 
 import { AuthService } from "./auth.service";
 
@@ -17,6 +19,8 @@ describe("AuthService", () => {
   });
 
   it("should be defined", () => {
-    expect(service).toBeDefined();
+    expectTypeOf(
+      service.createToken()
+    ).resolves.toEqualTypeOf<GetAccessTokenResponse>();
   });
 });

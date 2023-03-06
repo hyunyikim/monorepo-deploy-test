@@ -4038,6 +4038,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:27.5.1"\
       ],\
       [\
+        "expect-type",\
+        "npm:0.15.0"\
+      ],\
+      [\
         "express",\
         "npm:4.18.1"\
       ],\
@@ -26379,6 +26383,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-import", "virtual:69be9317c653aa03a84847831a8f95fa11b84120ff7188a7e9504931f0154d27755a080dd3171cfeed292de408a1ab961fe73f37cca9dd14d23622ecf1f77c0f#npm:2.27.5"],\
             ["eslint-plugin-jest", "virtual:69be9317c653aa03a84847831a8f95fa11b84120ff7188a7e9504931f0154d27755a080dd3171cfeed292de408a1ab961fe73f37cca9dd14d23622ecf1f77c0f#npm:27.2.1"],\
             ["eslint-plugin-prettier", "virtual:69be9317c653aa03a84847831a8f95fa11b84120ff7188a7e9504931f0154d27755a080dd3171cfeed292de408a1ab961fe73f37cca9dd14d23622ecf1f77c0f#npm:4.0.0"],\
+            ["expect-type", "npm:0.15.0"],\
             ["fs", "npm:0.0.1-security"],\
             ["jest", "virtual:69be9317c653aa03a84847831a8f95fa11b84120ff7188a7e9504931f0154d27755a080dd3171cfeed292de408a1ab961fe73f37cca9dd14d23622ecf1f77c0f#npm:29.3.1"],\
             ["jest-pnp-resolver", "virtual:69be9317c653aa03a84847831a8f95fa11b84120ff7188a7e9504931f0154d27755a080dd3171cfeed292de408a1ab961fe73f37cca9dd14d23622ecf1f77c0f#npm:1.2.3"],\
@@ -34785,6 +34790,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-matcher-utils", "npm:29.4.3"],\
             ["jest-message-util", "npm:29.4.3"],\
             ["jest-util", "npm:29.4.3"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["expect-type", [\
+        ["npm:0.15.0", {\
+          "packageLocation": "./.yarn/cache/expect-type-npm-0.15.0-247c7bdf23-f5d3733bb5.zip/node_modules/expect-type/",\
+          "packageDependencies": [\
+            ["expect-type", "npm:0.15.0"]\
           ],\
           "linkType": "HARD"\
         }]\
