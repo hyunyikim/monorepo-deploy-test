@@ -76,7 +76,7 @@ function PartnersHomepageFooter() {
 						사업자등록번호 469-88-01884 | 통신판매업신고번호: 제
 						2021-서울강남-06170 호 | 대표: 박찬우
 						<br />
-						서울특별시 강남구 테헤란로 217, 오렌지플래닛 702
+						서울특별시 성동구 아차산로9길 21, 이레타워 2층
 						<br />
 						<a
 							href="https://guide.vircle.co.kr/policy/agreement_230213"
