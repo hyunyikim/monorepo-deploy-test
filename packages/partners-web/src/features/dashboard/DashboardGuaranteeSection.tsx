@@ -588,9 +588,8 @@ function DashboardGuaranteeSection({
 										)
 									) || 0}
 								</Typography>
-								건
 								{currentPeriod?.issuedGraph?.averageCount >= 1
-									? `, ${
+									? `건, ${
 											period === 'WEEKLY' ? '일' : '주'
 									  } 평균 ${
 											Math.round(
