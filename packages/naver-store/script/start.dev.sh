@@ -27,7 +27,7 @@ rimraf dist
 echo ">[$(date) BUILD TEST]" >> $LOG_POINT
 echo ">[$(date) BUILD START]" >> $LOG_POINT
 
-yarn build
+yarn build >> $LOG_POINT
 
 echo ">[$(date)] Kill All pm2 process]" >> $LOG_POINT
 
