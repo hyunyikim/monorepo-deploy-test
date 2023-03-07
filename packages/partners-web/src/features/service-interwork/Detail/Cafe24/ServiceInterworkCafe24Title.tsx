@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useMemo, useState, useEffect} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {useNavigate} from 'react-router-dom';
 
@@ -6,7 +6,7 @@ import {SelectChangeEvent, Stack, Typography} from '@mui/material';
 
 import {useOpen} from '@/utils/hooks';
 import {updateLeaveReason} from '@/api/cafe24.api';
-import {usePageView} from '@/utils';
+import {usePageView, sendAmplitudeLog} from '@/utils';
 import {Cafe24Interwork} from '@/@types';
 
 import {Button, Select, Dialog, TextField} from '@/components';
@@ -33,6 +33,10 @@ function ServiceInterworkCafe24Title({data: cafe24Interwork}: Props) {
 			<Button
 				data-tracking={`'cafe24_stratpopupview', {pv_title: '카페24 연동시작 팝업'}`}
 				onClick={() => {
+					sendAmplitudeLog('cafe24_linkservicedetail_install_click', {
+						button_title:
+							'연동하기 버튼 클릭시, 카페24 앱스토어로 이동',
+					});
 					window.open('https://store.cafe24.com/kr/apps/16145');
 				}}>
 				연동하기
@@ -51,6 +55,12 @@ function ServiceInterworkCafe24Title({data: cafe24Interwork}: Props) {
 			</Button>
 		);
 	}, [onOpen]);
+
+	useEffect(() => {
+		sendAmplitudeLog('cafe24_linkservicedetail_pv', {
+			pv_title: '카페24 주문연동 상세',
+		});
+	}, []);
 
 	return (
 		<>

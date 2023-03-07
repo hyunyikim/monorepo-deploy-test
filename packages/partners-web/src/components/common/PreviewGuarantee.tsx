@@ -843,7 +843,7 @@ const guaranteeSample = [
 	},
 ];
 
-export function ExamplePreviewGuarantee() {
+export function ExamplePreviewGuarantee({hasProfileLogo}) {
 	const [exampleIdx, setExampleIdx] = useState<number>(0);
 
 	const changeExample = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -854,9 +854,13 @@ export function ExamplePreviewGuarantee() {
 			guaranteeSample[Number(targetIdx)].name
 		) {
 			sendAmplitudeLog(
-				`guaranteesetting_example_popup_category_${String(
-					guaranteeSample[Number(targetIdx)].name
-				)}`,
+				!hasProfileLogo
+					? `first_guaranteesetting_example_popup_category_${String(
+							guaranteeSample[Number(targetIdx)].name
+					  )}`
+					: `guaranteesetting_example_popup_category_${String(
+							guaranteeSample[Number(targetIdx)].name
+					  )}`,
 				{
 					pv_title: '브랜드 개런티 예시보기 팝업노출',
 				}
@@ -867,9 +871,14 @@ export function ExamplePreviewGuarantee() {
 	};
 
 	useEffect(() => {
-		sendAmplitudeLog('guaranteesetting_example_popupview', {
-			pv_title: '브랜드 개런티 예시보기 팝업노출',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_example_popupview'
+				: 'guaranteesetting_example_popupview',
+			{
+				pv_title: '브랜드 개런티 예시보기 팝업노출',
+			}
+		);
 	}, []);
 
 	return (

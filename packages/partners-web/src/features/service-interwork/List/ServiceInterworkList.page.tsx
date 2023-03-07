@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import {useAsync} from 'react-use';
 import {useNavigate} from 'react-router-dom';
-import {usePageView} from '@/utils';
+import {usePageView, sendAmplitudeLog} from '@/utils';
 
 import {Box, Stack, Typography} from '@mui/material';
 
@@ -51,7 +51,11 @@ const interworkList: InterworkItem[] = [
 			</Box>
 		),
 		isLinked: false,
-		onClick: null,
+		onClick: () => {
+			sendAmplitudeLog('serviceadmin_cafe24_click', {
+				button_title: '카페24 주문연동 카드 클릭',
+			});
+		},
 	},
 	{
 		name: 'repair',
@@ -76,7 +80,11 @@ const interworkList: InterworkItem[] = [
 			</Box>
 		),
 		isLinked: false,
-		onClick: null,
+		onClick: () => {
+			sendAmplitudeLog('serviceadmin_repair_click', {
+				button_title: '수선신청 관리 카드 클릭',
+			});
+		},
 	},
 	{
 		name: 'kakao',
@@ -101,7 +109,11 @@ const interworkList: InterworkItem[] = [
 			</Box>
 		),
 		isLinked: false,
-		onClick: null,
+		onClick: () => {
+			sendAmplitudeLog('serviceadmin_kakao_click', {
+				button_title: '카카오 알림톡 카드 클릭',
+			});
+		},
 	},
 ];
 
@@ -136,21 +148,36 @@ function ServiceInterworkList() {
 			if (item?.name === 'cafe24') {
 				return {
 					...item,
-					onClick: () => navigate('/b2b/interwork/cafe24'),
+					onClick: () => {
+						sendAmplitudeLog('serviceadmin_cafe24_click', {
+							button_title: '카페24 주문연동 카드 클릭',
+						});
+						navigate('/b2b/interwork/cafe24');
+					},
 					isLinked: isCafe24Linked,
 				};
 			}
 			if (item?.name === 'repair') {
 				return {
 					...item,
-					onClick: () => navigate('/b2b/interwork/repair'),
+					onClick: () => {
+						sendAmplitudeLog('serviceadmin_repair_click', {
+							button_title: '수선신청 관리 카드 클릭',
+						});
+						navigate('/b2b/interwork/repair');
+					},
 					isLinked: isPartnershipLinked,
 				};
 			}
 			if (item?.name === 'kakao') {
 				return {
 					...item,
-					onClick: () => navigate('/b2b/interwork/kakao'),
+					onClick: () => {
+						sendAmplitudeLog('serviceadmin_kakao_click', {
+							button_title: '카카카오 알림톡 카드 클릭',
+						});
+						navigate('/b2b/interwork/kakao');
+					},
 					isLinked: isKakaoAlramLinked,
 				};
 			}

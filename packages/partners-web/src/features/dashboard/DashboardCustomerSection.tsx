@@ -550,6 +550,7 @@ function DashboardCustomerSection({
 			<SectionBox
 				sx={{
 					minWidth: '590px',
+					maxWidth: '590px',
 					minHeight: '400px',
 					maxHeight: '400px',
 					padding: 0,
