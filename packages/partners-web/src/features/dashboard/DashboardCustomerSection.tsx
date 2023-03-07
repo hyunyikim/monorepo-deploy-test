@@ -671,7 +671,7 @@ function DashboardCustomerSection({
 						<DataWithToolTipBox
 							data={{
 								title: '전송',
-								content: '고객에게 전송한 알림톡 건수 입니다.',
+								content: '고객에게 전송한 알림톡 건수입니다.',
 								count: guaranteeData[period]?.walletLink
 									?.confirmCount,
 								openState: tooltipState.send,
