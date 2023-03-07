@@ -113,7 +113,7 @@ import {
 	PayMethod,
 	PAYMENT_STATUS,
 	REFUND_STATUS,
-	CardCompanyCode,
+	CARD_COMPANY_CODE,
 } from './enum';
 
 export interface VAccountReqBody {
@@ -442,7 +442,7 @@ export interface Card {
 	/** 카드로 결제한 금액입니다.*/
 	amount: number;
 	/** 카드사 코드입니다. */
-	company: CardCompanyCode;
+	company: CARD_COMPANY_CODE;
 	/** 카드번호입니다. 번호의 일부는 마스킹 되어 있습니다. */
 	number: string;
 	/** 할부 개월 수 입니디. 일시불인 경우 0 입니다. */

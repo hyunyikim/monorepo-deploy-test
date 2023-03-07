@@ -40,7 +40,11 @@ import {GetToken, TokenInfo} from './getToken.decorator';
 import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
 import {HttpExceptionFilter} from './httpException.filter';
-import {PAYMENT_STATUS, PLAN_TYPE} from '../infrastructure/api-client';
+import {
+	getCardCompany,
+	PAYMENT_STATUS,
+	PLAN_TYPE,
+} from '../infrastructure/api-client';
 import {VircleCoreApi} from '../infrastructure/api-client/vircle-core.api';
 
 export class BillingInterface {
@@ -72,7 +76,7 @@ export class BillingInterface {
 					cardType: billing.card.cardType,
 					ownerType: billing.card.ownerType,
 					number: billing.card.number,
-					company: billing.card.company,
+					company: getCardCompany(billing.card.issuerCode),
 					companyCode: billing.card.issuerCode,
 			  }
 			: undefined;
