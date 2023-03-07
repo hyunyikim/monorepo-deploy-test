@@ -133,7 +133,10 @@ function CustomerInfoOverview({
 			title: '전송',
 			tooltipText: '고객에게 전송한 알림톡 건수입니다.',
 			rate: linkData?.confirmCount ? '100' : '0',
-			count: formatCommaNum(linkData?.confirmCount),
+			count: linkData?.linked
+				? formatCommaNum(linkData?.confirmCount)
+				: 0,
+			// count: linkData?.linked,
 			icon: icGreenSend,
 			openState: tooltipState.send,
 			toolTipHandler: () => toolTipHandler('send'),
@@ -146,7 +149,9 @@ function CustomerInfoOverview({
 						(linkData?.viewCount / linkData?.confirmCount) * 100
 				  )
 				: '0',
-			count: formatCommaNum(linkData?.viewCount),
+			count: linkData?.viewCount
+				? formatCommaNum(linkData?.viewCount)
+				: 0,
 			icon: icYellowView,
 			openState: tooltipState.view,
 			toolTipHandler: () => toolTipHandler('view'),
@@ -158,7 +163,7 @@ function CustomerInfoOverview({
 			rate: linkData?.linked
 				? Math.round((linkData?.linked / linkData?.confirmCount) * 100)
 				: '0',
-			count: formatCommaNum(linkData?.linked),
+			count: linkData?.linked ? formatCommaNum(linkData?.linked) : 0,
 			icon: icBlueChain,
 			openState: tooltipState.link,
 			toolTipHandler: () => toolTipHandler('link'),
@@ -321,7 +326,6 @@ function CustomerInfoOverview({
 						</Typography>
 					</Stack>
 
-					{/* ---------------------------- */}
 					<Stack
 						flexDirection="row"
 						justifyContent={'space-between'}
