@@ -146,8 +146,9 @@ export class ChangeBillingPlanHandler
 			// 월결제 -> 월결제 (즉시 변경)
 			if (
 				currentPlan.planType === PLAN_TYPE.MONTH &&
-				newPlan.planType === PLAN_TYPE.YEAR
+				newPlan.planType === PLAN_TYPE.MONTH
 			) {
+				console.log('### 월결제 -> 월결제 (즉시 변경) ####');
 				// 사용량 조회
 				const payload = {
 					from: DateTime.fromISO(
