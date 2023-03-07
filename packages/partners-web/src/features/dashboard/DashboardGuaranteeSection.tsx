@@ -89,6 +89,31 @@ function GuaranteeOverviewBox({
 		return;
 	};
 
+	const transformPriceForm = () => {
+		if (Math.abs(Number(difference)) > 100000000) {
+			const removeThousandPrice = Math.floor(
+				Math.abs(Math.abs(Number(difference)) / 10000)
+			);
+			const splitPrice = String(removeThousandPrice / 10000).split('.');
+
+			const over100M = splitPrice[0];
+			const Under100M = splitPrice[1];
+
+			if (over100M) {
+				if (Number(Under100M) === 0) {
+					/* 천만원 단위가 없을때는 억만 표시 */
+					return `${over100M}억`;
+				}
+				/* ~억 ~만 표시 */
+				return `${over100M}억 ${Under100M}만`;
+			}
+		} else if (Math.abs(Number(difference)) > 0) {
+			return formatCommaNum(Math.abs(Math.abs(Number(difference))));
+		} else {
+			return 0;
+		}
+	};
+
 	return (
 		<Box sx={{display: 'flex', gap: '12px', alignItems: 'center'}}>
 			<Box
@@ -135,7 +160,7 @@ function GuaranteeOverviewBox({
 										? '#F8434E'
 										: 'grey.300',
 							}}>
-							{formatCommaNum(Math.abs(Number(difference))) || 0}
+							{transformPriceForm(Number(difference))}
 							{title === '발급총액' ? '원' : '건'}
 						</Typography>
 
@@ -563,6 +588,7 @@ function DashboardGuaranteeSection({
 										)
 									) || 0}
 								</Typography>
+								건
 								{currentPeriod?.issuedGraph?.averageCount >= 1
 									? `, ${
 											period === 'WEEKLY' ? '일' : '주'

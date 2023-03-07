@@ -1,5 +1,6 @@
 const {ESBuildMinifyPlugin} = require('esbuild-loader');
 const MiniCssExtractionPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	mode: 'production',
@@ -20,5 +21,11 @@ module.exports = {
 			}),
 		],
 	},
-	plugins: [new MiniCssExtractionPlugin(), new ESBuildMinifyPlugin()],
+	plugins: [
+		new MiniCssExtractionPlugin(),
+		new ESBuildMinifyPlugin(),
+		new CopyPlugin({
+			patterns: [{from: 'public', to: ''}],
+		}),
+	],
 };
