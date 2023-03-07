@@ -58,7 +58,7 @@ jobs:
             - name: node 환경 설정
               uses: actions/setup-node@v3
               with:
-                  node-version: 19
+                  node-version: 16
 
             - name: aws 세팅
               uses: aws-actions/configure-aws-credentials@v1
