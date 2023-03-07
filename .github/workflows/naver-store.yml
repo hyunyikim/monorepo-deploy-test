@@ -52,21 +52,18 @@ jobs:
                 shell: bash
                 working-directory: ./packages/naver-store
         steps:
-            - name: git Checkout
-              uses: actions/checkout@v3
-
-            - name: node 환경 설정
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-
             - name: aws 세팅
               uses: aws-actions/configure-aws-credentials@v2
               with:
                   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: ap-northeast-2
-
+            - name: git Checkout
+              uses: actions/checkout@v3
+            - name: node 환경 설정
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18
             - name: 개발 서버에 배포 (aws ssm send-command)
               run: |
                   aws ssm send-command \
