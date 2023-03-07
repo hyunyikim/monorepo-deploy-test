@@ -18,4 +18,5 @@ export const CATEGORIES = {
 export const EXCEL_FILE_TYPE = [
 	'application/vnd.ms-excel',
 	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	'application/haansoftxlsx',
 ];
