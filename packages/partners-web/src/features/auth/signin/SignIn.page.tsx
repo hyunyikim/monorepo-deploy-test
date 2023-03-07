@@ -105,7 +105,7 @@ const Footer = () => {
 				2021-서울강남-06170 호 | 대표: 박찬우
 			</Typography>
 			<Typography textAlign="center" variant="caption2" color="grey.400">
-				서울특별시 강남구 테헤란로 217, 오렌지플래닛 702
+				서울특별시 성동구 아차산로9길 21, 이레타워 2층
 			</Typography>
 		</Stack>
 	);
