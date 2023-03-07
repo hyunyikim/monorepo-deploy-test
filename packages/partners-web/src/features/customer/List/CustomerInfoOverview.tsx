@@ -15,6 +15,7 @@ import {
 } from '@/@types/dashboard.types';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {formatCommaNum} from '@/utils';
 
 interface ProgressStateProps {
 	data: {
@@ -130,22 +131,22 @@ function CustomerInfoOverview({
 	const repairStateList = [
 		{
 			title: '전송',
-			tooltipText: '개런티 알림톡을 발송한 고객 수 입니다.',
+			tooltipText: '고객에게 전송한 알림톡 건수입니다.',
 			rate: linkData?.confirmCount ? '100' : '0',
-			count: linkData?.confirmCount,
+			count: formatCommaNum(linkData?.confirmCount),
 			icon: icGreenSend,
 			openState: tooltipState.send,
 			toolTipHandler: () => toolTipHandler('send'),
 		},
 		{
 			title: '조회',
-			tooltipText: '개런티 알림톡을 클릭해서 조회한 고객 수 입니다.',
+			tooltipText: '개런티 알림톡을 클릭해서 조회한 고객의 수 입니다.',
 			rate: linkData?.viewCount
 				? Math.round(
 						(linkData?.viewCount / linkData?.confirmCount) * 100
 				  )
 				: '0',
-			count: linkData?.viewCount,
+			count: formatCommaNum(linkData?.viewCount),
 			icon: icYellowView,
 			openState: tooltipState.view,
 			toolTipHandler: () => toolTipHandler('view'),
@@ -153,11 +154,11 @@ function CustomerInfoOverview({
 		{
 			title: '연동',
 			tooltipText:
-				'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객 수 입니다.',
+				'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객의 수 입니다.',
 			rate: linkData?.linked
 				? Math.round((linkData?.linked / linkData?.confirmCount) * 100)
 				: '0',
-			count: linkData?.linked,
+			count: formatCommaNum(linkData?.linked),
 			icon: icBlueChain,
 			openState: tooltipState.link,
 			toolTipHandler: () => toolTipHandler('link'),
@@ -288,71 +289,99 @@ function CustomerInfoOverview({
 						display: 'flex',
 						flexDirection: 'column',
 						justifyContent: 'space-between',
+						width: '100%',
 					}}>
-					<Typography
-						variant="h2"
-						sx={{
-							fontWeight: 700,
-							fontSize: '18px',
-							lineHeight: '145%',
-							color: 'grey.900',
-							marginBottom: '11px',
-						}}>
-						단골고객
-					</Typography>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							alignItems: 'center',
-							marginBottom: '4px',
-						}}>
-						<Typography
-							sx={{
-								fontWeight: 700,
-								fontSize: '21px',
-								lineHeight: '30px',
-								color: 'grey.900',
-							}}>
-							{customerData?.vip || 0}
-						</Typography>
-						<Typography
-							sx={{
-								fontWeight: 700,
-								fontSize: '13px',
-								lineHeight: '30px',
-								color: 'grey.900',
-							}}>
-							명
-						</Typography>
-					</Box>
-
 					<Stack
 						sx={{
-							fontWeight: 500,
-							fontSize: '14px',
-							lineHeight: '20px',
-							color: 'grey.400',
-							padding: '0px 6.5px',
-							height: '20px',
-							background: '#F3F3F5',
-							borderRadius: '64px',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+							marginBottom: '11px',
 						}}>
-						3개 이상 구매한 고객
+						<Typography
+							variant="h2"
+							sx={{
+								fontWeight: 700,
+								fontSize: '18px',
+								lineHeight: '145%',
+								color: 'grey.900',
+							}}>
+							단골고객
+						</Typography>
+
+						<Typography
+							variant="h2"
+							sx={{
+								fontWeight: 500,
+								fontSize: '13px',
+								lineHeight: '145%',
+								color: 'grey.300',
+							}}>
+							전체 기간
+						</Typography>
+					</Stack>
+
+					{/* ---------------------------- */}
+					<Stack
+						flexDirection="row"
+						justifyContent={'space-between'}
+						sx={{gap: '16px'}}>
+						<Box>
+							<Stack
+								sx={{width: '100%', height: '40px'}}
+								flexDirection="row"
+								alignItems={'flex-end'}
+								mb="4px">
+								<Typography
+									sx={{
+										fontWeight: 700,
+										fontSize: '21px',
+										lineHeight: '30px',
+										color: 'grey.900',
+									}}>
+									{customerData?.vip || 0}
+								</Typography>
+								<Typography
+									sx={{
+										fontWeight: 700,
+										fontSize: '13px',
+										lineHeight: '30px',
+										color: 'grey.900',
+									}}>
+									명
+								</Typography>
+							</Stack>
+
+							<Stack
+								sx={{
+									fontWeight: 500,
+									fontSize: '14px',
+									lineHeight: '20px',
+									color: 'grey.400',
+									padding: '0px 6.5px',
+									height: '20px',
+									background: '#F3F3F5',
+									borderRadius: '64px',
+								}}>
+								3개 이상 구매한 고객
+							</Stack>
+						</Box>
+
+						<Stack>
+							<Box
+								sx={{
+									width: '60px',
+									height: '60px',
+									img: {
+										width: '60px',
+										height: '60px',
+									},
+								}}>
+								<img src={imgVipStar} alt="yellow-star" />
+							</Box>
+						</Stack>
 					</Stack>
 				</Stack>
-
-				<Box>
-					<Box
-						sx={{
-							img: {
-								width: '60px',
-								height: '60px',
-							},
-						}}>
-						<img src={imgVipStar} alt="yellow-star" />
-					</Box>
-				</Box>
 			</SectionBox>
 		</Stack>
 	);
