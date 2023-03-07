@@ -28,6 +28,9 @@ echo ">[$(date) BUILD START]" >> $LOG_POINT
 
 yarn build >> $LOG_POINT 2>&1
 echo $? >> $LOG_POINT
+nest -v >> $LOG_POINT
+tsc -v  >> $LOG_POINT
+yarn -v >> $LOG_POINT
 
 echo ">[$(date)] Kill All pm2 process]" >> $LOG_POINT
 
