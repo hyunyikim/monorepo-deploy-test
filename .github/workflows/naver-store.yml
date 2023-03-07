@@ -30,7 +30,7 @@ jobs:
             - name: node 환경 설정
               uses: actions/setup-node@v3
               with:
-                  node-version: 19
+                  node-version: 16
 
             - name: 의존성 체크
               run: yarn
