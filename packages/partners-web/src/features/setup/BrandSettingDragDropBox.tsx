@@ -13,6 +13,7 @@ interface BrandSettingDragDropBoxProps {
 	accept: string;
 	width?: string;
 	height?: string;
+	hasProfileLogo?: string | boolean;
 	handleFile: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
@@ -21,6 +22,7 @@ function BrandSettingDragDropBox({
 	width,
 	height,
 	handleFile,
+	hasProfileLogo,
 }: BrandSettingDragDropBoxProps) {
 	const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,7 +49,9 @@ function BrandSettingDragDropBox({
 				onDrop={onDrop}
 				onClick={() =>
 					sendAmplitudeLog(
-						'guaranteesetting_cardcustom_popup_filesearch_click',
+						!hasProfileLogo
+							? 'first_guaranteesetting_cardcustom_popup_filesearch_click'
+							: 'guaranteesetting_cardcustom_popup_filesearch_click',
 						{button_title: '기기에서 검색'}
 					)
 				}

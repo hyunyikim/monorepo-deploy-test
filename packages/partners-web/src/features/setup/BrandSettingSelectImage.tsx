@@ -24,6 +24,7 @@ interface BrandSettingSelectImageProps {
 	cropConfig: CropConfigProps | null;
 	setCropConfig?: (value: CropImageProps | null) => void;
 	setMoveToAfterModalClose?: (_bool: boolean) => void;
+	hasProfileLogo?: string | boolean;
 }
 
 const MEGA_PER_BYTE = 1048576;
@@ -34,6 +35,7 @@ function BrandSettingSelectImage({
 	cropConfig,
 	setCropConfig,
 	setMoveToAfterModalClose,
+	hasProfileLogo,
 }: BrandSettingSelectImageProps) {
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 
@@ -80,6 +82,7 @@ function BrandSettingSelectImage({
 					width="auto"
 					// height='375px'
 					handleFile={handleFile}
+					hasProfileLogo={hasProfileLogo}
 				/>
 			)}
 		</>

@@ -788,9 +788,15 @@ export function InputFormSection({
 
 		reader.readAsDataURL(currentFile);
 
-		sendAmplitudeLog('guaranteesetting_logoupload_change', {
-			button_title: '로고 이미지 파일 변경',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_logoupload_change'
+				: 'guaranteesetting_logoupload_change',
+			{
+				button_title: '로고 이미지 파일 변경',
+			}
+		);
+
 		setBrandLogoError(false);
 	};
 
@@ -827,9 +833,14 @@ export function InputFormSection({
 	};
 
 	const addNewProductHandler = () => {
-		sendAmplitudeLog('guaranteesetting_infoplus_click', {
-			button_title: '상품정보 추가 클릭',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_infoplus_click'
+				: 'guaranteesetting_infoplus_click',
+			{
+				button_title: '상품정보 추가 클릭',
+			}
+		);
 
 		setProductInfoValue((pre) => ({
 			// ...pre,
@@ -881,9 +892,14 @@ export function InputFormSection({
 	 */
 	const handleCheckOutLinkClick = () => {
 		const centreUrl: string | '' = getValues('customerCenterUrl');
-		sendAmplitudeLog('guaranteesetting_cs_click', {
-			button_title: '고객센터로 이동',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_cs_click'
+				: 'guaranteesetting_cs_click',
+			{
+				button_title: '고객센터로 이동',
+			}
+		);
 		if (centreUrl) {
 			if (centreUrl.includes('http')) {
 				window.open(centreUrl);
@@ -927,9 +943,14 @@ export function InputFormSection({
 	const openCustomiseCardModal = () => {
 		const nftBackgroundImg = data?.nftBackgroundImg as string;
 
-		sendAmplitudeLog('guaranteesetting_cardcustom_click', {
-			button_title: '브랜드 카드제작 이미지 업로드 하기 클릭',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_cardcustom_click'
+				: 'guaranteesetting_cardcustom_click',
+			{
+				button_title: '브랜드 카드제작 이미지 업로드 하기 클릭',
+			}
+		);
 
 		setModalOption({
 			id: 'CustomiseGuranteeCard',
@@ -958,6 +979,7 @@ export function InputFormSection({
 					}}
 					setMoveToAfterModalClose={setMoveToAfterModalClose}
 					convertToBase64={base64Convertor}
+					hasProfileLogo={hasProfileLogo}
 				/>
 			),
 			align: 'left',
@@ -969,9 +991,14 @@ export function InputFormSection({
 	const openPreviewGuaranteeModal = () => {
 		const values = getValues();
 
-		sendAmplitudeLog('guaranteesetting_preview_guide_click', {
-			button_title: '미리보기 클릭',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_preview_guide_click'
+				: 'guaranteesetting_preview_guide_click',
+			{
+				button_title: '미리보기 클릭',
+			}
+		);
 
 		setModalOption({
 			id: 'exampleGuranteeCard',
@@ -992,15 +1019,17 @@ export function InputFormSection({
 						}}
 						greyBoxAmplitude={{
 							return: {
-								eventName:
-									'guaranteesetting_preview_guide_return_info_click',
+								eventName: !hasProfileLogo
+									? 'first_guaranteesetting_preview_guide_return_info_click'
+									: 'guaranteesetting_preview_guide_return_info_click',
 								eventPropertyKey: 'button_title',
 								eventPropertyValue:
 									'미리보기 내 교환/반품 안내 드롭다운 메뉴 클릭',
 							},
 							as: {
-								eventName:
-									'guaranteesetting_preview_guide_as_info_click',
+								eventName: !hasProfileLogo
+									? 'first_guaranteesetting_preview_guide_as_info_click'
+									: 'guaranteesetting_preview_guide_as_info_click',
 								eventPropertyKey: 'button_title',
 								eventPropertyValue:
 									'미리보기 내 A/S 드롭다운 메뉴 클릭',
@@ -1021,28 +1050,42 @@ export function InputFormSection({
 	};
 
 	const openExampleModal = () => {
-		sendAmplitudeLog('guaranteesetting_example_click', {
-			button_title: '브랜드 개런티 예시보기 클릭',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_example_click'
+				: 'guaranteesetting_example_click',
+			{
+				button_title: '브랜드 개런티 예시보기 클릭',
+			}
+		);
 
 		setModalOption({
 			id: 'exampleGuranteeCard',
 			isOpen: true,
 			title: '브랜드 개런티 예시',
-			children: <ExamplePreviewGuarantee />,
+			children: (
+				<ExamplePreviewGuarantee hasProfileLogo={hasProfileLogo} />
+			),
 			width: '544px',
 			buttonTitle: '확인',
 			align: 'center',
 			amplitudeInfo: {
-				eventName: 'guaranteesetting_example_popup_close',
+				eventName: !hasProfileLogo
+					? 'first_guaranteesetting_example_popup_close'
+					: 'guaranteesetting_example_popup_close',
 				eventPropertyKey: 'button_title',
 				eventPropertyValue: 'X 클릭 시 팝업 닫힘',
 			},
 			onClickButton: () => {
 				if (typeof setIsOpen === 'function') {
-					sendAmplitudeLog('guaranteesetting_example_popup_confirm', {
-						button_title: '확인 클릭 시 팝업 닫힘',
-					});
+					sendAmplitudeLog(
+						!hasProfileLogo
+							? 'first_guaranteesetting_example_popup_confirm'
+							: 'guaranteesetting_example_popup_confirm',
+						{
+							button_title: '확인 클릭 시 팝업 닫힘',
+						}
+					);
 
 					setIsOpen(false);
 				}
@@ -1158,7 +1201,9 @@ export function InputFormSection({
 			useCloseIcon: true,
 			onCloseFunc: () => {
 				sendAmplitudeLog(
-					'guaranteesetting_finished_popup_close_click',
+					!hasProfileLogo
+						? 'first_guaranteesetting_finished_popup_close_click'
+						: 'guaranteesetting_finished_popup_close_click',
 					{button_title: '팝업 닫기'}
 				);
 				setTimeout(() => {
@@ -1175,8 +1220,9 @@ export function InputFormSection({
 						color="black"
 						variant="outlined"
 						taxoInfo={{
-							eventName:
-								'guaranteesetting_finished_popup_cafe24_click',
+							eventName: !hasProfileLogo
+								? 'first_guaranteesetting_finished_popup_cafe24_click'
+								: 'guaranteesetting_finished_popup_cafe24_click',
 							eventPropertyValue: 'cafe24 연동하기 클릭',
 						}}
 						onClick={() => {
@@ -1194,8 +1240,9 @@ export function InputFormSection({
 						color="black"
 						variant="contained"
 						taxoInfo={{
-							eventName:
-								'guaranteesetting_finished_popup_guarantee_click',
+							eventName: !hasProfileLogo
+								? 'first_guaranteesetting_finished_popup_guarantee_click'
+								: 'guaranteesetting_finished_popup_guarantee_click',
 							eventPropertyValue: '개런티 발급하기 클릭',
 						}}
 						onClick={() => {
@@ -1321,9 +1368,14 @@ export function InputFormSection({
 		if (!hasProfileLogo) {
 			/* 재설정일때는 저장없이 그냥 나가기 */
 			/* 최초일때만, 로컬에 데이터 저장 */
-			sendAmplitudeLog('guaranteesetting_save_click', {
-				button_title: '저장 및 나가기',
-			});
+			sendAmplitudeLog(
+				!hasProfileLogo
+					? 'first_guaranteesetting_save_click'
+					: 'guaranteesetting_save_click',
+				{
+					button_title: '저장 및 나가기',
+				}
+			);
 
 			localStorage.setItem(`hasInputDataSaved=${email}`, 'true');
 			Object.keys(values).forEach((key) => {
@@ -1356,9 +1408,14 @@ export function InputFormSection({
 				localStorage.setItem(`cafe24state=${email}`, queryData.state);
 			}
 		} else {
-			sendAmplitudeLog('guaranteesetting_save_click', {
-				button_title: '나가기',
-			});
+			sendAmplitudeLog(
+				!hasProfileLogo
+					? 'first_guaranteesetting_save_click'
+					: 'guaranteesetting_save_click',
+				{
+					button_title: '나가기',
+				}
+			);
 		}
 
 		setTimeout(() => {
@@ -1482,9 +1539,14 @@ export function InputFormSection({
 	}, [data, isLoading, location, setFocus]);
 
 	useEffect(() => {
-		sendAmplitudeLog('guaranteesetting_pv', {
-			pv_title: '개런티 설정화면 진입',
-		});
+		sendAmplitudeLog(
+			!hasProfileLogo
+				? 'first_guaranteesetting_pv'
+				: 'guaranteesetting_pv',
+			{
+				pv_title: '개런티 설정화면 진입',
+			}
+		);
 	}, []);
 
 	if (isLoading) {
@@ -1614,7 +1676,9 @@ export function InputFormSection({
 							<CapsuleButton
 								onClick={() => {
 									sendAmplitudeLog(
-										'guaranteesetting_guide_click',
+										!hasProfileLogo
+											? 'first_guaranteesetting_guide_click'
+											: 'guaranteesetting_guide_click',
 										{
 											button_title:
 												'이용가이드 링크로 이동',
@@ -1658,7 +1722,9 @@ export function InputFormSection({
 								onChange={(e) => handleAttachFile(e)}
 								onClick={() => {
 									sendAmplitudeLog(
-										'guaranteesetting_logoupload_click',
+										!hasProfileLogo
+											? 'first_guaranteesetting_logoupload_click'
+											: 'guaranteesetting_logoupload_click',
 										{
 											button_title:
 												'로고 이미지 파일 업로드',
@@ -1750,7 +1816,9 @@ export function InputFormSection({
 								linkTitle={'연결 확인하기'}
 								onLinkClick={() => {
 									sendAmplitudeLog(
-										'guaranteesetting_cs_click',
+										!hasProfileLogo
+											? 'first_guaranteesetting_cs_click'
+											: 'guaranteesetting_cs_click',
 										{
 											button_title: '고객센터로 이동',
 										}
@@ -2060,7 +2128,18 @@ export function InputFormSection({
 												textDecoration: 'underline',
 												cursor: 'pointer',
 											}}
-											onClick={openCustomizedCardDesign}>
+											onClick={() => {
+												sendAmplitudeLog(
+													!hasProfileLogo
+														? 'first_guaranteesetting_cardcustom_popup_guide_click'
+														: 'guaranteesetting_cardcustom_popup_guide_click',
+													{
+														button_title:
+															'이미지 제작 가이드 링크로 이동',
+													}
+												);
+												openCustomizedCardDesign();
+											}}>
 											가이드보기
 										</Typography>
 									</BulletListStyle>
@@ -2165,7 +2244,9 @@ export function InputFormSection({
 									type="submit"
 									onClick={() => {
 										sendAmplitudeLog(
-											'guaranteesetting_settingconfirm_click',
+											!hasProfileLogo
+												? 'first_guaranteesetting_settingconfirm_click'
+												: 'guaranteesetting_settingconfirm_click',
 											{
 												button_title: hasProfileLogo
 													? '수정 완료'

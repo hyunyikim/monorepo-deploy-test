@@ -27,6 +27,7 @@ import ServiceInterworkDetailTitle from '@/features/service-interwork/Detail/com
 import ServiceInterworkDetailContent from '@/features/service-interwork/Detail/common/ServiceInterworkDetailContent';
 import {getUserPricePlan} from '@/api/payment.api';
 import {isPlanOnSubscription} from '@/data';
+import {sendAmplitudeLog} from '@/utils';
 
 type CurrentPlanType = {
 	isExpired: boolean;
@@ -151,6 +152,10 @@ function ServiceInterworkRepair() {
 		return (
 			<Button
 				onClick={() => {
+					sendAmplitudeLog('repair_linkservicedetail_install_click', {
+						button_title: '연동하기 클릭',
+					});
+
 					if (isExpired) {
 						openPricePlanModal();
 					} else {
@@ -168,10 +173,26 @@ function ServiceInterworkRepair() {
 									),
 									showBottomCloseButton: true,
 									closeButtonValue: '닫기',
+									onCloseFunc: () => {
+										sendAmplitudeLog(
+											'repair_linkservicedetail_installed_popup_close_click',
+											{
+												button_title: '닫기 클릭',
+											}
+										);
+									},
 									buttons: (
 										<Button
 											color="black"
 											onClick={() => {
+												sendAmplitudeLog(
+													'repair_linkservicedetail_installed_popup_setting_click',
+													{
+														button_title:
+															'개런티 설정으로 이동 클릭',
+													}
+												);
+
 												let url = '/setup/guarantee';
 												if (
 													isGuaranteeSettingCompleted
@@ -190,6 +211,12 @@ function ServiceInterworkRepair() {
 										</Button>
 									),
 								});
+								sendAmplitudeLog(
+									'repair_linkservicedetail_installed_popupview',
+									{
+										pv_title: '연동완료 팝업 진입',
+									}
+								);
 								// }
 							} catch (e) {
 								onOpenError();
@@ -213,6 +240,14 @@ function ServiceInterworkRepair() {
 				color="grey-100"
 				variant="outlined"
 				onClick={() => {
+					sendAmplitudeLog(
+						'repair_linkservicedetail_uninstall_click',
+						{button_title: '연동해제 클릭'}
+					);
+					sendAmplitudeLog(
+						'repair_linkservicedetail_uninstall_popupview',
+						{pv_title: '연동해제 팝업 노출'}
+					);
 					onOpenMessageDialog({
 						title: '수선신청 관리를 연동 해제하시겠습니까?',
 						message: (
@@ -228,6 +263,10 @@ function ServiceInterworkRepair() {
 							<Button
 								color="black"
 								onClick={() => {
+									sendAmplitudeLog(
+										'repair_linkservicedetail_uninstall_popup_confirm_click',
+										{button_title: '연동해제 클릭'}
+									);
 									(async () => {
 										try {
 											await uninstallServiceInterworkMutation.mutateAsync();
@@ -250,6 +289,12 @@ function ServiceInterworkRepair() {
 			</Button>
 		);
 	}, [onOpenMessageDialog, onOpenError, uninstallServiceInterworkMutation]);
+
+	useEffect(() => {
+		sendAmplitudeLog('repair_linkservicedetail_pv', {
+			pv_title: '수선신청 관리 페이지 진입',
+		});
+	}, []);
 
 	if (isLoading) {
 		return <></>;
