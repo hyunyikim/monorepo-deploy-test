@@ -14,17 +14,16 @@ ssh-add /root/.ssh/vircle_deploy_key;
 
 cd /root/vircle/packages/naver-store
 
+echo ">[$(date) DELETE BUILD]" >> $LOG_POINT
+
+rimraf dist
+
 echo ">[$(date) PULL LATEST SOURCE FROM GITHUB]" >> $LOG_POINT
 
 git pull >>  $LOG_POINT
 
 yarn
 
-echo ">[$(date) DELETE BUILD]" >> $LOG_POINT
-
-rimraf dist
-
-echo ">[$(date) BUILD TEST]" >> $LOG_POINT
 echo ">[$(date) BUILD START]" >> $LOG_POINT
 
 yarn build >> $LOG_POINT
