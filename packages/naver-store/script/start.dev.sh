@@ -26,7 +26,7 @@ yarn
 
 echo ">[$(date) BUILD START]" >> $LOG_POINT
 
-yarn build >> $LOG_POINT
+yarn workspace @vircle/naver-store build >> $LOG_POINT
 
 echo ">[$(date)] Kill All pm2 process]" >> $LOG_POINT
 
