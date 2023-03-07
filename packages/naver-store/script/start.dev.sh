@@ -10,9 +10,9 @@ echo $LOG_POINT
 echo ">[$(date) START DEPLOY BY USER : $(whoami)]" >>  $LOG_POINT
 
 eval `ssh-agent -s`;
-ssh-add ~/.ssh/vircle_deploy_key;
+ssh-add /root/.ssh/vircle_deploy_key;
 
-cd ~/vircle/packages/naver-store
+cd /root/vircle/packages/naver-store
 
 echo ">[$(date) PULL LATEST SOURCE FROM GITHUB]" >> $LOG_POINT
 
@@ -35,6 +35,6 @@ yarn pm2 kill
 
 echo ">[$(date)] Application Run by pm2]" >> $LOG_POINT
 
-NODE_ENV=development yarn pm2 start --name naver-store dist/src/main.js >> $LOG_POINT
+NODE_ENV=development yarn pm2 start --name NAVER-STORE dist/src/main.js >> $LOG_POINT
 
 echo "[$(date)] DONE DEPLOY]" >> $LOG_POINT

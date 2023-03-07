@@ -72,7 +72,7 @@ jobs:
                   aws ssm send-command \
                     --document-name "AWS-RunShellScript" \
                     --targets '[{"Key":"InstanceIds","Values":["i-0234a0bcb3f2ab70d"]}]' \
-                    --parameters '{"commands":[ "#!/bin/bash","cd ~/vircle/packages/naver-store", "bash ./script/start.dev.sh"]}'
+                    --parameters '{"commands":[ "#!/bin/bash","cd /root/vircle/packages/naver-store", "bash /root/vircle/packages/naver-store/script/start.dev.sh"]}'
 
     # deploy_on_prod:
     #     if: ${{ github.ref_name == 'main' && github.event_name == 'push'  }}

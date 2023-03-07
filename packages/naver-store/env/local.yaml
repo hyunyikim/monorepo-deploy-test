@@ -8,9 +8,17 @@ naver:
     baseURL: https://sandbox-api.commerce.naver.com/partner
 aws:
   region: ap-northeast-2
+  dynamodb:
+    interwork:
+      tableName: dev_interwork_naver_store
+    guarantee:
+      tableName: dev_guarantee_naver_store
 sentry:
   dsn: https://7bbe13b070864e0e8d62e60a1b405bc1@o1107902.ingest.sentry.io/4504734609571840
   serverName: naver-store
 talktalk:
   http:
     baseURL: https://talk.naver.com
+vircle-api:
+  http:
+    baseURL: https://dev-api.vircle.co.kr

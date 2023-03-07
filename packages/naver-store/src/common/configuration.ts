@@ -27,10 +27,17 @@ export class NaverConfig {
   @IsObject()
   http: HttpModuleOptions;
 }
+export class DynamoDBConfig {
+  tableName: string;
+}
 
 export class AwsConfig {
   @IsString()
   region: string;
+
+  dynamodb: {
+    [dbName: string]: DynamoDBConfig;
+  };
 }
 export class Config {
   @IsEnum(ENV)

@@ -1,11 +1,15 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { lastValueFrom } from "rxjs";
 import { hashSync } from "bcryptjs";
+import { DateTime } from "luxon";
 
 import { NaverConfig } from "src/common/configuration";
 import {
+  URL_GET_CHANNEL_PRODUCT_LIST,
+  URL_GET_ORDER_LIST,
+  URL_GET_PRODUCT_LIST,
   URL_GET_SELLER_CHANNELS,
   URL_REQUEST_ACCESS_TOKEN,
 } from "src/common/path";
@@ -16,7 +20,7 @@ import {
 } from "./interfaces/naver-store-api.interface";
 
 @Injectable()
-export class NaverStoreApi implements OnModuleInit {
+export class NaverStoreApi {
   constructor(private config: ConfigService, private http: HttpService) {}
 
   private _naverToken = "";
@@ -28,12 +32,12 @@ export class NaverStoreApi implements OnModuleInit {
     return this._naverToken;
   }
 
-  /** 어플 실행 시 초기화 */
-  async onModuleInit() {
-    await this.setAccessToken();
-  }
+  // /** 어플 실행 시 초기화 */
+  // async onModuleInit() {
+  //   await this.generateToken(null);
+  // }
 
-  async setAccessToken() {
+  async generateToken(accountId: string) {
     const naver = this.config.getOrThrow<NaverConfig>("naver");
     const { auth } = naver;
     const { id, secret } = auth;
@@ -46,11 +50,9 @@ export class NaverStoreApi implements OnModuleInit {
 
     const { data } = await lastValueFrom(
       this.http.post<GetAccessTokenResponse>(
-        URL_REQUEST_ACCESS_TOKEN(id, date.getTime(), hashed)
+        URL_REQUEST_ACCESS_TOKEN(id, date.getTime(), hashed, accountId)
       )
     );
-
-    this.naverToken = data.access_token;
 
     return data;
   }
@@ -59,10 +61,67 @@ export class NaverStoreApi implements OnModuleInit {
     return this.naverToken;
   }
 
-  async getSellerChannels() {
+  async getSellerChannels(token: string) {
     const { data } = await lastValueFrom(
       this.http.get<GetSellerChannelsResponse>(URL_GET_SELLER_CHANNELS, {
-        headers: { Authorization: `Bearer ${this.naverToken}` },
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    );
+
+    return data;
+  }
+
+  async getChannelProductList(channelId: number, token: string) {
+    return await this.requestGet(
+      URL_GET_CHANNEL_PRODUCT_LIST(channelId),
+      token
+    );
+  }
+
+  async getOrderList(token: string) {
+    return await this.requestGet(
+      `${URL_GET_ORDER_LIST}?lastChangedFrom=${DateTime.now()
+        .minus({ months: 1 })
+        .toISO()}`,
+      token
+    );
+  }
+
+  /**
+   * 상품 리스트 조회
+   * @link https://sandbox-api.commerce.naver.com/partner#tag/%EC%83%81%ED%92%88-%EB%AA%A9%EB%A1%9D/operation/search.product
+   */
+  async getProductList(token: string, accountId: string) {
+    return await this.requestPost(
+      URL_GET_PRODUCT_LIST,
+      {
+        searchKeywordType: "SELLER_CODE",
+        sellerManagementCode: accountId,
+        productStatusTypes: ["SALE"],
+        size: 1000,
+        orderType: "NO",
+      },
+      token
+    );
+  }
+
+  private async requestPost<T = Record<string, any>>(
+    url: string,
+    body: T,
+    token: string
+  ) {
+    const { data } = await lastValueFrom(
+      this.http.post<T>(url, body, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    );
+    return data;
+  }
+
+  private async requestGet<T>(url: string, token: string) {
+    const { data } = await lastValueFrom(
+      this.http.get<T>(url, {
+        headers: { Authorization: `Bearer ${token}` },
       })
     );
 

@@ -12,3 +12,10 @@ export const URL_REQUEST_ACCESS_TOKEN = (
 };
 
 export const URL_GET_SELLER_CHANNELS = "/v1/seller/channels";
+export const URL_GET_ORDER_LIST =
+  "/v1/pay-order/seller/product-orders/last-changed-statuses";
+
+export const URL_GET_PRODUCT_LIST = "/v1/products/search";
+
+export const URL_GET_CHANNEL_PRODUCT_LIST = (channelId: number) =>
+  `/v2/products/channel-products/${channelId}`;
