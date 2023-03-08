@@ -1,38 +1,38 @@
 import {
 	Body,
-	Query,
 	Controller,
 	Delete,
 	Get,
-	Post,
-	Patch,
-	UseGuards,
-	Param,
-	UseFilters,
 	Inject,
+	Param,
+	Patch,
+	Post,
+	Query,
+	UseFilters,
+	UseGuards,
 } from '@nestjs/common';
 import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {
-	RegisterBillingBodyDTO,
 	ChangeBillingPlanBodyDTO,
-	RegisterFreeBillingBodyDTO,
 	CustomerKeyDTO,
+	RegisterBillingBodyDTO,
 	RegisterCardBodyDTO,
+	RegisterFreeBillingBodyDTO,
 } from './dto';
 import {
-	RegisterBillingCommand,
-	UnregisterBillingCommand,
-	DeleteBillingCommand,
 	ChangeBillingPlanCommand,
-	RegisterFreeBillingCommand,
-	RegisterCardCommand,
+	DeleteBillingCommand,
 	DeleteCardCommand,
+	RegisterBillingCommand,
+	RegisterCardCommand,
+	RegisterFreeBillingCommand,
+	UnregisterBillingCommand,
 } from '../application/command';
 import {
 	FindBillingByPartnerTokenQuery,
+	FindPaymentByOrderIdQuery,
 	FindPaymentsQuery,
 	FindPlanQuery,
-	FindPaymentByOrderIdQuery,
 } from '../application/query';
 import {BillingProps, PaymentProps, PricePlanProps} from '../domain';
 import {JwtAuthGuard} from './guards/jwt-auth.guard';
@@ -40,7 +40,11 @@ import {GetToken, TokenInfo} from './getToken.decorator';
 import {DateTime} from 'luxon';
 import {FindPaymentsQueryDto} from './dto/find-payments.query.dto';
 import {HttpExceptionFilter} from './httpException.filter';
-import {PAYMENT_STATUS, PLAN_TYPE} from '../infrastructure/api-client';
+import {
+	getCardCompany,
+	PAYMENT_STATUS,
+	PLAN_TYPE,
+} from '../infrastructure/api-client';
 import {VircleCoreApi} from '../infrastructure/api-client/vircle-core.api';
 
 export class BillingInterface {
@@ -72,7 +76,7 @@ export class BillingInterface {
 					cardType: billing.card.cardType,
 					ownerType: billing.card.ownerType,
 					number: billing.card.number,
-					company: billing.card.company,
+					company: getCardCompany(billing.card.issuerCode),
 					companyCode: billing.card.issuerCode,
 			  }
 			: undefined;
@@ -109,10 +113,11 @@ export class PaymentSummaryInterface {
 		this.displayOrderId = tempOrderId[tempOrderId.length - 1];
 		this.orderId = payment.orderId;
 		this.planName = payment.pricePlan.planName;
-		this.payTotalPrice = payment.totalAmount;
+		this.payTotalPrice =
+			payment.status === PAYMENT_STATUS.DONE ? payment.totalAmount : 0;
 		this.payPrice = payment.suppliedAmount;
 		this.payVat = payment.vat;
-		this.payStatus = payment.status; // TODO: 결제 실패건 처리 시 변경
+		this.payStatus = payment.status;
 		this.startDate = DateTime.fromISO(payment.approvedAt).toISO();
 		this.expireDate = payment.expiredAt
 			? DateTime.fromISO(payment.expiredAt).toISO()

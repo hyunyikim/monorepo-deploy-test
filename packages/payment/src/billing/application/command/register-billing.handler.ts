@@ -297,7 +297,14 @@ export class RegisterCardHandler
 				...cardInfo,
 			});
 
-		// 빌링 생성 (기존 구독 정보는 유지)
+		// 기존 구독정보 결제실패 5회 초과된 경우 다시 결제를 시도하도록 다음 결제정보 초기화
+		if (prevBillingProps?.paymentFailedCount) {
+			prevBillingProps.nextPricePlan = prevBillingProps.pricePlan;
+			prevBillingProps.nextPaymentDate = DateTime.now().toISO();
+			prevBillingProps.planExpireDate = undefined;
+		}
+
+		// 빌링 생성
 		const newBillingProps = {
 			...tossBilling,
 			...(prevBillingProps && {
@@ -309,6 +316,7 @@ export class RegisterCardHandler
 				nextPricePlan: prevBillingProps.nextPricePlan,
 				pausedAt: prevBillingProps.pausedAt,
 			}),
+			paymentFailedCount: 0,
 			partnerIdx: token.partnerIdx,
 			pricePlan: prevBillingProps?.pricePlan || new PricePlan(),
 			paymentEmail: cardInfo.customerEmail,
