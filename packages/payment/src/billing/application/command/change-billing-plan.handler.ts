@@ -95,11 +95,7 @@ export class ChangeBillingPlanHandler
 		////////////////////
 		// 상위 플랜으로 변경
 		////////////////////
-		if (
-			!isFree &&
-			!isCanceled &&
-			currentPlan.planLevel < newPlan.planLevel
-		) {
+		if (!isFree && currentPlan.planLevel < newPlan.planLevel) {
 			// 월결제 -> 연결제 (변경 예약)
 			if (
 				currentPlan.planType === PLAN_TYPE.MONTH &&
