@@ -20,6 +20,7 @@ import {
 	blackCloseBtn,
 	blackCloseBtn2x,
 } from '@/assets/images/homepage/index';
+import AtagComponent from '@/components/atoms/AtagComponent';
 
 interface openEmailModalProps {
 	openEmailModal?(): void;
@@ -73,11 +74,12 @@ function HomepageHeader({
 				sendAmplitudeLog('homepage_dashboard_click', {
 					button_title: '도입문의 페이지 이동',
 				});
-				break;
+				return;
 
 			default:
 				break;
 		}
+
 		if (typeof path === 'string') {
 			navigate(`/${path}`);
 		}
@@ -177,12 +179,14 @@ function HomepageHeader({
 								가격안내
 							</li>
 
-							<li
-								className="header_list"
-								data-path="inquiry"
-								onClick={goToPage}>
-								도입문의
-							</li>
+							<AtagComponent url="https://vircle.imweb.me/inquiry">
+								<li
+									className="header_list"
+									data-path="inquiry"
+									onClick={goToPage}>
+									도입문의
+								</li>
+							</AtagComponent>
 						</ul>
 					</ul>
 

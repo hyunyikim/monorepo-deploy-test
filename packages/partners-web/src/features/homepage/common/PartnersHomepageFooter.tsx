@@ -71,7 +71,7 @@ function PartnersHomepageFooter() {
 
 				<div className="company_information_section">
 					<div className="company_information_text">
-						C 2022 Mass Adoption Corp.
+						C 2022 Mass Adoption Inc.
 						<br />
 						사업자등록번호 469-88-01884 | 통신판매업신고번호: 제
 						2021-서울강남-06170 호 | 대표: 박찬우

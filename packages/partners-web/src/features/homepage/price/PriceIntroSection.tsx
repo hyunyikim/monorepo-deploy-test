@@ -17,6 +17,7 @@ import {
 import {useModalStore} from '@/stores';
 import {getPricePlanList} from '@/api/payment.api';
 import {PricePlan, PlanType} from '@/@types';
+import AtagComponent from '@/components/atoms/AtagComponent';
 
 type PricePlanCard = {
 	mainColor: string;
@@ -678,9 +679,9 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 			sendAmplitudeLog(`homepage_pricing_inquiry${_location}_click`, {
 				button_title: '도입문의 버튼 클릭',
 			});
-			setTimeout(() => {
-				navigate('/inquiry');
-			}, 200);
+			// setTimeout(() => {
+			// 	navigate('/inquiry');
+			// }, 200);
 		}
 	};
 	const openPlanInfoModal = () => {
@@ -758,10 +759,13 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 							30일 무료 체험 시작하기
 						</GradientButton>
 
-						<CapsuleButton
-							onClick={() => openIntroductionInquiryModal('top')}>
-							도입 문의하기
-						</CapsuleButton>
+						<AtagComponent url="https://vircle.imweb.me/inquiry">
+							<CapsuleButton
+							// onClick={() => openIntroductionInquiryModal('top')}
+							>
+								도입 문의하기
+							</CapsuleButton>
+						</AtagComponent>
 					</ButtonBoxStyle>
 				</TitleArea>
 
@@ -826,24 +830,29 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 							)
 						)}
 
-						<PricePlanBoxStyle
-							mainColor="blue"
-							onClick={() => openIntroductionInquiryModal('mid')}>
-							<img
-								src={imgBlueCheckTick}
-								srcSet={`${imgBlueCheckTick} 1x, ${imgBlueCheckTick2x} 2x`}
-								alt="check tick"
-							/>
-							<PriceInnerFlexBoxStyle>
-								<h4>엔터프라이즈</h4>
-								<p>발급량 1,000개 초과</p>
-							</PriceInnerFlexBoxStyle>
-							<PriceInnerPriceFlexBoxStyle>
-								<h6>별도협의</h6>
-							</PriceInnerPriceFlexBoxStyle>
+						<AtagComponent
+							url="https://vircle.imweb.me/inquiry"
+							sx={{width: '100%'}}>
+							<PricePlanBoxStyle
+								mainColor="blue"
+								// onClick={() => openIntroductionInquiryModal('mid')}
+							>
+								<img
+									src={imgBlueCheckTick}
+									srcSet={`${imgBlueCheckTick} 1x, ${imgBlueCheckTick2x} 2x`}
+									alt="check tick"
+								/>
+								<PriceInnerFlexBoxStyle>
+									<h4>엔터프라이즈</h4>
+									<p>발급량 1,000개 초과</p>
+								</PriceInnerFlexBoxStyle>
+								<PriceInnerPriceFlexBoxStyle>
+									<h6>별도협의</h6>
+								</PriceInnerPriceFlexBoxStyle>
 
-							<button>도입문의</button>
-						</PricePlanBoxStyle>
+								<button>도입문의</button>
+							</PricePlanBoxStyle>
+						</AtagComponent>
 					</PriceBoxStyle>
 
 					<PriceTaxTextStyle>
