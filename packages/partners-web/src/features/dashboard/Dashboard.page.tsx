@@ -31,6 +31,7 @@ import {useGetPartnershipInfo, useModalStore} from '@/stores';
 import NoticeModal from './common/NoticeModal';
 import {dashboardDateStack, sendAmplitudeLog} from '@/utils';
 import DashboardSettingHelper from '@/features/dashboard/DashboardSettingHelper';
+import DashboardCheckPaymentModal from '@/features/dashboard/DashboardCheckPaymentModal';
 
 function Dashboard() {
 	const theme = useTheme();
@@ -132,50 +133,50 @@ function Dashboard() {
 		}
 	}, [periodState, partnershipData /* location */]);
 
-	useEffect(() => {
-		if (partnershipData && partnershipData?.companyName) {
-			const noMoreNoticePopup = localStorage.getItem(
-				`230213_notice_${partnershipData?.companyName}`
-			);
+	// useEffect(() => {
+	// 	if (partnershipData && partnershipData?.companyName) {
+	// 		const noMoreNoticePopup = localStorage.getItem(
+	// 			`230213_notice_${partnershipData?.companyName}`
+	// 		);
 
-			if (!noMoreNoticePopup || noMoreNoticePopup !== 'true') {
-				setModal({
-					isOpen: true,
-					title: '버클 서비스 이용약관 및 개인정보처리방침 개정 안내',
-					titlePadding: '40px 32px',
-					children: <NoticeModal closeModal={closeNoticeModal} />,
-					buttonTitle: '',
-					maxWidth: '900px',
-					width: '100%',
-					align: 'center',
-					titleAlign: 'left',
-					showCloseButton: false,
-					sx: {
-						'& .MuiDialog-container': {
-							'& .MuiPaper-root': {
-								height: '600px',
-								'& .MuiDialogContent-root': {
-									paddingTop: {
-										xs: '0px !important',
-										sm: '4px !important',
-									},
-								},
-							},
-							'& .MuiDialogContent-root': {
-								paddingBottom: '32px',
-								padding: {xs: '0px 20px 24px 20px', sm: '32px'},
-								'> div': {
-									height: '100%',
-								},
-							},
-						},
-					},
-					useBackgroundClickClose: false,
-					amplitudeInfo: {},
-				});
-			}
-		}
-	}, [partnershipData]);
+	// 		if (!noMoreNoticePopup || noMoreNoticePopup !== 'true') {
+	// 			setModal({
+	// 				isOpen: true,
+	// 				title: '버클 서비스 이용약관 및 개인정보처리방침 개정 안내',
+	// 				titlePadding: '40px 32px',
+	// 				children: <NoticeModal closeModal={closeNoticeModal} />,
+	// 				buttonTitle: '',
+	// 				maxWidth: '900px',
+	// 				width: '100%',
+	// 				align: 'center',
+	// 				titleAlign: 'left',
+	// 				showCloseButton: false,
+	// 				sx: {
+	// 					'& .MuiDialog-container': {
+	// 						'& .MuiPaper-root': {
+	// 							height: '600px',
+	// 							'& .MuiDialogContent-root': {
+	// 								paddingTop: {
+	// 									xs: '0px !important',
+	// 									sm: '4px !important',
+	// 								},
+	// 							},
+	// 						},
+	// 						'& .MuiDialogContent-root': {
+	// 							paddingBottom: '32px',
+	// 							padding: {xs: '0px 20px 24px 20px', sm: '32px'},
+	// 							'> div': {
+	// 								height: '100%',
+	// 							},
+	// 						},
+	// 					},
+	// 				},
+	// 				useBackgroundClickClose: false,
+	// 				amplitudeInfo: {},
+	// 			});
+	// 		}
+	// 	}
+	// }, [partnershipData]);
 
 	const closeNoticeModal = () => {
 		resetModal(false);
@@ -193,77 +194,84 @@ function Dashboard() {
 	}, []);
 
 	return (
-		<Stack p={5} gap="20px">
-			{/* 개런티 세팅, 카카오연동, 카페24연동 유도 섹션 */}
-			<DashboardSettingHelper partnershipData={partnershipData} />
+		<>
+			<Stack p={5} gap="20px">
+				{/* 개런티 세팅, 카카오연동, 카페24연동 유도 섹션 */}
+				<DashboardSettingHelper partnershipData={partnershipData} />
 
-			{/* 데이터 기간 조희 셀렉트 */}
-			<Stack
-				sx={{
-					flexDirection: 'row',
-					gap: '8px',
-					marginBottom: '40px',
-					maxWidth: '1200px',
-					margin: 'auto',
-					width: '100%',
-					[theme.breakpoints.down(1330)]: {
-						width: '590px',
-						margin: 'auto',
-					},
-				}}>
-				<Select
-					height={40}
-					value={periodState}
-					options={[
-						{
-							label: '주간',
-							value: 'WEEKLY',
-						},
-						{
-							label: '월간',
-							value: 'MONTHLY',
-						},
-					]}
-					onChange={selectBoxHandler}
+				{/* 데이터 기간 조희 셀렉트 */}
+				<Stack
 					sx={{
-						minWidth: '150px',
-						marginRight: '8px',
-					}}
+						flexDirection: 'row',
+						gap: '8px',
+						marginBottom: '40px',
+						maxWidth: '1200px',
+						margin: 'auto',
+						width: '100%',
+						[theme.breakpoints.down(1330)]: {
+							width: '590px',
+							margin: 'auto',
+						},
+					}}>
+					<Select
+						height={40}
+						value={periodState}
+						options={[
+							{
+								label: '주간',
+								value: 'WEEKLY',
+							},
+							{
+								label: '월간',
+								value: 'MONTHLY',
+							},
+						]}
+						onChange={selectBoxHandler}
+						sx={{
+							minWidth: '150px',
+							marginRight: '8px',
+						}}
+					/>
+
+					<Box
+						sx={{
+							height: '40px',
+							background: '#FFFFFF',
+							padding: '9px 16px 8px',
+							border: '1px solid',
+							borderColor: 'grey.100',
+							borderRadius: '4px',
+							fontWeight: 500,
+							fontSize: '16px',
+							lineHeight: '145%',
+							color: 'grey.500',
+						}}>
+						{periodState === 'WEEKLY'
+							? previousWeek
+							: previousMonth}{' '}
+						~ {today}
+					</Box>
+				</Stack>
+
+				<DashboardGuaranteeSection
+					period={periodState}
+					guaranteeData={guaranteeOverviewData}
+					date={
+						periodState === 'WEEKLY' ? previousWeek : previousMonth
+					}
 				/>
 
-				<Box
-					sx={{
-						height: '40px',
-						background: '#FFFFFF',
-						padding: '9px 16px 8px',
-						border: '1px solid',
-						borderColor: 'grey.100',
-						borderRadius: '4px',
-						fontWeight: 500,
-						fontSize: '16px',
-						lineHeight: '145%',
-						color: 'grey.500',
-					}}>
-					{periodState === 'WEEKLY' ? previousWeek : previousMonth} ~{' '}
-					{today}
-				</Box>
+				<DashboardCustomerSection
+					period={periodState}
+					guaranteeData={guaranteeOverviewData}
+					customerData={customerOverviewData}
+					repairData={repairOverviewData}
+					partnershipData={partnershipData}
+				/>
+				<DashboardInfoCentreSection />
 			</Stack>
-
-			<DashboardGuaranteeSection
-				period={periodState}
-				guaranteeData={guaranteeOverviewData}
-				date={periodState === 'WEEKLY' ? previousWeek : previousMonth}
-			/>
-
-			<DashboardCustomerSection
-				period={periodState}
-				guaranteeData={guaranteeOverviewData}
-				customerData={customerOverviewData}
-				repairData={repairOverviewData}
-				partnershipData={partnershipData}
-			/>
-			<DashboardInfoCentreSection />
-		</Stack>
+			<DashboardCheckPaymentModal />
+		</>
 	);
 }
 

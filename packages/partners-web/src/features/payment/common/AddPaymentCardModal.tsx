@@ -48,7 +48,7 @@ const inputList: AddPaymentCardInputList[] = [
 		name: `cardNumber${idx}`,
 		placeholder: new Array(4).fill('●').join(''),
 		label: '카드번호',
-		autoComplete: 'off',
+		autoComplete: 'new-password',
 		required: true,
 		inputProps: {
 			maxLength: 4,
@@ -61,7 +61,7 @@ const inputList: AddPaymentCardInputList[] = [
 			name: 'cardExpirationMonth',
 			placeholder: 'MM',
 			label: '유효기간',
-			autoComplete: 'off',
+			autoComplete: 'new-password',
 			required: true,
 			inputProps: {
 				maxLength: 2,
@@ -73,7 +73,7 @@ const inputList: AddPaymentCardInputList[] = [
 			name: 'cardExpirationYear',
 			placeholder: 'YY',
 			label: '유효기간',
-			autoComplete: 'off',
+			autoComplete: 'new-password',
 			required: true,
 			inputProps: {
 				maxLength: 2,
@@ -86,7 +86,7 @@ const inputList: AddPaymentCardInputList[] = [
 		name: 'cardPassword',
 		placeholder: new Array(2).fill('●').join(''),
 		label: '비밀번호 앞 2자리',
-		autoComplete: 'off',
+		autoComplete: 'new-password',
 		required: true,
 		inputProps: {
 			maxLength: 2,
@@ -98,7 +98,7 @@ const inputList: AddPaymentCardInputList[] = [
 		name: 'customerIdentityNumber',
 		placeholder: '000000',
 		label: '생년월일 6자리',
-		autoComplete: 'off',
+		autoComplete: 'new-password',
 		required: false,
 		desc: '법인카드의 경우 사업등록번호 10자리를 입력해주세요',
 		inputProps: {
@@ -110,7 +110,7 @@ const inputList: AddPaymentCardInputList[] = [
 		name: 'customerEmail',
 		placeholder: '이메일을 지정해주세요.',
 		label: '결제용 이메일',
-		autoComplete: 'off',
+		autoComplete: 'new-password',
 		required: false,
 		desc: '결제 정보를 받을 이메일을 지정해주세요. 비워두면 결제 관련 메일을 받아볼 수 없어요.',
 	},
@@ -125,6 +125,7 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const queryClient = useQueryClient();
+
 	const {
 		control,
 		handleSubmit,
@@ -197,10 +198,9 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 			await queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
 			});
-
+			onClose();
 			// 구독변경 과정 중 넘어온 경우
 			if (afterAddPaymentCardFunc) {
-				onClose();
 				afterAddPaymentCardFunc();
 				return;
 			}
@@ -208,7 +208,6 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 				title: '결제 카드를 등록했습니다.',
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
-				onCloseFunc: onClose,
 			});
 		},
 		onError: (e) => {
@@ -276,9 +275,10 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 						등록
 					</Button>
 				</Stack>
-			}>
+			}
+			width={600}>
 			<Stack>
-				<form noValidate>
+				<form noValidate autoComplete="new-password">
 					{inputList.map(
 						(
 							input: AddPaymentCardInput | AddPaymentCardInput[],

@@ -79,7 +79,6 @@ function ProductGuaranteeTable({idx}: {idx: number}) {
 								})
 							}
 							sx={{
-								marginRight: 1,
 								minWidth: '150px',
 							}}
 						/>
@@ -93,7 +92,6 @@ function ProductGuaranteeTable({idx}: {idx: number}) {
 								})
 							}
 							sx={{
-								marginRight: 1,
 								minWidth: '150px',
 							}}
 						/>
@@ -106,9 +104,6 @@ function ProductGuaranteeTable({idx}: {idx: number}) {
 						<Button
 							height={32}
 							color="black"
-							sx={{
-								marginLeft: '8px',
-							}}
 							onClick={() => {
 								navigate(
 									`/b2b/guarantee/register?productIdx=${idx}`

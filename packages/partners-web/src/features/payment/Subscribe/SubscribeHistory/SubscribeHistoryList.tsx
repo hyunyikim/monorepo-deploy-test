@@ -51,7 +51,7 @@ function SubscribeHistoryList() {
 		data && (
 			<Stack>
 				<TableInfo totalSize={totalSize} unit="건">
-					<Select
+					{/* <Select
 						height={32}
 						value={filter?.sort ?? 'latest'}
 						options={sortSearchFilter}
@@ -63,7 +63,7 @@ function SubscribeHistoryList() {
 						sx={{
 							minWidth: '150px',
 						}}
-					/>
+					/> */}
 					<PageSelect
 						value={filter.pageMaxNum}
 						onChange={(value: {

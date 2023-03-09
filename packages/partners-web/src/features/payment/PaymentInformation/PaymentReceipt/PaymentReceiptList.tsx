@@ -80,7 +80,7 @@ function PaymentReceiptList() {
 							minWidth: '150px',
 						}}
 					/>
-					<Select
+					{/* <Select
 						height={32}
 						value={filter?.sort ?? 'latest'}
 						options={sortSearchFilter}
@@ -92,7 +92,7 @@ function PaymentReceiptList() {
 						sx={{
 							minWidth: '150px',
 						}}
-					/>
+					/> */}
 					<PageSelect
 						value={filter.pageMaxNum}
 						onChange={(value: {

@@ -42,8 +42,8 @@ export const guaranteeRequestStates: Options<GuaranteeRequestState> = [
 // 목록 조회를 위한 옵션, 발급신청/승인완료/발급완료 상태를 발급완료 상태 하나로 묶어놓음
 export const groupingGuaranteeRequestStates: Options<string> = [
 	{value: '', label: '전체'},
-	{value: '1', label: '신청대기'},
-	{value: '2,3,4', label: '발급완료'},
+	{value: '1,2', label: '신청대기'},
+	{value: '3,4', label: '발급완료'},
 	{value: '9', label: '발급취소'},
 ];
 

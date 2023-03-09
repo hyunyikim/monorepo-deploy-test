@@ -77,6 +77,7 @@ function MessageDialog() {
 						sx={{
 							padding: 0,
 							marginBottom: '8px',
+							width: '100%',
 						}}>
 						{title}
 					</DialogTitle>

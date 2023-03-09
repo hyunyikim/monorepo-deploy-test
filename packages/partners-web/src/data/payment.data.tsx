@@ -58,7 +58,7 @@ export const PAYMENT_MESSAGE_MODAL: Record<
 		disableClickBackground: true,
 	},
 	PLAN_SUBSCRIBE: {
-		title: '플랜 구독하고 개런티를 발급해보세요!',
+		title: '플랜을 구독하고 개런티를 발급해보세요.',
 		showBottomCloseButton: true,
 		closeButtonValue: '닫기',
 		disableClickBackground: true,
@@ -184,21 +184,17 @@ export const isPlanOnSubscription = ({
 	if (planType === 'INFINITE') {
 		return true;
 	}
-	if (isNextPlanExisted) {
-		return true;
-	}
 
 	// 무료플랜이거나
 	// 구독 취소 되었는데 아직 구독 중인 경우
 	const today = new Date();
 	if (startDate && endDate) {
-		const endDateEndOfDay = endOfDay(endDate);
-		if (isAfter(today, startDate) && isBefore(today, endDateEndOfDay)) {
+		if (isAfter(today, startDate) && isBefore(today, endDate)) {
 			return true;
 		}
 		return false;
 	}
-	return false;
+	return true;
 };
 
 // 플랜 남은 일수 계산

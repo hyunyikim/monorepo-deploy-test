@@ -76,7 +76,7 @@ const LINE_NOTICE: LineNotice = {
 	},
 	// 유료 플랜 종료
 	CHARGED_PLAN_FINISHED: {
-		content: `플랜 구독하고 개런티를 계속 발급해보세요.`,
+		content: `플랜을 구독하고 개런티를 계속 발급해보세요.`,
 		color: 'red',
 	},
 };

@@ -274,7 +274,7 @@ function GuaranteeCheckboxButton({
 			/>
 			{
 				//신청대기
-				nftReqState === '1' && (
+				nftReqState === '1,2' && (
 					<>
 						<Button
 							variant="outlined"
@@ -381,7 +381,7 @@ function GuaranteeCheckboxButton({
 					</>
 				)
 			}
-			{nftReqState === '2,3,4' && (
+			{nftReqState === '3,4' && (
 				<Button
 					variant="contained"
 					color="black"

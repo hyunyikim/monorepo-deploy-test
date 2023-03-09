@@ -92,7 +92,8 @@ function SubscribeManagementTab() {
 		useMemo<TotalSubscribeInfoPreviewData | null>(() => {
 			if (
 				!selectedPlan ||
-				selectedPlan?.planId === userPlan?.pricePlan.planId // 동일한 플랜 선택시
+				(!isOnSubscription &&
+					selectedPlan?.planId === userPlan?.pricePlan.planId) // 동일한 플랜 선택시
 			) {
 				return null;
 			}
@@ -101,7 +102,7 @@ function SubscribeManagementTab() {
 				userPlan,
 				isTrial: !!isTrial,
 			});
-		}, [isTrial, selectedPlan, userPlan]);
+		}, [isTrial, isOnSubscription, selectedPlan, userPlan]);
 
 	if (!selectedPlan) {
 		return <></>;

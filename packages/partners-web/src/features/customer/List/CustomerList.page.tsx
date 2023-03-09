@@ -22,6 +22,7 @@ import {
 	calculatePeriod,
 	walletLinkOption,
 	isPlanOnSubscription,
+	HEADER_HEIGHT,
 } from '@/data';
 import {
 	dashboardDateStack,
@@ -207,7 +208,11 @@ function CustomerList() {
 
 	return (
 		<>
-			<Box p={5}>
+			<Box
+				p={5}
+				sx={{
+					minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+				}}>
 				<TitleTypography title="고객관리" />
 				<CustomerInfoOverview
 					customerData={customerOverviewData?.MONTHLY}
