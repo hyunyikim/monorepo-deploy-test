@@ -309,7 +309,9 @@ export class RegisterCardHandler
 			...tossBilling,
 			...(prevBillingProps && {
 				orderId: prevBillingProps.orderId,
-				lastPaymentAt: prevBillingProps.lastPaymentAt,
+				lastPaymentAt:
+					prevBillingProps.lastPaymentAt ||
+					prevBillingProps.authenticatedAt,
 				lastPaymentKey: prevBillingProps.lastPaymentKey,
 				planExpireDate: prevBillingProps.planExpireDate,
 				nextPaymentDate: prevBillingProps.nextPaymentDate,
@@ -383,7 +385,9 @@ export class DeleteCardHandler
 			pricePlan: prevBillingProps.pricePlan,
 			authenticatedAt: DateTime.now().toISO(),
 			orderId: prevBillingProps.orderId,
-			lastPaymentAt: prevBillingProps.lastPaymentAt,
+			lastPaymentAt:
+				prevBillingProps.lastPaymentAt ||
+				prevBillingProps.authenticatedAt,
 			lastPaymentKey: prevBillingProps.lastPaymentKey,
 			planExpireDate: prevBillingProps.planExpireDate,
 			nextPaymentDate: prevBillingProps.nextPaymentDate,
