@@ -299,7 +299,6 @@ export class RegisterCardHandler
 
 		// 기존 구독정보 결제실패 5회 초과된 경우 다시 결제를 시도하도록 다음 결제정보 초기화
 		if (prevBillingProps?.paymentFailedCount) {
-			prevBillingProps.nextPricePlan = prevBillingProps.pricePlan;
 			prevBillingProps.nextPaymentDate = DateTime.now().toISO();
 			prevBillingProps.planExpireDate = undefined;
 		}
