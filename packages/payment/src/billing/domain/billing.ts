@@ -150,7 +150,6 @@ export class PlanBilling extends AggregateRoot implements Billing {
 	 * 구독 취소
 	 */
 	unregister(): void {
-		this.nextPricePlan = undefined;
 		this.nextPaymentDate = undefined;
 		this.planExpireDate = DateTime.fromISO(
 			this.props.lastPaymentAt || this.props.authenticatedAt
