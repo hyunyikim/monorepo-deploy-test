@@ -146,10 +146,9 @@ function SubscribeMagageButtonGroup({
 	const {data: partnershipData} = useGetPartnershipInfo();
 
 	const isPlanChanged = useMemo(() => {
-		const isNextPricePlanExisted = !!userPlan?.nextPricePlan;
-		if (!isOnSubscription || !isNextPricePlanExisted) {
+		if (!isOnSubscription || userPlan?.planExpireDate) {
 			// 1. 현재 구독하지 않고 있을 경우,
-			// 2. 다음 플랜이 없는 경우(구독 취소 예정인 경우)
+			// 2. 플랜 종료일이 있는 경우(구독 취소 예정인 경우)
 			// 모든 플랜 선택 가능
 			return true;
 		}

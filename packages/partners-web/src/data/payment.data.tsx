@@ -130,7 +130,8 @@ export const checkSubscribeNoticeStatus = (
 	}
 
 	// 유료 플랜
-	if (nextPricePlan) {
+	// 결제 종료일이 없어야 다음 번에도 결제됨
+	if (nextPricePlan && !userPlan?.planExpireDate) {
 		// 월결제에서 연결제로 변경 예정
 		if (
 			isPlanTypeMonth(pricePlan.planType) &&
@@ -163,7 +164,7 @@ export const checkSubscribeNoticeStatus = (
 		return 'CHARGED_PLAN_FINISHED';
 	}
 	// 구독 취소 예정
-	if (!userPlan?.nextPricePlan) {
+	if (userPlan?.planExpireDate) {
 		return 'CHARGED_PLAN_WILL_END';
 	}
 	return 'CHARGED';

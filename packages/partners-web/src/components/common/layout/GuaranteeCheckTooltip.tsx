@@ -25,8 +25,7 @@ const GuaranteeCheckTooltip = () => {
 			return null;
 		}
 
-		const {pricePlan, nextPricePlan, usedNftCount, planExpireDate} =
-			userPricePlan;
+		const {pricePlan, usedNftCount, planExpireDate} = userPricePlan;
 
 		const planLimit = pricePlan.planLimit;
 		const isExpired = !isOnSubscription;
@@ -79,7 +78,7 @@ const GuaranteeCheckTooltip = () => {
 			};
 		} else {
 			// 유료플랜에서
-			if (isExpired || (!nextPricePlan && planExpireDate)) {
+			if (isExpired || planExpireDate) {
 				// 플랜 만료 || 유료플랜 구독 취소
 				return {
 					content: [
