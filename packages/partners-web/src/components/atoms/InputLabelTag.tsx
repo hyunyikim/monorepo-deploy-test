@@ -50,7 +50,7 @@ function InputLabelTag({
 			onLinkClick();
 		}
 		if (linkUrl) {
-			if (linkUrl.includes('http')) {
+			if (String(linkUrl).includes('http')) {
 				window.open(linkUrl);
 			} else {
 				window.open(`https://${linkUrl}`);
