@@ -22,6 +22,7 @@ const queryClient = new QueryClient({
 			retry: false,
 			refetchOnWindowFocus: false,
 			refetchInterval: 3 * 60 * 1000, // 3분마다 캐시 갱신
+			staleTime: 5 * 60 * 1000, // 5분마다 캐시 갱신
 		},
 	},
 });

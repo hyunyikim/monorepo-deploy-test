@@ -150,7 +150,7 @@ function Button({
 		return sx;
 	}, [variant, color, width, height]);
 
-	const buttonClickHandler = () => {
+	const buttonClickHandler = (e) => {
 		if (taxoInfo) {
 			const {eventName, eventPropertyValue} = taxoInfo;
 			if (eventName && eventPropertyValue) {
@@ -159,7 +159,7 @@ function Button({
 		}
 
 		if (onClick) {
-			onClick();
+			onClick(e);
 		}
 	};
 

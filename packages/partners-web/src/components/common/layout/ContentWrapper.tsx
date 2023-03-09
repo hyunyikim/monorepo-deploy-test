@@ -12,28 +12,32 @@ interface Props {
 function ContentWrapper({fullWidth, sx, maxWidth, children}: Props) {
 	return (
 		<Stack
-			flexDirection="column"
-			sx={[
-				{
-					margin: {
-						xs: '16px',
-						sm: '40px',
-					},
-					...(!fullWidth && {
-						width: '100%',
-						maxWidth: maxWidth
-							? typeof maxWidth === 'number'
-								? `${maxWidth}px`
-								: maxWidth
-							: PAGE_MAX_WIDTH,
-						marginX: {
-							md: 'auto !important',
-						},
-					}),
+			sx={{
+				margin: {
+					xs: '16px',
+					sm: '40px',
 				},
-				...(Array.isArray(sx) ? sx : [sx]),
-			]}>
-			{children}
+				...(!fullWidth && {
+					alignItems: 'center',
+				}),
+			}}>
+			<Stack
+				flexDirection="column"
+				sx={[
+					{
+						...(!fullWidth && {
+							width: '100%',
+							maxWidth: maxWidth
+								? typeof maxWidth === 'number'
+									? `${maxWidth}px`
+									: maxWidth
+								: PAGE_MAX_WIDTH,
+						}),
+					},
+					...(Array.isArray(sx) ? sx : [sx]),
+				]}>
+				{children}
+			</Stack>
 		</Stack>
 	);
 }

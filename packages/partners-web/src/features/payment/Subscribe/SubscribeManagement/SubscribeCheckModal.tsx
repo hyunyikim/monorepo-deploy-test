@@ -69,9 +69,10 @@ function SubscribeCheckModal({
 			setIsAvailableSelect(false);
 		},
 		onError: (e) => {
-			console.log('e :>> ', e);
-			// TODO: 결제 실패 에러 메시지 표기
-			onOpenError();
+			onOpenError({
+				e,
+				message: '다시 확인해주세요.',
+			});
 		},
 		onSettled: () => {
 			setIsLoading(false);

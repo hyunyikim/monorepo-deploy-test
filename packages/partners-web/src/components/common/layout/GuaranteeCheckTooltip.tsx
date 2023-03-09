@@ -49,7 +49,7 @@ const GuaranteeCheckTooltip = () => {
 			if (isExpired) {
 				return {
 					content: [
-						`플랜 구독하고 개런티를 계속 발급해보세요.`,
+						`플랜을 구독하고 개런티를 계속 발급해보세요.`,
 						'플랜 구독하기',
 					],
 					color: 'red.50',
@@ -61,7 +61,7 @@ const GuaranteeCheckTooltip = () => {
 			if (usedAllCredit) {
 				return {
 					content: [
-						`플랜 구독하고 개런티를 계속 발급해보세요.`,
+						`플랜을 구독하고 개런티를 계속 발급해보세요.`,
 						'플랜 구독하기',
 					],
 					color: 'red.50',
@@ -83,7 +83,7 @@ const GuaranteeCheckTooltip = () => {
 				// 플랜 만료 || 유료플랜 구독 취소
 				return {
 					content: [
-						`플랜 구독하고 개런티를 계속 발급해보세요.`,
+						`플랜을 구독하고 개런티를 계속 발급해보세요.`,
 						'플랜 구독하기',
 					],
 					color: 'red.50',

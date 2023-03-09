@@ -51,7 +51,7 @@ function PaymentCardTab() {
 										카드
 									</HeadTableCell>
 									<HeadTableCell minWidth={300}>
-										결제사
+										카드사
 									</HeadTableCell>
 									<HeadTableCell width={180}>
 										기타

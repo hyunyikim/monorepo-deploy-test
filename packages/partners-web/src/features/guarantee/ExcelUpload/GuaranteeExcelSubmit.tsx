@@ -139,6 +139,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 							color="black"
 							onClick={() => {
 								navigate('/b2b/payment/subscribe');
+								onCloseMessageDialog();
 							}}>
 							플랜 업그레이드
 						</Button>
@@ -155,6 +156,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 						color="black"
 						onClick={() => {
 							navigate('/b2b/payment/subscribe');
+							onCloseMessageDialog();
 						}}>
 						구독
 					</Button>
@@ -176,7 +178,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 						현재 잔여 개런티 발급량은 {leftCount.toLocaleString()}
 						개입니다.
 						<br />
-						플랜 업그레이드하고{' '}
+						플랜을 업그레이드하고{' '}
 						{willIssueGuaranteeCount.toLocaleString()}개의 개런티를
 						모두 발급해보세요.
 					</>
@@ -186,6 +188,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 						color="black"
 						onClick={() => {
 							navigate('/b2b/payment/subscribe');
+							onCloseMessageDialog();
 						}}>
 						플랜 업그레이드
 					</Button>
