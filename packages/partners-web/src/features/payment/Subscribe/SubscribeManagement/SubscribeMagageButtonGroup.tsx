@@ -164,7 +164,7 @@ function SubscribeMagageButtonGroup({
 		}
 		// 다음 플랜이 있으면 현재 플랜과 비교
 		// 다음 플랜이 없으면(구독 취소 예정) 모든 플랜 선택 가능
-		const nowComparedPlan = userPlan?.nextPricePlan ? userPlan : null;
+		const nowComparedPlan = userPlan?.planExpireDate ? null : userPlan;
 
 		// 기존 구독 종료
 		// 플랜 업그레이드 시
