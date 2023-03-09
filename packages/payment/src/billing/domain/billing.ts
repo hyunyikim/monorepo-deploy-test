@@ -237,7 +237,6 @@ export class PlanBilling extends AggregateRoot implements Billing {
 		if (this.paymentFailedCount < 6) {
 			this.nextPaymentDate = now.plus({days: 1}).toISO();
 		} else {
-			this.nextPricePlan = undefined;
 			this.nextPaymentDate = undefined;
 			this.planExpireDate = now.toISO();
 		}
