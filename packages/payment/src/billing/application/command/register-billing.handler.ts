@@ -392,6 +392,7 @@ export class DeleteCardHandler
 			planExpireDate: prevBillingProps.planExpireDate,
 			nextPaymentDate: prevBillingProps.nextPaymentDate,
 			nextPricePlan: prevBillingProps.nextPricePlan,
+			paymentFailedCount: prevBillingProps.paymentFailedCount,
 			pausedAt: prevBillingProps.pausedAt,
 		} as BillingProps;
 
