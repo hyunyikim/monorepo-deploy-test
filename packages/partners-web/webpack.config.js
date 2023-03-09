@@ -8,7 +8,10 @@ module.exports = (env, argv) => {
 	const mode = argv.mode;
 	console.log('env, argv :>> ', env, argv);
 
-	const envConfig = require(`./webpack.${mode}`);
+	// TODO: 임시 개발 빌드 테스트 위함
+	// const envConfig = require(`./webpack.${mode}`);
+	const envConfig = require(`./webpack.production`);
+	console.log('=======envConfig :>> ', envConfig);
 
 	const config = {
 		entry: './src/App.tsx',
