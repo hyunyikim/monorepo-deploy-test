@@ -60,8 +60,8 @@ export class ChangeBillingPlanHandler
 		// 무료 플랜 사용중이면서 예약된 플랜이 없는 경우
 		const isFree = billingProps.pricePlan.planLevel === 0 && !nextPlan;
 
-		// 구독 취소상태 (무료 플랜이 아니지만 다음 플랜이 없는 경우)
-		const isCanceled = !isFree && !nextPlan;
+		// 구독 취소상태 (무료 플랜이 아니지만 만료일자가 있는경우)
+		const isCanceled = !isFree && billingProps.planExpireDate;
 
 		// 플랜 변경 예정 일자
 		let scheduledDate: string | undefined;
@@ -106,7 +106,8 @@ export class ChangeBillingPlanHandler
 				newPlan.planType === PLAN_TYPE.YEAR
 			) {
 				// 다음달 결제예정일에 업그레이드 예약
-				scheduledDate = billingProps.nextPaymentDate;
+				scheduledDate =
+					billingProps.nextPaymentDate || billingProps.planExpireDate;
 			}
 
 			// 연결제 -> 연결제 (즉시 변경)
@@ -148,7 +149,6 @@ export class ChangeBillingPlanHandler
 				currentPlan.planType === PLAN_TYPE.MONTH &&
 				newPlan.planType === PLAN_TYPE.MONTH
 			) {
-				console.log('### 월결제 -> 월결제 (즉시 변경) ####');
 				// 사용량 조회
 				const payload = {
 					from: DateTime.fromISO(
@@ -169,11 +169,21 @@ export class ChangeBillingPlanHandler
 		}
 
 		////////////////////
+		// 동일 플랜으로 변경
+		////////////////////
+		if (currentPlan.planLevel === newPlan.planLevel) {
+			// 취소 상태에서는 동일한 플랜도 가능, 다음달 결제예정일로 예약
+			scheduledDate =
+				billingProps.nextPaymentDate || billingProps.planExpireDate;
+		}
+
+		////////////////////
 		// 하위 플랜으로 변경
 		////////////////////
 		if (currentPlan.planLevel > newPlan.planLevel) {
 			// 모든 다운그레이드는 다음달 결제예정일로 예약
-			scheduledDate = billingProps.nextPaymentDate;
+			scheduledDate =
+				billingProps.nextPaymentDate || billingProps.planExpireDate;
 
 			// 연결제 -> 연결제 (변경불가!)
 			if (

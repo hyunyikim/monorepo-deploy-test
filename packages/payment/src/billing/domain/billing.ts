@@ -278,6 +278,11 @@ export class PlanBilling extends AggregateRoot implements Billing {
 				})
 				.toISO();
 		}
+
+		if (!this.nextPaymentDate) {
+			this.nextPaymentDate = this.planExpireDate;
+		}
+
 		this.nextPricePlan = newPricePlan;
 		this.canceledPricePlan = canceledPricePlan;
 		this.planExpireDate = undefined;
