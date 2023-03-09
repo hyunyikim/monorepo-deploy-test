@@ -159,7 +159,7 @@ function GuaranteeDetailProductInfo({data}: {data: GuaranteeDetail}) {
 					{customFields && customFields?.length > 0 && (
 						<>
 							{customFields.map((item) =>
-								item[1].includes('http') ? (
+								item[1] && String(item[1]).includes('http') ? (
 									<AtagComponent url={item[1]}>
 										<DetailInfoColumn
 											key={item[0]}

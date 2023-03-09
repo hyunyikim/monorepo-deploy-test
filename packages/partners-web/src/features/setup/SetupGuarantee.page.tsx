@@ -901,7 +901,7 @@ export function InputFormSection({
 			}
 		);
 		if (centreUrl) {
-			if (centreUrl.includes('http')) {
+			if (String(centreUrl).includes('http')) {
 				window.open(centreUrl);
 			} else {
 				window.open(`https://${centreUrl}`);
@@ -1135,7 +1135,7 @@ export function InputFormSection({
 			) {
 				if (key === 'customerCenterUrl') {
 					const centreUrl: string = values[key];
-					if (centreUrl && centreUrl.includes('http')) {
+					if (centreUrl && String(centreUrl).includes('http')) {
 						formData.append(key, values[key] as string);
 					} else {
 						if (!centreUrl) {
