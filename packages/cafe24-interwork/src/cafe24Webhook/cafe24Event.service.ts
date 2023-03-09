@@ -37,6 +37,7 @@ import {
 import {SqsService} from 'src/sqs/sqs.service';
 import {Cron} from '@nestjs/schedule';
 import {SlackReporter} from 'src/slackReporter';
+import {WebhookResponse} from 'src/cafe24Webhook/cafe24Event.dto';
 
 @Injectable()
 export class Cafe24EventService {
@@ -146,31 +147,24 @@ export class Cafe24EventService {
 				mergeMap((hook) => this.addNftInfo(hook)),
 				concatMap((hook) => this.divideEachOrderItem(hook)),
 				map((hook) => this.categorizeAction(hook)),
-				mergeMap((hook) => this.handleAction(hook, traceId))
+				toArray()
 			);
-
-			const report$ = orderItems.pipe(
-				groupBy((h) => h.action),
-				mergeMap((h) =>
-					h.pipe(
-						map(({action, nftReqIdx, item}) => ({
-							action,
-							nftReqIdx,
-							orderItemCode: item.order_item_code,
-							status: item.order_status,
-						})),
-						toArray()
-					)
-				)
-			);
-
-			// TODO: 웹훅이니 응답을 줄 필요가 없다면 지워도 될 것 같다.
-			const report = await lastValueFrom(report$).catch(() => {
+			const actions = await lastValueFrom(orderItems).catch(() => {
 				this.logger.log('개런티 발급 대상 주문이 아닙니다.');
 				return [];
 			});
-			this.logger.log(report);
-			return report;
+
+			const result: WebhookResponse[] = [];
+			for (const action of actions) {
+				result.push(
+					new WebhookResponse(
+						await this.handleAction(action, traceId)
+					)
+				);
+			}
+
+			this.logger.log(result);
+			return result;
 		} catch (error) {
 			if (error instanceof WebHookError) {
 				this.logger.log(error.toString());

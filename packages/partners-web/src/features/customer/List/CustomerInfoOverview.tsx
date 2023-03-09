@@ -326,6 +326,7 @@ function CustomerInfoOverview({
 						</Typography>
 					</Stack>
 
+					{/* ---------------------------- */}
 					<Stack
 						flexDirection="row"
 						justifyContent={'space-between'}

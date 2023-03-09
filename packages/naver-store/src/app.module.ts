@@ -2,12 +2,12 @@ import { Module } from "@nestjs/common";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { AuthModule } from "./auth/auth.module";
 import { GlobalModule } from "./global.module";
-import { SellerModule } from "./seller/seller.module";
+import { InterworkModule } from "./interwork/interwork.module";
+import { GuaranteeModule } from "./guarantee/guarantee.module";
 
 @Module({
-  imports: [GlobalModule, AuthModule, SellerModule],
+  imports: [GlobalModule, InterworkModule, GuaranteeModule],
   controllers: [AppController],
   providers: [AppService],
 })

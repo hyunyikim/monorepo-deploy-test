@@ -45,8 +45,8 @@ bootstrap();
 function addSwagger(app: INestApplication) {
   if (process.env.NODE_ENV !== "production") {
     const config = new DocumentBuilder()
-      .setTitle("Cardoc Platform API")
-      .setDescription("The platform-api 프로젝트의 API 문서입니다.")
+      .setTitle("Naver Store API")
+      .setDescription("Naver Store API 문서입니다.")
       .setVersion("1.0")
       .addBearerAuth(
         {

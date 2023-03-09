@@ -7,7 +7,6 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 module.exports = (env, argv) => {
 	const mode = argv.mode;
 	console.log('env, argv :>> ', env, argv);
-
 	const envConfig = require(`./webpack.${mode}`);
 
 	const config = {
