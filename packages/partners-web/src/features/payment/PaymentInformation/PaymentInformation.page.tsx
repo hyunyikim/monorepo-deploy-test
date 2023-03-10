@@ -31,14 +31,6 @@ function PaymentInformation() {
 	const {data: userPlan} = useGetUserPricePlan();
 
 	const onOpenAddCardModal = () => {
-		if (
-			ENV_MODE === 'production' &&
-			partnershipData?.email !== 'test@vircle.co.kr'
-		) {
-			onMessageDialogOpen(BAN_PLAN_UPGRADE_MODAL);
-			return;
-		}
-
 		if (userPlan?.card) {
 			onMessageDialogOpen({
 				title: '결제 카드는 1개만 등록이 가능합니다.',

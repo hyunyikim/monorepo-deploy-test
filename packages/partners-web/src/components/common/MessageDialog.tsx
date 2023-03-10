@@ -1,4 +1,4 @@
-import {useCallback} from 'react';
+import {useCallback, useEffect} from 'react';
 
 import {
 	Dialog,
@@ -77,7 +77,7 @@ function MessageDialog() {
 						sx={{
 							padding: 0,
 							marginBottom: '8px',
-							width: '100%',
+							width: useCloseIcon ? 'calc(100% - 24px)' : '100%',
 						}}>
 						{title}
 					</DialogTitle>
@@ -85,6 +85,7 @@ function MessageDialog() {
 						<IcClose
 							style={{cursor: 'pointer'}}
 							onClick={handleClose}
+							color="#000000"
 						/>
 					)}
 				</Box>
