@@ -362,7 +362,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 					}
 				}
 			}
-			formData.append(formKey, formValue ? String(formValue) : '');
+			formData.append(formKey, formValue ? String(formValue).trim() : '');
 		});
 		const product = products[0];
 		Object.keys(product).forEach((key: string) => {

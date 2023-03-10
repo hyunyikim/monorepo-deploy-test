@@ -832,7 +832,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 
 						<AtagComponent
 							url="https://vircle.imweb.me/inquiry"
-							sx={{width: '100%'}}>
+							sx={{width: 'auto'}}>
 							<PricePlanBoxStyle
 								mainColor="blue"
 								// onClick={() => openIntroductionInquiryModal('mid')}

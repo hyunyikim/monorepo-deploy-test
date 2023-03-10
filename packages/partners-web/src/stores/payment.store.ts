@@ -72,7 +72,7 @@ export const useGetUserPricePlan = (
 				}),
 			} as UserPricePlanWithDate;
 		},
-		staleTime: 1 * 60 * 1000,
+		refetchInterval: 1 * 60 * 1000,
 	});
 };
 

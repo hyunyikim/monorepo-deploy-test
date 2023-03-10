@@ -162,22 +162,30 @@ function SubscribeMagageButtonGroup({
 		if (!selectedPlan) {
 			return;
 		}
-		// 다음 플랜이 있으면 현재 플랜과 비교
-		// 다음 플랜이 없으면(구독 취소 예정) 모든 플랜 선택 가능
-		const nowComparedPlan = userPlan?.planExpireDate ? null : userPlan;
+
+		// 유료플랜 종료 예정이고 현재 플랜과 동일한 플랜 선택시
+		if (
+			!isTrial &&
+			isOnSubscription &&
+			userPlan?.planExpireDate &&
+			userPlan?.pricePlan?.planId === selectedPlan?.planId
+		) {
+			onSubscribeCheckModalOpen();
+			return;
+		}
 
 		// 기존 구독 종료
 		// 플랜 업그레이드 시
 		// 1. 동일한 플랜타입에서 업그레이드
 		// 2. 무료플랜에서 업그레이드
 		if (
-			!nowComparedPlan ||
+			!userPlan ||
 			!isOnSubscription ||
 			(isPlanUpgraded(
-				nowComparedPlan.pricePlan.planLevel,
+				userPlan.pricePlan.planLevel,
 				selectedPlan.planLevel
 			) &&
-				(nowComparedPlan.pricePlan.planType === selectedPlan.planType ||
+				(userPlan.pricePlan.planType === selectedPlan.planType ||
 					isTrial))
 		) {
 			onSubscribeCheckModalOpen();
@@ -187,7 +195,7 @@ function SubscribeMagageButtonGroup({
 		// 월결제에서 연결제로
 		let messageDialogData: OnOpenParamType | null = null;
 		if (
-			isPlanTypeMonth(nowComparedPlan.pricePlan.planType) &&
+			isPlanTypeMonth(userPlan.pricePlan.planType) &&
 			isPlanTypeYear(selectedPlan.planType)
 		) {
 			messageDialogData = PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_MONTH_TO_YEAR;
@@ -195,7 +203,7 @@ function SubscribeMagageButtonGroup({
 
 		// 연결제에서 월결제로
 		if (
-			isPlanTypeYear(nowComparedPlan.pricePlan.planType) &&
+			isPlanTypeYear(userPlan.pricePlan.planType) &&
 			isPlanTypeMonth(selectedPlan.planType)
 		) {
 			messageDialogData = PAYMENT_MESSAGE_MODAL.CHANGE_PLAN_YEAR_TO_MONTH;
@@ -203,10 +211,10 @@ function SubscribeMagageButtonGroup({
 
 		// 월결제 플랜 다운그레이드
 		if (
-			isPlanTypeMonth(nowComparedPlan.pricePlan.planType) &&
+			isPlanTypeMonth(userPlan.pricePlan.planType) &&
 			isPlanTypeMonth(selectedPlan.planType) &&
 			isPlanDowngraded(
-				nowComparedPlan.pricePlan.planLevel,
+				userPlan.pricePlan.planLevel,
 				selectedPlan.planLevel
 			)
 		) {
@@ -216,10 +224,10 @@ function SubscribeMagageButtonGroup({
 
 		// 연결제 플랜 다운그레이드
 		if (
-			isPlanTypeYear(nowComparedPlan.pricePlan.planType) &&
+			isPlanTypeYear(userPlan.pricePlan.planType) &&
 			isPlanTypeYear(selectedPlan.planType) &&
 			isPlanDowngraded(
-				nowComparedPlan.pricePlan.planLevel,
+				userPlan.pricePlan.planLevel,
 				selectedPlan.planLevel
 			)
 		) {
