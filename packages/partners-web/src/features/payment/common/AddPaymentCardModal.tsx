@@ -278,7 +278,14 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 			}
 			width={600}>
 			<Stack>
-				<form noValidate autoComplete="new-password">
+				<form
+					noValidate
+					autoComplete="new-password"
+					onKeyUp={(e) => {
+						if (e.key === 'Enter') {
+							handleSubmit(onSubmit)();
+						}
+					}}>
 					{inputList.map(
 						(
 							input: AddPaymentCardInput | AddPaymentCardInput[],

@@ -90,13 +90,19 @@ function SubscribeManagementTab() {
 
 	const subscribePreviewData =
 		useMemo<TotalSubscribeInfoPreviewData | null>(() => {
+			const isPlanWillCanceled = !!userPlan?.planExpireDate; // 취소 예정
+			if (!selectedPlan) {
+				return null;
+			}
 			if (
-				!selectedPlan ||
-				(!isOnSubscription &&
-					selectedPlan?.planId === userPlan?.pricePlan.planId) // 동일한 플랜 선택시
+				!isTrial &&
+				isOnSubscription &&
+				!isPlanWillCanceled &&
+				selectedPlan?.planId === userPlan?.pricePlan.planId // 현재 구독 중이고, 유료 플랜이 다음에도 결제될 예정이라면, 동일한 플랜 선택 불가
 			) {
 				return null;
 			}
+
 			return getSubscribePreviwData({
 				selectedPlan,
 				userPlan,
@@ -115,6 +121,7 @@ function SubscribeManagementTab() {
 					md: 'row',
 				}}
 				flex={1}
+				flexWrap="wrap"
 				gap="24px"
 				mt="32px">
 				<Stack

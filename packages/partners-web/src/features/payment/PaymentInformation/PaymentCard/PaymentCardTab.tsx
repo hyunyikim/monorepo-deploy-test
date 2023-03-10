@@ -47,7 +47,7 @@ function PaymentCardTab() {
 							totalSize={totalSize}
 							headcell={
 								<>
-									<HeadTableCell width={240}>
+									<HeadTableCell width={300}>
 										카드
 									</HeadTableCell>
 									<HeadTableCell minWidth={300}>

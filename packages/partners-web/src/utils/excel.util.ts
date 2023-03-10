@@ -197,7 +197,8 @@ export const matchingExcelDataWithKey = <T>(
 			if (input?.parser && typeof input?.parser === 'function') {
 				val = input.parser(val);
 			}
-			result[input.name] = val || '';
+			val = val || '';
+			result[input.name] = typeof val === 'string' ? val.trim() : val;
 		});
 		data.push(result);
 	});
