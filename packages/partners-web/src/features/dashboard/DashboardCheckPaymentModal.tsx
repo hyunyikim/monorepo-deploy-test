@@ -1,5 +1,5 @@
 import {Button} from '@/components';
-import {PAYMENT_MESSAGE_MODAL} from '@/data';
+import {isPlanEnterprise, PAYMENT_MESSAGE_MODAL} from '@/data';
 import {
 	useGetUserPricePlan,
 	useIsPlanOnSubscription,
@@ -18,7 +18,12 @@ function DashboardCheckPaymentModal() {
 	const {data: isOnSubscription} = useIsPlanOnSubscription();
 
 	useEffect(() => {
-		if (!userPricePlan) {
+		if (
+			!userPricePlan ||
+			isPlanEnterprise(userPricePlan?.pricePlan?.planType) ||
+			typeof isTrial === 'undefined' ||
+			typeof isOnSubscription === 'undefined'
+		) {
 			return;
 		}
 
