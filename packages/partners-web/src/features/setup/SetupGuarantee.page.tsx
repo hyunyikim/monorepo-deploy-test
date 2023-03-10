@@ -459,6 +459,19 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 		return result;
 	}, [boxIndexState]);
 
+	const tipTitle = useMemo(() => {
+		switch (boxIndexState) {
+			case 0:
+				return '고객센터란?';
+			case 1:
+				return '개런티 상품 정보란?';
+			case 2:
+				return '개런티 카드 이미지';
+			case 3:
+				return '브랜드 정책 정보';
+		}
+	}, [boxIndexState]);
+
 	const tipText = useMemo(() => {
 		let result;
 
@@ -477,7 +490,7 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 				result = (
 					<TipTextStyle>
 						디지털개런티에 어떤 상품 정보를 노출할지 설정하는
-						단계입니다.
+						단계입니다.{' '}
 						<TipBoldTextStyle>
 							상품명과 보증기간 두가지의 필수정보
 						</TipBoldTextStyle>
@@ -642,7 +655,7 @@ function VideoInformationSection({boxIndexState}: {boxIndexState: number}) {
 							lineHeight: '24px',
 							marginBottom: '16px',
 						}}>
-						버클TIP
+						{tipTitle}
 					</Typography>
 					{tipText}
 				</Grid>

@@ -57,9 +57,8 @@ export const useGetUserPricePlan = (
 		queryKey: ['userPricePlan', token],
 		queryFn: getUserPricePlan,
 		suspense,
-		refetchOnMount: false,
-		select: (userPlan) => {
-			return {
+		select: (userPlan) =>
+			({
 				...userPlan,
 				...(userPlan?.planStartedAt && {
 					planStartedAt: new Date(userPlan?.planStartedAt),
@@ -70,8 +69,7 @@ export const useGetUserPricePlan = (
 				...(userPlan?.nextPlanStartDate && {
 					nextPlanStartDate: new Date(userPlan?.nextPlanStartDate),
 				}),
-			} as UserPricePlanWithDate;
-		},
+			} as UserPricePlanWithDate),
 		refetchInterval: 1 * 60 * 1000,
 	});
 };
@@ -86,8 +84,9 @@ export const useIsUserUsedTrialPlan = (
 		suspense: boolean;
 	} = {suspense: false}
 ) => {
+	const token = useLoginStore().token;
 	return useQuery({
-		queryKey: ['userPricePlan'],
+		queryKey: ['userPricePlan', token],
 		queryFn: getUserPricePlan,
 		suspense,
 		refetchOnMount: false,
@@ -100,8 +99,9 @@ export const useIsUserUsedTrialPlan = (
  * 현재 플랜 구독 여부
  */
 export const useIsPlanOnSubscription = () => {
+	const token = useLoginStore().token;
 	return useQuery({
-		queryKey: ['userPricePlan'],
+		queryKey: ['userPricePlan', token],
 		queryFn: getUserPricePlan,
 		refetchOnMount: false,
 		select: (userPlan) =>

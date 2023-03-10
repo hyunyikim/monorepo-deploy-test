@@ -20,9 +20,7 @@ function DashboardCheckPaymentModal() {
 	useEffect(() => {
 		if (
 			!userPricePlan ||
-			isPlanEnterprise(userPricePlan?.pricePlan?.planType) ||
-			typeof isTrial === 'undefined' ||
-			typeof isOnSubscription === 'undefined'
+			isPlanEnterprise(userPricePlan?.pricePlan?.planType)
 		) {
 			return;
 		}
