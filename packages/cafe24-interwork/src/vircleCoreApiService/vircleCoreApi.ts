@@ -85,6 +85,7 @@ export class VircleCoreAPI {
 			nftState,
 		} = payload;
 		const form = new FormData();
+		form.append('request_route', 'cafe24');
 		image && form.append('product_img', image);
 		category && form.append('cate_cd', category);
 		brandIdx && form.append('brand_idx', brandIdx);

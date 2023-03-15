@@ -14,19 +14,16 @@ import {
 	EventBatchOrderShipping,
 	EventOrderRegister,
 	EventOrderReturnExchange,
-	EventOrderShipping,
 	WebHookBody,
 } from '../cafe24Interwork';
 import {Cafe24EventService} from './cafe24Event.service';
-import {Cafe24OrderEventHandler} from './cafe24OrderEvent.handler';
 import {ApiHeader} from '@nestjs/swagger';
 
 @Controller({version: '1', path: 'events'})
 export class Cafe24EventController {
 	constructor(
 		private readonly cafe24InterworkService: Cafe24InterworkService,
-		private readonly cafe24EventService: Cafe24EventService,
-		private readonly cafe24OrderEventHandler: Cafe24OrderEventHandler
+		private readonly cafe24EventService: Cafe24EventService
 	) {}
 
 	@Get('')
