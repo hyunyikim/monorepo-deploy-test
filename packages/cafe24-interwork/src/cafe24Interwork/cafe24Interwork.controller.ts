@@ -6,7 +6,6 @@ import {
 	Post,
 	Patch,
 	UseGuards,
-	NotFoundException,
 	Query,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
@@ -15,6 +14,8 @@ import {IssueSetting} from './interwork.entity';
 import {JwtAuthGuard, MasterAuthGuard} from '../guard';
 import {TransformInstanceToPlain} from 'class-transformer';
 import {CategoryListParams} from './cafe24Interwork.service';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
 
 @Controller({version: '1', path: 'interwork'})
 export class Cafe24InterworkController {
@@ -31,7 +32,7 @@ export class Cafe24InterworkController {
 				token.partnerIdx
 			);
 		if (!interwork) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK_INFO');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 		return interwork;
 	}
@@ -43,7 +44,7 @@ export class Cafe24InterworkController {
 			mallId
 		);
 		if (!interwork) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK_INFO');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 		return interwork;
 	}
