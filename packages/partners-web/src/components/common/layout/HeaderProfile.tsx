@@ -6,6 +6,7 @@ import {ButtonBase, Typography, MenuItem, Menu, Stack} from '@mui/material';
 import {Avatar} from '@/components';
 import {PartnershipInfoResponse} from '@/@types';
 import {useLoginStore} from '@/stores';
+import {sendAmplitudeLog} from '@/utils';
 
 interface Props {
 	data: PartnershipInfoResponse;
@@ -28,6 +29,9 @@ function HeaderProfile({data}: Props) {
 	}, []);
 
 	const handleLogout = useCallback(() => {
+		sendAmplitudeLog('dashboard_top_logout_click', {
+			button_title: '로그아웃. 로그인 화면으로 이동',
+		});
 		setLogout();
 		navigate('/auth/login', {
 			replace: true,
@@ -99,6 +103,10 @@ function HeaderProfile({data}: Props) {
 				}}>
 				<MenuItem
 					onClick={() => {
+						sendAmplitudeLog(
+							'dashboard_left_profilesetting_click',
+							{button_title: '계정 설정 화면으로 이동'}
+						);
 						navigate('/setting/profile');
 						handleClose();
 					}}>
