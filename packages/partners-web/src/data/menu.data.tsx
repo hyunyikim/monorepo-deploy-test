@@ -127,10 +127,18 @@ export const menuList: MenuList = [
 				{
 					title: '서비스 구독 관리',
 					path: '/b2b/payment/subscribe',
+					event: [
+						'dashboard_left_subscription_click',
+						'서비스 구독 관리로 이동',
+					],
 				},
 				{
 					title: '결제 정보 관리',
 					path: '/b2b/payment/information',
+					event: [
+						'dashboard_left_payment_click',
+						'결제정보 관리로 이동',
+					],
 				},
 			],
 		},

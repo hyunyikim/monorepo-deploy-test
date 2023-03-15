@@ -591,12 +591,10 @@ function DashboardGuaranteeSection({
 								{currentPeriod?.issuedGraph?.averageCount >= 1
 									? `건, ${
 											period === 'WEEKLY' ? '일' : '주'
-									  } 평균 ${
-											Math.round(
-												currentPeriod?.issuedGraph
-													?.averageCount * 10
-											) / 10 || 0
-									  }건의 `
+									  } 평균 ${Math.round(
+											currentPeriod?.issuedGraph
+												?.averageCount
+									  )}건의 `
 									: '건의'}
 								<br /> 개런티를 발급완료 했습니다.
 							</Typography>

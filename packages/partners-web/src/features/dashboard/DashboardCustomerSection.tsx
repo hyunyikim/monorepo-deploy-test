@@ -672,8 +672,10 @@ function DashboardCustomerSection({
 							data={{
 								title: '전송',
 								content: '고객에게 전송한 알림톡 건수입니다.',
-								count: guaranteeData[period]?.walletLink
-									?.confirmCount,
+								count: formatCommaNum(
+									guaranteeData[period]?.walletLink
+										?.confirmCount
+								),
 								openState: tooltipState.send,
 								toolTipHandler: () => toolTipHandler('send'),
 							}}
@@ -685,8 +687,9 @@ function DashboardCustomerSection({
 								title: '조회',
 								content:
 									'개런티 알림톡을 클릭해서 조회한 고객의 수 입니다.',
-								count: guaranteeData[period]?.walletLink
-									?.viewCount,
+								count: formatCommaNum(
+									guaranteeData[period]?.walletLink?.viewCount
+								),
 								openState: tooltipState.view,
 								toolTipHandler: () => toolTipHandler('view'),
 							}}
@@ -697,8 +700,9 @@ function DashboardCustomerSection({
 								title: '연동',
 								content:
 									'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객의 수 입니다.',
-								count: guaranteeData[period]?.walletLink
-									?.linked,
+								count: formatCommaNum(
+									guaranteeData[period]?.walletLink?.linked
+								),
 								openState: tooltipState.link,
 								toolTipHandler: () => toolTipHandler('link'),
 							}}
