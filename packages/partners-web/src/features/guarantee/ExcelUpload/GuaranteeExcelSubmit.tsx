@@ -9,6 +9,7 @@ import {
 	useGlobalLoading,
 	useIsPlanOnSubscription,
 	useIsUserUsedTrialPlan,
+	useLoginStore,
 	useMessageDialog,
 } from '@/stores';
 import ProgressModal from '@/features/common/ProgressModal';
@@ -35,6 +36,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 	const {data: userPricePlan} = useGetUserPricePlan();
 	const {data: isOnSubscription} = useIsPlanOnSubscription();
 	const {data: isTrialPlan} = useIsUserUsedTrialPlan();
+	const token = useLoginStore().token;
 	const queryClient = useQueryClient();
 
 	// 개런티 발급중 모달
@@ -91,6 +93,9 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 		}
 		queryClient.invalidateQueries({
 			queryKey: ['userPricePlan'],
+		});
+		queryClient.invalidateQueries({
+			queryKey: ['sellerList', token],
 		});
 
 		// delay

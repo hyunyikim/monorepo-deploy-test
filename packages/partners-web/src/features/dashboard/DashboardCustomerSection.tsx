@@ -209,10 +209,12 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 								}}>
 								{topData &&
 									topData.paid &&
-									`${formatCommaNum(topData.paid)}원`}
+									`${(topData.paid || 0).toLocaleString()}원`}
 								{topData &&
 									topData.issued &&
-									`${formatCommaNum(topData.issued)}개`}
+									`${(
+										topData.issued || 0
+									).toLocaleString()}개`}
 							</Box>
 						</Stack>
 				  )
@@ -270,10 +272,12 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 								}}>
 								{topData &&
 									topData.paid &&
-									`${formatCommaNum(topData.paid)}원`}
+									`${(topData.paid || 0).toLocaleString()}원`}
 								{topData &&
 									topData.issued &&
-									`${formatCommaNum(topData.issued)}개`}
+									`${(
+										topData.issued || 0
+									).toLocaleString()}개`}
 							</Box>
 						</Stack>
 				  )}
@@ -672,10 +676,10 @@ function DashboardCustomerSection({
 							data={{
 								title: '전송',
 								content: '고객에게 전송한 알림톡 건수입니다.',
-								count: formatCommaNum(
+								count: (
 									guaranteeData[period]?.walletLink
-										?.confirmCount
-								),
+										?.confirmCount || 0
+								).toLocaleString(),
 								openState: tooltipState.send,
 								toolTipHandler: () => toolTipHandler('send'),
 							}}
@@ -687,9 +691,10 @@ function DashboardCustomerSection({
 								title: '조회',
 								content:
 									'개런티 알림톡을 클릭해서 조회한 고객의 수 입니다.',
-								count: formatCommaNum(
-									guaranteeData[period]?.walletLink?.viewCount
-								),
+								count: (
+									guaranteeData[period]?.walletLink
+										?.viewCount || 0
+								).toLocaleString(),
 								openState: tooltipState.view,
 								toolTipHandler: () => toolTipHandler('view'),
 							}}
@@ -700,9 +705,10 @@ function DashboardCustomerSection({
 								title: '연동',
 								content:
 									'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객의 수 입니다.',
-								count: formatCommaNum(
-									guaranteeData[period]?.walletLink?.linked
-								),
+								count: (
+									guaranteeData[period]?.walletLink?.linked ||
+									0
+								).toLocaleString(),
 								openState: tooltipState.link,
 								toolTipHandler: () => toolTipHandler('link'),
 							}}

@@ -8,6 +8,7 @@ import {
 	useGlobalLoading,
 	useMessageDialog,
 	useGetUserPricePlan,
+	useLoginStore,
 } from '@/stores';
 import {useOpen} from '@/utils/hooks';
 import {
@@ -40,6 +41,7 @@ function GuaranteeCheckboxButton({
 	const totalCount = useMemo(() => checkedItems.length, [checkedItems]);
 	const [requestCount, setRequestCount] = useState(0);
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
+	const token = useLoginStore().token;
 
 	const {
 		open: openRegisterGuaranteeListModal,
@@ -129,6 +131,9 @@ function GuaranteeCheckboxButton({
 			});
 			queryClient.invalidateQueries({
 				queryKey: ['userPricePlan'],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['sellerList', token],
 			});
 		} catch (e: any) {
 			onOpenError();

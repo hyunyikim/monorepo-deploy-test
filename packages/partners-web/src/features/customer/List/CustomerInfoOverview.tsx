@@ -134,7 +134,7 @@ function CustomerInfoOverview({
 			tooltipText: '고객에게 전송한 알림톡 건수입니다.',
 			rate: linkData?.confirmCount ? '100' : '0',
 			count: linkData?.linked
-				? formatCommaNum(linkData?.confirmCount)
+				? (linkData?.confirmCount || 0).toLocaleString()
 				: 0,
 			// count: linkData?.linked,
 			icon: icGreenSend,
@@ -150,7 +150,7 @@ function CustomerInfoOverview({
 				  )
 				: '0',
 			count: linkData?.viewCount
-				? formatCommaNum(linkData?.viewCount)
+				? (linkData?.viewCount || 0).toLocaleString()
 				: 0,
 			icon: icYellowView,
 			openState: tooltipState.view,
@@ -163,7 +163,9 @@ function CustomerInfoOverview({
 			rate: linkData?.linked
 				? Math.round((linkData?.linked / linkData?.confirmCount) * 100)
 				: '0',
-			count: linkData?.linked ? formatCommaNum(linkData?.linked) : 0,
+			count: linkData?.linked
+				? (linkData?.linked || 0).toLocaleString()
+				: 0,
 			icon: icBlueChain,
 			openState: tooltipState.link,
 			toolTipHandler: () => toolTipHandler('link'),
