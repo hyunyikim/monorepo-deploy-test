@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import {RouterProvider, createBrowserRouter} from 'react-router-dom';
 import {ErrorBoundary} from 'react-error-boundary';
 
@@ -52,7 +52,11 @@ function RootRouter() {
 }
 
 const CustomErrorBoundary = ({children}: {children: React.ReactElement}) => {
-	return <ErrorBoundary fallback={<Error />}>{children}</ErrorBoundary>;
+	return (
+		<ErrorBoundary fallback={<Error />} resetKeys={[new Date().getTime()]}>
+			{children}
+		</ErrorBoundary>
+	);
 };
 
 export default RootRouter;

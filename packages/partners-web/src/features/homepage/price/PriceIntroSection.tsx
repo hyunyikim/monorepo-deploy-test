@@ -819,9 +819,9 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 									</PriceInnerFlexBoxStyle>
 									<PriceInnerPriceFlexBoxStyle>
 										<h6>
-											{formatCommaNum(
-												String(displayPrice)
-											)}
+											{(
+												displayPrice || 0
+											).toLocaleString()}
 											원
 										</h6>
 										<span>/월</span>

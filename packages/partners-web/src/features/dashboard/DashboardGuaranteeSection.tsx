@@ -108,7 +108,9 @@ function GuaranteeOverviewBox({
 				return `${over100M}억 ${Under100M}만`;
 			}
 		} else if (Math.abs(Number(difference)) > 0) {
-			return formatCommaNum(Math.abs(Math.abs(Number(difference))));
+			return (
+				Math.abs(Math.abs(Number(difference))) || 0
+			).toLocaleString();
 		} else {
 			return 0;
 		}
@@ -199,7 +201,7 @@ function GuaranteeOverviewBox({
 							lineHeight: '145%',
 							color: 'grey.900',
 						}}>
-						{formatCommaNum(count) || 0}
+						{(count || 0).toLocaleString()}
 						{title === '발급총액' ? '원' : null}
 					</Typography>
 					{title === '발급총액' ? null : (
@@ -482,7 +484,7 @@ function DashboardGuaranteeSection({
 				},
 			},
 			// dataLabels: {
-			// 	enabled: false,
+			//  enabled: false,
 			// },
 			stroke: {
 				show: true,
@@ -581,12 +583,10 @@ function DashboardGuaranteeSection({
 										color: 'primary.main',
 										display: 'inline-block',
 									}}>
-									{formatCommaNum(
-										String(
-											currentPeriod?.issuedGraph
-												?.totalCount
-										)
-									) || 0}
+									{(
+										currentPeriod?.issuedGraph
+											?.totalCount || 0
+									).toLocaleString()}
 								</Typography>
 								{currentPeriod?.issuedGraph?.averageCount >= 1
 									? `건, ${

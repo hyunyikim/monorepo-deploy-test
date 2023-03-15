@@ -34,6 +34,7 @@ import {
 	useGuaranteePreviewStore,
 	useGlobalLoading,
 	useGetPlatformList,
+	useLoginStore,
 } from '@/stores';
 import {getProductDetail, registerProduct} from '@/api/product.api';
 import {useOpen} from '@/utils/hooks';
@@ -61,6 +62,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 		(state) => state.setData
 	);
 
+	const token = useLoginStore().token;
 	const {data: userPlan} = useGetUserPricePlan();
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
@@ -573,6 +575,9 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 				queryClient.invalidateQueries({
 					queryKey: ['userPricePlan'],
 				});
+				queryClient.invalidateQueries({
+					queryKey: ['sellerList', token],
+				});
 			} catch (e: any) {
 				const message = String(e?.response?.data?.message || '');
 				const result = String(e?.response?.data?.result || '');
@@ -592,7 +597,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 				setIsLoading(false);
 			}
 		},
-		[navigate, setIsLoading]
+		[navigate, setIsLoading, token]
 	);
 
 	const handleAddSingleProduct = useCallback(
