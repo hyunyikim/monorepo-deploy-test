@@ -21,7 +21,7 @@ import {
 	ControlledInputComponent,
 } from '@/components';
 import {RegisterCardRequestParam} from '@/@types';
-import {onChangeOnlyNumber} from '@/utils';
+import {onChangeOnlyNumber, usePageView} from '@/utils';
 import {emailSchemaValidation} from '@/utils/schema';
 import {registerCard} from '@/api/payment.api';
 import {useGlobalLoading, useMessageDialog} from '@/stores';
@@ -122,6 +122,7 @@ interface Props {
 }
 
 function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
+	usePageView('payment_add_card_popup_pv', '');
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 	const queryClient = useQueryClient();
@@ -263,7 +264,8 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 						variant="outlined"
 						color="grey-100"
 						height={32}
-						onClick={onClose}>
+						onClick={onClose}
+						data-tracking={`payment_add_card_popup_cancel_click,{'button_title': ''}`}>
 						취소
 					</Button>
 					<Button
@@ -271,7 +273,8 @@ function AddPaymentCardModal({open, onClose, afterAddPaymentCardFunc}: Props) {
 						type="submit"
 						onClick={() => {
 							handleSubmit(onSubmit)();
-						}}>
+						}}
+						data-tracking={`payment_add_card_popup_add_click,{'button_title': ''}`}>
 						등록
 					</Button>
 				</Stack>

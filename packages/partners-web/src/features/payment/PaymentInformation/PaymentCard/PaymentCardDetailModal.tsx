@@ -70,10 +70,15 @@ function PaymentCardDetailModal({data, open, onClose}: Props) {
 						variant="outlined"
 						color="grey-100"
 						height={40}
-						onClick={onDeleteCard}>
+						onClick={onDeleteCard}
+						data-tracking={`payment_card_details_popup_delete_click,{'button_title': ''}`}>
 						삭제
 					</Button>
-					<Button color="black" height={40} onClick={onClose}>
+					<Button
+						color="black"
+						height={40}
+						onClick={onClose}
+						data-tracking={`payment_card_details_popup_ok_click,{'button_title': ''}`}>
 						확인
 					</Button>
 				</Stack>

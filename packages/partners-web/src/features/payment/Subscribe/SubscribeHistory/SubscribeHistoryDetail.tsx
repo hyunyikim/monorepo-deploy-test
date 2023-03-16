@@ -14,12 +14,14 @@ import {IcPrinter} from '@/assets/icon';
 import Breadcrumbs from '@/features/payment/common/Breadcrumbs';
 import SubscribeInfoPreview from '@/features/payment/common/SubscribeInfoPreview';
 import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBullet';
+import {usePageView} from '@/utils';
 
 interface Props {
 	idx: string;
 }
 
 function SubscribeHistoryDetail({idx}: Props) {
+	usePageView('subscription_invoice_details_pv', '');
 	const navigate = useNavigate();
 	const {data} = useGetUserPaymentHistoryDetail(idx);
 

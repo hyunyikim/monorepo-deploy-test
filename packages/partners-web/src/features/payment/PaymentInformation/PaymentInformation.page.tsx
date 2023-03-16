@@ -15,7 +15,6 @@ import {
 	useGetUserPricePlan,
 	useMessageDialog,
 } from '@/stores';
-import {BAN_PLAN_UPGRADE_MODAL} from '@/data';
 
 function PaymentInformation() {
 	const location = useLocation();
@@ -25,7 +24,6 @@ function PaymentInformation() {
 		defaultValue: 'card',
 	});
 	const onMessageDialogOpen = useMessageDialog((state) => state.onOpen);
-	const {data: partnershipData} = useGetPartnershipInfo();
 	const {open, onOpen, onClose} = useOpen({});
 
 	const {data: userPlan} = useGetUserPricePlan();
@@ -76,7 +74,10 @@ function PaymentInformation() {
 						marginTop: '16px !important',
 					}}>
 					{selectedValue === 'card' && (
-						<Button height={32} onClick={onOpenAddCardModal}>
+						<Button
+							height={32}
+							data-tracking={`payment_add_card_click,{'button_title': ''}`}
+							onClick={onOpenAddCardModal}>
 							결제 카드 추가
 						</Button>
 					)}

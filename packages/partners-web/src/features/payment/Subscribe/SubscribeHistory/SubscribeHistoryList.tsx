@@ -102,6 +102,7 @@ function SubscribeHistoryList() {
 								<TableCell>
 									<Typography
 										className="underline"
+										data-tracking={`subscription_invoice_no_click,{'button_title': ''}`}
 										onClick={() => {
 											goToDetailSubscribePage(
 												item.orderId

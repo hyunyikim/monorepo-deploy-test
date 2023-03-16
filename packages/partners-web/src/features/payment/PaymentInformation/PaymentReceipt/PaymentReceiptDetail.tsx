@@ -10,12 +10,14 @@ import Breadcrumbs from '@/features/payment/common/Breadcrumbs';
 import {PaymentHistoryDetail} from '@/@types';
 import {useGetPartnershipInfo, useGetUserPaymentHistoryDetail} from '@/stores';
 import {DATE_FORMAT} from '@/data';
+import {usePageView} from '@/utils';
 
 interface Props {
 	idx: string;
 }
 
 function PaymentReceiptDetail({idx}: Props) {
+	usePageView('payment_reciept_detail_pv', '');
 	const navigate = useNavigate();
 
 	const {data} = useGetUserPaymentHistoryDetail(idx, {suspense: true});

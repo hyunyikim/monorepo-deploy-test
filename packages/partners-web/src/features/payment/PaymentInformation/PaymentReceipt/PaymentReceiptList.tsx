@@ -121,6 +121,7 @@ function PaymentReceiptList() {
 								<TableCell>
 									<Typography
 										className="underline"
+										data-tracking={`payment_reciept_no_click,{'button_title': ''}`}
 										onClick={() => {
 											goToDetailReceiptPage(item.orderId);
 										}}>

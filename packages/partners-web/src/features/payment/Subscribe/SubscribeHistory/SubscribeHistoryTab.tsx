@@ -6,8 +6,10 @@ import {Skeleton, Stack} from '@mui/material';
 
 import SubscribeHistoryList from './SubscribeHistoryList';
 import SubscribeHistoryDetail from './SubscribeHistoryDetail';
+import {usePageView} from '@/utils';
 
 function SubscribeHistoryTab() {
+	usePageView('subscription_invoice_list_pv', '');
 	const {search} = useLocation();
 
 	const idx = useMemo(() => {
