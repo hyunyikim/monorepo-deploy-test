@@ -1,19 +1,12 @@
-import {Inject, Injectable, UnauthorizedException} from '@nestjs/common';
-import {
-	concatMap,
-	EMPTY,
-	firstValueFrom,
-	map,
-	mergeAll,
-	of,
-	UnsubscriptionError,
-} from 'rxjs';
-import {Cafe24API} from 'src/cafe24Api';
+import {Inject, Injectable} from '@nestjs/common';
+import {concatMap, EMPTY, firstValueFrom, map, of} from 'rxjs';
 import {
 	Cafe24InterworkService,
 	EventOrderRegister,
 	WebHookBody,
 } from 'src/cafe24Interwork';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
 import {KakaoAlimTalkService} from 'src/kakao-alim-talk';
 
 @Injectable()
@@ -45,8 +38,11 @@ export class Cafe24OrderEventHandler {
 							);
 						}),
 						map((interwork) => {
-							if (interwork === null)
-								throw new UnauthorizedException('');
+							if (interwork === null) {
+								throw new ErrorResponse(
+									ErrorMetadata.notFoundInterworkInfo
+								);
+							}
 							return interwork;
 						}),
 						concatMap((interwork) => {

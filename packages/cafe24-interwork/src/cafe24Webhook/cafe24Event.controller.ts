@@ -1,12 +1,4 @@
-import {
-	Body,
-	Controller,
-	Get,
-	Headers,
-	InternalServerErrorException,
-	Post,
-	UseGuards,
-} from '@nestjs/common';
+import {Body, Controller, Get, Headers, Post, UseGuards} from '@nestjs/common';
 import {Cafe24InterworkService} from '../cafe24Interwork/cafe24Interwork.service';
 import {ApiKeyGuard} from '../guard';
 import {
@@ -18,6 +10,8 @@ import {
 } from '../cafe24Interwork';
 import {Cafe24EventService} from './cafe24Event.service';
 import {ApiHeader} from '@nestjs/swagger';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
 
 @Controller({version: '1', path: 'events'})
 export class Cafe24EventController {
@@ -28,7 +22,7 @@ export class Cafe24EventController {
 
 	@Get('')
 	alive() {
-		throw new InternalServerErrorException('error');
+		throw new ErrorResponse(ErrorMetadata.internalServerError('ERROR'));
 	}
 
 	@Post('app/delete')
