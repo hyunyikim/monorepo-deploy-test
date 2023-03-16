@@ -1,20 +1,29 @@
 import {bearerTokenInstance, nonAuthInstance} from '@/api';
-import {Cafe24Category, Cafe24Interwork, IssueSetting} from '@/@types';
+import {
+	Cafe24Category,
+	Cafe24Interwork,
+	IssueSetting,
+	ResponseV2,
+} from '@/@types';
 
 export const getCategoryList = async (mallId: string, name = '') => {
 	const url = `/cafe24/v1/interwork/${mallId}/categories`;
-	const resp = await bearerTokenInstance.get<Cafe24Category[]>(url, {
-		params: {
-			name: name || undefined,
-		},
-	});
-	return resp;
+	const resp = await bearerTokenInstance.get<ResponseV2<Cafe24Category[]>>(
+		url,
+		{
+			params: {
+				name: name || undefined,
+			},
+		}
+	);
+	return resp.data;
 };
 
 export const getInterworkByToken = async () => {
-	return await bearerTokenInstance.get<Cafe24Interwork>(
+	const res = await bearerTokenInstance.get<ResponseV2<Cafe24Interwork>>(
 		`/cafe24/v1/interwork`
 	);
+	return res.data;
 };
 
 // cafe24 연동 초기화
@@ -23,8 +32,11 @@ export const requestInterwork = async (mallId: string, authCode: string) => {
 	const body = {
 		authCode: authCode,
 	};
-	const resp = await nonAuthInstance.post<Cafe24Interwork>(url, body);
-	return resp.data;
+	const resp = await nonAuthInstance.post<ResponseV2<Cafe24Interwork>>(
+		url,
+		body
+	);
+	return resp.data.data;
 };
 
 // cafe24 연동 승인
@@ -35,8 +47,8 @@ export const confirmInterwork = async (mallId: string) => {
 
 export const isConfirmedInterwork = async (mallId: string) => {
 	const url = `/cafe24/v1/interwork/${mallId}/confirm`;
-	const resp = await nonAuthInstance.get<boolean>(url);
-	return resp.data;
+	const resp = await nonAuthInstance.get<ResponseV2<boolean>>(url);
+	return resp.data?.data;
 };
 
 export const updateLeaveReason = async (mallId: string, reasons: any) => {
