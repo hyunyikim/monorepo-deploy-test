@@ -254,7 +254,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 															시작하기
 														</button>
 
-														<AtagComponent url="https://vircle.imweb.me/inquiry">
+														<AtagComponent url="https://vircle.imweb.me/inquiry?utm_source=homepage&utm_medium=btn&utm_campaign=direct">
 															<button
 																className="btn_intro white"
 																onClick={() => {
@@ -348,7 +348,7 @@ function IntroSection({openEmailModal}: openEmailModalProps) {
 													alt="phone"
 													className="headphone"
 												/>
-												<AtagComponent url="https://vircle.imweb.me/inquiry">
+												<AtagComponent url="https://vircle.imweb.me/inquiry?utm_source=homepage&utm_medium=btn&utm_campaign=direct">
 													<button className="btn_intro white">
 														도입 문의하기
 													</button>
