@@ -6,11 +6,13 @@ import {IcAtm} from '@/assets/icon';
 import {Table, HeadTableCell, TableCell, Chip} from '@/components';
 import PaymentCardDetailModal from './PaymentCardDetailModal';
 import {useGetUserPricePlan} from '@/stores';
+import {usePageView} from '@/utils';
 
 const totalSize = 1;
 const isLoading = false;
 
 function PaymentCardTab() {
+	usePageView('payment_card_pv', '');
 	const {open, onOpen, onClose} = useOpen({});
 	const {data: userPlan} = useGetUserPricePlan();
 	const card = userPlan?.card;
@@ -76,6 +78,7 @@ function PaymentCardTab() {
 											<IcAtm width={20} height={20} />
 										</Box>
 										<Typography
+											data-tracking={`payment_card_no_click,{'button_title': ''}`}
 											className="underline"
 											onClick={onOpen}
 											ml="12px">

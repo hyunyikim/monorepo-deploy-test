@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction} from 'react';
+import {Dispatch, SetStateAction, useEffect} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {Stack, Typography} from '@mui/material';
@@ -21,6 +21,7 @@ import SubscribeNoticeBullet from '@/features/payment/common/SubscribeNoticeBull
 import AddPaymentCardModal from '@/features/payment/common/AddPaymentCardModal';
 import {useOpen} from '@/utils/hooks';
 import {patchPricePlan} from '@/api/payment.api';
+import {sendAmplitudeLog, usePageView} from '@/utils';
 
 interface Props {
 	selectedPlan: PricePlan;
@@ -39,6 +40,14 @@ function SubscribeCheckModal({
 	onClose,
 	setIsAvailableSelect,
 }: Props) {
+	useEffect(() => {
+		if (open) {
+			sendAmplitudeLog('subscription_change_plan_popup_pv', {
+				pv_title: '',
+			});
+		}
+	}, [open]);
+
 	const queryClient = useQueryClient();
 	const {data: userPlan} = useGetUserPricePlan();
 
@@ -65,6 +74,14 @@ function SubscribeCheckModal({
 				title: '구독 플랜이 변경됐습니다.',
 				showBottomCloseButton: true,
 				closeButtonValue: '확인',
+				onCloseFunc: () => {
+					sendAmplitudeLog(
+						'subscription_plan_changed_popup_ok_click',
+						{
+							button_title: '팝업 닫힘',
+						}
+					);
+				},
 			});
 			setIsAvailableSelect(false);
 		},
@@ -110,12 +127,14 @@ function SubscribeCheckModal({
 							variant="outlined"
 							color="grey-100"
 							height={32}
+							data-tracking={`subscription_change_plan_popup_close_click,{'button_title': '팝업 닫힘'}`}
 							onClick={onClose}>
 							닫기
 						</Button>
 						<Button
 							color="primary"
 							height={32}
+							data-tracking={`subscription_change_plan_popup_subscribe_click,{'button_title': ''}`}
 							onClick={onClickSubscribeChange}>
 							구독 변경
 						</Button>

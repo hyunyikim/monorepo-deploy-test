@@ -13,6 +13,7 @@ import {IcLogin} from '@/assets/icon';
 import style from '@/assets/styles/style.module.scss';
 import {Button} from '@/components';
 import {cancelPricePlan} from '@/api/payment.api';
+import {sendAmplitudeLog} from '@/utils';
 
 function CancelSubscribe({}) {
 	const queryClient = useQueryClient();
@@ -65,6 +66,7 @@ function CancelSubscribe({}) {
 		<Stack
 			flexDirection="row"
 			className="cursor-pointer"
+			data-tracking={`subscription_cancel_plan_click,{'button_title': '구독 취소 안내 팝업 노출'}`}
 			onClick={() => {
 				onMessageDialogOpen({
 					title: '정말 구독을 취소하시겠어요?',
@@ -76,10 +78,17 @@ function CancelSubscribe({}) {
 							height={40}
 							variant="contained"
 							color="black"
-							onClick={onClickCancel}>
+							onClick={onClickCancel}
+							data-tracking={`subscription_cancel_popup_ok_click,{'button_title': ''}`}>
 							확인
 						</Button>
 					),
+					onCloseFunc: () => {
+						sendAmplitudeLog(
+							'subscription_cancel_popup_cancel_click',
+							{button_title: ''}
+						);
+					},
 				});
 			}}>
 			<Typography

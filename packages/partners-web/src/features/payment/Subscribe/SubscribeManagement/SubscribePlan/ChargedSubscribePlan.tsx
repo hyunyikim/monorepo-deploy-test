@@ -9,6 +9,7 @@ import {useIsPlanOnSubscription, useIsUserUsedTrialPlan} from '@/stores';
 import SubscribePlanSelect from './SubscribePlanSelect';
 import SubscribePlan from './SubscribePlan';
 import SquaredSwitch from '../SquaredSwitch';
+import {usePageView} from '@/utils';
 
 interface Props {
 	selectedPlan: PricePlan;
@@ -21,6 +22,7 @@ function ChargedSubscribePlan({
 	onChangePlan,
 	onChangePlanType,
 }: Props) {
+	usePageView('subscription_plan_pv', '');
 	const {data: isTrial} = useIsUserUsedTrialPlan();
 	const {data: isOnSubscription} = useIsPlanOnSubscription();
 	const [selectOpen, setSelectOpen] = useState(false);

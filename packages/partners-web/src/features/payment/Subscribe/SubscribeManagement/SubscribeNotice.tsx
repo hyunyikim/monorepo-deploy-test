@@ -6,7 +6,7 @@ import {SxProps} from '@mui/system';
 import {SubscribeNoticeKey, UserPricePlanWithDate} from '@/@types';
 import {checkSubscribeNoticeStatus} from '@/data';
 import {useGetUserPricePlan, useGetPricePlanList} from '@/stores/payment.store';
-import {openChannelTalk} from '@/utils';
+import {openChannelTalk, sendAmplitudeLog} from '@/utils';
 
 type SubscribeNoticeType = {
 	[key in SubscribeNoticeKey]: React.ReactNode;
@@ -50,7 +50,10 @@ function SubscribeNotice({sx = {}}: Props) {
 					</Stack>
 					<Link
 						className="cursor-pointer"
-						onClick={onClickPricingUrl}>
+						data-tracking={`subscription_guide_pay_click,{'button_title': 'https://partners.vircle.co.kr/pricing 로 이동'}`}
+						onClick={() => {
+							onClickPricingUrl();
+						}}>
 						요금제 안내페이지 보기
 					</Link>
 				</>
@@ -72,6 +75,7 @@ function SubscribeNotice({sx = {}}: Props) {
 					</Stack>
 					<Link
 						className="cursor-pointer"
+						data-tracking={`subscription_guide_pay_click,{'button_title': 'https://partners.vircle.co.kr/pricing 로 이동'}`}
 						onClick={() => onClickNewTab(subscribePlanGuideUrl)}>
 						요금제 안내페이지 보기
 					</Link>
@@ -94,7 +98,8 @@ function SubscribeNotice({sx = {}}: Props) {
 					</Stack>
 					<Link
 						className="cursor-pointer"
-						onClick={onClickPricingUrl}>
+						onClick={onClickPricingUrl}
+						data-tracking={`subscription_guide_count_click,{'button_title': 'https://partners.vircle.co.kr/pricing 로 이동'}`}>
 						요금제 안내페이지 보기
 					</Link>
 				</>
@@ -113,7 +118,10 @@ function SubscribeNotice({sx = {}}: Props) {
 					</Stack>
 					<Link
 						className="cursor-pointer"
-						onClick={() => onClickNewTab(changePlanGuideUrl)}>
+						data-tracking={`subscription_guide_monthly_pay_click,{'button_title': 'https://guide.vircle.co.kr/subscription/change-plan-policy 로 이동'}`}
+						onClick={() => {
+							onClickNewTab(changePlanGuideUrl);
+						}}>
 						결제 가이드 보기
 					</Link>
 				</>
@@ -135,6 +143,7 @@ function SubscribeNotice({sx = {}}: Props) {
 					</Stack>
 					<Link
 						className="cursor-pointer"
+						data-tracking={`subscription_guide_changetoyear_click,{'button_title': 'https://guide.vircle.co.kr/subscription/change-plan-policy 로 이동'}`}
 						onClick={() => onClickNewTab(changePlanGuideUrl)}>
 						구독가이드 보기
 					</Link>
@@ -161,6 +170,7 @@ function SubscribeNotice({sx = {}}: Props) {
 					</Stack>
 					<Link
 						className="cursor-pointer"
+						data-tracking={`subscription_guide_changetomonth_click,{'button_title': 'https://guide.vircle.co.kr/subscription/change-plan-policy 로 이동'}`}
 						onClick={() => onClickNewTab(changePlanGuideUrl)}>
 						구독가이드 보기
 					</Link>
@@ -188,6 +198,7 @@ function SubscribeNotice({sx = {}}: Props) {
 					</Stack>
 					<Link
 						className="cursor-pointer"
+						data-tracking={`subscription_guide_downgrade_click,{'button_title': 'https://guide.vircle.co.kr/subscription/change-plan-policy 로 이동'}`}
 						onClick={() => onClickNewTab(changePlanGuideUrl)}>
 						구독가이드 보기
 					</Link>

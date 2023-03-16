@@ -21,6 +21,7 @@ function SubscribeManagement() {
 		key: 'mode',
 		defaultValue: 'management',
 	});
+
 	return (
 		<ContentWrapper
 			fullWidth={true}
@@ -58,6 +59,7 @@ function SubscribeManagement() {
 				}}>
 				<Link
 					className="flex-center cursor-pointer"
+					data-tracking={`subscription_pricing_detail_click,{'button_title': 'https://partners.vircle.co.kr/pricing 로 이동'}`}
 					sx={{
 						fontSize: 14,
 						fontWeight: 700,

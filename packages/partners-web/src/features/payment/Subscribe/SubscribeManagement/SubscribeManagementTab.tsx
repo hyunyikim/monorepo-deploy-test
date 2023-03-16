@@ -31,8 +31,10 @@ import SubscribePlan from './SubscribePlan/SubscribePlan';
 import SubscribeLineNotice from './SubscribeLineNotice';
 import SubscribeCheckModal from './SubscribeCheckModal';
 import SubscribeMagageButtonGroup from './SubscribeMagageButtonGroup';
+import {usePageView} from '@/utils';
 
 function SubscribeManagementTab() {
+	usePageView('subscription_invoice_pv', '');
 	const {data: planList} = useGetPricePlanList({suspense: true});
 	const {data: userPlan} = useGetUserPricePlan();
 	const {data: yearPlanList} = useGetPricePlanListByPlanType('YEAR');

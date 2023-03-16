@@ -334,6 +334,7 @@ function SubscribeMagageButtonGroup({
 			{isAvailableSelect ? (
 				<>
 					<Button
+						data-tracking={`subscription_plan_subscribe_click,{'button_title': ''}`}
 						disabled={!isPlanChanged}
 						height={40}
 						sx={{
@@ -345,6 +346,7 @@ function SubscribeMagageButtonGroup({
 							: '구독설정 변경'}
 					</Button>
 					<Button
+						data-tracking={`subscription_plan_cancel_click,{'button_title': ''}`}
 						variant="outlined"
 						color="grey-100"
 						height={40}
@@ -354,7 +356,10 @@ function SubscribeMagageButtonGroup({
 				</>
 			) : (
 				<>
-					<Button height={40} onClick={onClickTrySubscribeChange}>
+					<Button
+						height={40}
+						onClick={onClickTrySubscribeChange}
+						data-tracking={`subscription_subscribe_plan_click,{'button_title': '유료플랜 구독 화면으로 전환'}`}>
 						{!isOnSubscription || isTrial
 							? '플랜 구독하기'
 							: '플랜 변경하기'}

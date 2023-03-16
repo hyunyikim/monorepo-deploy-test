@@ -7,8 +7,10 @@ import {Stack} from '@mui/material';
 
 import PaymentReceiptList from './PaymentReceiptList';
 import PaymentReceiptDetail from './PaymentReceiptDetail';
+import {usePageView} from '@/utils';
 
 function PaymentReceiptTab() {
+	usePageView('payment_reciept_pv', '');
 	const {search} = useLocation();
 
 	const idx = useMemo(() => {
