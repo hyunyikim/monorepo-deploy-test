@@ -179,7 +179,14 @@ function HomepageHeader({
 								가격안내
 							</li>
 
-							<AtagComponent url="https://vircle.imweb.me/inquiry">
+							{/* <AtagComponent url="https://vircle.imweb.me/inquiry"> */}
+							<AtagComponent
+								/* FIXME: 지금은 페이지가 가격안내랑 메인뿐이라서 배경화면 색으로 처리하지만, 나중에는 바꿔야함!! */
+								url={
+									bgColor === 'black'
+										? 'https://vircle.imweb.me/inquiry?utm_source=homepage&utm_medium=btn&utm_campaign=direct'
+										: 'https://vircle.imweb.me/inquiry?utm_source=homepage&utm_medium=btn&utm_campaign=pricing'
+								}>
 								<li
 									className="header_list"
 									data-path="inquiry"
