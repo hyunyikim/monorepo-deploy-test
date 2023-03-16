@@ -4,13 +4,17 @@ enum eErrorCode {
 	NO_CONFIG_PATH = -1001,
 	GET_CONFIG_FAILED = -1002,
 
-	NO_AUTH_FOR_CORE_API = 403,
+	NO_AUTH_FOR_CORE_API = 401,
+	NO_AUTH_TOKEN = 401,
+	CAN_NOT_ACCESS_TOKEN = 403,
 	INTERNAL_SERVER_ERROR = 500, // TODO: 추후 제거
 
 	// interwork 1001 - 1100
 	NOT_FOUND_INTERWORK_INFO = 1001,
 	NOT_COMPLETE_INTERWORK = 1002,
 	CANCELED_INTERWORK = 1003,
+
+	NOT_FOUND_GUARANTEE_REQUEST = 1011,
 
 	// webhook 1101 - 1200
 	NOT_DEFAULT_SHOP_NO = 1101,
@@ -54,6 +58,20 @@ export const ErrorMetadata = {
 		message: 'coreApiToken 없음',
 		code: eErrorCode.NO_AUTH_FOR_CORE_API,
 		description: 'coreApiToken 값을 확인해주세요.',
+		status: HttpStatus.UNAUTHORIZED,
+	},
+	noAuthToken: {
+		name: 'NO_AUTH_TOKEN',
+		message: 'token이 없거나 잘못됨',
+		code: eErrorCode.NO_AUTH_TOKEN,
+		description: 'token을 확인해주세요.',
+		status: HttpStatus.UNAUTHORIZED,
+	},
+	canNotAccessToken: {
+		name: 'CAN_NOT_ACCESS_TOKEN',
+		message: '해당 토큰으로 접근할 수 없음',
+		code: eErrorCode.CAN_NOT_ACCESS_TOKEN,
+		description: '잘못된 토큰 값입니다.',
 		status: HttpStatus.UNAUTHORIZED,
 	},
 	notFoundInterworkInfo: {
@@ -103,6 +121,13 @@ export const ErrorMetadata = {
 		message: '개런티 정보 없음',
 		code: eErrorCode.NO_GUARANTEE_FOR_CANCEL,
 		description: '취소 대상 개런티가 존재하지 않습니다.',
+		status: HttpStatus.OK,
+	},
+	notFoundGuaranteeRequest: {
+		name: 'NOT_FOUND_GUARANTEE_REQUEST',
+		message: '개런티 요청 정보 없음',
+		code: eErrorCode.NOT_FOUND_GUARANTEE_REQUEST,
+		description: '개런티 요청 정보가 존재하지 않습니다.',
 		status: HttpStatus.OK,
 	},
 

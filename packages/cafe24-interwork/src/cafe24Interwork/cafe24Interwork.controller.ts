@@ -11,7 +11,7 @@ import {
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 import {GetToken, TokenInfo} from '../getToken.decorator';
 import {IssueSetting} from './interwork.entity';
-import {JwtAuthGuard, MasterAuthGuard} from '../guard';
+import {JwtAuthGuard} from '../guard';
 import {TransformInstanceToPlain} from 'class-transformer';
 import {CategoryListParams} from './cafe24Interwork.service';
 import {ErrorResponse} from 'src/common/error';
