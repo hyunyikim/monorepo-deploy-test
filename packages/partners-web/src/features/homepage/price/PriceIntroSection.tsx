@@ -759,7 +759,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 							30일 무료 체험 시작하기
 						</GradientButton>
 
-						<AtagComponent url="https://vircle.imweb.me/inquiry">
+						<AtagComponent url="https://vircle.imweb.me/inquiry?utm_source=homepage&utm_medium=btn&utm_campaign=pricing">
 							<CapsuleButton
 							// onClick={() => openIntroductionInquiryModal('top')}
 							>
