@@ -130,20 +130,6 @@ export const commaFormNumber = (value: unknown) => {
 	return Number(value)?.toLocaleString();
 };
 
-// export const formatCommaNum = (value: string | number) => {
-// 	if (!value && value !== 0) {  //  'sdfasdff' || undefined || null || false
-// 		return '';
-// 	}
-
-// 	let numberValue;
-// 	if (typeof value === 'string') {
-// 		//  '0' || '213213'
-// 		numberValue = Number(value);
-// 	}
-
-// 	return numberValue?.toLocaleString();
-// };
-
 export const formatDateString = (_str: string, _separator = '-') => {
 	const pureNumber = (_str || '')
 		.toString()
