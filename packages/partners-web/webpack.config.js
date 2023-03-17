@@ -3,10 +3,15 @@ const path = require('path');
 const {merge} = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const BundleAnalyzerPlugin =
+	require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const smp = new SpeedMeasurePlugin({});
 
 module.exports = (env, argv) => {
 	const mode = argv.mode;
 	console.log('env, argv :>> ', env, argv);
+	const analyzeMode = env.analyze === 'true';
 	const envConfig = require(`./webpack.${mode}`);
 
 	const config = {
@@ -110,7 +115,11 @@ module.exports = (env, argv) => {
 					...{[key]: JSON.stringify(value)},
 				})),
 			}),
-		],
+			analyzeMode && new BundleAnalyzerPlugin(),
+		].filter((plugin) => plugin),
 	};
+	if (analyzeMode) {
+		return smp.wrap(merge(config, envConfig));
+	}
 	return merge(config, envConfig);
 };

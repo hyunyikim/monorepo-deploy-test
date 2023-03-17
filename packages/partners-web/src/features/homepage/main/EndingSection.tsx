@@ -9,8 +9,6 @@ import {
 } from '@/assets/images/homepage/index';
 import {sendAmplitudeLog} from '@/utils';
 
-// import '../../assets/scss/partnersHomepage.scss';
-
 function EndingSection() {
 	const screenWidth = window.innerWidth;
 	const navigate = useNavigate();

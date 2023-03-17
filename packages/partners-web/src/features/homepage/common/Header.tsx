@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {debounce} from 'lodash';
 import {useLoginStore} from '@/stores';
-import {sendAmplitudeLog} from '@/utils';
+import {debounce, sendAmplitudeLog} from '@/utils';
 import {Dialog} from '@mui/material';
 
 // import img
@@ -90,27 +89,24 @@ function HomepageHeader({
 	};
 
 	const scrollHandlerDebounce = () => {
-		const liveScrollPosition = window.scrollY;
-
-		if (liveScrollPosition === 0) {
-			setHeaderState('top');
-		} else if (liveScrollPosition - preScrollPosition < 0) {
-			setHeaderState('');
-		} else if (liveScrollPosition - preScrollPosition > 0) {
-			// 스크롤 내렸을때,
-			setHeaderState('scrolling_down');
-		}
-
-		preScrollPosition = liveScrollPosition;
+		debounce(() => {
+			const liveScrollPosition = window.scrollY;
+			if (liveScrollPosition === 0) {
+				setHeaderState('top');
+			} else if (liveScrollPosition - preScrollPosition < 0) {
+				setHeaderState('');
+			} else if (liveScrollPosition - preScrollPosition > 0) {
+				// 스크롤 내렸을때,
+				setHeaderState('scrolling_down');
+			}
+			preScrollPosition = liveScrollPosition;
+		}, 200)();
 	};
 
 	useEffect(() => {
-		window.addEventListener('scroll', debounce(scrollHandlerDebounce, 20));
+		window.addEventListener('scroll', scrollHandlerDebounce);
 		return () => {
-			window.removeEventListener(
-				'scroll',
-				debounce(scrollHandlerDebounce, 20)
-			);
+			window.removeEventListener('scroll', scrollHandlerDebounce);
 		};
 	}, []);
 

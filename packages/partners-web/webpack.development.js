@@ -6,7 +6,7 @@ module.exports = {
 		hot: true,
 		historyApiFallback: true,
 	},
-	devtool: 'inline-source-map',
+	devtool: 'eval-source-map',
 	plugins: [
 		new ReactRefreshWebpackPlugin({
 			overlay: false,

@@ -16,6 +16,9 @@ import {sendAmplitudeLog} from '@/utils';
 import {useOpen} from '@/utils/hooks';
 import {IntroductionInquiryDialog} from '@/components';
 
+import '@/assets/styles/partnersHomepage.scss';
+import '@/assets/styles/sliderStyle.scss';
+
 function PartnersHomepage() {
 	const {open, onOpen, onClose} = useOpen({});
 	const [promotionModal, setPromotionModal] = useState<boolean>(false);
