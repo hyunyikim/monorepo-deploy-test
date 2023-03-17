@@ -17,7 +17,7 @@ import {
 
 import {useCheckboxList} from '@/utils/hooks';
 import {imgDefaultPieChart, imgDefaultPieChart2x} from '@/assets/images';
-import {formatCommaNum, dashboardDateStack, sendAmplitudeLog} from '@/utils';
+import {commaFormNumber, dashboardDateStack, sendAmplitudeLog} from '@/utils';
 import {
 	DashboardPeriodType,
 	IssueStatusType,
@@ -108,9 +108,7 @@ function GuaranteeOverviewBox({
 				return `${over100M}억 ${Under100M}만`;
 			}
 		} else if (Math.abs(Number(difference)) > 0) {
-			return (
-				Math.abs(Math.abs(Number(difference))) || 0
-			).toLocaleString();
+			return commaFormNumber(Math.abs(Number(difference) || 0));
 		} else {
 			return 0;
 		}
@@ -201,7 +199,7 @@ function GuaranteeOverviewBox({
 							lineHeight: '145%',
 							color: 'grey.900',
 						}}>
-						{(count || 0).toLocaleString()}
+						{commaFormNumber(count)}
 						{title === '발급총액' ? '원' : null}
 					</Typography>
 					{title === '발급총액' ? null : (
@@ -583,10 +581,9 @@ function DashboardGuaranteeSection({
 										color: 'primary.main',
 										display: 'inline-block',
 									}}>
-									{(
-										currentPeriod?.issuedGraph
-											?.totalCount || 0
-									).toLocaleString()}
+									{commaFormNumber(
+										currentPeriod?.issuedGraph?.totalCount
+									)}
 								</Typography>
 								{currentPeriod?.issuedGraph?.averageCount >= 1
 									? `건, ${
