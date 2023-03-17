@@ -1,8 +1,7 @@
-import {ExcelError, ExcelErrorType, ExcelInput, Options} from '@/@types';
-import {GUARANTEE_EXCEL_COLUMN} from '@/data';
 import {Borders, Column, FillPattern, Workbook} from 'exceljs';
 import {saveAs} from 'file-saver';
-import {read, utils} from 'xlsx';
+
+import {ExcelError, ExcelErrorType, ExcelInput, Options} from '@/@types';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -17,6 +16,9 @@ export const generateExcelFile = async ({
 	optionalColumns: Array<Partial<Column>>;
 	sampleData: any[];
 }) => {
+	const exceljs = await import('exceljs');
+	const {Workbook} = exceljs;
+
 	const workbook = new Workbook();
 	const worksheet = workbook.addWorksheet('Sheet1');
 
@@ -124,6 +126,7 @@ export const downloadExcel = async (workbook: Workbook, title: string) => {
 };
 
 export const parseExcelData = async (excelBuffer: ArrayBuffer) => {
+	const {read, utils} = await import('xlsx');
 	const workbook = read(excelBuffer);
 	if (!workbook) {
 		return false;

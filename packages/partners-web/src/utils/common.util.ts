@@ -134,3 +134,13 @@ export const openChannelTalk = () => {
 		window.ChannelIO('showMessenger');
 	}
 };
+
+export const debounce = (callback: (args: any[]) => any, delay = 1000) => {
+	let time: NodeJS.Timeout | null = null;
+	return (...args: any[]) => {
+		clearTimeout(time as NodeJS.Timeout);
+		time = setTimeout(() => {
+			callback(...args);
+		}, delay);
+	};
+};
