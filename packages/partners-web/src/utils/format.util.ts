@@ -120,6 +120,30 @@ export const formatCommaNum = (value: string) => {
 	return pureNumber.toLocaleString();
 };
 
+/* new version 콤마 생성기  ****** 이거 쓰세요 제발... ******* */
+export const commaFormNumber = (value: unknown) => {
+	const check = /^[0-9]+$/;
+	if (!check.test(String(value))) {
+		return 0;
+	}
+
+	return Number(value)?.toLocaleString();
+};
+
+// export const formatCommaNum = (value: string | number) => {
+// 	if (!value && value !== 0) {  //  'sdfasdff' || undefined || null || false
+// 		return '';
+// 	}
+
+// 	let numberValue;
+// 	if (typeof value === 'string') {
+// 		//  '0' || '213213'
+// 		numberValue = Number(value);
+// 	}
+
+// 	return numberValue?.toLocaleString();
+// };
+
 export const formatDateString = (_str: string, _separator = '-') => {
 	const pureNumber = (_str || '')
 		.toString()

@@ -32,7 +32,7 @@ import {
 } from '@/assets/images';
 import {Button} from '@/components';
 import {formatCommaNum, sendAmplitudeLog, dashboardDateStack} from '@/utils';
-
+import {commaFormNumber} from '@/utils';
 import styled from '@emotion/styled';
 import {makeStyles} from '@mui/styles';
 import TooltipComponent from '@/components/atoms/ToolTipComponent';
@@ -209,12 +209,10 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 								}}>
 								{topData &&
 									topData.paid &&
-									`${(topData.paid || 0).toLocaleString()}원`}
+									`${commaFormNumber(topData.paid)}원`}
 								{topData &&
 									topData.issued &&
-									`${(
-										topData.issued || 0
-									).toLocaleString()}개`}
+									`${commaFormNumber(topData.issued)}개`}
 							</Box>
 						</Stack>
 				  )
@@ -272,12 +270,10 @@ function TopBoxComponent({topData, order, type}: TopBoxPropsType) {
 								}}>
 								{topData &&
 									topData.paid &&
-									`${(topData.paid || 0).toLocaleString()}원`}
+									`${commaFormNumber(topData.paid)}원`}
 								{topData &&
 									topData.issued &&
-									`${(
-										topData.issued || 0
-									).toLocaleString()}개`}
+									`${commaFormNumber(topData.issued)}개`}
 							</Box>
 						</Stack>
 				  )}
@@ -676,10 +672,10 @@ function DashboardCustomerSection({
 							data={{
 								title: '전송',
 								content: '고객에게 전송한 알림톡 건수입니다.',
-								count: (
+								count: commaFormNumber(
 									guaranteeData[period]?.walletLink
-										?.confirmCount || 0
-								).toLocaleString(),
+										?.confirmCount
+								),
 								openState: tooltipState.send,
 								toolTipHandler: () => toolTipHandler('send'),
 							}}
@@ -691,10 +687,9 @@ function DashboardCustomerSection({
 								title: '조회',
 								content:
 									'개런티 알림톡을 클릭해서 조회한 고객의 수 입니다.',
-								count: (
-									guaranteeData[period]?.walletLink
-										?.viewCount || 0
-								).toLocaleString(),
+								count: commaFormNumber(
+									guaranteeData[period]?.walletLink?.viewCount
+								),
 								openState: tooltipState.view,
 								toolTipHandler: () => toolTipHandler('view'),
 							}}
@@ -705,10 +700,9 @@ function DashboardCustomerSection({
 								title: '연동',
 								content:
 									'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객의 수 입니다.',
-								count: (
-									guaranteeData[period]?.walletLink?.linked ||
-									0
-								).toLocaleString(),
+								count: commaFormNumber(
+									guaranteeData[period]?.walletLink?.linked
+								),
 								openState: tooltipState.link,
 								toolTipHandler: () => toolTipHandler('link'),
 							}}

@@ -15,7 +15,7 @@ import {
 } from '@/@types/dashboard.types';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {formatCommaNum} from '@/utils';
+import {commaFormNumber} from '@/utils';
 
 interface ProgressStateProps {
 	data: {
@@ -134,7 +134,7 @@ function CustomerInfoOverview({
 			tooltipText: '고객에게 전송한 알림톡 건수입니다.',
 			rate: linkData?.confirmCount ? '100' : '0',
 			count: linkData?.linked
-				? (linkData?.confirmCount || 0).toLocaleString()
+				? commaFormNumber(linkData?.confirmCount)
 				: 0,
 			// count: linkData?.linked,
 			icon: icGreenSend,
@@ -150,7 +150,7 @@ function CustomerInfoOverview({
 				  )
 				: '0',
 			count: linkData?.viewCount
-				? (linkData?.viewCount || 0).toLocaleString()
+				? commaFormNumber(linkData?.viewCount)
 				: 0,
 			icon: icYellowView,
 			openState: tooltipState.view,
@@ -163,9 +163,7 @@ function CustomerInfoOverview({
 			rate: linkData?.linked
 				? Math.round((linkData?.linked / linkData?.confirmCount) * 100)
 				: '0',
-			count: linkData?.linked
-				? (linkData?.linked || 0).toLocaleString()
-				: 0,
+			count: linkData?.linked ? commaFormNumber(linkData?.linked) : 0,
 			icon: icBlueChain,
 			openState: tooltipState.link,
 			toolTipHandler: () => toolTipHandler('link'),
