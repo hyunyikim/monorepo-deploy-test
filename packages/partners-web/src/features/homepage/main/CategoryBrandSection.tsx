@@ -3,6 +3,8 @@ import {useNavigate} from 'react-router-dom';
 import Carousel from 'nuka-carousel';
 
 import {
+	newsThumnail10,
+	newsThumnail10_2x,
 	newsThumnail9,
 	newsThumnail9_2x,
 	newsThumnail8,
@@ -53,6 +55,14 @@ function CategoryBrandSection() {
 	};
 
 	const newsList = [
+		{
+			title: `매스어답션, 신규 아웃도어 'DOD'와 디지털 보증 협업`,
+			company: '패션비즈',
+			date: '2023.03',
+			link: `http://www.fashionbiz.co.kr/article/view.asp?cate=1&sub_num=&idx=198936`,
+			img: newsThumnail10,
+			img2x: newsThumnail10_2x,
+		},
 		{
 			title: `매스어답션, 그라운드X와 NFT 보증서 맞손`,
 			company: '매일경제',
