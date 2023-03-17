@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom';
 
 import styled from '@emotion/styled';
 import {css, keyframes} from '@emotion/react';
-import {formatCommaNum, sendAmplitudeLog} from '@/utils';
+import {commaFormNumber, sendAmplitudeLog} from '@/utils';
 import {
 	imgBlueCheckTick,
 	imgBlueCheckTick2x,
@@ -819,10 +819,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 									</PriceInnerFlexBoxStyle>
 									<PriceInnerPriceFlexBoxStyle>
 										<h6>
-											{(
-												displayPrice || 0
-											).toLocaleString()}
-											원
+											{commaFormNumber(displayPrice)}원
 										</h6>
 										<span>/월</span>
 									</PriceInnerPriceFlexBoxStyle>
@@ -831,7 +828,7 @@ function PriceIntroSection({openEmailModal}: openEmailModalProps) {
 						)}
 
 						<AtagComponent
-							url="https://vircle.imweb.me/inquiry"
+							url="https://vircltoLocaleString().imweb.me/inquiry"
 							sx={{width: 'auto'}}>
 							<PricePlanBoxStyle
 								mainColor="blue"
