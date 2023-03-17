@@ -78,6 +78,8 @@ export {default as newsThumnail8} from './main/img_news_202210310953.jpg';
 export {default as newsThumnail8_2x} from './main/img_news_202210310953.jpg';
 export {default as newsThumnail9} from './main/img_news_groundXxVircle.png';
 export {default as newsThumnail9_2x} from './main/img_news_groundXxVircle@2x.png';
+export {default as newsThumnail10} from './main/img_news_dod.png';
+export {default as newsThumnail10_2x} from './main/img_news_dod@2x.png';
 export {default as categoryJewelryCard} from './main/img_category_jewelry_card.png';
 export {default as categoryJewelryCard2x} from './main/img_category_jewelry_card@2x.png';
 export {default as categoryFashionCard} from './main/img_category_fashion_card.png';
