@@ -11,7 +11,7 @@ export class InterworkRepository {
     private tableName: string
   ) {}
 
-  async getInterwork(accountId: string) {
+  async getInterworkByAccountId(accountId: string) {
     const { Item } = await this.ddbClient
       .get({
         TableName: this.tableName,
@@ -22,6 +22,26 @@ export class InterworkRepository {
       .promise();
 
     return Item ? plainToInstance(NaverStoreInterwork, Item) : null;
+  }
+
+  async getInterworkByToken(partnerIdx: number) {
+    const { Items } = await this.ddbClient
+      .query({
+        TableName: this.tableName,
+        IndexName: "partnerIdx-index",
+        KeyConditionExpression: "partnerIdx = :idx",
+        ExpressionAttributeValues: {
+          ":idx": partnerIdx,
+        },
+      })
+      .promise()
+      .catch((e) => {
+        throw new Error("interwork partnerInfo not found");
+      });
+
+    return Items?.length
+      ? plainToInstance(NaverStoreInterwork, Items?.[0])
+      : null;
   }
 
   async putInterwork(interwork: Partial<NaverStoreInterwork>) {
@@ -72,5 +92,18 @@ export class InterworkRepository {
     }
 
     return plainToInstance(NaverStoreInterwork, list);
+  }
+
+  async getAllWithoutUnlinked() {
+    const { Items: list } = await this.ddbClient
+      .scan({ TableName: this.tableName })
+      .promise();
+    if (!list) {
+      return [];
+    }
+
+    return plainToInstance(NaverStoreInterwork, list).filter(
+      (interwork) => !interwork.reasonForLeave
+    );
   }
 }

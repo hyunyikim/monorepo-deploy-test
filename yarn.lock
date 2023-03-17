@@ -7156,6 +7156,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/event-emitter@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@nestjs/event-emitter@npm:1.4.1"
+  dependencies:
+    eventemitter2: 6.4.9
+  peerDependencies:
+    "@nestjs/common": ^7.0.0 || ^8.0.0 || ^9.0.0
+    "@nestjs/core": ^7.0.0 || ^8.0.0 || ^9.0.0
+    reflect-metadata: ^0.1.12
+  checksum: d8fba80b8f81a717430d0ee774f8a02b068d7ab278dbfae66165c7c0a2941874fb563103bd04dfe8088683fc105472722601f5a7ba4a60e80d7d3cd36d4490a0
+  languageName: node
+  linkType: hard
+
+"@nestjs/jwt@npm:^10.0.2":
+  version: 10.0.2
+  resolution: "@nestjs/jwt@npm:10.0.2"
+  dependencies:
+    "@types/jsonwebtoken": 9.0.1
+    jsonwebtoken: 9.0.0
+  peerDependencies:
+    "@nestjs/common": ^8.0.0 || ^9.0.0
+  checksum: e5b993c900c69112666f0e13ef0dcef0c7435f26eadcf964f0ae95d3b8bb335aedc0312d731f7505a4a5554903b9baa9d58ffccd212a3d160c882869c687cdae
+  languageName: node
+  linkType: hard
+
 "@nestjs/jwt@npm:^9.0.0":
   version: 9.0.0
   resolution: "@nestjs/jwt@npm:9.0.0"
@@ -7332,6 +7357,20 @@ __metadata:
     "@nestjs/core": ^7.0.0 || ^8.0.0 || ^9.0.0
     reflect-metadata: ^0.1.12
   checksum: 43423eb0491c692c08dcdb6d18d34ec758fe29cda52f4674a945e06933ec5b4e23229193c1b071971842b50db57024d6f1c55fe8f4c6392754b6a597b31eb423
+  languageName: node
+  linkType: hard
+
+"@nestjs/schedule@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@nestjs/schedule@npm:2.2.0"
+  dependencies:
+    cron: 2.2.0
+    uuid: 9.0.0
+  peerDependencies:
+    "@nestjs/common": ^7.0.0 || ^8.0.0 || ^9.0.0
+    "@nestjs/core": ^7.0.0 || ^8.0.0 || ^9.0.0
+    reflect-metadata: ^0.1.12
+  checksum: c353b0701848afac319f239b2d1a740d05fed84deabd10b9296e1cf7547d18499642f949e642ebfa35f8fc0063f629a1a67fa7fd6ca4b7cbd925651fe4b8496a
   languageName: node
   linkType: hard
 
@@ -8122,6 +8161,25 @@ __metadata:
     p-queue: ^6.6.1
     p-retry: ^4.0.0
   checksum: caa82f3bb25d43a6a9434be659d74a41a35dbcc347a9ae356266da58982d42a7280d25f82a24d208c39c687038707747e5d6e415617412abd21e79c99a32c22e
+  languageName: node
+  linkType: hard
+
+"@slack/web-api@npm:^6.8.1":
+  version: 6.8.1
+  resolution: "@slack/web-api@npm:6.8.1"
+  dependencies:
+    "@slack/logger": ^3.0.0
+    "@slack/types": ^2.0.0
+    "@types/is-stream": ^1.1.0
+    "@types/node": ">=12.0.0"
+    axios: ^0.27.2
+    eventemitter3: ^3.1.0
+    form-data: ^2.5.0
+    is-electron: 2.2.0
+    is-stream: ^1.1.0
+    p-queue: ^6.6.1
+    p-retry: ^4.0.0
+  checksum: a622f44b0d9bef010799b78feb20cf93a8181a6c858aaccac60cd1041561681e1d444b39865efe3e4febfe3e85ea38e001315bbe6896bb8e0fc065eb9fd6634d
   languageName: node
   linkType: hard
 
@@ -10321,6 +10379,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jsonwebtoken@npm:9.0.1":
+  version: 9.0.1
+  resolution: "@types/jsonwebtoken@npm:9.0.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: a7f0925e9a42ad3ae970364c63c5986d40da5c83d51d3f4e624eb0f064a380376f9e3fb3f2f837390a9ab80143f5d75fd51866da30e110f6b486a3379e1c768f
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:^4.14.175":
   version: 4.14.186
   resolution: "@types/lodash@npm:4.14.186"
@@ -11430,15 +11497,20 @@ __metadata:
     "@nestjs/common": ^9.0.0
     "@nestjs/config": ^2.3.1
     "@nestjs/core": ^9.0.0
+    "@nestjs/event-emitter": ^1.4.1
+    "@nestjs/jwt": ^10.0.2
     "@nestjs/mongoose": ^9.2.1
     "@nestjs/platform-express": ^9.0.0
+    "@nestjs/schedule": ^2.2.0
     "@nestjs/schematics": ^9.0.0
     "@nestjs/swagger": ^6.2.1
     "@nestjs/testing": ^9.3.9
     "@nestjs/typeorm": ^9.0.1
     "@sentry/node": ^7.38.0
     "@sentry/tracing": ^7.38.0
+    "@slack/web-api": ^6.8.1
     "@types/bcryptjs": ^2
+    "@types/cron": ^2.0.0
     "@types/express": ^4.17.13
     "@types/jest": 29.2.4
     "@types/js-yaml": ^4.0.5
@@ -15880,6 +15952,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cron@npm:2.2.0":
+  version: 2.2.0
+  resolution: "cron@npm:2.2.0"
+  dependencies:
+    luxon: ^3.2.1
+  checksum: 53905d0f55e052742cf4fed34598a4ebfc311f4f9143c90384225bb4376fa639cd12f485cbf5d3dca00db377bf5117f27a1cae405f15e4745d1f69808e4fb9ac
+  languageName: node
+  linkType: hard
+
 "croner@npm:~4.1.92":
   version: 4.1.97
   resolution: "croner@npm:4.1.97"
@@ -18149,6 +18230,13 @@ __metadata:
   version: 5.0.1
   resolution: "eventemitter2@npm:5.0.1"
   checksum: 61cb074b8a71d6e0bcbbf3107aa08cede21b5a588858ef5faf6308d868f277eb30c1a65c5da0cb4e35960c6b2d5bcfb42dbfb7d0302decff94b68da368852b14
+  languageName: node
+  linkType: hard
+
+"eventemitter2@npm:6.4.9":
+  version: 6.4.9
+  resolution: "eventemitter2@npm:6.4.9"
+  checksum: be59577c1e1c35509c7ba0e2624335c35bbcfd9485b8a977384c6cc6759341ea1a98d3cb9dbaa5cea4fff9b687e504504e3f9c2cc1674cf3bd8a43a7c74ea3eb
   languageName: node
   linkType: hard
 
@@ -23859,6 +23947,18 @@ __metadata:
     ms: ^2.1.1
     semver: ^5.6.0
   checksum: 93c9e3f23c59b758ac88ba15f4e4753b3749dfce7a6f7c40fb86663128a1e282db085eec852d4e0cbca4cefdcd3a8275ee255dbd08fcad0df26ad9f6e4cc853a
+  languageName: node
+  linkType: hard
+
+"jsonwebtoken@npm:9.0.0":
+  version: 9.0.0
+  resolution: "jsonwebtoken@npm:9.0.0"
+  dependencies:
+    jws: ^3.2.2
+    lodash: ^4.17.21
+    ms: ^2.1.1
+    semver: ^7.3.8
+  checksum: b9181cecf9df99f1dc0253f91ba000a1aa4d91f5816d1608c0dba61a5623726a0bfe200b51df25de18c1a6000825d231ad7ce2788aa54fd48dcb760ad9eb9514
   languageName: node
   linkType: hard
 
@@ -29676,6 +29776,17 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.8":
+  version: 7.3.8
+  resolution: "semver@npm:7.3.8"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: ba9c7cbbf2b7884696523450a61fee1a09930d888b7a8d7579025ad93d459b2d1949ee5bbfeb188b2be5f4ac163544c5e98491ad6152df34154feebc2cc337c1
   languageName: node
   linkType: hard
 

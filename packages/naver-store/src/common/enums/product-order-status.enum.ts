@@ -1,0 +1,11 @@
+export enum eProductOrderStatus {
+  PAYMENT_WAITING = "PAYMENT_WAITING", //	결제 대기
+  PAYED = "PAYED", //	결제 완료
+  DELIVERING = "DELIVERING", //	배송 중
+  DELIVERED = "DELIVERED", //	배송 완료
+  PURCHASE_DECIDED = "PURCHASE_DECIDED", //	구매 확정
+  EXCHANGED = "EXCHANGED", //	교환
+  CANCELED = "CANCELED", //	취소
+  RETURNED = "RETURNED", //	반품
+  CANCELED_BY_NOPAYMENT = "CANCELED_BY_NOPAYMENT", //	미결제 취소
+}

@@ -55,7 +55,8 @@ function addSwagger(app: INestApplication) {
           bearerFormat: "Jwt",
           name: "Token",
           in: "header",
-          description: "JWT 토큰",
+          description:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjEwNDYsInR5cGUiOiJCIiwiYjJiVHlwZSI6IkIiLCJpYXQiOjE2Nzg2NjM4MjMsImV4cCI6NDgzMjI2MzgyM30.k2Vm2AurofniOwyqqPiMn93oq0pTw_k5S4utYuSwO40",
         },
         "Token"
       )

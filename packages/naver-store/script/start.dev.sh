@@ -23,6 +23,7 @@ echo ">[$(date) PULL LATEST SOURCE FROM GITHUB]" >> $LOG_POINT
 git pull >>  $LOG_POINT
 
 yarn
+echo $? >> $LOG_POINT
 
 echo ">[$(date) BUILD START]" >> $LOG_POINT
 

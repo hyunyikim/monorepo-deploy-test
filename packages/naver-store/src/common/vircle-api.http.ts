@@ -4,6 +4,8 @@ import Axios, { AxiosHeaders, AxiosInstance, CreateAxiosDefaults } from "axios";
 import FormData from "form-data";
 import { Nft } from "@vircle/entity";
 
+import { PRODUCT_CATEGORY } from "src/common/enums/product-category.enum";
+
 @Injectable()
 export class VircleApiHttpService {
   private httpAgent: AxiosInstance;
@@ -42,7 +44,7 @@ export class VircleApiHttpService {
     return data;
   }
 
-  async requestGuarantee(token: string, payload: Record<string, any>) {
+  async requestGuarantee(token: string, payload: ReqGuaranteePayload) {
     const {
       image,
       category,
@@ -96,7 +98,7 @@ export class VircleApiHttpService {
   }
 }
 
-export interface Partnership {
+export class Partnership {
   idx: number;
   parentIdx: number;
   adminType: string;
@@ -159,4 +161,33 @@ export interface Partnership {
     useInspect: "Y" | "N";
     useRepair: "Y" | "N";
   } | null;
+}
+
+export interface ReqGuaranteePayload {
+  image: string;
+  category: PRODUCT_CATEGORY;
+  brandIdx: number;
+  productName: string;
+  modelNum: string;
+  material: string;
+  size: string;
+  weight: string;
+  price: number;
+  warranty: string;
+  platformName: string;
+  orderedAt: string;
+  orderId: string;
+  ordererName: string;
+  ordererTel: string;
+  nftState: NFT_STATUS;
+}
+
+export enum NFT_STATUS {
+  READY = "1",
+  REQUESTED = "2",
+  CONFIRMED = "3",
+  COMPLETED = "4",
+  WAITING_SEND = "5",
+  WAITING_RECEIVE = "6",
+  CANCELED = "9",
 }
