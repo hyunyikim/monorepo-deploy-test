@@ -6,7 +6,7 @@ export HOME="/root"
 
 cd ~/naver-store
 
-export NODE_ENV=production
+export NODE_ENV=stage
 
 echo ">AFTER INSTALL[$(date)]: GET ENV File from S3" >> /root/deploy.log
 

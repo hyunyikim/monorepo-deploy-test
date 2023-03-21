@@ -17,8 +17,8 @@ export const URL_GET_ORDER_LIST =
 
 export const URL_GET_PRODUCT_LIST = "/v1/products/search";
 
-export const URL_GET_CHANNEL_PRODUCT_LIST = (channelId: number) =>
-  `/v2/products/channel-products/${channelId}`;
+export const URL_GET_CHANNEL_PRODUCT_LIST = (productId: string) =>
+  `/v2/products/channel-products/${productId}`;
 
 export const URL_GET_ORDER_DETAIL_LIST =
   "/v1/pay-order/seller/product-orders/query";

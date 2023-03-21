@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 
 import { eProductOrderStatus } from "src/common/enums/product-order-status.enum";
 import {
+  NFT_STATUS,
   ReqGuaranteePayload,
   VircleApiHttpService,
 } from "src/common/vircle-api.http";
@@ -12,11 +13,15 @@ import { InterworkRepository } from "src/interwork/entities/interwork.repository
 import { NaverStoreApi } from "src/naver-api/naver-store.api";
 import {
   ChangedOrder,
+  NaverProductDetail,
+  NaverProduct,
   OrderDetail,
 } from "src/naver-api/interfaces/naver-store-api.interface";
 import {
   GetChangedOrderListEvent,
   GetOrderDetailEvent,
+  GetProductDetailEvent,
+  GetProductListEvent,
   IssueGuaranteeEvent,
 } from "src/guarantee/events/guarantee.event";
 import { SqsService } from "src/common/sqs/sqs.service";
@@ -126,12 +131,12 @@ export class GuaranteeService {
         orders.map((order) => order.productOrderId)
       );
 
-      const event = new IssueGuaranteeEvent();
+      const event = new GetProductListEvent();
       event.interwork = interwork;
       event.orders = orders;
       event.orderDetails = orderDetailList;
       event.retryCount = retryCount;
-      this.emitter.emit(IssueGuaranteeEvent.Key, event);
+      this.emitter.emit(GetProductListEvent.Key, event);
     } catch (e) {
       e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
 
@@ -141,19 +146,164 @@ export class GuaranteeService {
     }
   }
 
+  async getProducts(
+    interwork: NaverStoreInterwork,
+    orders: ChangedOrder[],
+    orderDtails: OrderDetail[],
+    retryCount = 0
+  ) {
+    try {
+      const productIds = orderDtails.map(
+        (detail) => +detail.productOrder.productId
+      );
+
+      const products = await this.api.getProductList(
+        productIds,
+        interwork.getAccessToken()
+      );
+
+      const event = new GetProductDetailEvent();
+      event.interwork = interwork;
+      event.orders = orders;
+      event.orderDetails = orderDtails;
+      event.products = products;
+      event.retryCount = retryCount;
+      this.emitter.emit(GetProductDetailEvent.Key, event);
+    } catch (e) {
+      e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
+
+      await this.sqsService.send(
+        SQS_METADATA[GetProductListEvent.Key](
+          interwork,
+          orders,
+          orderDtails,
+          retryCount
+        )
+      );
+    }
+  }
+
   /**
    * 카테고리 여부에 따라 개런티 발급 필터
    */
-  async filterCategories() {}
+  private filterCategories(
+    interwork: NaverStoreInterwork,
+    orderDetails: OrderDetail[],
+    products: NaverProduct[]
+  ) {
+    const categories = interwork.issueSetting.issueCategories.map(
+      (category) => +category.id
+    );
+
+    const filteredProducts = products.filter((product) =>
+      categories.includes(+product.channelProducts[0].categoryId)
+    );
+    const filteredProductIds = filteredProducts.map(
+      (product) => +product.channelProducts[0].channelProductNo
+    );
+    const filteredDetails = orderDetails.filter((detail) =>
+      filteredProductIds.includes(+detail.productOrder.productId)
+    );
+    return { filteredDetails, filteredProducts };
+  }
+
+  async getProductDetails(
+    interwork: NaverStoreInterwork,
+    orders: ChangedOrder[],
+    orderDtails: OrderDetail[],
+    products: NaverProduct[],
+    retryCount = 0
+  ) {
+    try {
+      if (interwork.issueSetting.issueCategories.length) {
+        const { filteredDetails, filteredProducts } = this.filterCategories(
+          interwork,
+          orderDtails,
+          products
+        );
+      }
+
+      const productDetails = [] as NaverProductDetail[];
+      for (const _product of products) {
+        const product = await this.api.getProductDetail(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          _product.channelProducts[0].channelProductNo,
+          interwork.getAccessToken()
+        );
+        productDetails.push(product);
+      }
+
+      const event = new IssueGuaranteeEvent();
+      event.interwork = interwork;
+      event.orders = orders;
+      event.orderDetails = orderDtails;
+      event.products = products;
+      event.productDetails = productDetails;
+      event.retryCount = retryCount;
+      this.emitter.emit(IssueGuaranteeEvent.Key, event);
+    } catch (e) {
+      e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
+
+      await this.sqsService.send(
+        SQS_METADATA[GetProductDetailEvent.Key](
+          interwork,
+          orders,
+          orderDtails,
+          products,
+          retryCount
+        )
+      );
+    }
+  }
 
   async issueGuarantee(
     interwork: NaverStoreInterwork,
-    orderDtails: OrderDetail[]
+    orders: ChangedOrder[],
+    orderDtails: OrderDetail[],
+    products: NaverProduct[],
+    productDetails: NaverProductDetail[],
+    retryCount = 0
   ) {
-    orderDtails.map((order) => {
-      order.productOrder.sellerCustomCode1;
-    });
-    // await this.vircleCoreApi.requestGuarantee(interwork.coreApiToken, {});
+    try {
+      const payload = {
+        brandIdx: interwork.partnerInfo?.brand?.idx,
+        warranty: interwork.partnerInfo?.warrantyDate,
+        nftState: interwork.issueSetting.isAutoIssue
+          ? NFT_STATUS.REQUESTED
+          : NFT_STATUS.READY,
+        orderId: orderDtails[0].productOrder.productOrderId,
+        ordererTel: orderDtails[0].order.ordererTel,
+        ordererName: orderDtails[0].order.ordererName,
+        orderedAt: orderDtails[0].order.orderDate,
+        price: orderDtails[0].order.generalPaymentAmount,
+        platformName: orderDtails[0].productOrder.inflowPath,
+        productName: productDetails[0].originProduct.name,
+        image: productDetails[0].originProduct.images.representativeImage.url,
+        category: productDetails[0].originProduct.leafCategoryId,
+        size: undefined,
+        modelNum: undefined,
+        weight: undefined,
+        material: undefined,
+      } as ReqGuaranteePayload;
+      await this.vircleCoreApi
+        .requestGuarantee(interwork.coreApiToken, payload)
+        .catch((e) => {
+          console.log(e);
+          throw e;
+        });
+    } catch (e) {
+      e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
+
+      // await this.sqsService.send(
+      //   SQS_METADATA[IssueGuaranteeEvent.Key](
+      //     interwork,
+      //     orders,
+      //     orderDtails,
+      //     products,
+      //     retryCount
+      //   )
+      // );
+    }
   }
 
   // private createReqGuaranteePayload(): ReqGuaranteePayload {

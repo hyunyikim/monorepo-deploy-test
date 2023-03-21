@@ -5,6 +5,7 @@ import FormData from "form-data";
 import { Nft } from "@vircle/entity";
 
 import { PRODUCT_CATEGORY } from "src/common/enums/product-category.enum";
+import { NFT_REQUEST_ROUTE } from "src/common/enums/nft-req-route.enum";
 
 @Injectable()
 export class VircleApiHttpService {
@@ -81,6 +82,7 @@ export class VircleApiHttpService {
     ordererName && form.append("orderer_nm", ordererName);
     ordererTel && form.append("orderer_tel", ordererTel);
     nftState && form.append("nft_req_state", nftState);
+    form.append("request_route", NFT_REQUEST_ROUTE.NAVER);
 
     const { data } = await this.httpAgent.post<{
       data: {
@@ -165,13 +167,13 @@ export class Partnership {
 
 export interface ReqGuaranteePayload {
   image: string;
-  category: PRODUCT_CATEGORY;
-  brandIdx: number;
+  category: string;
+  brandIdx?: number;
   productName: string;
-  modelNum: string;
-  material: string;
-  size: string;
-  weight: string;
+  modelNum?: string;
+  material?: string;
+  size?: string;
+  weight?: string;
   price: number;
   warranty: string;
   platformName: string;

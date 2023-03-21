@@ -24,24 +24,9 @@ export class InterworkRepository {
     return Item ? plainToInstance(NaverStoreInterwork, Item) : null;
   }
 
-  async getInterworkByToken(partnerIdx: number) {
-    const { Items } = await this.ddbClient
-      .query({
-        TableName: this.tableName,
-        IndexName: "partnerIdx-index",
-        KeyConditionExpression: "partnerIdx = :idx",
-        ExpressionAttributeValues: {
-          ":idx": partnerIdx,
-        },
-      })
-      .promise()
-      .catch((e) => {
-        throw new Error("interwork partnerInfo not found");
-      });
-
-    return Items?.length
-      ? plainToInstance(NaverStoreInterwork, Items?.[0])
-      : null;
+  async getInterworkByToken(token: string) {
+    const interworks = await this.getAll();
+    return interworks.find((interwork) => interwork.getAccessToken() === token);
   }
 
   async putInterwork(interwork: Partial<NaverStoreInterwork>) {

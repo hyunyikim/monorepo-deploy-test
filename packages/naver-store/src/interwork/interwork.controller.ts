@@ -49,7 +49,8 @@ export class InterworkController {
 
   @Get()
   getInterwork(@GetToken() token: TokenInfo) {
-    return this.interworkService.getInterworkByToken(token);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return this.interworkService.getInterworkByPartner(token);
   }
 
   @Get("category")

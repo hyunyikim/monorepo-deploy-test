@@ -23,14 +23,6 @@ export class LoggerService implements WinstonModuleOptionsFactory {
     const isProduction = env === ENV.PRODUCTION;
     const { errors, combine, json, timestamp, ms, splat, prettyPrint } = format;
     const _transports: transport[] = [
-      new Sentry({
-        config: {
-          dsn: this.config.getOrThrow("sentry.dsn"),
-          server_name: this.config.getOrThrow("sentry.serverName"),
-          environment: env,
-        },
-        level: "error",
-      } as ISentryOptions),
       new transports.Console({
         level: "debug",
         format: combine(
@@ -41,17 +33,25 @@ export class LoggerService implements WinstonModuleOptionsFactory {
         ),
       }),
     ];
-    ENV.LOCAL !== env &&
-      _transports.push(
-        new WinstonCloudwatch({
-          level: isProduction ? "info" : "silly",
-          logGroupName: `naver-store-${env}`,
-          logStreamName: DateTime.now().toSQLDate(),
-          awsRegion: this.config.getOrThrow("aws.region"),
-          jsonMessage: true,
-        })
-      );
 
+    const sentryTransport = new Sentry({
+      config: {
+        dsn: this.config.getOrThrow("sentry.dsn"),
+        server_name: this.config.getOrThrow("sentry.serverName"),
+        environment: env,
+      },
+      level: "error",
+    } as ISentryOptions);
+    const cloudwatchTransport = new WinstonCloudwatch({
+      level: isProduction ? "info" : "silly",
+      logGroupName: `naver-store-${env}`,
+      logStreamName: DateTime.now().toSQLDate(),
+      awsRegion: this.config.getOrThrow("aws.region"),
+      jsonMessage: true,
+    });
+
+    ENV.LOCAL !== env && _transports.push(cloudwatchTransport);
+    ENV.PRODUCTION === env && _transports.push(sentryTransport);
     const loggerOptions = {
       format: combine(
         errors({ stack: true }),

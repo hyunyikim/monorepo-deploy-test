@@ -28,7 +28,7 @@ export class IssueSetting {
   issueTiming: IssueTiming = "AFTER_DELIVERED";
 
   @IsArray()
-  issueCategories: NaverCategory[];
+  issueCategories: NaverCategory[] = [];
 
   @IsBoolean()
   issueIntro?: boolean = true;

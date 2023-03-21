@@ -1,0 +1,33 @@
+naver:
+  auth:
+    id: 6s8pCrYL8amvvX8gIIx0eC
+    name: S-PTNR-AGENCY-매스어답션-A001
+    secret: $2a$04$Zynf7UcJxQp47NF2FNKyc.
+    accountId: ncp_1njkqz_02
+  http:
+    baseURL: https://sandbox-api.commerce.naver.com/partner
+aws:
+  region: ap-northeast-2
+  dynamodb:
+    interwork:
+      tableName: stage_interwork_naver_store
+    guarantee:
+      tableName: stage_guarantee_naver_store
+  sqs:
+    url: https://sqs.ap-northeast-2.amazonaws.com/677062093523/NaverStoreEventFailedQueueStage
+sentry:
+  dsn: https://7bbe13b070864e0e8d62e60a1b405bc1@o1107902.ingest.sentry.io/4504734609571840
+  serverName: naver-store
+talktalk:
+  http:
+    baseURL: https://talk.naver.com
+vircle-api:
+  http:
+    baseURL: https://stage-api.vircle.co.kr
+jwt:
+  secret-key: valuAdmin21!
+slack:
+  channelId: C04ULU1ED45
+  appId: A02NH9A2RGC
+  clientId: 2455036956996.2765316093556
+  botToken: xoxb-2455036956996-2786781546320-nfyqo5mKSoMQe1rCmHRLgbCL

@@ -74,7 +74,7 @@ export class InterworkService {
       partnerIdx: partnership.idx,
       partnerInfo: partnership,
       coreApiToken,
-      IssueSetting: new IssueSetting(),
+      issueSetting: new IssueSetting(),
     });
 
     await this.interworkRepo.putInterwork(naverStoreInterwork);
@@ -92,6 +92,20 @@ export class InterworkService {
     return tokenInfo;
   }
 
+  async refreshTokenByOldToken(oldToken: string) {
+    const naverStoreInterwork = (await this.interworkRepo.getInterworkByToken(
+      oldToken
+    )) as NaverStoreInterwork;
+
+    const tokenInfo = await this.naverApi.generateToken(
+      naverStoreInterwork.accountId
+    );
+    naverStoreInterwork.tokenInfo = tokenInfo;
+
+    await this.interworkRepo.putInterwork(naverStoreInterwork);
+    return tokenInfo.access_token;
+  }
+
   async getInterworkByAccountId(accountId: string) {
     const interwork = await this.interworkRepo.getInterworkByAccountId(
       accountId
@@ -102,8 +116,10 @@ export class InterworkService {
     return interwork;
   }
 
-  async getInterworkByToken({ partnerIdx }: TokenInfo) {
-    const interwork = await this.interworkRepo.getInterworkByToken(partnerIdx);
+  async getInterworkByPartner({ partnerIdx }: TokenInfo) {
+    const interwork = await this.interworkRepo.getInterworkByPartner(
+      partnerIdx
+    );
     if (!interwork) {
       throw new Error("interwork not found");
     }
