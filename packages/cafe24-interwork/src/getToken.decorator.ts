@@ -18,3 +18,13 @@ export const GetToken = createParamDecorator(
 		};
 	}
 );
+
+export const GetTokenOrNot = createParamDecorator(
+	(data, ctx: ExecutionContext): TokenInfo => {
+		const req: Express.Request = ctx.switchToHttp().getRequest();
+		return {
+			partnerIdx: req['partnerIdx'] as number,
+			token: req['token'] as string,
+		};
+	}
+);

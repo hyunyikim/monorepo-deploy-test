@@ -37,6 +37,33 @@ export class JwtAuthGuard implements CanActivate {
 }
 
 @Injectable()
+export class JwtAuthGuardOrNot implements CanActivate {
+	constructor(@Inject(JwtService) private jwtService: JwtService) {}
+
+	canActivate(
+		context: ExecutionContext
+	): boolean | Promise<boolean> | Observable<boolean> {
+		const req: Request = context.switchToHttp().getRequest();
+		const header = req.headers.authorization;
+		if (!header) {
+			return true;
+		}
+
+		const token = header.replaceAll('Bearer ', '');
+		req['token'] = token;
+		return this.jwtService
+			.verifyAsync(token)
+			.then((payload: {idx: number; iat: number; exp: number}) => {
+				req['partnerIdx'] = payload.idx;
+				return true;
+			})
+			.catch((error) => {
+				throw new BadRequestException('Invalid Token');
+			});
+	}
+}
+
+@Injectable()
 export class MasterAuthGuard implements CanActivate {
 	constructor(@Inject(JwtService) private jwtService: JwtService) {}
 
