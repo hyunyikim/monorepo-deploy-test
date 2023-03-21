@@ -70,7 +70,7 @@ function HomepageHeader({
 				});
 				break;
 			case 'inquiry':
-				sendAmplitudeLog('homepage_dashboard_click', {
+				sendAmplitudeLog('homepage_inquiry_click', {
 					button_title: '도입문의 페이지 이동',
 				});
 				return;
