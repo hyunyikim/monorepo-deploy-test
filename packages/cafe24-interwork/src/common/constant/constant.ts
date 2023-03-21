@@ -65,3 +65,9 @@ export const orderStatus2Action = (
 			return WEBHOOK_ACTION.PASS;
 	}
 };
+
+export enum INTERWORK_STATUS {
+	OK = 'OK',
+	FAIL = 'FAIL',
+	LINKED_OTHER_PARTNERS = 'LINKED_OTHER_PARTNERS',
+}
