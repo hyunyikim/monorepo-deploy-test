@@ -98,7 +98,7 @@ export class Cafe24EventService {
 		);
 
 		try {
-			if (webHook.resource.event_shop_no !== '1') {
+			if (Number(webHook.resource.event_shop_no) !== 1) {
 				throw new ErrorResponse(ErrorMetadata.notDefaultShopNo);
 			}
 
