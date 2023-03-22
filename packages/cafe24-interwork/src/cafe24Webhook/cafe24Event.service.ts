@@ -174,7 +174,7 @@ export class Cafe24EventService {
 	private async addInterworkInfo(
 		webHook: WebHookBody<EventBatchOrderShipping>
 	) {
-		const interwork = await this.interworkRepo.getInterwork(
+		let interwork = await this.interworkRepo.getInterwork(
 			webHook.resource.mall_id
 		);
 		if (!interwork) {
@@ -186,6 +186,10 @@ export class Cafe24EventService {
 		if (interwork.leavedAt) {
 			throw new ErrorResponse(ErrorMetadata.canceledInterwork);
 		}
+		interwork = await this.tokenRefresher.refreshExpiredAccessToken(
+			interwork
+		);
+		this.logger.log(`Passed auth and refreshed token`);
 
 		return interwork;
 	}
