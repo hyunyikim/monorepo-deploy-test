@@ -6,15 +6,16 @@ import {
 	Post,
 	Patch,
 	UseGuards,
-	NotFoundException,
 	Query,
 } from '@nestjs/common';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
-import {GetToken, TokenInfo} from '../getToken.decorator';
+import {GetToken, GetTokenOrNot, TokenInfo} from '../getToken.decorator';
 import {IssueSetting} from './interwork.entity';
-import {JwtAuthGuard, MasterAuthGuard} from '../guard';
+import {JwtAuthGuard, JwtAuthGuardOrNot} from '../guard';
 import {TransformInstanceToPlain} from 'class-transformer';
 import {CategoryListParams} from './cafe24Interwork.service';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
 
 @Controller({version: '1', path: 'interwork'})
 export class Cafe24InterworkController {
@@ -31,7 +32,7 @@ export class Cafe24InterworkController {
 				token.partnerIdx
 			);
 		if (!interwork) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK_INFO');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 		return interwork;
 	}
@@ -43,7 +44,7 @@ export class Cafe24InterworkController {
 			mallId
 		);
 		if (!interwork) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK_INFO');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 		return interwork;
 	}
@@ -90,11 +91,18 @@ export class Cafe24InterworkController {
 	/**
 	 * 해당 mallId로 카페24와 연동하고 승인된 계정이 있는지 확인하는 엔드포인트 입니다.
 	 * @param mallId
-	 * @returns 연동 되어 있음=true, 연동 안됨=false
+	 * @returns INTERWORK_STATUS
 	 */
 	@Get(':mallId/confirm')
-	isConfirmedPartnership(@Param('mallId') mallId: string) {
-		return this.cafe24InterworkService.isConfirmed(mallId);
+	@UseGuards(JwtAuthGuardOrNot)
+	isConfirmedPartnership(
+		@Param('mallId') mallId: string,
+		@GetTokenOrNot() token?: TokenInfo
+	) {
+		return this.cafe24InterworkService.isConfirmed(
+			mallId,
+			token?.partnerIdx
+		);
 	}
 
 	@Patch(':mallId/setting')

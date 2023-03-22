@@ -1,9 +1,4 @@
-import {
-	Inject,
-	Injectable,
-	NotFoundException,
-	UnauthorizedException,
-} from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import {Cafe24Interwork, IssueSetting} from './interwork.entity';
 import {Cafe24API} from '../cafe24Api/cafe24Api';
 import {InterworkRepository} from '../dynamo/interwork.repository';
@@ -12,6 +7,9 @@ import {VircleCoreAPI} from '../vircleCoreApiService';
 import {TokenInfo} from '../getToken.decorator';
 import {SlackReporter} from '../slackReporter';
 import {IsNumber, IsOptional, IsString} from 'class-validator';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
+import {INTERWORK_STATUS} from 'src/common/constant/constant';
 @Injectable()
 export class Cafe24InterworkService {
 	constructor(
@@ -29,18 +27,20 @@ export class Cafe24InterworkService {
 	/**
 	 * cafe24에 특정 mall이 연동 되어 있는지를 확인합니다.
 	 * @param mallId 연동 정보를 얻고자 하는 파트너스의 cafe24 mallId
-	 * @returns 연동 = true, 비연동 = false
+	 * @returns INTERWORK_STATUS
 	 */
-	async isConfirmed(mallId: string) {
+	async isConfirmed(mallId: string, partnerIdx?: number) {
 		const interwork = await this.interworkRepo.getInterwork(mallId);
 		if (interwork === null) {
-			return false;
+			return INTERWORK_STATUS.FAIL;
 		} else if (interwork.leavedAt) {
-			return false;
+			return INTERWORK_STATUS.FAIL;
+		} else if (partnerIdx && interwork.partnerIdx !== partnerIdx) {
+			return INTERWORK_STATUS.LINKED_OTHER_PARTNERS;
 		} else if (interwork.confirmedAt) {
-			return true;
+			return INTERWORK_STATUS.OK;
 		} else {
-			return false;
+			return INTERWORK_STATUS.FAIL;
 		}
 	}
 
@@ -109,7 +109,7 @@ export class Cafe24InterworkService {
 	async completeInterwork(mallId: string, {token, partnerIdx}: TokenInfo) {
 		const interwork = await this.getInterworkInfo(mallId);
 		if (interwork === null) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 
 		const partnership = await this.vircleCoreApi.getPartnerInfo(token);
@@ -142,7 +142,7 @@ export class Cafe24InterworkService {
 		const interwork = await this.interworkRepo.getInterwork(mallId);
 
 		if (interwork === null) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 
 		interwork.leavedAt = DateTime.now().toISO();
@@ -159,10 +159,10 @@ export class Cafe24InterworkService {
 		const interwork = await this.interworkRepo.getInterwork(mallId);
 
 		if (interwork === null) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 		if (interwork.partnerIdx !== token.partnerIdx) {
-			throw new UnauthorizedException('NOT_ALLOWED_RESOURCE_ACCESS');
+			throw new ErrorResponse(ErrorMetadata.canNotAccessToken);
 		}
 
 		interwork.issueSetting = {
@@ -178,7 +178,7 @@ export class Cafe24InterworkService {
 		const interwork = await this.getInterworkInfo(mallId);
 
 		if (!interwork) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 
 		interwork.reasonForLeave = reasons;

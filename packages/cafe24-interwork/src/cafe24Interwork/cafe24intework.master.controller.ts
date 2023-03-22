@@ -1,11 +1,7 @@
-import {
-	Controller,
-	Get,
-	NotFoundException,
-	Query,
-	UseGuards,
-} from '@nestjs/common';
+import {Controller, Get, Query, UseGuards} from '@nestjs/common';
 import {TransformInstanceToPlain} from 'class-transformer';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
 import {MasterAuthGuard} from 'src/guard';
 import {Cafe24InterworkService} from './cafe24Interwork.service';
 
@@ -29,7 +25,7 @@ export class MasterCafe24InterworkController {
 				partnershipIdx
 			);
 		if (!interwork) {
-			throw new NotFoundException('NOT_FOUND_INTERWORK_INFO');
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 		return interwork;
 	}

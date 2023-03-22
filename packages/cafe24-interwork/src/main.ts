@@ -4,8 +4,9 @@ import {Cafe24InterworkModule} from './cafe24Interwork.module';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import {LoggerService, ValidationPipe, VersioningType} from '@nestjs/common';
 import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
-import {HttpExceptionFilter} from './filter';
 import {RequestInterceptor} from './common/middleware/request.interceptor';
+import {AllExceptionsFilter} from 'src/filter';
+import {ResponseInterceptor} from 'src/common/middleware/response.interceptor';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(
@@ -26,8 +27,9 @@ async function bootstrap() {
 
 	const logger = app.get<LoggerService>(WINSTON_MODULE_NEST_PROVIDER);
 	app.useLogger(logger);
-	app.useGlobalFilters(new HttpExceptionFilter());
 	app.useGlobalInterceptors(new RequestInterceptor());
+	app.useGlobalInterceptors(new ResponseInterceptor());
+	app.useGlobalFilters(new AllExceptionsFilter());
 
 	const config = new DocumentBuilder()
 		.setTitle('카페24 연동')

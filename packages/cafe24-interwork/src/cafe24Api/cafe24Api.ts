@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {plainToInstance, TransformPlainToInstance} from 'class-transformer';
 import {
 	AccessToken,
@@ -13,6 +13,8 @@ import {
 } from './type';
 import Axios, {AxiosError, AxiosInstance} from 'axios';
 import {stringify} from 'querystring';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
 @Injectable()
 export class Cafe24API {
 	private httpAgent: AxiosInstance;
@@ -54,8 +56,7 @@ export class Cafe24API {
 			if (!('error' in err.response.data)) throw err;
 			if (!('error_description' in err.response.data)) throw err;
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-			throw new InvalidGrant(err.response.data.error_description);
+			throw new ErrorResponse(ErrorMetadata.canNotAccessToken);
 		}
 	}
 
@@ -317,12 +318,5 @@ export class Cafe24API {
 			},
 		});
 		return data.buyer;
-	}
-}
-
-export class InvalidGrant extends BadRequestException {
-	constructor(msg: string) {
-		super(msg);
-		this.name = 'InvalidGrant';
 	}
 }
