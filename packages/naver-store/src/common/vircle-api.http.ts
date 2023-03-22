@@ -16,11 +16,11 @@ export class VircleApiHttpService {
     );
   }
 
-  async cancelGuarantee(token: string, reqIdx: number) {
+  async cancelGuarantee(token: string, reqIdx: string) {
     const { data } = await this.httpAgent.put<Nft>(
       "/admin/nft/cancel",
       {
-        nft_req_idx: reqIdx.toString(),
+        nft_req_idx: reqIdx,
       },
       {
         headers: {
@@ -165,7 +165,7 @@ export class Partnership {
   } | null;
 }
 
-export interface ReqGuaranteePayload {
+export class ReqGuaranteePayload {
   image: string;
   category: string;
   brandIdx?: number;

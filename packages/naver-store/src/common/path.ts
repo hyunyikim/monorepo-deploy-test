@@ -23,4 +23,5 @@ export const URL_GET_CHANNEL_PRODUCT_LIST = (productId: string) =>
 export const URL_GET_ORDER_DETAIL_LIST =
   "/v1/pay-order/seller/product-orders/query";
 
-export const URL_GET_CATEGORIES = "/v1/categories";
+export const URL_GET_CATEGORY = (categoryId: string) =>
+  `/v1/categories/${categoryId}`;

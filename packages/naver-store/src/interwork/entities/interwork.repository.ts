@@ -26,7 +26,7 @@ export class InterworkRepository {
 
   async getInterworkByToken(token: string) {
     const interworks = await this.getAll();
-    return interworks.find((interwork) => interwork.getAccessToken() === token);
+    return interworks.find((interwork) => interwork.accessToken === token);
   }
 
   async putInterwork(interwork: Partial<NaverStoreInterwork>) {

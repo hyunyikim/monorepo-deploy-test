@@ -16,7 +16,7 @@ import { DateTime } from "luxon";
 import { Partnership } from "src/common/vircle-api.http";
 import {
   GetAccessTokenResponse,
-  NaverCategory,
+  InterworkCategory,
 } from "src/naver-api/interfaces/naver-store-api.interface";
 
 export type IssueTiming = "AFTER_SHIPPING" | "AFTER_DELIVERED";
@@ -27,8 +27,11 @@ export class IssueSetting {
   @IsString()
   issueTiming: IssueTiming = "AFTER_DELIVERED";
 
+  @IsBoolean()
+  useCategory = false;
+
   @IsArray()
-  issueCategories: NaverCategory[] = [];
+  issueCategories: InterworkCategory[] = [];
 
   @IsBoolean()
   issueIntro?: boolean = true;
@@ -75,7 +78,11 @@ export class NaverStoreInterwork {
   @Type(() => IssueSetting)
   issueSetting: IssueSetting;
 
-  getAccessToken() {
+  get accessToken() {
     return this.tokenInfo.access_token;
+  }
+
+  get isUsingCategory() {
+    return this.issueSetting.useCategory;
   }
 }

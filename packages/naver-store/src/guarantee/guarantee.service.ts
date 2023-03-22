@@ -1,69 +1,79 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Cron } from "@nestjs/schedule";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { AxiosError } from "axios";
+import { plainToInstance } from "class-transformer";
+import { Cron } from "@nestjs/schedule";
 
 import { eProductOrderStatus } from "src/common/enums/product-order-status.enum";
-import {
-  NFT_STATUS,
-  ReqGuaranteePayload,
-  VircleApiHttpService,
-} from "src/common/vircle-api.http";
+import { VircleApiHttpService } from "src/common/vircle-api.http";
 import { InterworkRepository } from "src/interwork/entities/interwork.repository";
 import { NaverStoreApi } from "src/naver-api/naver-store.api";
 import {
   ChangedOrder,
-  NaverProductDetail,
-  NaverProduct,
   OrderDetail,
 } from "src/naver-api/interfaces/naver-store-api.interface";
-import {
-  GetChangedOrderListEvent,
-  GetOrderDetailEvent,
-  GetProductDetailEvent,
-  GetProductListEvent,
-  IssueGuaranteeEvent,
-} from "src/guarantee/events/guarantee.event";
 import { SqsService } from "src/common/sqs/sqs.service";
-import { NaverStoreInterwork } from "src/interwork/entities/interwork.entity";
 import { SlackReporter } from "src/common/slack";
-import { SQS_METADATA } from "src/guarantee/sqs-metadata/sqs.metadata";
-// import {} from "";
+import { InterworkService } from "src/interwork/interwork.service";
+import { GuaranteeRequestRepository } from "src/guarantee/entities/guarantee.repository";
+import { GuaranteeEvent } from "src/guarantee/entities/guarantee-event.entity";
+import { eEventKey } from "src/guarantee/enums/event-key.enum";
+import { NaverStoreInterwork } from "src/interwork/entities/interwork.entity";
+
+const SQS_PARAM = (key: eEventKey, guaranteeEvent: GuaranteeEvent) => ({
+  MessageBody: JSON.stringify({
+    key,
+    guaranteeEvent,
+  }),
+  MessageAttributes: {
+    accountId: {
+      DataType: "String",
+      StringValue: guaranteeEvent.interwork.accountId,
+    },
+    partnerIdx: {
+      DataType: "Number",
+      StringValue: `${guaranteeEvent.interwork.partnerIdx}`,
+    },
+  },
+});
 
 @Injectable()
 export class GuaranteeService {
   constructor(
     private api: NaverStoreApi,
     private interworkRepo: InterworkRepository,
+    private guaranteeRepo: GuaranteeRequestRepository,
     private vircleCoreApi: VircleApiHttpService,
     private emitter: EventEmitter2,
     private sqsService: SqsService,
-    private slackReporter: SlackReporter
+    private slackReporter: SlackReporter,
+    private interworkService: InterworkService
   ) {}
-  // 30초마다 이벤트 실행
-  // 전체 연동된 업체 리스트 조회
+  // {30}초마다 이벤트 실행
+  // 전체 연동된 업체 리스트 조회 (이탈한 업체 제외) (OK)
   // 각 업체의 주문 변경 이력 획득
   // 각 변경 이력의 상세 주문 정보 획득
-  // ???
+  // 각 상세 주문의 상품 정보 획득
+  // 각 상품의 상세 정보 획득 (이미지를 위해) (딜레이 고려해야됨)
+  // 카테고리 사용유무에 따라 사용할경우 필터
+
+  //
   // 개런티 발급
   // 톡톡 or 알림톡 발송
 
   // 만약 실패나면 sqs 전송
   // sqs 에서 주기적으로 꺼내서 다시 이벤트 실행
 
-  // FIXME: 실행 중간에 토큰이 갱신되면?
-
-  // @Cron("*/5 * * * * *", { name: "RETRY_NAVER_EVENT" })
+  @Cron("*/5 * * * * *", { name: "RETRY_NAVER_EVENT" })
   async retryNaverEvent() {
     const message = await this.sqsService.consume();
     if (message) {
       const param = JSON.parse(message.Body as string) as {
-        key: string;
-        values: any;
-        retryCount: number;
+        key: eEventKey;
+        guaranteeEvent: GuaranteeEvent;
       };
-
-      if (param.retryCount > 3) {
+      ++param.guaranteeEvent.retryCount;
+      if (param.guaranteeEvent.retryCount > 3) {
         this.slackReporter.sendWebhookFailed();
         Logger.error({
           message: "Tried naver request 3 times but finally failed",
@@ -71,115 +81,219 @@ export class GuaranteeService {
         });
         throw new Error("Tried naver request 3 times but finally failed");
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        this.emitter.emit(param.key, {
-          ...param.values,
-          retryCount: param.retryCount,
-        });
+        this.emitter.emit(
+          param.key,
+          plainToInstance(GuaranteeEvent, param.guaranteeEvent)
+        );
       }
     }
   }
 
   // @Cron("0 * * * * *")
   async startIssueGuarantee() {
+    Logger.log("startIssueGuarantee");
     const interworks = await this.interworkRepo.getAllWithoutUnlinked();
     for (const interwork of interworks) {
-      await this.getChangedOrderList(interwork);
+      await this.interworkService
+        .refreshToken(interwork.accountId)
+        .catch((e) => {
+          throw new Error("토큰 갱신 실패");
+        }); // 토큰 갱신 후 시작
+
+      const guaranteeEvent = new GuaranteeEvent();
+      guaranteeEvent.interwork = interwork;
+
+      await this.getChangedOrderList(guaranteeEvent);
     }
   }
 
-  async getChangedOrderList(interwork: NaverStoreInterwork, retryCount = 0) {
+  async getChangedOrderList(guaranteeEvent: GuaranteeEvent) {
     try {
-      const token = interwork.tokenInfo.access_token;
+      const { interwork } = guaranteeEvent;
       const stateFilter = [
-        eProductOrderStatus.PAYED,
-        eProductOrderStatus.DELIVERED,
-        eProductOrderStatus.CANCELED,
-        eProductOrderStatus.CANCELED_BY_NOPAYMENT,
+        eProductOrderStatus.DELIVERED, // 개런티 발급 완료
+        eProductOrderStatus.PURCHASE_DECIDED, // 개런티 발급 완료
+        eProductOrderStatus.CANCELED, // 개런티 발급 취소
+        eProductOrderStatus.CANCELED_BY_NOPAYMENT, // 개런티 발급 취소
+        eProductOrderStatus.EXCHANGED, // 개런티 발급 취소 -> 개런티 발급
       ];
-      const orderList = await this.api.getChangedOrderList(token);
-      // if (!orderList.length) {
-      //   console.log("없음");
-      //   return;
-      // }
-      const filteredList = orderList.filter((order) =>
-        stateFilter.includes(order.productOrderStatus)
+      const orderList = await this.api.getChangedOrderList(
+        interwork.accessToken
       );
 
-      const event = new GetOrderDetailEvent();
-      event.interwork = interwork;
-      event.orders = filteredList;
-      event.retryCount = retryCount;
-      this.emitter.emit(GetOrderDetailEvent.Key, event);
+      if (!orderList.length) {
+        Logger.log("변경된 주문 없음.");
+        return;
+      }
+      // TODO: 결제완료 알림 전송
+      await this.sendIntroGuarantee(orderList, interwork);
+
+      const guarantees = await this.guaranteeRepo.getAll();
+
+      /**
+       * 1. 필터에 해당되는 상태의 주문 추가
+       * 2. 해당 주문번호로 저장된 개런티가 있을 경우 상태가 바뀐 주문만 추가
+       * 3. 해당 주문번호로 저장된 개런티가 없을 경우 추가
+       */
+      const filteredList = orderList
+        .filter((order) => stateFilter.includes(order.productOrderStatus))
+        .filter((order) => {
+          const guarantee = guarantees.find(
+            (guarantee) => order.productOrderId === guarantee.productOrderId
+          );
+          return guarantee
+            ? guarantee.productOrderStatus !== order.productOrderStatus
+            : true;
+        });
+
+      if (!filteredList.length) {
+        Logger.log("처리할 주문 없음");
+        return;
+      }
+
+      guaranteeEvent.orders = filteredList;
+      this.emitter.emit(eEventKey.GetOrderDetailEvent, guaranteeEvent);
     } catch (e) {
       e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
-
       await this.sqsService.send(
-        SQS_METADATA[GetChangedOrderListEvent.Key](interwork, retryCount)
+        SQS_PARAM(eEventKey.GetChangedOrderListEvent, guaranteeEvent)
       );
     }
   }
 
-  async getOrderDetailList(
-    interwork: NaverStoreInterwork,
-    orders: ChangedOrder[],
-    retryCount = 0
-  ) {
+  async getOrderDetailList(guaranteeEvent: GuaranteeEvent) {
+    const { interwork, orders } = guaranteeEvent;
     try {
       const orderDetailList = await this.api.getOrderDetailList(
-        interwork.tokenInfo.access_token,
+        interwork.accessToken,
         orders.map((order) => order.productOrderId)
       );
 
-      const event = new GetProductListEvent();
-      event.interwork = interwork;
-      event.orders = orders;
-      event.orderDetails = orderDetailList;
-      event.retryCount = retryCount;
-      this.emitter.emit(GetProductListEvent.Key, event);
+      guaranteeEvent.orders.forEach((order) => {
+        order.orderDetail = orderDetailList.find(
+          (detail) =>
+            detail.productOrder.productOrderId === order.productOrderId
+        ) as OrderDetail;
+      });
+
+      this.emitter.emit(eEventKey.GetProductDetailEvent, guaranteeEvent);
     } catch (e) {
       e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
-
       await this.sqsService.send(
-        SQS_METADATA[GetOrderDetailEvent.Key](interwork, orders, retryCount)
+        SQS_PARAM(eEventKey.GetOrderDetailEvent, guaranteeEvent)
       );
     }
   }
 
-  async getProducts(
-    interwork: NaverStoreInterwork,
-    orders: ChangedOrder[],
-    orderDtails: OrderDetail[],
-    retryCount = 0
-  ) {
+  async getProductDetails(guaranteeEvent: GuaranteeEvent) {
     try {
-      const productIds = orderDtails.map(
-        (detail) => +detail.productOrder.productId
-      );
+      const { interwork, orders } = guaranteeEvent;
+      // if (interwork.isUsingCategory) {
+      //   this.filterCategories(guaranteeEvent);
+      // }
 
-      const products = await this.api.getProductList(
-        productIds,
-        interwork.getAccessToken()
-      );
+      for (const order of orders) {
+        // TODO: 딜레이 고려
+        const productDetail = await this.api.getProductDetail(
+          order.orderDetail.productOrder.productId,
+          interwork.accessToken
+        );
+        order.productDetail = productDetail;
+      }
 
-      const event = new GetProductDetailEvent();
-      event.interwork = interwork;
-      event.orders = orders;
-      event.orderDetails = orderDtails;
-      event.products = products;
-      event.retryCount = retryCount;
-      this.emitter.emit(GetProductDetailEvent.Key, event);
+      if (interwork.isUsingCategory) {
+        this.emitter.emit(eEventKey.GetCategoryEvent, guaranteeEvent);
+      } else {
+        this.emitter.emit(eEventKey.IssueGuaranteeEvent, guaranteeEvent);
+      }
     } catch (e) {
       e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
 
       await this.sqsService.send(
-        SQS_METADATA[GetProductListEvent.Key](
-          interwork,
-          orders,
-          orderDtails,
-          retryCount
-        )
+        SQS_PARAM(eEventKey.GetProductDetailEvent, guaranteeEvent)
       );
+    }
+  }
+
+  async getCategory(guaranteeEvent: GuaranteeEvent) {
+    try {
+      const { interwork, orders } = guaranteeEvent;
+
+      for (const order of orders) {
+        const category = await this.api.getCategory(
+          order.productDetail.originProduct.leafCategoryId,
+          interwork.accessToken
+        );
+        order.category = category;
+        this.filterCategories(interwork, order);
+      }
+
+      this.emitter.emit(eEventKey.IssueGuaranteeEvent, guaranteeEvent);
+    } catch (e) {
+      e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
+
+      await this.sqsService.send(
+        SQS_PARAM(eEventKey.GetCategoryEvent, guaranteeEvent)
+      );
+    }
+  }
+
+  async handleGuarantee(guaranteeEvent: GuaranteeEvent) {
+    try {
+      throw new Error("test");
+      // for (const order of guaranteeEvent.orders) {
+      //   switch (order.productOrderStatus) {
+      //     case eProductOrderStatus.DELIVERED:
+      //     case eProductOrderStatus.PURCHASE_DECIDED: {
+      //       this.issueGuarantee(order, guaranteeEvent);
+      //       break;
+      //     }
+      //     case eProductOrderStatus.CANCELED:
+      //     case eProductOrderStatus.RETURNED: {
+      //       await this.cancelGuarantee(order, guaranteeEvent);
+      //       break;
+      //     }
+      //     case eProductOrderStatus.EXCHANGED: {
+      //       await this.cancelGuarantee(order, guaranteeEvent);
+      //       await this.issueGuarantee(order, guaranteeEvent);
+      //     }
+      //   }
+      // }
+    } catch (e) {
+      e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
+      await this.sqsService.send(
+        SQS_PARAM(eEventKey.IssueGuaranteeEvent, guaranteeEvent)
+      );
+    }
+  }
+
+  async issueGuarantee(order: ChangedOrder, guaranteeEvent: GuaranteeEvent) {
+    if (!order.isFiltered) {
+      const payload = guaranteeEvent.setProductDetailInfoToPayload(
+        order.productDetail
+      );
+      guaranteeEvent.setOrderDetailInfoToPayload(payload, order.orderDetail);
+      guaranteeEvent.setInterworkInfoToPayload(
+        payload,
+        guaranteeEvent.interwork
+      );
+      const reqNft = await this.vircleCoreApi
+        .requestGuarantee(guaranteeEvent.interwork.coreApiToken, payload)
+        .catch((e) => {
+          console.log(e);
+          throw e;
+        });
+
+      await this.guaranteeRepo.putRequest({
+        productOrderId: order.productOrderId,
+        productOrderStatus: order.productOrderStatus,
+        reqNftId: reqNft.nft_req_idx,
+        reqNftStatus: reqNft.nft_req_state,
+        accountId: guaranteeEvent.interwork.accountId,
+        productId: order.orderDetail.productOrder.productId,
+        categoryId: order.category?.id,
+        guaranteeEvent,
+      });
     }
   }
 
@@ -188,142 +302,34 @@ export class GuaranteeService {
    */
   private filterCategories(
     interwork: NaverStoreInterwork,
-    orderDetails: OrderDetail[],
-    products: NaverProduct[]
+    order: ChangedOrder
   ) {
-    const categories = interwork.issueSetting.issueCategories.map(
-      (category) => +category.id
-    );
-
-    const filteredProducts = products.filter((product) =>
-      categories.includes(+product.channelProducts[0].categoryId)
-    );
-    const filteredProductIds = filteredProducts.map(
-      (product) => +product.channelProducts[0].channelProductNo
-    );
-    const filteredDetails = orderDetails.filter((detail) =>
-      filteredProductIds.includes(+detail.productOrder.productId)
-    );
-    return { filteredDetails, filteredProducts };
-  }
-
-  async getProductDetails(
-    interwork: NaverStoreInterwork,
-    orders: ChangedOrder[],
-    orderDtails: OrderDetail[],
-    products: NaverProduct[],
-    retryCount = 0
-  ) {
-    try {
-      if (interwork.issueSetting.issueCategories.length) {
-        const { filteredDetails, filteredProducts } = this.filterCategories(
-          interwork,
-          orderDtails,
-          products
-        );
+    interwork.issueSetting.issueCategories.forEach((category) => {
+      const isSameCategory =
+        order.category.wholeCategoryName.split(">")[0] === category.name;
+      if (!isSameCategory) {
+        order.isFiltered = true;
       }
-
-      const productDetails = [] as NaverProductDetail[];
-      for (const _product of products) {
-        const product = await this.api.getProductDetail(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          _product.channelProducts[0].channelProductNo,
-          interwork.getAccessToken()
-        );
-        productDetails.push(product);
-      }
-
-      const event = new IssueGuaranteeEvent();
-      event.interwork = interwork;
-      event.orders = orders;
-      event.orderDetails = orderDtails;
-      event.products = products;
-      event.productDetails = productDetails;
-      event.retryCount = retryCount;
-      this.emitter.emit(IssueGuaranteeEvent.Key, event);
-    } catch (e) {
-      e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
-
-      await this.sqsService.send(
-        SQS_METADATA[GetProductDetailEvent.Key](
-          interwork,
-          orders,
-          orderDtails,
-          products,
-          retryCount
-        )
-      );
-    }
+    });
   }
 
-  async issueGuarantee(
-    interwork: NaverStoreInterwork,
+  private async sendIntroGuarantee(
     orders: ChangedOrder[],
-    orderDtails: OrderDetail[],
-    products: NaverProduct[],
-    productDetails: NaverProductDetail[],
-    retryCount = 0
+    interwork: NaverStoreInterwork
   ) {
-    try {
-      const payload = {
-        brandIdx: interwork.partnerInfo?.brand?.idx,
-        warranty: interwork.partnerInfo?.warrantyDate,
-        nftState: interwork.issueSetting.isAutoIssue
-          ? NFT_STATUS.REQUESTED
-          : NFT_STATUS.READY,
-        orderId: orderDtails[0].productOrder.productOrderId,
-        ordererTel: orderDtails[0].order.ordererTel,
-        ordererName: orderDtails[0].order.ordererName,
-        orderedAt: orderDtails[0].order.orderDate,
-        price: orderDtails[0].order.generalPaymentAmount,
-        platformName: orderDtails[0].productOrder.inflowPath,
-        productName: productDetails[0].originProduct.name,
-        image: productDetails[0].originProduct.images.representativeImage.url,
-        category: productDetails[0].originProduct.leafCategoryId,
-        size: undefined,
-        modelNum: undefined,
-        weight: undefined,
-        material: undefined,
-      } as ReqGuaranteePayload;
-      await this.vircleCoreApi
-        .requestGuarantee(interwork.coreApiToken, payload)
-        .catch((e) => {
-          console.log(e);
-          throw e;
-        });
-    } catch (e) {
-      e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
-
-      // await this.sqsService.send(
-      //   SQS_METADATA[IssueGuaranteeEvent.Key](
-      //     interwork,
-      //     orders,
-      //     orderDtails,
-      //     products,
-      //     retryCount
-      //   )
-      // );
-    }
+    const payedList = orders.filter(
+      (order) => order.productOrderStatus === eProductOrderStatus.PAYED
+    );
   }
 
-  // private createReqGuaranteePayload(): ReqGuaranteePayload {
-  //   return {
-  //     brandIdx,
-  //     category,
-  //     image,
-  //     material,
-  //     modelNum,
-  //     nftState,
-  //     orderId,
-  //     orderedAt,
-  //     ordererName,
-  //     ordererTel,
-  //     platformName,
-  //     price,
-  //     productName,
-  //     size,
-  //     warranty,
-  //     weight,
-  //   };
-  // }
+  private async cancelGuarantee(
+    order: ChangedOrder,
+    guaranteeEvent: GuaranteeEvent
+  ) {
+    const { interwork } = guaranteeEvent;
+    await this.vircleCoreApi.cancelGuarantee(
+      interwork.coreApiToken,
+      order.productOrderId
+    );
+  }
 }

@@ -22,11 +22,9 @@ export interface getChangedOrderResponse {
   };
 }
 
-export interface NaverCategory {
-  wholeCategoryName: string;
+export interface InterworkCategory {
   id: number;
   name: string;
-  last: boolean;
 }
 export class ChangedOrder {
   @IsString()
@@ -43,6 +41,11 @@ export class ChangedOrder {
   receiverAddressChanged: boolean; // false,
   @IsEnum(eProductOrderStatus)
   lastChangedType: eProductOrderStatus; // "PAYED"
+
+  isFiltered = false;
+  orderDetail: OrderDetail;
+  productDetail: NaverProductDetail;
+  category: NaverCategory;
 }
 
 export interface GetOrderDetailResponse {
@@ -54,7 +57,7 @@ export interface GetOrderDetailResponse {
 export interface OrderDetail {
   productOrder: {
     quantity: 3;
-    productOrderId: "2023032030505341";
+    productOrderId: string;
     mallId: "ncp_1njkqz_02";
     productClass: "단일상품";
     productOrderStatus: "PAYED";
@@ -161,4 +164,19 @@ export interface NaverProductDetail {
     salePrice: 999999990;
     stockQuantity: 99999999;
   };
+}
+
+export interface NaverCategory {
+  wholeCategoryName: string;
+  id: string;
+  name: string;
+  last: true;
+  exceptionalCategories: ["E_COUPON"];
+  certificationInfos: [
+    {
+      id: 0;
+      name: string;
+      kindTypes: ["KC_CERTIFICATION"];
+    }
+  ];
 }

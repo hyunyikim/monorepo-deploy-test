@@ -1,16 +1,13 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { fromEvent, lastValueFrom, Observable } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { hashSync } from "bcryptjs";
-import { DateTime } from "luxon";
-import { AxiosError, RawAxiosRequestHeaders } from "axios";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { plainToInstance } from "class-transformer";
+import { AxiosError } from "axios";
 
 import { NaverConfig } from "src/common/configuration";
 import {
-  URL_GET_CATEGORIES,
+  URL_GET_CATEGORY,
   URL_GET_CHANNEL_PRODUCT_LIST,
   URL_GET_ORDER_DETAIL_LIST,
   URL_GET_ORDER_LIST,
@@ -18,29 +15,21 @@ import {
   URL_GET_SELLER_CHANNELS,
   URL_REQUEST_ACCESS_TOKEN,
 } from "src/common/path";
-import {
-  RefreshTokenEvent,
-  RefreshTokenResposneEvent,
-} from "src/interwork/events/interwork.event";
+import { HIGHIST_CATEGORY_LIST } from "src/naver-api/interfaces/category-list";
 
 import {
   GetAccessTokenResponse,
   GetSellerChannelsResponse,
   getChangedOrderResponse,
   GetOrderDetailResponse,
-  ChangedOrder,
   NaverProduct,
   NaverProductDetail,
-  AuthError,
+  NaverCategory,
 } from "./interfaces/naver-store-api.interface";
 
 @Injectable()
 export class NaverStoreApi {
-  constructor(
-    private config: ConfigService,
-    private http: HttpService,
-    private emitter: EventEmitter2
-  ) {}
+  constructor(private config: ConfigService, private http: HttpService) {}
 
   async generateToken(accountId: string) {
     const naver = this.config.getOrThrow<NaverConfig>("naver");
@@ -108,13 +97,21 @@ export class NaverStoreApi {
     ).contents;
   }
 
-  async getCategories(token: string) {
-    return await this.requestGet(URL_GET_CATEGORIES, token);
+  async getHighistCategories() {
+    return HIGHIST_CATEGORY_LIST;
+    // return await this.requestGet(URL_GET_CATEGORIES, token);
   }
 
   async getProductDetail(productId: string, token: string) {
     return await this.requestGet<NaverProductDetail>(
       URL_GET_CHANNEL_PRODUCT_LIST(productId),
+      token
+    );
+  }
+
+  async getCategory(categoryId: string, token: string) {
+    return await this.requestGet<NaverCategory>(
+      URL_GET_CATEGORY(categoryId),
       token
     );
   }
@@ -128,27 +125,6 @@ export class NaverStoreApi {
       console.log(e);
       throw e;
     });
-    // .catch(async (e: AxiosError) => {
-    //   const res = e.response as unknown as { data: AuthError };
-
-    //   // 토큰 만료
-    //   if (res?.data && res?.data.code === "GW.AUTHN") {
-    //     this.emitter.emit(RefreshTokenEvent.Key, {
-    //       oldToken: token,
-    //     });
-    //     // const result = await lastValueFrom(
-    //     //   fromEvent(this.emitter, RefreshTokenResposneEvent.Key)
-    //     // );
-    //     const result = await this.test();
-    //     return await lastValueFrom(
-    //       this.http.post<T>(url, body, {
-    //         headers: { Authorization: `Bearer ""` },
-    //       })
-    //     );
-    //   } else {
-    //     throw e;
-    //   }
-    // });
     return data;
   }
 

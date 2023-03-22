@@ -54,8 +54,8 @@ export class InterworkController {
   }
 
   @Get("category")
-  getCategories(@Query("token") naverToken: string) {
-    return this.interworkService.getCategories(naverToken);
+  getCategories() {
+    return this.interworkService.getCategories();
   }
 
   @Put(":accountId/category")

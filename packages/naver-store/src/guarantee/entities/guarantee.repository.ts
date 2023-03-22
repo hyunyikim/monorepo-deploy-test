@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DynamoDB } from "aws-sdk";
+import { plainToInstance } from "class-transformer";
 import { DateTime } from "luxon";
 
 import { NaverStoreGuarantee } from "src/guarantee/entities/guarantee.entity";
@@ -57,6 +58,13 @@ export class GuaranteeRequestRepository {
   }
 
   async getAll() {
-    return await this.ddbClient.scan({ TableName: this.tableName }).promise();
+    const { Items: list } = await this.ddbClient
+      .scan({ TableName: this.tableName })
+      .promise();
+    if (!list) {
+      return [];
+    }
+
+    return plainToInstance(NaverStoreGuarantee, list);
   }
 }
