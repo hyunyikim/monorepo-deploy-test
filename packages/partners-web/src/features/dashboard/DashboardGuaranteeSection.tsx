@@ -23,7 +23,7 @@ import {
 	IssueStatusType,
 	IssuedFromType,
 	IssuedGraphType,
-	WalletLinkType,
+	WalletLink,
 } from '@/@types/dashboard.types';
 import {useNavigate} from 'react-router-dom';
 import {format, subDays, subWeeks} from 'date-fns';
@@ -227,7 +227,7 @@ function DashboardGuaranteeSection({
 		issueStatusCount: IssueStatusType;
 		issuedFrom: IssuedFromType;
 		issuedGraph: IssuedGraphType;
-		walletLink: WalletLinkType;
+		walletLink: WalletLink;
 	};
 
 	if (guaranteeData) {

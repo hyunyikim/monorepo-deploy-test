@@ -83,6 +83,14 @@ export type AutocompleteInputType = {
 	options?: Options<any>;
 };
 
+export interface ResponseV2<T> {
+	data: T;
+	statusCode: number;
+	timestamp: string;
+	error?: any;
+	tradeId?: string;
+}
+
 export interface BulkResponse {
 	total: number;
 	success: number;

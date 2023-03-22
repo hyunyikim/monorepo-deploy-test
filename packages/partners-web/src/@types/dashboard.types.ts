@@ -11,7 +11,7 @@ export interface DashboardCustomersParamsType {
 	to: string;
 }
 export interface DashboardIssuedGuranteeOverviewType {
-	issuedGraph: issuedGraphType;
+	issuedGraph: IssuedGraphType;
 	issueStatusCount: any;
 	issuedFrom: any;
 }
@@ -32,7 +32,7 @@ export interface IssuedGraphType {
 	rate: number;
 	totalCount: number;
 }
-export interface WalletLinkType {
+export interface WalletLink {
 	confirmCount: number;
 	lastConfirmCount: number;
 	lastLinked: number;

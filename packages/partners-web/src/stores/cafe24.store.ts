@@ -1,6 +1,7 @@
 import {useQuery} from '@tanstack/react-query';
 
 import {getCategoryList, getInterworkByToken} from '@/api/cafe24.api';
+import {useLoginStore} from '@/stores/auth.store';
 
 export const useCafe24GetInterworkByToken = (
 	{
@@ -9,8 +10,9 @@ export const useCafe24GetInterworkByToken = (
 		suspense: boolean;
 	} = {suspense: false}
 ) => {
+	const token = useLoginStore().token;
 	return useQuery({
-		queryKey: ['getInterworkByToken'],
+		queryKey: ['getInterworkByToken', token],
 		queryFn: () => getInterworkByToken(),
 		suspense,
 	});
