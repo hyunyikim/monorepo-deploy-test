@@ -1,6 +1,7 @@
 import {bearerTokenInstance, nonAuthInstance} from '@/api';
 import {
 	Cafe24Category,
+	Cafe24ConfirmType,
 	Cafe24Interwork,
 	IssueSetting,
 	ResponseV2,
@@ -45,9 +46,19 @@ export const confirmInterwork = async (mallId: string) => {
 	return await bearerTokenInstance.post<Cafe24Interwork>(url);
 };
 
-export const isConfirmedInterwork = async (mallId: string) => {
+export const isConfirmedInterwork = async (
+	mallId: string,
+	isLogin: boolean
+): Promise<Cafe24ConfirmType> => {
 	const url = `/cafe24/v1/interwork/${mallId}/confirm`;
-	const resp = await nonAuthInstance.get<ResponseV2<boolean>>(url);
+
+	if (isLogin) {
+		const resp = await bearerTokenInstance.get<
+			ResponseV2<Cafe24ConfirmType>
+		>(url);
+		return resp?.data;
+	}
+	const resp = await nonAuthInstance.get<ResponseV2<Cafe24ConfirmType>>(url);
 	return resp.data?.data;
 };
 

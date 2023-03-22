@@ -1,3 +1,9 @@
+/**
+ * OK: mallId와 해당 계정이 연동됨
+ * FAIL: mallId와 연동되지 않았음
+ * LINKED_OTHER_PARTNERS: mallId와 다른 계정이 연동됨
+ */
+export type Cafe24ConfirmType = 'OK' | 'FAIL' | 'LINKED_OTHER_PARTNERS';
 export interface Cafe24Interwork {
 	mallId: string;
 	issueSetting: IssueSetting;

@@ -332,13 +332,15 @@ function Cafe24Init() {
 		return (parsed?.mall_id || null) as string | null;
 	}, [search]);
 
-	const {value: isConfirmed, loading} = useAsync(async () => {
+	const {value: confirmType, loading} = useAsync(async () => {
 		if (!mallId) return;
 
-		// cafe24에서 확인된 mall이고 로그인이 된 사용자라면 인터워크 페이지로 넘김
-		const result = await isConfirmedInterwork(mallId);
-		if (result && isLogin) {
+		const result = await isConfirmedInterwork(mallId, isLogin);
+		if (isLogin && result === 'OK') {
+			// 이미 해당 계정으로 연동됨
+			// 카페24 연동 설정 페이지로 넘김
 			navigate('/b2b/interwork/cafe24');
+			return;
 		}
 		return result;
 	}, [mallId, isLogin]);
@@ -358,20 +360,26 @@ function Cafe24Init() {
 		window.location.href = `https://${mallId}.cafe24api.com/api/v2/oauth/authorize?${query}`;
 	};
 
-	const moveSignUpPage = () => {
+	const handleClickCafe24LinkRequest = () => {
 		if (!mallId) {
 			window.alert('올바른 접근이 아닙니다.');
 			navigate('/');
 			return;
 		}
-		if (isConfirmed) {
-			navigate('/');
+
+		if (!isLogin && confirmType === 'OK') {
+			alert('이미 카페24가 연동되어 있습니다. 로그인 후 진행해주세요.');
+			navigate('/auth/login');
+			return;
+		}
+		if (confirmType === 'LINKED_OTHER_PARTNERS') {
+			alert(
+				'다른 버클 계정으로 카페24가 연동되어 있습니다. 먼저 연동을 해제한 후 계속해서 연동을 진행해주세요.'
+			);
 			return;
 		}
 
-		// TODO: 로그인 안 되었는데 접근하는 경우 확인
-
-		// mallId 존재하는데, 아직 설치 되지 않았다면 authcode 요청
+		// mallId 존재하는데, 아직 설치 되지 않았다면 authcode 요청(confirmType === 'FAIL')
 		requestAuthCode();
 	};
 
@@ -460,8 +468,8 @@ function Cafe24Init() {
 					</Grid>
 
 					<button
-						data-tracking={`cafe24_service_start_click,{'pv_title': '연동 시작하기'}`}
-						onClick={moveSignUpPage}
+						data-tracking={`cafe24_service_start_click,{'button_title': '연동 시작하기'}`}
+						onClick={handleClickCafe24LinkRequest}
 						className={classes.bigBlueBtn}>
 						연동 시작하기
 					</button>
@@ -708,8 +716,8 @@ function Cafe24Init() {
 					</h1>
 
 					<button
-						data-tracking={`cafe24_service_startbottom_click,{'pv_title': '연동 시작하기(하단)'}`}
-						onClick={moveSignUpPage}
+						data-tracking={`cafe24_service_startbottom_click,{'button_title': '연동 시작하기(하단)'}`}
+						onClick={handleClickCafe24LinkRequest}
 						className={classes.blueBtn}>
 						연동 시작하기
 					</button>
