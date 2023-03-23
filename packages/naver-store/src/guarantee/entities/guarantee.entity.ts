@@ -1,7 +1,9 @@
+import { Nft } from "@vircle/entity";
 import { IsEnum, IsString } from "class-validator";
 
 import { eProductOrderStatus } from "src/common/enums/product-order-status.enum";
 import { GuaranteeEvent } from "src/guarantee/entities/guarantee-event.entity";
+import { ChangedOrder } from "src/naver-api/interfaces/naver-store-api.interface";
 
 export class NaverStoreGuarantee {
   /** Partition Key */
@@ -14,7 +16,9 @@ export class NaverStoreGuarantee {
   reqNftId: number;
   reqNftStatus: number;
   accountId: string;
-  guaranteeEvent: GuaranteeEvent;
+  order: ChangedOrder;
   productId: string;
   categoryId: string;
+  canceledAt: string;
+  canceledNft: Nft;
 }

@@ -22,6 +22,19 @@ export class GuaranteeRequestRepository {
       .promise();
   }
 
+  async getGuaranteeByOrderId(productOrderId: string) {
+    const { Item } = await this.ddbClient
+      .get({
+        TableName: this.tableName,
+        Key: {
+          productOrderId,
+        },
+      })
+      .promise();
+
+    return Item ? plainToInstance(NaverStoreGuarantee, Item) : null;
+  }
+
   async updateCanceledRequest(
     idx: number,
     payload: {

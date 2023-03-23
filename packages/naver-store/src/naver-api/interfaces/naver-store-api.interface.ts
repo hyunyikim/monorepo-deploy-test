@@ -1,6 +1,8 @@
 import { IsBoolean, IsDate, IsEnum, IsString } from "class-validator";
 
 import { eProductOrderStatus } from "src/common/enums/product-order-status.enum";
+import { NFT_STATUS, ReqGuaranteePayload } from "src/common/vircle-api.http";
+import { NaverStoreInterwork } from "src/interwork/entities/interwork.entity";
 
 export class GetAccessTokenResponse {
   access_token: string;
@@ -42,10 +44,44 @@ export class ChangedOrder {
   @IsEnum(eProductOrderStatus)
   lastChangedType: eProductOrderStatus; // "PAYED"
 
-  isFiltered = false;
+  // TODO: 구조를 정리해야됨
+  isFilteredByCategory = false;
   orderDetail: OrderDetail;
   productDetail: NaverProductDetail;
   category: NaverCategory;
+  payload: ReqGuaranteePayload;
+
+  setInterworkInfoToPayload(
+    payload: ReqGuaranteePayload,
+    interwork: NaverStoreInterwork
+  ) {
+    payload.brandIdx = interwork.partnerInfo?.brand?.idx;
+    payload.warranty = interwork.partnerInfo?.warrantyDate;
+    payload.nftState = interwork.issueSetting.isAutoIssue
+      ? NFT_STATUS.REQUESTED
+      : NFT_STATUS.READY;
+    return payload;
+  }
+  setOrderDetailInfoToPayload(
+    payload: ReqGuaranteePayload,
+    orderDetail: OrderDetail
+  ) {
+    payload.orderId = orderDetail.productOrder.productOrderId;
+    payload.ordererTel = orderDetail.order.ordererTel;
+    payload.ordererName = orderDetail.order.ordererName;
+    payload.orderedAt = orderDetail.order.orderDate;
+    payload.price = orderDetail.order.generalPaymentAmount;
+    payload.platformName = orderDetail.productOrder.inflowPath;
+    return payload;
+  }
+  setProductDetailInfoToPayload(productDetail: NaverProductDetail) {
+    const payload = new ReqGuaranteePayload();
+    payload.productName = productDetail.originProduct.name;
+    payload.image = productDetail.originProduct.images.representativeImage.url;
+    payload.category = productDetail.originProduct.leafCategoryId;
+
+    return payload;
+  }
 }
 
 export interface GetOrderDetailResponse {
@@ -55,61 +91,265 @@ export interface GetOrderDetailResponse {
 }
 
 export interface OrderDetail {
-  productOrder: {
-    quantity: 3;
-    productOrderId: string;
-    mallId: "ncp_1njkqz_02";
-    productClass: "단일상품";
-    productOrderStatus: "PAYED";
-    productName: "QA_매스어답션_상품_테스트1";
-    productId: string;
-    itemNo: "2001973987";
-    placeOrderStatus: "OK";
-    optionPrice: 0;
-    unitPrice: 150000;
-    productDiscountAmount: 45000;
-    totalPaymentAmount: 405000;
-    packageNumber: "2023032012566577";
-    shippingDueDate: "2023-03-23T23:59:59.0+09:00";
-    saleCommission: 0;
-    optionCode: "2001973987";
-    placeOrderDate: "2023-03-20T16:58:47.0+09:00";
-    shippingAddress: {
-      addressType: "DOMESTIC";
-      tel1: "010-1233-2352";
-      isRoadNameAddress: false;
-      name: "길민수";
+  cancel: {
+    cancelApprovalDate: "2023-01-16T17:14:51.794+09:00";
+    cancelCompletedDate: "2023-01-16T17:14:51.794+09:00";
+    cancelDetailedReason: "string";
+    cancelReason: "string";
+    claimRequestDate: "2023-01-16T17:14:51.794+09:00";
+    claimStatus: "string";
+    refundExpectedDate: "2023-01-16T17:14:51.794+09:00";
+    refundStandbyReason: "string";
+    refundStandbyStatus: "string";
+    requestChannel: "string";
+  };
+  delivery: {
+    deliveredDate: "2023-01-16T17:14:51.794+09:00";
+    deliveryCompany: "string";
+    deliveryMethod: "DELIVERY";
+    deliveryStatus: "COLLECT_REQUEST";
+    isWrongTrackingNumber: true;
+    pickupDate: "2023-01-16T17:14:51.794+09:00";
+    sendDate: "2023-01-16T17:14:51.794+09:00";
+    trackingNumber: "string";
+    wrongTrackingNumberRegisteredDate: "2023-01-16T17:14:51.794+09:00";
+    wrongTrackingNumberType: "string";
+  };
+  exchange: {
+    claimDeliveryFeeDemandAmount: 0;
+    claimDeliveryFeePayMeans: "string";
+    claimDeliveryFeePayMethod: "string";
+    claimRequestDate: "2023-01-16T17:14:51.794+09:00";
+    claimStatus: "string";
+    collectAddress: {
+      addressType: "string";
+      baseAddress: "string";
+      city: "string";
+      country: "string";
+      detailedAddress: "string";
+      name: "string";
+      state: "string";
+      tel1: "string";
+      tel2: "string";
+      zipCode: "string";
+      isRoadNameAddress: true;
     };
-    totalProductAmount: 450000;
-    sellerBurdenDiscountAmount: 45000;
-    expectedDeliveryMethod: "NOTHING";
-    sellerProductCode: "m202212201f875bd6f";
-    commissionRatingType: "결제수수료";
-    commissionPrePayStatus: "GENERAL_PRD";
-    paymentCommission: 14701;
-    expectedSettlementAmount: 390299;
-    inflowPath: "네이버쇼핑 외 ";
-    channelCommission: 0;
-    productImediateDiscountAmount: 45000;
-    sellerBurdenImediateDiscountAmount: 45000;
-    knowledgeShoppingSellingInterlockCommission: 0;
+    collectCompletedDate: "2023-01-16T17:14:51.794+09:00";
+    collectDeliveryCompany: "string";
+    collectDeliveryMethod: "DELIVERY";
+    collectStatus: "NOT_REQUESTED";
+    collectTrackingNumber: "string";
+    etcFeeDemandAmount: 0;
+    etcFeePayMeans: "string";
+    etcFeePayMethod: "string";
+    exchangeDetailedReason: "string";
+    exchangeReason: "string";
+    holdbackDetailedReason: "string";
+    holdbackReason: "string";
+    holdbackStatus: "string";
+    reDeliveryMethod: "DELIVERY";
+    reDeliveryStatus: "COLLECT_REQUEST";
+    reDeliveryCompany: "string";
+    reDeliveryTrackingNumber: "string";
+    requestChannel: "string";
+    returnReceiveAddress: {
+      addressType: "string";
+      baseAddress: "string";
+      city: "string";
+      country: "string";
+      detailedAddress: "string";
+      name: "string";
+      state: "string";
+      tel1: "string";
+      tel2: "string";
+      zipCode: "string";
+      isRoadNameAddress: true;
+    };
+    holdbackConfigDate: "2023-01-16T17:14:51.794+09:00";
+    holdbackConfigurer: "string";
+    holdbackReleaseDate: "2023-01-16T17:14:51.794+09:00";
+    holdbackReleaser: "string";
+    claimDeliveryFeeProductOrderIds: "string";
+    reDeliveryOperationDate: "2023-01-16T17:14:51.794+09:00";
+    claimDeliveryFeeDiscountAmount: 0;
+    remoteAreaCostChargeAmount: 0;
   };
   order: {
-    payLocationType: "PC";
-    orderId: "2023032028022811";
-    paymentDate: "2023-03-20T16:58:48.0+09:00";
-    orderDiscountAmount: 0;
-    orderDate: "2023-03-20T16:58:47.0+09:00";
     chargeAmountPaymentAmount: 0;
-    generalPaymentAmount: 405000;
+    checkoutAccumulationPaymentAmount: 0;
+    generalPaymentAmount: 0;
     naverMileagePaymentAmount: 0;
-    ordererId: "aprm****";
-    ordererName: "길민수";
-    paymentMeans: "신용카드";
-    isDeliveryMemoParticularInput: "false";
+    orderDate: "2023-01-16T17:14:51.794+09:00";
+    orderDiscountAmount: 0;
+    orderId: "string";
+    ordererId: "string";
+    ordererName: "string";
+    ordererTel: "string";
+    paymentDate: "2023-01-16T17:14:51.794+09:00";
+    paymentDueDate: "2023-01-16T17:14:51.794+09:00";
+    paymentMeans: "string";
+    isDeliveryMemoParticularInput: "string";
+    payLocationType: "string";
+    ordererNo: "string";
     payLaterPaymentAmount: 0;
-    ordererTel: "01025052886";
-    ordererNo: "200726884";
+  };
+  productOrder: {
+    claimStatus: "string";
+    claimType: "string";
+    decisionDate: "2023-01-16T17:14:51.794+09:00";
+    delayedDispatchDetailedReason: "string";
+    delayedDispatchReason: "PRODUCT_PREPARE";
+    deliveryDiscountAmount: 0;
+    deliveryFeeAmount: 0;
+    deliveryPolicyType: "string";
+    expectedDeliveryMethod: "DELIVERY";
+    freeGift: "string";
+    mallId: "string";
+    optionCode: "string";
+    optionPrice: 0;
+    packageNumber: "string";
+    placeOrderDate: "2023-01-16T17:14:51.794+09:00";
+    placeOrderStatus: "string";
+    productClass: "string";
+    productDiscountAmount: 0;
+    productId: "string";
+    productName: "string";
+    productOption: "string";
+    productOrderId: "string";
+    productOrderStatus: "string";
+    quantity: 0;
+    sectionDeliveryFee: 0;
+    sellerProductCode: "string";
+    shippingAddress: {
+      addressType: "string";
+      baseAddress: "string";
+      city: "string";
+      country: "string";
+      detailedAddress: "string";
+      name: "string";
+      state: "string";
+      tel1: "string";
+      tel2: "string";
+      zipCode: "string";
+      isRoadNameAddress: true;
+      pickupLocationType: "FRONT_OF_DOOR";
+      pickupLocationContent: "string";
+      entryMethod: "LOBBY_PW";
+      entryMethodContent: "string";
+    };
+    shippingDueDate: "2023-01-16T17:14:51.794+09:00";
+    shippingFeeType: "string";
+    shippingMemo: "string";
+    takingAddress: {
+      addressType: "string";
+      baseAddress: "string";
+      city: "string";
+      country: "string";
+      detailedAddress: "string";
+      name: "string";
+      state: "string";
+      tel1: "string";
+      tel2: "string";
+      zipCode: "string";
+      isRoadNameAddress: true;
+    };
+    totalPaymentAmount: 0;
+    totalProductAmount: 0;
+    unitPrice: 0;
+    sellerBurdenDiscountAmount: 0;
+    commissionRatingType: "string";
+    commissionPrePayStatus: "string";
+    paymentCommission: 0;
+    saleCommission: 0;
+    expectedSettlementAmount: 0;
+    inflowPath: "string";
+    itemNo: "string";
+    optionManageCode: "string";
+    sellerCustomCode1: "string";
+    sellerCustomCode2: "string";
+    claimId: "string";
+    channelCommission: 0;
+    individualCustomUniqueCode: "string";
+    productImediateDiscountAmount: 0;
+    productProductDiscountAmount: 0;
+    productMultiplePurchaseDiscountAmount: 0;
+    sellerBurdenImediateDiscountAmount: 0;
+    sellerBurdenProductDiscountAmount: 0;
+    sellerBurdenMultiplePurchaseDiscountAmount: 0;
+    knowledgeShoppingSellingInterlockCommission: 0;
+    giftReceivingStatus: "string";
+    sellerBurdenStoreDiscountAmount: 0;
+    sellerBurdenMultiplePurchaseDiscountType: "IGNORE_QUANTITY";
+    logisticsCompanyId: "string";
+    logisticsCenterId: "string";
+    hopeDelivery: {
+      region: "string";
+      additionalFee: 0;
+      hopeDeliveryYmd: "string";
+      hopeDeliveryHm: "string";
+      changeReason: "string";
+      changer: "string";
+    };
+    arrivalGuaranteeDate: "2023-01-16T17:14:51.794+09:00";
+    deliveryAttributeType: "NORMAL";
+  };
+  return: {
+    claimDeliveryFeeDemandAmount: 0;
+    claimDeliveryFeePayMeans: "string";
+    claimDeliveryFeePayMethod: "string";
+    claimRequestDate: "2023-01-16T17:14:51.794+09:00";
+    claimStatus: "string";
+    collectAddress: {
+      addressType: "string";
+      baseAddress: "string";
+      city: "string";
+      country: "string";
+      detailedAddress: "string";
+      name: "string";
+      state: "string";
+      tel1: "string";
+      tel2: "string";
+      zipCode: "string";
+      isRoadNameAddress: true;
+    };
+    collectCompletedDate: "2023-01-16T17:14:51.794+09:00";
+    collectDeliveryCompany: "string";
+    collectDeliveryMethod: "DELIVERY";
+    collectStatus: "NOT_REQUESTED";
+    collectTrackingNumber: "string";
+    etcFeeDemandAmount: 0;
+    etcFeePayMeans: "string";
+    etcFeePayMethod: "string";
+    holdbackDetailedReason: "string";
+    holdbackReason: "string";
+    holdbackStatus: "string";
+    refundExpectedDate: "2023-01-16T17:14:51.794+09:00";
+    refundStandbyReason: "string";
+    refundStandbyStatus: "string";
+    requestChannel: "string";
+    returnDetailedReason: "string";
+    returnReason: "string";
+    returnReceiveAddress: {
+      addressType: "string";
+      baseAddress: "string";
+      city: "string";
+      country: "string";
+      detailedAddress: "string";
+      name: "string";
+      state: "string";
+      tel1: "string";
+      tel2: "string";
+      zipCode: "string";
+      isRoadNameAddress: true;
+    };
+    returnCompletedDate: "2023-01-16T17:14:51.794+09:00";
+    holdbackConfigDate: "2023-01-16T17:14:51.794+09:00";
+    holdbackConfigurer: "string";
+    holdbackReleaseDate: "2023-01-16T17:14:51.794+09:00";
+    holdbackReleaser: "string";
+    claimDeliveryFeeProductOrderIds: "string";
+    claimDeliveryFeeDiscountAmount: 0;
+    remoteAreaCostChargeAmount: 0;
   };
 }
 

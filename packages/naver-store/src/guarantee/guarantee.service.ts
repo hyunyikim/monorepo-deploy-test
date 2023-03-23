@@ -19,6 +19,8 @@ import { GuaranteeRequestRepository } from "src/guarantee/entities/guarantee.rep
 import { GuaranteeEvent } from "src/guarantee/entities/guarantee-event.entity";
 import { eEventKey } from "src/guarantee/enums/event-key.enum";
 import { NaverStoreInterwork } from "src/interwork/entities/interwork.entity";
+import { sleep } from "src/common/utils/sleep.util";
+import { NaverStoreGuarantee } from "src/guarantee/entities/guarantee.entity";
 
 const SQS_PARAM = (key: eEventKey, guaranteeEvent: GuaranteeEvent) => ({
   MessageBody: JSON.stringify({
@@ -36,6 +38,7 @@ const SQS_PARAM = (key: eEventKey, guaranteeEvent: GuaranteeEvent) => ({
     },
   },
 });
+const DELAY_SECONDS = 1000;
 
 @Injectable()
 export class GuaranteeService {
@@ -110,49 +113,53 @@ export class GuaranteeService {
   async getChangedOrderList(guaranteeEvent: GuaranteeEvent) {
     try {
       const { interwork } = guaranteeEvent;
-      const stateFilter = [
-        eProductOrderStatus.DELIVERED, // 개런티 발급 완료
-        eProductOrderStatus.PURCHASE_DECIDED, // 개런티 발급 완료
-        eProductOrderStatus.CANCELED, // 개런티 발급 취소
-        eProductOrderStatus.CANCELED_BY_NOPAYMENT, // 개런티 발급 취소
-        eProductOrderStatus.EXCHANGED, // 개런티 발급 취소 -> 개런티 발급
-      ];
-      const orderList = await this.api.getChangedOrderList(
-        interwork.accessToken
-      );
+      const orders = await this.api.getChangedOrderList(interwork.accessToken);
 
-      if (!orderList.length) {
+      if (!orders.length) {
         Logger.log("변경된 주문 없음.");
         return;
       }
-      // TODO: 결제완료 알림 전송
-      await this.sendIntroGuarantee(orderList, interwork);
 
       const guarantees = await this.guaranteeRepo.getAll();
+      const payedList = orders.filter(
+        (order) => order.productOrderStatus === eProductOrderStatus.PAYED
+      );
+      const deliveredList = orders.filter(
+        (order) => order.productOrderStatus === eProductOrderStatus.DELIVERED
+      );
+      const elseList = orders.filter((order) =>
+        [
+          eProductOrderStatus.CANCELED,
+          eProductOrderStatus.CANCELED_BY_NOPAYMENT,
+          eProductOrderStatus.RETURNED,
+          eProductOrderStatus.EXCHANGED,
+        ].includes(order.productOrderStatus)
+      );
 
       /**
-       * 1. 필터에 해당되는 상태의 주문 추가
-       * 2. 해당 주문번호로 저장된 개런티가 있을 경우 상태가 바뀐 주문만 추가
-       * 3. 해당 주문번호로 저장된 개런티가 없을 경우 추가
+       * 필터된 주문 리스트에 따라 이벤트 분기처리
        */
-      const filteredList = orderList
-        .filter((order) => stateFilter.includes(order.productOrderStatus))
-        .filter((order) => {
-          const guarantee = guarantees.find(
-            (guarantee) => order.productOrderId === guarantee.productOrderId
-          );
-          return guarantee
-            ? guarantee.productOrderStatus !== order.productOrderStatus
-            : true;
-        });
-
-      if (!filteredList.length) {
-        Logger.log("처리할 주문 없음");
-        return;
+      if (payedList.length) {
+        //TODO: 결제 완료 시 알림 전송
+        // await this.sendIntroGuarantee(payedList, interwork);
       }
 
-      guaranteeEvent.orders = filteredList;
-      this.emitter.emit(eEventKey.GetOrderDetailEvent, guaranteeEvent);
+      if (deliveredList.length) {
+        guaranteeEvent.orders = deliveredList;
+        this.emitter.emit(eEventKey.GetOrderDetailEvent, guaranteeEvent);
+      }
+
+      if (elseList) {
+        const guaranteeOrders = elseList.map((order) => {
+          const guarantee = guarantees.find(
+            (guarantee) => guarantee.productOrderId === order.productOrderId
+          ) as NaverStoreGuarantee;
+          Object.assign(guarantee.order, order);
+          return guarantee.order;
+        });
+        guaranteeEvent.orders = guaranteeOrders;
+        this.emitter.emit(eEventKey.IssueGuaranteeEvent, guaranteeEvent);
+      }
     } catch (e) {
       e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
       await this.sqsService.send(
@@ -188,16 +195,13 @@ export class GuaranteeService {
   async getProductDetails(guaranteeEvent: GuaranteeEvent) {
     try {
       const { interwork, orders } = guaranteeEvent;
-      // if (interwork.isUsingCategory) {
-      //   this.filterCategories(guaranteeEvent);
-      // }
 
       for (const order of orders) {
-        // TODO: 딜레이 고려
         const productDetail = await this.api.getProductDetail(
           order.orderDetail.productOrder.productId,
           interwork.accessToken
         );
+        await sleep(DELAY_SECONDS);
         order.productDetail = productDetail;
       }
 
@@ -240,25 +244,23 @@ export class GuaranteeService {
 
   async handleGuarantee(guaranteeEvent: GuaranteeEvent) {
     try {
-      throw new Error("test");
-      // for (const order of guaranteeEvent.orders) {
-      //   switch (order.productOrderStatus) {
-      //     case eProductOrderStatus.DELIVERED:
-      //     case eProductOrderStatus.PURCHASE_DECIDED: {
-      //       this.issueGuarantee(order, guaranteeEvent);
-      //       break;
-      //     }
-      //     case eProductOrderStatus.CANCELED:
-      //     case eProductOrderStatus.RETURNED: {
-      //       await this.cancelGuarantee(order, guaranteeEvent);
-      //       break;
-      //     }
-      //     case eProductOrderStatus.EXCHANGED: {
-      //       await this.cancelGuarantee(order, guaranteeEvent);
-      //       await this.issueGuarantee(order, guaranteeEvent);
-      //     }
-      //   }
-      // }
+      for (const order of guaranteeEvent.orders) {
+        switch (order.productOrderStatus) {
+          case eProductOrderStatus.DELIVERED: {
+            this.issueGuarantee(order, guaranteeEvent.interwork);
+            break;
+          }
+          case eProductOrderStatus.CANCELED:
+          case eProductOrderStatus.RETURNED: {
+            await this.cancelGuarantee(order, guaranteeEvent.interwork);
+            break;
+          }
+          case eProductOrderStatus.EXCHANGED: {
+            await this.cancelGuarantee(order, guaranteeEvent.interwork);
+            await this.issueGuarantee(order, guaranteeEvent.interwork);
+          }
+        }
+      }
     } catch (e) {
       e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
       await this.sqsService.send(
@@ -267,18 +269,15 @@ export class GuaranteeService {
     }
   }
 
-  async issueGuarantee(order: ChangedOrder, guaranteeEvent: GuaranteeEvent) {
-    if (!order.isFiltered) {
-      const payload = guaranteeEvent.setProductDetailInfoToPayload(
-        order.productDetail
-      );
-      guaranteeEvent.setOrderDetailInfoToPayload(payload, order.orderDetail);
-      guaranteeEvent.setInterworkInfoToPayload(
-        payload,
-        guaranteeEvent.interwork
-      );
+  async issueGuarantee(order: ChangedOrder, interwork: NaverStoreInterwork) {
+    if (!order.isFilteredByCategory) {
+      const payload = order.setProductDetailInfoToPayload(order.productDetail);
+      order.setOrderDetailInfoToPayload(payload, order.orderDetail);
+      order.setInterworkInfoToPayload(payload, interwork);
+      order.payload = payload;
+
       const reqNft = await this.vircleCoreApi
-        .requestGuarantee(guaranteeEvent.interwork.coreApiToken, payload)
+        .requestGuarantee(interwork.coreApiToken, order.payload)
         .catch((e) => {
           console.log(e);
           throw e;
@@ -289,10 +288,10 @@ export class GuaranteeService {
         productOrderStatus: order.productOrderStatus,
         reqNftId: reqNft.nft_req_idx,
         reqNftStatus: reqNft.nft_req_state,
-        accountId: guaranteeEvent.interwork.accountId,
+        accountId: interwork.accountId,
         productId: order.orderDetail.productOrder.productId,
         categoryId: order.category?.id,
-        guaranteeEvent,
+        order,
       });
     }
   }
@@ -308,7 +307,7 @@ export class GuaranteeService {
       const isSameCategory =
         order.category.wholeCategoryName.split(">")[0] === category.name;
       if (!isSameCategory) {
-        order.isFiltered = true;
+        order.isFilteredByCategory = true;
       }
     });
   }
@@ -324,12 +323,20 @@ export class GuaranteeService {
 
   private async cancelGuarantee(
     order: ChangedOrder,
-    guaranteeEvent: GuaranteeEvent
+    interwork: NaverStoreInterwork
   ) {
-    const { interwork } = guaranteeEvent;
-    await this.vircleCoreApi.cancelGuarantee(
+    const nft = await this.vircleCoreApi.cancelGuarantee(
       interwork.coreApiToken,
       order.productOrderId
     );
+    const guaranteeEntity = await this.guaranteeRepo.getGuaranteeByOrderId(
+      order.productOrderId
+    );
+    if (guaranteeEntity) {
+      guaranteeEntity.order = order;
+      guaranteeEntity.canceledAt = order.orderDetail.cancel.cancelCompletedDate;
+      guaranteeEntity.canceledNft = nft;
+      await this.guaranteeRepo.putRequest(guaranteeEntity);
+    }
   }
 }
