@@ -2,10 +2,9 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Axios, { AxiosHeaders, AxiosInstance, CreateAxiosDefaults } from "axios";
 import FormData from "form-data";
-import { Nft } from "@vircle/entity";
 
-import { PRODUCT_CATEGORY } from "src/common/enums/product-category.enum";
 import { NFT_REQUEST_ROUTE } from "src/common/enums/nft-req-route.enum";
+import { Nft } from "src/vircle-entities";
 
 @Injectable()
 export class VircleApiHttpService {
