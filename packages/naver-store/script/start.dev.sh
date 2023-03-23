@@ -28,7 +28,7 @@ echo $? >> $LOG_POINT
 
 echo ">[$(date) BUILD START]: GET ENV File from S3" >> /root/deploy.log
 
-aws s3 cp s3://mass-adoption.app.env/vircle/naver-store/env/development.yaml ./env/development.yaml
+#aws s3 cp s3://mass-adoption.app.env/vircle/naver-store/env/development.yaml ./env/development.yaml
 
 echo ">[$(date) BUILD START]" >> $LOG_POINT
 
