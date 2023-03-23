@@ -171,7 +171,12 @@ module.exports = {
 		{
 			files: ['packages/partners-web/**/*.ts?(x)'],
 			rules: {
-				'@typescript-eslint/no-misused-promises': 'warn',
+				'@typescript-eslint/no-misused-promises': [
+					'warn',
+					{
+						checksVoidReturn: false,
+					},
+				],
 				'@typescript-eslint/no-empty-interface': 'warn',
 				'@typescript-eslint/no-unsafe-assignment': 'warn',
 				'@typescript-eslint/no-unsafe-member-access': 'warn',
