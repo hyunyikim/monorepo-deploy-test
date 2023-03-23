@@ -34,7 +34,7 @@ echo ">[$(date) BUILD START]" >> $LOG_POINT
 
 yarn -v >> $LOG_POINT
 echo $? >> $LOG_POINT
-if [ $? != 0 ]; then
+if [ $? != "0" ]; then
   sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
   source ~/.bashrc
   source ~/.profile
