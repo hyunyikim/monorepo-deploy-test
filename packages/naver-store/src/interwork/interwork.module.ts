@@ -9,5 +9,6 @@ import { InterworkController } from "./interwork.controller";
   imports: [GlobalModule],
   controllers: [InterworkController],
   providers: [InterworkService],
+  exports: [InterworkService],
 })
 export class InterworkModule {}

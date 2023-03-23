@@ -25,6 +25,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
       /**
        * 로깅 도중 Sentry 라이브러리 에러가 발생해 아래와 같이 예외처리.
+       * https://mass-adoption-inc.sentry.io/issues/3961782498/?project=4504734609571840&query=is%3Aunresolved&referrer=issue-stream
+       * winston-sentry-log 에서 의존하는 패키지로 "@sentry/node": "^6.13.2" 가 있으나 버전이 너무 낮아 발생하는 문제
+       * 7.3.x에선 해결되어 있어 winston-sentry-log를 사용하지 않거나 의존관계를 해결해야됨
        */
       try {
         Logger.error(JSON.stringify(errorFormat));
@@ -56,6 +59,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       code: -9999,
     } as Record<string, any>;
 
+    //TODO: catch 데코레이터를 이용해 역할별로 파일과 클래스를 분리시킬 수 있음.
     if (exception instanceof ErrorResponse) {
       statusCode = exception.getStatus();
       error.name = exception.errName;

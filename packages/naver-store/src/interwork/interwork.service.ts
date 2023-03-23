@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 import { TokenInfo } from "src/common/getToken.decorator";
 import { Partnership, VircleApiHttpService } from "src/common/vircle-api.http";
 import { InterworkRepository } from "src/interwork/entities/interwork.repository";
-import { NaverCategory } from "src/naver-api/interfaces/naver-store-api.interface";
+import { InterworkCategory } from "src/naver-api/interfaces/naver-store-api.interface";
 import { NaverStoreApi } from "src/naver-api/naver-store.api";
 
 import { NaverStoreInterwork, IssueSetting } from "./entities/interwork.entity";
@@ -28,7 +28,6 @@ export class InterworkService {
         tokenInfo: await this.refreshToken(interwork.accountId),
       }))
     );
-    Logger.log({ ...result });
     return result;
   }
 
@@ -74,7 +73,7 @@ export class InterworkService {
       partnerIdx: partnership.idx,
       partnerInfo: partnership,
       coreApiToken,
-      IssueSetting: new IssueSetting(),
+      issueSetting: new IssueSetting(),
     });
 
     await this.interworkRepo.putInterwork(naverStoreInterwork);
@@ -92,6 +91,20 @@ export class InterworkService {
     return tokenInfo;
   }
 
+  async refreshTokenByOldToken(oldToken: string) {
+    const naverStoreInterwork = (await this.interworkRepo.getInterworkByToken(
+      oldToken
+    )) as NaverStoreInterwork;
+
+    const tokenInfo = await this.naverApi.generateToken(
+      naverStoreInterwork.accountId
+    );
+    naverStoreInterwork.tokenInfo = tokenInfo;
+
+    await this.interworkRepo.putInterwork(naverStoreInterwork);
+    return tokenInfo.access_token;
+  }
+
   async getInterworkByAccountId(accountId: string) {
     const interwork = await this.interworkRepo.getInterworkByAccountId(
       accountId
@@ -102,19 +115,21 @@ export class InterworkService {
     return interwork;
   }
 
-  async getInterworkByToken({ partnerIdx }: TokenInfo) {
-    const interwork = await this.interworkRepo.getInterworkByToken(partnerIdx);
+  async getInterworkByPartner({ partnerIdx }: TokenInfo) {
+    const interwork = await this.interworkRepo.getInterworkByPartner(
+      partnerIdx
+    );
     if (!interwork) {
       throw new Error("interwork not found");
     }
     return interwork;
   }
 
-  async getCategories(token: string) {
-    return await this.naverApi.getCategories(token);
+  async getCategories() {
+    return await this.naverApi.getHighistCategories();
   }
 
-  async updateCategories(accountId: string, categories: NaverCategory[]) {
+  async updateCategories(accountId: string, categories: InterworkCategory[]) {
     const interwork = await this.interworkRepo.getInterworkByAccountId(
       accountId
     );

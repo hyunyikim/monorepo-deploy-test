@@ -2,9 +2,9 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Axios, { AxiosHeaders, AxiosInstance, CreateAxiosDefaults } from "axios";
 import FormData from "form-data";
-import { Nft } from "@vircle/entity";
 
-import { PRODUCT_CATEGORY } from "src/common/enums/product-category.enum";
+import { NFT_REQUEST_ROUTE } from "src/common/enums/nft-req-route.enum";
+import { Nft } from "src/vircle-entities";
 
 @Injectable()
 export class VircleApiHttpService {
@@ -15,11 +15,11 @@ export class VircleApiHttpService {
     );
   }
 
-  async cancelGuarantee(token: string, reqIdx: number) {
+  async cancelGuarantee(token: string, reqIdx: string) {
     const { data } = await this.httpAgent.put<Nft>(
       "/admin/nft/cancel",
       {
-        nft_req_idx: reqIdx.toString(),
+        nft_req_idx: reqIdx,
       },
       {
         headers: {
@@ -81,6 +81,7 @@ export class VircleApiHttpService {
     ordererName && form.append("orderer_nm", ordererName);
     ordererTel && form.append("orderer_tel", ordererTel);
     nftState && form.append("nft_req_state", nftState);
+    form.append("request_route", NFT_REQUEST_ROUTE.NAVER);
 
     const { data } = await this.httpAgent.post<{
       data: {
@@ -163,15 +164,15 @@ export class Partnership {
   } | null;
 }
 
-export interface ReqGuaranteePayload {
+export class ReqGuaranteePayload {
   image: string;
-  category: PRODUCT_CATEGORY;
-  brandIdx: number;
+  category: string;
+  brandIdx?: number;
   productName: string;
-  modelNum: string;
-  material: string;
-  size: string;
-  weight: string;
+  modelNum?: string;
+  material?: string;
+  size?: string;
+  weight?: string;
   price: number;
   warranty: string;
   platformName: string;

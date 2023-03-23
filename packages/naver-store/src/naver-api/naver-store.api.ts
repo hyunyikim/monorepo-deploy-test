@@ -3,24 +3,28 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { lastValueFrom } from "rxjs";
 import { hashSync } from "bcryptjs";
-import { DateTime } from "luxon";
-import { RawAxiosRequestHeaders } from "axios";
+import { AxiosError } from "axios";
 
 import { NaverConfig } from "src/common/configuration";
 import {
-  URL_GET_CATEGORIES,
+  URL_GET_CATEGORY,
+  URL_GET_CHANNEL_PRODUCT_LIST,
   URL_GET_ORDER_DETAIL_LIST,
   URL_GET_ORDER_LIST,
   URL_GET_PRODUCT_LIST,
   URL_GET_SELLER_CHANNELS,
   URL_REQUEST_ACCESS_TOKEN,
 } from "src/common/path";
+import { HIGHIST_CATEGORY_LIST } from "src/naver-api/interfaces/category-list";
 
 import {
   GetAccessTokenResponse,
   GetSellerChannelsResponse,
   getChangedOrderResponse,
   GetOrderDetailResponse,
+  NaverProduct,
+  NaverProductDetail,
+  NaverCategory,
 } from "./interfaces/naver-store-api.interface";
 
 @Injectable()
@@ -38,10 +42,13 @@ export class NaverStoreApi {
       "base64"
     );
 
-    return await this.requestPost<GetAccessTokenResponse>(
-      URL_REQUEST_ACCESS_TOKEN(id, date.getTime(), hashed, accountId),
-      null
+    const { data } = await lastValueFrom(
+      this.http.post<GetAccessTokenResponse>(
+        URL_REQUEST_ACCESS_TOKEN(id, date.getTime(), hashed, accountId)
+      )
     );
+
+    return data;
   }
 
   async getSellerChannels(token: string) {
@@ -55,9 +62,7 @@ export class NaverStoreApi {
     return (
       (
         await this.requestGet<getChangedOrderResponse>(
-          `${URL_GET_ORDER_LIST}?lastChangedFrom=${encodeURIComponent(
-            DateTime.now().minus({ minutes: 30 }).toISO({})
-          )}`,
+          `${URL_GET_ORDER_LIST}?lastChangedFrom=2023-03-20T16:58:00.0%2B09:00`, //${encodeURIComponent(DateTime.now().minus({ minutes: 30 }).toISO({}))}
           token
         )
       ).data?.lastChangeStatuses ?? []
@@ -78,36 +83,48 @@ export class NaverStoreApi {
    * 상품 리스트 조회
    * @link https://sandbox-api.commerce.naver.com/partner#tag/%EC%83%81%ED%92%88-%EB%AA%A9%EB%A1%9D/operation/search.product
    */
-  async getProductList(token: string, accountId: string) {
-    return await this.requestPost(
-      URL_GET_PRODUCT_LIST,
-      {
-        searchKeywordType: "SELLER_CODE",
-        sellerManagementCode: accountId,
-        productStatusTypes: ["SALE"],
-        size: 1000,
-        orderType: "NO",
-      },
+  async getProductList(productIds: number[], token: string) {
+    return (
+      await this.requestPost<{ contents: NaverProduct[] }>(
+        URL_GET_PRODUCT_LIST,
+        {
+          searchKeywordType: "CHANNEL_PRODUCT_NO",
+          channelProductNos: productIds,
+          orderType: "NO",
+        },
+        token
+      )
+    ).contents;
+  }
+
+  async getHighistCategories() {
+    return HIGHIST_CATEGORY_LIST;
+    // return await this.requestGet(URL_GET_CATEGORIES, token);
+  }
+
+  async getProductDetail(productId: string, token: string) {
+    return await this.requestGet<NaverProductDetail>(
+      URL_GET_CHANNEL_PRODUCT_LIST(productId),
       token
     );
   }
 
-  async getCategories(token: string) {
-    return await this.requestGet(URL_GET_CATEGORIES, token).catch((e) => {
+  async getCategory(categoryId: string, token: string) {
+    return await this.requestGet<NaverCategory>(
+      URL_GET_CATEGORY(categoryId),
+      token
+    );
+  }
+
+  private async requestPost<T>(url: string, body: any, token: string) {
+    const { data } = await lastValueFrom(
+      this.http.post<T>(url, body, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    ).catch((e) => {
       console.log(e);
       throw e;
     });
-  }
-
-  private async requestPost<T>(url: string, body: any, token?: string) {
-    const { data } = await lastValueFrom(
-      this.http.post<T>(url, body, {
-        headers: token
-          ? { Authorization: `Bearer ${token}` }
-          : (this.http.axiosRef.defaults
-              .headers as Partial<RawAxiosRequestHeaders>),
-      })
-    );
     return data;
   }
 
@@ -116,7 +133,10 @@ export class NaverStoreApi {
       this.http.get<T>(url, {
         headers: { Authorization: `Bearer ${token}` },
       })
-    );
+    ).catch((e: AxiosError) => {
+      console.log(e);
+      throw e;
+    });
 
     return data;
   }
