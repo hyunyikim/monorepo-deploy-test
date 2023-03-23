@@ -19,9 +19,11 @@ import {
 	formatDateString,
 	formatPhoneNum,
 	isValidWebImage,
-	linkFormChecker,
 	validateRegExp,
 } from '@/utils';
+
+export const NOT_OPEN_GUARANTEE_REGISTER_ALIM_TALK_NOTICE_KEY =
+	'vircle-guarantee-register-alim-talk-notice';
 
 export const guaranteeListSearchTypes: Options<GuaranteeListRequestSearchType> =
 	[
@@ -436,4 +438,16 @@ export const getGuaranteeExcelSampleData = (
 			orderer_tel: '010-1234-5678',
 		},
 	];
+};
+
+export const checkNotOpenAlimtalkModal = (email?: string) => {
+	const tempSavedData = JSON.parse(
+		localStorage.getItem(
+			NOT_OPEN_GUARANTEE_REGISTER_ALIM_TALK_NOTICE_KEY
+		) || '{}'
+	);
+	if (tempSavedData.hasOwnProperty(email)) {
+		return tempSavedData[email as string] === 'Y' ? true : false;
+	}
+	return false;
 };
