@@ -32,11 +32,20 @@ aws s3 cp s3://mass-adoption.app.env/vircle/naver-store/env/development.yaml ./e
 
 echo ">[$(date) BUILD START]" >> $LOG_POINT
 
-yarn build >> $LOG_POINT 2>&1
-echo $? >> $LOG_POINT
-node -v >> $LOG_POINT
-npm -v  >> $LOG_POINT 
 yarn -v >> $LOG_POINT
+echo $? >> $LOG_POINT
+if [ $? != 0 ]; then
+  sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+  source ~/.bashrc
+  source ~/.profile
+  nvm install 19
+  nvm use 19
+  npm install -g yarn
+  npm install -g pm2
+  npm install -g rimraf
+fi
+
+yarn build >> $LOG_POINT 2>&1
 
 echo ">[$(date)] Kill All pm2 process]" >> $LOG_POINT
 
