@@ -48,6 +48,7 @@ function addSwagger(app: INestApplication) {
       .setTitle("Naver Store API")
       .setDescription("Naver Store API 문서입니다.")
       .setVersion("1.0")
+      .addServer("/naver-store")
       .addBearerAuth(
         {
           type: "http",
