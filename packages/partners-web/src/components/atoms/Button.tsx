@@ -91,6 +91,12 @@ function Button({
 				};
 			// primary 기본 버튼 스타일 속성 사용
 			case 'primary':
+				if (variant === 'outlined') {
+					return {
+						borderColor: 'primary.main',
+					};
+				}
+				return {};
 			default:
 				return {};
 		}

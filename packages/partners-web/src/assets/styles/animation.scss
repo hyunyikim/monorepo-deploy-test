@@ -41,3 +41,12 @@
 		transform: translate3d(0, -2px, 0);
 	}
 }
+
+@keyframes left-to-right {
+	from {
+		transform: translateX(0px);
+	}
+	to {
+		transform: translateX(-10px);
+	}
+}
