@@ -68,7 +68,7 @@ jobs:
               run: |
                   aws ssm send-command \
                     --document-name "AWS-RunShellScript" \
-                    --targets '[{"Key":"InstanceIds","Values":["i-0ba0b5dc4467b4ed9"]}]' \
+                    --targets '[{"Key":"InstanceIds","Values":["i-046f0f7a057c048f0"]}]' \
                     --parameters '{"commands":[ "#!/bin/bash","cd /root/vircle/packages/naver-store", "bash /root/vircle/packages/naver-store/script/start.dev.sh"]}'
 
     # deploy_on_prod:
