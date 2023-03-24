@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import {Box, Stack, Typography} from '@mui/material';
 
@@ -10,6 +10,7 @@ import LogoVircleKakaoProfile2x from '@/assets/images/logo-vircle-kakao-profile@
 import ImgKakaoGuarantee from '@/assets/images/img-kakao-guarantee.png';
 import ImgKakaoGuarantee2x from '@/assets/images/img-kakao-guarantee@2x.png';
 import {NOT_OPEN_GUARANTEE_REGISTER_ALIM_TALK_NOTICE_KEY} from '@/data';
+import {sendAmplitudeLog} from '@/utils';
 
 interface Props {
 	open: boolean;
@@ -42,6 +43,14 @@ function GuaranteeRegisterAlimTalkNoticeModal({open, modalData}: Props) {
 			})
 		);
 	}, [modalData, notShowChecked]);
+
+	useEffect(() => {
+		if (open) {
+			sendAmplitudeLog('guarantee_publish_kakao_popupview', {
+				pv_title: '카카오 알림톡 안내 팝업 노출',
+			});
+		}
+	}, [open]);
 
 	return (
 		<Dialog
@@ -370,7 +379,8 @@ const BottomControl = ({
 				height={40}
 				onClick={() => {
 					window.open('/b2b/interwork/kakao');
-				}}>
+				}}
+				data-tracking={`guarantee_publish_kakao_popup_kakao_click,{'button_title': '카카오 알림톡 연동 상세 페이지로 이동 (새창)'}`}>
 				카카오 알림톡 연동
 			</Button>
 		</Stack>
