@@ -1,5 +1,5 @@
-import { InterworkCategory } from "src/naver-api/interfaces/naver-store-api.interface";
+import { PartialType } from "@nestjs/swagger";
 
-export class UpdateCategoryListDto {
-  categories: InterworkCategory[];
-}
+import { IssueSetting } from "src/interwork/entities/interwork.entity";
+
+export class UpdateSettingDto extends PartialType(IssueSetting) {}

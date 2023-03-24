@@ -1,12 +1,12 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { plainToInstance } from "class-transformer";
 import { DateTime } from "luxon";
 
 import { TokenInfo } from "src/common/getToken.decorator";
 import { Partnership, VircleApiHttpService } from "src/common/vircle-api.http";
+import { UpdateSettingDto } from "src/interwork/dto/update-category-list.dto";
 import { InterworkRepository } from "src/interwork/entities/interwork.repository";
-import { InterworkCategory } from "src/naver-api/interfaces/naver-store-api.interface";
 import { NaverStoreApi } from "src/naver-api/naver-store.api";
 
 import { NaverStoreInterwork, IssueSetting } from "./entities/interwork.entity";
@@ -129,7 +129,7 @@ export class InterworkService {
     return await this.naverApi.getHighistCategories();
   }
 
-  async updateCategories(accountId: string, categories: InterworkCategory[]) {
+  async updateSetting(accountId: string, setting: UpdateSettingDto) {
     const interwork = await this.interworkRepo.getInterworkByAccountId(
       accountId
     );
@@ -138,7 +138,8 @@ export class InterworkService {
       throw new Error("no interwork");
     }
 
-    interwork.issueSetting.issueCategories = categories;
+    Object.assign(interwork.issueSetting, setting);
     await this.interworkRepo.putInterwork(interwork);
+    return true;
   }
 }

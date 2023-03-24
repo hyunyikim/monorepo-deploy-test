@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiParam } from "@nestjs/swagger";
 
 import { GetToken, TokenInfo } from "src/common/getToken.decorator";
 import { JwtAuthGuard } from "src/common/jwtAuth.guard";
-import { UpdateCategoryListDto } from "src/interwork/dto/update-category-list.dto";
+import { UpdateSettingDto } from "src/interwork/dto/update-category-list.dto";
 
 import { InterworkService } from "./interwork.service";
 
@@ -49,7 +49,6 @@ export class InterworkController {
 
   @Get()
   getInterwork(@GetToken() token: TokenInfo) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.interworkService.getInterworkByPartner(token);
   }
 
@@ -58,11 +57,12 @@ export class InterworkController {
     return this.interworkService.getCategories();
   }
 
-  @Put(":accountId/category")
-  updateCategories(
+  @Put(":accountId/setting")
+  @ApiParam({ name: "accountId", example: "ncp_1njkqz_02" })
+  updateSettings(
     @Param("accountId") accountId: string,
-    @Body() dto: UpdateCategoryListDto
+    @Body() dto: UpdateSettingDto
   ) {
-    return this.interworkService.updateCategories(accountId, dto.categories);
+    return this.interworkService.updateSetting(accountId, dto);
   }
 }

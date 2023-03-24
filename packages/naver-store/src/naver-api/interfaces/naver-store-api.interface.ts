@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsEnum, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsEnum, IsNumber, IsString } from "class-validator";
 
 import { eProductOrderStatus } from "src/common/enums/product-order-status.enum";
 import { NFT_STATUS, ReqGuaranteePayload } from "src/common/vircle-api.http";
@@ -24,8 +24,10 @@ export interface getChangedOrderResponse {
   };
 }
 
-export interface InterworkCategory {
+export class InterworkCategory {
+  @IsNumber()
   id: number;
+  @IsString()
   name: string;
 }
 export class ChangedOrder {

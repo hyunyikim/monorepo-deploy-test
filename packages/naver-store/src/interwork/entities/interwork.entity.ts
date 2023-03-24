@@ -31,6 +31,8 @@ export class IssueSetting {
   useCategory = false;
 
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InterworkCategory)
   issueCategories: InterworkCategory[] = [];
 
   @IsBoolean()
