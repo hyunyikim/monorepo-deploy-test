@@ -120,7 +120,7 @@ export class Cafe24InterworkService {
 		const partnership = await this.vircleCoreApi.getPartnerInfo(token);
 		const store = await this.cafe24Api.getStoreInfo(
 			mallId,
-			shopNo,
+			shopNo || 1,
 			interwork.accessToken.access_token
 		);
 
