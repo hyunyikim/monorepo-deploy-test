@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Inject, Injectable, LoggerService} from '@nestjs/common';
 import {plainToInstance, TransformPlainToInstance} from 'class-transformer';
 import {
 	AccessToken,
@@ -15,6 +15,7 @@ import Axios, {AxiosError, AxiosInstance} from 'axios';
 import {stringify} from 'querystring';
 import {ErrorResponse} from 'src/common/error';
 import {ErrorMetadata} from 'src/common/error-metadata';
+import {WINSTON_MODULE_NEST_PROVIDER} from 'nest-winston';
 @Injectable()
 export class Cafe24API {
 	private httpAgent: AxiosInstance;
@@ -22,7 +23,8 @@ export class Cafe24API {
 	constructor(
 		private clientId: string,
 		private clientSecret: string,
-		private redirectURL: string
+		private redirectURL: string,
+		@Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
 	) {
 		this.httpAgent = Axios.create();
 	}
@@ -145,9 +147,11 @@ export class Cafe24API {
 	async getProductResourceList(
 		mallId: string,
 		accessToken: string,
-		productNoList: string
+		productNoList: string,
+		shopNo: number
 	) {
-		const url = `https://${mallId}.${this.fixedURL}/admin/products?product_no=${productNoList}?limit=100`;
+		const url = `https://${mallId}.${this.fixedURL}/admin/products?shop_no=${shopNo}&product_no=${productNoList}?limit=100`;
+		this.logger.log(`[getProductResourceList] ${url}`);
 		const {data} = await this.httpAgent.get<{products: Array<Product>}>(
 			url,
 			{
@@ -168,6 +172,7 @@ export class Cafe24API {
 		shopNo: number
 	) {
 		const url = `https://${mallId}.${this.fixedURL}/admin/products?shop_no=${shopNo}&category=${category}&limit=100`;
+		this.logger.log(`[getProductResourceListByCategory] ${url}`);
 		const {data} = await this.httpAgent.get<{products: Array<Product>}>(
 			url,
 			{
@@ -305,6 +310,7 @@ export class Cafe24API {
 		shopNo: number
 	) {
 		const url = `https://${mallId}.${this.fixedURL}/admin/orders?order_id=${orderIds}&embed=items,buyer&limit=1000&shop_no=${shopNo}`;
+		this.logger.log(`[getOrderList] ${url}`);
 		const {data} = await this.httpAgent.get<{orders: Array<Order>}>(url, {
 			headers: {
 				Authorization: `Bearer ${accessToken}`,
