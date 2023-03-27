@@ -1,9 +1,9 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { lastValueFrom } from "rxjs";
 import { hashSync } from "bcryptjs";
-import { AxiosError } from "axios";
+import { plainToInstance } from "class-transformer";
 
 import { NaverConfig } from "src/common/configuration";
 import {
@@ -24,8 +24,10 @@ import {
   GetOrderDetailResponse,
   NaverProduct,
   NaverProductDetail,
+  ChangedOrder,
   NaverCategory,
 } from "./interfaces/naver-store-api.interface";
+import { DateTime } from "luxon";
 
 @Injectable()
 export class NaverStoreApi {
@@ -58,15 +60,17 @@ export class NaverStoreApi {
     );
   }
 
-  async getChangedOrderList(token: string) {
-    return (
+  async getChangedOrderList(token: string, from = new Date("2023-03-20")) {
+    const orders =
       (
         await this.requestGet<getChangedOrderResponse>(
-          `${URL_GET_ORDER_LIST}?lastChangedFrom=2023-03-20T16:58:00.0%2B09:00`, //${encodeURIComponent(DateTime.now().minus({ minutes: 30 }).toISO({}))}
+          `${URL_GET_ORDER_LIST}?lastChangedFrom=${encodeURIComponent(
+            DateTime.fromJSDate(from).minus({ minutes: 30 }).toISO({})
+          )}`,
           token
         )
-      ).data?.lastChangeStatuses ?? []
-    );
+      ).data?.lastChangeStatuses ?? [];
+    return plainToInstance(ChangedOrder, orders);
   }
 
   async getOrderDetailList(token: string, productOrderIds: string[]) {
@@ -121,10 +125,10 @@ export class NaverStoreApi {
       this.http.post<T>(url, body, {
         headers: { Authorization: `Bearer ${token}` },
       })
-    ).catch((e) => {
-      console.log(e);
-      throw e;
-    });
+    );
+    if (data["traceId"]) {
+      Logger.log({ url, token, traceId: data["traceId"] as string });
+    }
     return data;
   }
 
@@ -133,11 +137,10 @@ export class NaverStoreApi {
       this.http.get<T>(url, {
         headers: { Authorization: `Bearer ${token}` },
       })
-    ).catch((e: AxiosError) => {
-      console.log(e);
-      throw e;
-    });
-
+    );
+    if (data["traceId"]) {
+      Logger.log({ url, token, traceId: data["traceId"] as string });
+    }
     return data;
   }
 }

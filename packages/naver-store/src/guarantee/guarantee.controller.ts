@@ -7,7 +7,7 @@ export class GuaranteeController {
   constructor(private readonly guaranteeService: GuaranteeService) {}
 
   @Get()
-  startIssueGuarantee() {
-    return this.guaranteeService.startIssueGuarantee();
+  startIssueGuarantee(@Query("from") from: Date) {
+    return this.guaranteeService.startIssueGuarantee(from);
   }
 }

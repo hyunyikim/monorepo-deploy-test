@@ -8,6 +8,8 @@ import {
   VersioningType,
 } from "@nestjs/common";
 
+import { ENV } from "src/common/enums/env.enum";
+
 import { AppModule } from "./app.module";
 import { RequestInterceptor } from "./common/request.interceptor";
 import { ResponseInterceptor } from "./common/response.interceptor";
@@ -43,12 +45,11 @@ async function bootstrap() {
 bootstrap();
 
 function addSwagger(app: INestApplication) {
-  if (process.env.NODE_ENV !== "production") {
-    const config = new DocumentBuilder()
+  if (process.env.NODE_ENV !== ENV.PRODUCTION) {
+    const builder = new DocumentBuilder()
       .setTitle("Naver Store API")
       .setDescription("Naver Store API 문서입니다.")
       .setVersion("1.0")
-      .addServer("/naver-store")
       .addBearerAuth(
         {
           type: "http",
@@ -60,8 +61,10 @@ function addSwagger(app: INestApplication) {
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjEwNDYsInR5cGUiOiJCIiwiYjJiVHlwZSI6IkIiLCJpYXQiOjE2Nzg2NjM4MjMsImV4cCI6NDgzMjI2MzgyM30.k2Vm2AurofniOwyqqPiMn93oq0pTw_k5S4utYuSwO40",
         },
         "Token"
-      )
-      .build();
+      );
+
+    process.env.NODE_ENV !== ENV.LOCAL && builder.addServer("/naver-store");
+    const config = builder.build();
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("api", app, document);

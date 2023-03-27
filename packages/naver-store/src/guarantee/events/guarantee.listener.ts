@@ -11,7 +11,7 @@ export class GuaranteeEventListener {
 
   @OnEvent(eEventKey.GetChangedOrderListEvent, { async: true })
   async handleChangedOrderList(event: GuaranteeEvent) {
-    await this.guaranteeService.getChangedOrderList(event);
+    await this.guaranteeService.getChangedOrderList(event.interwork);
   }
 
   @OnEvent(eEventKey.GetOrderDetailEvent, { async: true })

@@ -18,18 +18,6 @@ export class InterworkService {
     private interworkRepo: InterworkRepository,
     private vircleCoreHttp: VircleApiHttpService
   ) {}
-  @Cron("0 0 */2 * * *")
-  async refreshTokenBatch() {
-    const interworks = await this.interworkRepo.getAllWithoutUnlinked();
-    const result = await Promise.all(
-      interworks.map(async (interwork) => ({
-        accountId: interwork.accountId,
-        partnerIdx: interwork.partnerIdx,
-        tokenInfo: await this.refreshToken(interwork.accountId),
-      }))
-    );
-    return result;
-  }
 
   async initInterwork(accountId: string, { token }: TokenInfo) {
     const account = await this.interworkRepo.getInterworkByAccountId(accountId);
@@ -45,8 +33,8 @@ export class InterworkService {
     });
   }
 
-  async unlinkInterwork(accountId: string, reason: string) {
-    const interwork = await this.getInterworkByAccountId(accountId);
+  async unlinkInterwork(token: TokenInfo, reason: string) {
+    const interwork = await this.getInterworkByPartnerToken(token);
     interwork.deletedAt = DateTime.now().toSQL();
     interwork.reasonForLeave = reason;
 
@@ -85,6 +73,10 @@ export class InterworkService {
     const naverStoreInterwork =
       interwork ?? (await this.getInterworkByAccountId(accountId));
 
+    if (tokenInfo.access_token === naverStoreInterwork.accessToken) {
+      return tokenInfo;
+    }
+
     naverStoreInterwork.tokenInfo = tokenInfo;
 
     await this.interworkRepo.putInterwork(naverStoreInterwork);
@@ -115,7 +107,7 @@ export class InterworkService {
     return interwork;
   }
 
-  async getInterworkByPartner({ partnerIdx }: TokenInfo) {
+  async getInterworkByPartnerToken({ partnerIdx }: TokenInfo) {
     const interwork = await this.interworkRepo.getInterworkByPartner(
       partnerIdx
     );
@@ -129,10 +121,8 @@ export class InterworkService {
     return await this.naverApi.getHighistCategories();
   }
 
-  async updateSetting(accountId: string, setting: UpdateSettingDto) {
-    const interwork = await this.interworkRepo.getInterworkByAccountId(
-      accountId
-    );
+  async updateSetting(token: TokenInfo, setting: UpdateSettingDto) {
+    const interwork = await this.getInterworkByPartnerToken(token);
 
     if (!interwork) {
       throw new Error("no interwork");

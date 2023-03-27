@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { AxiosError } from "axios";
 import { plainToInstance } from "class-transformer";
@@ -52,20 +52,6 @@ export class GuaranteeService {
     private slackReporter: SlackReporter,
     private interworkService: InterworkService
   ) {}
-  // {30}초마다 이벤트 실행
-  // 전체 연동된 업체 리스트 조회 (이탈한 업체 제외) (OK)
-  // 각 업체의 주문 변경 이력 획득
-  // 각 변경 이력의 상세 주문 정보 획득
-  // 각 상세 주문의 상품 정보 획득
-  // 각 상품의 상세 정보 획득 (이미지를 위해) (딜레이 고려해야됨)
-  // 카테고리 사용유무에 따라 사용할경우 필터
-
-  //
-  // 개런티 발급
-  // 톡톡 or 알림톡 발송
-
-  // 만약 실패나면 sqs 전송
-  // sqs 에서 주기적으로 꺼내서 다시 이벤트 실행
 
   @Cron("*/5 * * * * *", { name: "RETRY_NAVER_EVENT" })
   async retryNaverEvent() {
@@ -92,48 +78,73 @@ export class GuaranteeService {
     }
   }
 
+  /*********************************************
+   ************** 개런티 발급 프로세스 **************
+   *********************************************/
+
+  /**
+   * 1. 연동된 업체 조회 (연동 해제된 업체 제외)
+   * 2. 각 업체별 토큰 갱신
+   * 3. 변경된 주문 조회 (상태값에 따라 이벤트 분기 처리)
+   * 4. 주문 상세 정보 조회
+   * 5. 주문별 상품 상세 조회
+   * 6. 카테고리 조회 (연동 정보에 카테고리 사용 여부가 true일 때만)
+   * 7. 주문 상태별 분기처리
+   */
+
+  // TODO: 연동 도중 토큰 만료되면?
+
+  // TODO: prod 나갈때 주석 풀 것.
   // @Cron("0 * * * * *")
-  async startIssueGuarantee() {
+  async startIssueGuarantee(from?: Date) {
     Logger.log("startIssueGuarantee");
     const interworks = await this.interworkRepo.getAllWithoutUnlinked();
     for (const interwork of interworks) {
       await this.interworkService
-        .refreshToken(interwork.accountId)
+        .refreshToken(interwork.accountId, interwork)
         .catch((e) => {
           throw new Error("토큰 갱신 실패");
         }); // 토큰 갱신 후 시작
 
-      const guaranteeEvent = new GuaranteeEvent();
-      guaranteeEvent.interwork = interwork;
-
-      await this.getChangedOrderList(guaranteeEvent);
+      await this.getChangedOrderList(interwork, from);
     }
   }
 
-  async getChangedOrderList(guaranteeEvent: GuaranteeEvent) {
+  async getChangedOrderList(interwork: NaverStoreInterwork, from?: Date) {
     try {
-      const { interwork } = guaranteeEvent;
-      const orders = await this.api.getChangedOrderList(interwork.accessToken);
+      let orders = await this.api.getChangedOrderList(
+        interwork.accessToken,
+        from
+      );
+      const guarantees = await this.guaranteeRepo.getAll();
+      orders = orders.filter((order) => {
+        const guarantee = guarantees.find(
+          (guarantee) => guarantee.productOrderId === order.productOrderId
+        );
+        if (guarantee) {
+          return guarantee.productOrderStatus !== order.productOrderStatus;
+        } else {
+          return true;
+        }
+      });
 
       if (!orders.length) {
         Logger.log("변경된 주문 없음.");
         return;
       }
 
-      const guarantees = await this.guaranteeRepo.getAll();
       const payedList = orders.filter(
         (order) => order.productOrderStatus === eProductOrderStatus.PAYED
       );
-      const deliveredList = orders.filter(
-        (order) => order.productOrderStatus === eProductOrderStatus.DELIVERED
+      const deliveredList = orders.filter((order) =>
+        [eProductOrderStatus.DELIVERED, eProductOrderStatus.EXCHANGED].includes(
+          order.productOrderStatus
+        )
       );
       const elseList = orders.filter((order) =>
-        [
-          eProductOrderStatus.CANCELED,
-          eProductOrderStatus.CANCELED_BY_NOPAYMENT,
-          eProductOrderStatus.RETURNED,
-          eProductOrderStatus.EXCHANGED,
-        ].includes(order.productOrderStatus)
+        [eProductOrderStatus.CANCELED, eProductOrderStatus.RETURNED].includes(
+          order.productOrderStatus
+        )
       );
 
       /**
@@ -145,23 +156,41 @@ export class GuaranteeService {
       }
 
       if (deliveredList.length) {
+        const guaranteeEvent = new GuaranteeEvent();
+        guaranteeEvent.interwork = interwork;
         guaranteeEvent.orders = deliveredList;
+
         this.emitter.emit(eEventKey.GetOrderDetailEvent, guaranteeEvent);
       }
 
       if (elseList) {
-        const guaranteeOrders = elseList.map((order) => {
-          const guarantee = guarantees.find(
-            (guarantee) => guarantee.productOrderId === order.productOrderId
-          ) as NaverStoreGuarantee;
-          Object.assign(guarantee.order, order);
-          return guarantee.order;
-        });
+        const guaranteeEvent = new GuaranteeEvent();
+        guaranteeEvent.interwork = interwork;
+        const guaranteeOrders = elseList
+          .map((order) => {
+            const guarantee = guarantees.find(
+              (guarantee) => guarantee.productOrderId === order.productOrderId
+            ) as NaverStoreGuarantee;
+
+            // 스케줄러가 돌기 전에 취소까지 왔다면?
+            if (!guarantee) {
+              Logger.log(
+                `${order.productOrderId}: 개런티 발급 전 취소 또는 반품됨`
+              );
+              return null;
+            } else {
+              Object.assign(guarantee.order, order);
+              return guarantee.order;
+            }
+          })
+          .filter((_) => _) as ChangedOrder[]; // 발급 전 취소/반품된 주문 필터
         guaranteeEvent.orders = guaranteeOrders;
         this.emitter.emit(eEventKey.IssueGuaranteeEvent, guaranteeEvent);
       }
     } catch (e) {
       e instanceof AxiosError ? Logger.error(e.toJSON()) : Logger.error(e);
+      const guaranteeEvent = new GuaranteeEvent();
+      guaranteeEvent.interwork = interwork;
       await this.sqsService.send(
         SQS_PARAM(eEventKey.GetChangedOrderListEvent, guaranteeEvent)
       );
@@ -247,7 +276,7 @@ export class GuaranteeService {
       for (const order of guaranteeEvent.orders) {
         switch (order.productOrderStatus) {
           case eProductOrderStatus.DELIVERED: {
-            this.issueGuarantee(order, guaranteeEvent.interwork);
+            await this.issueGuarantee(order, guaranteeEvent.interwork);
             break;
           }
           case eProductOrderStatus.CANCELED:
@@ -256,7 +285,22 @@ export class GuaranteeService {
             break;
           }
           case eProductOrderStatus.EXCHANGED: {
-            await this.cancelGuarantee(order, guaranteeEvent.interwork);
+            const guaranteeEntity =
+              await this.guaranteeRepo.getGuaranteeByOrderId(
+                order.productOrderId
+              );
+            // 발급된 개런티가 있었다면 취소
+            if (guaranteeEntity) {
+              const interworkEntity =
+                await this.interworkService.getInterworkByAccountId(
+                  guaranteeEntity.accountId
+                );
+              await this.cancelGuarantee(
+                guaranteeEntity.order,
+                interworkEntity
+              );
+            }
+
             await this.issueGuarantee(order, guaranteeEvent.interwork);
           }
         }

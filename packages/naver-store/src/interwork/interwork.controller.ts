@@ -32,13 +32,12 @@ export class InterworkController {
     return this.interworkService.initInterwork(accountId, token);
   }
 
-  @Delete(":accountId")
-  @ApiParam({ name: "accountId", example: "ncp_1njkqz_02" })
+  @Delete()
   unlinkInterwork(
-    @Param("accountId") accountId: string,
+    @GetToken() token: TokenInfo,
     @Query("reason") reason: string
   ) {
-    return this.interworkService.unlinkInterwork(accountId, reason);
+    return this.interworkService.unlinkInterwork(token, reason);
   }
 
   @Post(":accountId/refresh")
@@ -49,7 +48,7 @@ export class InterworkController {
 
   @Get()
   getInterwork(@GetToken() token: TokenInfo) {
-    return this.interworkService.getInterworkByPartner(token);
+    return this.interworkService.getInterworkByPartnerToken(token);
   }
 
   @Get("category")
@@ -57,12 +56,8 @@ export class InterworkController {
     return this.interworkService.getCategories();
   }
 
-  @Put(":accountId/setting")
-  @ApiParam({ name: "accountId", example: "ncp_1njkqz_02" })
-  updateSettings(
-    @Param("accountId") accountId: string,
-    @Body() dto: UpdateSettingDto
-  ) {
-    return this.interworkService.updateSetting(accountId, dto);
+  @Put("setting")
+  updateSettings(@GetToken() token: TokenInfo, @Body() dto: UpdateSettingDto) {
+    return this.interworkService.updateSetting(token, dto);
   }
 }

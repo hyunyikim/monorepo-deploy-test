@@ -58,4 +58,3 @@ Nest is [MIT licensed](LICENSE).
 - Swagger 작성
 - Readme 작성
 - Error Code 룰 논의
-- Error Code 룰 논의

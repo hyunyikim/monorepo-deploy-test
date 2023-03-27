@@ -18,6 +18,7 @@ export interface GetSellerChannelsResponse {
 
 export interface getChangedOrderResponse {
   timestamp: Date;
+  traceId: string;
   data: {
     lastChangeStatuses: ChangedOrder[];
     count: 3;
@@ -47,6 +48,7 @@ export class ChangedOrder {
   lastChangedType: eProductOrderStatus; // "PAYED"
 
   // TODO: 구조를 정리해야됨
+  // 여긴 plain 변경 주문 객체를 담고, 아래 property와 메소드들은 개런티 이벤트 전용임
   isFilteredByCategory = false;
   orderDetail: OrderDetail;
   productDetail: NaverProductDetail;
