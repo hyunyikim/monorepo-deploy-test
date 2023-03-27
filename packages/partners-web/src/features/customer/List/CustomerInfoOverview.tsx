@@ -159,7 +159,7 @@ function CustomerInfoOverview({
 		{
 			title: '연동',
 			tooltipText:
-				'개런티 알림톡을 클릭해서 버클 월렛을 연동한 고객의 수 입니다.',
+				'개런티 알림톡을 클릭해서 Klip 지갑을 연동한 고객의 수 입니다.',
 			rate: linkData?.linked
 				? Math.round((linkData?.linked / linkData?.confirmCount) * 100)
 				: '0',
