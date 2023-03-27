@@ -185,7 +185,6 @@ export class Cafe24InterworkService {
 				throw new ErrorResponse(ErrorMetadata.notFoundStoreInCafe24);
 			}
 			interwork.store = store;
-			delete setting.shopNo;
 		}
 
 		interwork.issueSetting = {
