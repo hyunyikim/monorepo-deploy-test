@@ -79,10 +79,12 @@ export class Cafe24InterworkController {
 	@TransformInstanceToPlain()
 	async confirmInterwork(
 		@Param('mallId') mallId: string,
-		@GetToken() token: TokenInfo
+		@GetToken() token: TokenInfo,
+		@Body('shopNo') shopNo: number
 	) {
 		const interwork = await this.cafe24InterworkService.completeInterwork(
 			mallId,
+			shopNo,
 			token
 		);
 		return interwork;
@@ -144,5 +146,11 @@ export class Cafe24InterworkController {
 			offset,
 			name,
 		});
+	}
+
+	@Get(':mallId/stores')
+	@UseGuards(JwtAuthGuard)
+	getStores(@Param('mallId') mallId: string, @GetToken() token: TokenInfo) {
+		return this.cafe24InterworkService.getStores(mallId, token);
 	}
 }

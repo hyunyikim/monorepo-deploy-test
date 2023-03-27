@@ -91,6 +91,7 @@ export class Cafe24InterworkService {
 
 		const store = await this.cafe24Api.getStoreInfo(
 			mallId,
+			1, // 기본 멀티몰
 			accessToken.access_token
 		);
 
@@ -106,18 +107,28 @@ export class Cafe24InterworkService {
 		return interwork;
 	}
 
-	async completeInterwork(mallId: string, {token, partnerIdx}: TokenInfo) {
+	async completeInterwork(
+		mallId: string,
+		shopNo: number,
+		{token, partnerIdx}: TokenInfo
+	) {
 		const interwork = await this.getInterworkInfo(mallId);
 		if (interwork === null) {
 			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
 		}
 
 		const partnership = await this.vircleCoreApi.getPartnerInfo(token);
+		const store = await this.cafe24Api.getStoreInfo(
+			mallId,
+			shopNo || 1,
+			interwork.accessToken.access_token
+		);
 
 		interwork.partnerIdx = partnerIdx;
 		interwork.coreApiToken = token;
 		interwork.updatedAt = DateTime.now().toISO();
 		interwork.confirmedAt = DateTime.now().toISO();
+		interwork.store = store;
 		interwork.issueSetting = {
 			issueAll: true,
 			manually: false,
@@ -164,6 +175,18 @@ export class Cafe24InterworkService {
 		if (interwork.partnerIdx !== token.partnerIdx) {
 			throw new ErrorResponse(ErrorMetadata.canNotAccessToken);
 		}
+		if (setting.shopNo) {
+			const store = await this.cafe24Api.getStoreInfo(
+				mallId,
+				setting.shopNo,
+				interwork.accessToken.access_token
+			);
+			if (!store || !store.shop_no) {
+				throw new ErrorResponse(ErrorMetadata.notFoundStoreInCafe24);
+			}
+			interwork.store = store;
+			delete setting.shopNo;
+		}
 
 		interwork.issueSetting = {
 			...interwork.issueSetting,
@@ -188,6 +211,20 @@ export class Cafe24InterworkService {
 
 	async getCategories(mallId: string, option: CategoryListParams) {
 		return this.cafe24Api.getCategoryListFront(mallId, option);
+	}
+
+	async getStores(mallId: string, token: TokenInfo) {
+		const interwork = await this.getInterworkInfo(mallId);
+		if (!interwork) {
+			throw new ErrorResponse(ErrorMetadata.notFoundInterworkInfo);
+		}
+		if (interwork.partnerIdx !== token.partnerIdx) {
+			throw new ErrorResponse(ErrorMetadata.canNotAccessToken);
+		}
+		return this.cafe24Api.getStoreList(
+			mallId,
+			interwork.accessToken.access_token
+		);
 	}
 }
 

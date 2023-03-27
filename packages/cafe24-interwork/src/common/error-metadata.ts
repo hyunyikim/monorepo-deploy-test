@@ -17,12 +17,13 @@ enum eErrorCode {
 	NOT_FOUND_GUARANTEE_REQUEST = 1011,
 
 	// webhook 1101 - 1200
-	NOT_DEFAULT_SHOP_NO = 1101,
+	NOT_INTERWORK_SHOP_NO = 1101,
 	NO_GUARANTEE_FOR_CANCEL = 1102,
 
 	// cafe24 api 1201 - 1300
 	NOT_FOUND_ORDER_IN_CAFE24 = 1101,
 	NOT_FOUND_PRODUCT_IN_CAFE24 = 1102,
+	NOT_FOUND_STORE_IN_CAFE24 = 1103,
 }
 
 export const ErrorMetadata = {
@@ -95,12 +96,18 @@ export const ErrorMetadata = {
 		description: '해당 몰의 연동이 해제되었습니다.',
 		status: HttpStatus.NOT_FOUND,
 	},
-	notDefaultShopNo: {
-		name: 'NOT_DEFAULT_SHOP_NO',
-		message: '기본 멀티몰이 아님',
-		code: eErrorCode.NOT_DEFAULT_SHOP_NO,
-		description: '기본 멀티몰의 주문번호가 아닙니다.',
+	notInterworkShopNo: {
+		name: 'NOT_INTERWORK_SHOP_NO',
+		message: '연동된 멀티몰이 아님',
+		code: eErrorCode.NOT_INTERWORK_SHOP_NO,
+		description: '연동된 멀티몰의 주문번호가 아닙니다.',
 		status: HttpStatus.OK,
+	},
+	notFoundStoreInCafe24: {
+		name: 'NOT_FOUND_STORE_IN_CAFE24',
+		message: '스토어 정보를 찾을 수 없음',
+		code: eErrorCode.NOT_FOUND_STORE_IN_CAFE24,
+		description: '입력학 shopNo에 해당하는 스토어 정보를 찾을 수 없습니다.',
 	},
 	notFoundOrderInCafe24: {
 		name: 'NOT_FOUND_ORDER_IN_CAFE24',
