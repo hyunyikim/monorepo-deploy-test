@@ -98,11 +98,13 @@ export class Cafe24EventService {
 		);
 
 		try {
-			if (Number(webHook.resource.event_shop_no) !== 1) {
-				throw new ErrorResponse(ErrorMetadata.notDefaultShopNo);
-			}
-
 			const interwork = await this.addInterworkInfo(webHook);
+			if (
+				Number(webHook.resource.event_shop_no) !==
+				interwork.store.shop_no
+			) {
+				throw new ErrorResponse(ErrorMetadata.notInterworkShopNo);
+			}
 
 			const mallId = interwork.mallId;
 			const accessToken = interwork.accessToken.access_token;

@@ -79,8 +79,8 @@ export class Cafe24API {
 	}
 
 	@TransformPlainToInstance(Store)
-	async getStoreInfo(mallId: string, accessToken: string) {
-		const url = `https://${mallId}.${this.fixedURL}/admin/store`;
+	async getStoreInfo(mallId: string, shopNo: number, accessToken: string) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/store?shop_no=${shopNo}`;
 		const {data} = await this.httpAgent.get<{store: Store}>(url, {
 			headers: {
 				Authorization: `Bearer ${accessToken}`,
@@ -88,6 +88,18 @@ export class Cafe24API {
 			},
 		});
 		return data.store;
+	}
+
+	@TransformPlainToInstance(Store)
+	async getStoreList(mallId: string, accessToken: string) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/shops`;
+		const {data} = await this.httpAgent.get<{shops: Store[]}>(url, {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				'Content-Type': 'application/json',
+			},
+		});
+		return data.shops;
 	}
 
 	@TransformPlainToInstance(Product)

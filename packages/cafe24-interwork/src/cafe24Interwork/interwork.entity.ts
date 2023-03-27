@@ -21,6 +21,9 @@ export interface IssueCategory {
 	fullNo: number[];
 }
 export class IssueSetting {
+	@IsNumber()
+	shopNo?: number = 1;
+
 	@IsBoolean()
 	manually: boolean;
 

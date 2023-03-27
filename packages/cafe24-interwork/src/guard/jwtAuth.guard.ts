@@ -3,11 +3,12 @@ import {
 	CanActivate,
 	ExecutionContext,
 	Inject,
-	BadRequestException,
 } from '@nestjs/common';
 import {Observable} from 'rxjs';
 import {Request} from 'express';
 import {JwtService} from '@nestjs/jwt';
+import {ErrorResponse} from 'src/common/error';
+import {ErrorMetadata} from 'src/common/error-metadata';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -31,7 +32,7 @@ export class JwtAuthGuard implements CanActivate {
 				return true;
 			})
 			.catch((error) => {
-				throw new BadRequestException('Invalid Token');
+				throw new ErrorResponse(ErrorMetadata.noAuthToken);
 			});
 	}
 }
@@ -58,7 +59,7 @@ export class JwtAuthGuardOrNot implements CanActivate {
 				return true;
 			})
 			.catch((error) => {
-				throw new BadRequestException('Invalid Token');
+				throw new ErrorResponse(ErrorMetadata.noAuthToken);
 			});
 	}
 }
@@ -84,7 +85,7 @@ export class MasterAuthGuard implements CanActivate {
 				return payload.type === 'M';
 			})
 			.catch((error) => {
-				throw new BadRequestException('Invalid Token');
+				throw new ErrorResponse(ErrorMetadata.noAuthToken);
 			});
 	}
 }
