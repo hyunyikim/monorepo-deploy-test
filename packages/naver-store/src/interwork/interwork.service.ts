@@ -22,7 +22,7 @@ export class InterworkService {
   async initInterwork(accountId: string, { token }: TokenInfo) {
     const account = await this.interworkRepo.getInterworkByAccountId(accountId);
     if (account) {
-      return account.tokenInfo.access_token;
+      return account.tokenInfo;
     }
     const partnership = await this.vircleCoreHttp.getPartnerInfo(token);
 
@@ -31,6 +31,10 @@ export class InterworkService {
       partnership,
       coreApiToken: token,
     });
+  }
+
+  async isReadyToInterwork(accountId: string) {
+    return await this.naverApi.generateToken(accountId);
   }
 
   async unlinkInterwork(token: TokenInfo, reason: string) {
@@ -81,20 +85,6 @@ export class InterworkService {
 
     await this.interworkRepo.putInterwork(naverStoreInterwork);
     return tokenInfo;
-  }
-
-  async refreshTokenByOldToken(oldToken: string) {
-    const naverStoreInterwork = (await this.interworkRepo.getInterworkByToken(
-      oldToken
-    )) as NaverStoreInterwork;
-
-    const tokenInfo = await this.naverApi.generateToken(
-      naverStoreInterwork.accountId
-    );
-    naverStoreInterwork.tokenInfo = tokenInfo;
-
-    await this.interworkRepo.putInterwork(naverStoreInterwork);
-    return tokenInfo.access_token;
   }
 
   async getInterworkByAccountId(accountId: string) {

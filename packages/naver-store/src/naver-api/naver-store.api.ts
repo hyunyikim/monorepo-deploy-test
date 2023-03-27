@@ -4,6 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { lastValueFrom } from "rxjs";
 import { hashSync } from "bcryptjs";
 import { plainToInstance } from "class-transformer";
+import { DateTime } from "luxon";
 
 import { NaverConfig } from "src/common/configuration";
 import {
@@ -27,7 +28,6 @@ import {
   ChangedOrder,
   NaverCategory,
 } from "./interfaces/naver-store-api.interface";
-import { DateTime } from "luxon";
 
 @Injectable()
 export class NaverStoreApi {
@@ -50,7 +50,7 @@ export class NaverStoreApi {
       )
     );
 
-    return data;
+    return plainToInstance(GetAccessTokenResponse, data);
   }
 
   async getSellerChannels(token: string) {
