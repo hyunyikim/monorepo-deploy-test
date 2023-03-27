@@ -242,7 +242,6 @@ export class Cafe24EventService {
 		if (!orders.length) {
 			throw new ErrorResponse(ErrorMetadata.notFoundOrderInCafe24);
 		}
-		this.logger.log(`orders: ${JSON.stringify(orders)}`);
 		this.logger.log(`orders length: ${orders.length}`);
 
 		return orders;
@@ -299,7 +298,8 @@ export class Cafe24EventService {
 				const getProducts = await this.cafe24Api.getProductResourceList(
 					mallId,
 					accessToken,
-					list
+					list,
+					shopNo
 				);
 				products = [...products, ...getProducts];
 			}
@@ -325,7 +325,6 @@ export class Cafe24EventService {
 			throw new ErrorResponse(ErrorMetadata.notFoundProductInCafe24);
 		}
 
-		this.logger.log(`products: ${JSON.stringify(products)}`);
 		this.logger.log(`products length: ${products.length}`);
 		return products;
 	}
@@ -355,7 +354,6 @@ export class Cafe24EventService {
 			hook.order.order_id,
 			hook.interwork.mallId
 		);
-		this.logger.log(`reqList: ${JSON.stringify(reqList)}`);
 		this.logger.log(`reqList length: ${reqList.length}`);
 
 		return {

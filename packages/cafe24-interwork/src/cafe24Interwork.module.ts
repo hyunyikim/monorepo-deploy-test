@@ -65,7 +65,7 @@ import {SqsService} from './sqs/sqs.service';
 				const redirectURL = configService.getOrThrow<string>(
 					'CAFE24_REDIRECT_URL'
 				);
-				return new Cafe24API(clientId, secretKey, redirectURL);
+				return new Cafe24API(clientId, secretKey, redirectURL, Logger);
 			},
 			inject: [ConfigService],
 		},
