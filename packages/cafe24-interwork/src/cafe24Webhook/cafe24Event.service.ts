@@ -111,7 +111,8 @@ export class Cafe24EventService {
 			const orders = await this.addOrdersInfo(
 				mallId,
 				accessToken,
-				webHook.resource.order_id
+				webHook.resource.order_id,
+				interwork.store.shop_no
 			);
 			const {isIssueAll, categoryIdxList} = this.filteringProductCategory(
 				interwork.issueSetting
@@ -121,7 +122,8 @@ export class Cafe24EventService {
 				accessToken,
 				orders,
 				isIssueAll,
-				categoryIdxList
+				categoryIdxList,
+				interwork.store.shop_no
 			);
 
 			const hook = {interwork, webHook, orders, products};
@@ -219,7 +221,8 @@ export class Cafe24EventService {
 	private async addOrdersInfo(
 		mallId: string,
 		accessToken: string,
-		orderId: string
+		orderId: string,
+		shopNo: number
 	) {
 		const CAFE24_LIMIT = 1000; // cafe24 api CAFE24_LIMIT
 
@@ -230,7 +233,8 @@ export class Cafe24EventService {
 			const getOrders = await this.cafe24Api.getOrderList(
 				mallId,
 				accessToken,
-				list
+				list,
+				shopNo
 			);
 			orders = [...orders, ...getOrders];
 		}
@@ -273,7 +277,8 @@ export class Cafe24EventService {
 		accessToken: string,
 		orders: Array<Order>,
 		isIssueAll: boolean,
-		categoryIdxList: Array<number>
+		categoryIdxList: Array<number>,
+		shopNo: number
 	) {
 		const CAFE24_LIMIT = 100; // cafe24 products api CAFE24_LIMIT
 
@@ -304,7 +309,8 @@ export class Cafe24EventService {
 					await this.cafe24Api.getProductResourceListByCategory(
 						mallId,
 						accessToken,
-						categoryIdx
+						categoryIdx,
+						shopNo
 					);
 				products = [...products, ...getProducts];
 			}

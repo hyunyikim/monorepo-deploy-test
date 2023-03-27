@@ -164,9 +164,10 @@ export class Cafe24API {
 	async getProductResourceListByCategory(
 		mallId: string,
 		accessToken: string,
-		category: number
+		category: number,
+		shopNo: number
 	) {
-		const url = `https://${mallId}.${this.fixedURL}/admin/products?category=${category}&limit=100`;
+		const url = `https://${mallId}.${this.fixedURL}/admin/products?shop_no=${shopNo}&category=${category}&limit=100`;
 		const {data} = await this.httpAgent.get<{products: Array<Product>}>(
 			url,
 			{
@@ -297,8 +298,13 @@ export class Cafe24API {
 	}
 
 	@TransformPlainToInstance(Order)
-	async getOrderList(mallId: string, accessToken: string, orderIds: string) {
-		const url = `https://${mallId}.${this.fixedURL}/admin/orders?order_id=${orderIds}&embed=items,buyer&limit=1000`;
+	async getOrderList(
+		mallId: string,
+		accessToken: string,
+		orderIds: string,
+		shopNo: number
+	) {
+		const url = `https://${mallId}.${this.fixedURL}/admin/orders?order_id=${orderIds}&embed=items,buyer&limit=1000&shop_no=${shopNo}`;
 		const {data} = await this.httpAgent.get<{orders: Array<Order>}>(url, {
 			headers: {
 				Authorization: `Bearer ${accessToken}`,
