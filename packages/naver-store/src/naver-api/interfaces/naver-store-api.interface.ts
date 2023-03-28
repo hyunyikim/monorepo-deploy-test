@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsEnum, IsNumber, IsString } from "class-validator";
 
 import { eProductOrderStatus } from "src/common/enums/product-order-status.enum";
@@ -5,8 +6,14 @@ import { NFT_STATUS, ReqGuaranteePayload } from "src/common/vircle-api.http";
 import { NaverStoreInterwork } from "src/interwork/entities/interwork.entity";
 
 export class GetAccessTokenResponse {
+  @ApiProperty()
   access_token: string;
+  @ApiProperty({
+    description: "만료기간",
+    example: 10800,
+  })
   expires_in: number;
+  @ApiProperty()
   token_type: "Bearer";
 }
 

@@ -8,23 +8,61 @@ import {
   Query,
   Body,
   Put,
+  HttpStatus,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiParam } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from "@nestjs/swagger";
 
 import { GetToken, TokenInfo } from "src/common/getToken.decorator";
 import { JwtAuthGuard } from "src/common/jwtAuth.guard";
+import { ErrorFormat } from "src/common/response-format";
+import {
+  ApiCommonErrorResponse,
+  ApiCommonOkResponse,
+} from "src/common/utils/swagger.util";
 import { UpdateSettingDto } from "src/interwork/dto/update-category-list.dto";
+import { GetAccessTokenResponse } from "src/naver-api/interfaces/naver-store-api.interface";
 
 import { InterworkService } from "./interwork.service";
 
+@ApiTags("네이버 연동 API")
 @Controller("interwork")
 export class InterworkController {
   constructor(private readonly interworkService: InterworkService) {}
 
-  @Post(":accountId")
-  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "최초 연동",
+    description: "최초 연동 생성",
+  })
+  // @ApiCreatedResponse({
+  //   type: GetAccessTokenResponse,
+  //   description: "연동 성공 - 토큰정보 응답",
+  //   status: HttpStatus.CREATED,
+  // })
+  // @ApiForbiddenResponse({
+  //   description: "accountId가 잘못 들어왔을 때",
+  //   type: ErrorFormat,
+  // })
+  @ApiCommonOkResponse({
+    type: GetAccessTokenResponse,
+    description: "연동 성공 - 토큰정보 응답",
+    status: HttpStatus.CREATED,
+  })
+  @ApiCommonErrorResponse({
+    description: "accountId가 잘못 들어왔을 때",
+    type: ErrorFormat,
+  })
   @ApiBearerAuth("Token")
   @ApiParam({ name: "accountId", example: "ncp_1njkqz_02" })
+  @Post(":accountId")
+  @UseGuards(JwtAuthGuard)
   initInterwork(
     @GetToken() token: TokenInfo,
     @Param("accountId") accountId: string
