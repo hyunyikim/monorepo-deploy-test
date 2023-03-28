@@ -1,0 +1,752 @@
+{
+	"info": {
+		"_postman_id": "ba86cb37-f2a5-46e5-a16a-d22a103ab2a5",
+		"name": "Naver Store API",
+		"description": "Naver Store API 문서입니다.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "25354374-ba86cb37-f2a5-46e5-a16a-d22a103ab2a5"
+	},
+	"item": [
+		{
+			"name": "interwork",
+			"item": [
+				{
+					"name": "{accountId}",
+					"item": [
+						{
+							"name": "refresh",
+							"item": [
+								{
+									"name": "Interwork Controller refresh Token",
+									"id": "fa7f3b0c-f938-43a0-9470-d9a000a31f65",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/interwork/:accountId/refresh",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"interwork",
+												":accountId",
+												"refresh"
+											],
+											"variable": [
+												{
+													"key": "accountId",
+													"value": "<string>"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"id": "5adbb845-d1eb-46fd-b31c-18c02af8ceb4",
+											"name": "Untitled Response",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/interwork/:accountId/refresh",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"interwork",
+														":accountId",
+														"refresh"
+													],
+													"variable": [
+														{
+															"key": "accountId"
+														}
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"access_token\": \"<string>\",\n  \"expires_in\": \"<number>\",\n  \"token_type\": \"<string>\"\n}"
+										}
+									]
+								}
+							],
+							"id": "0127051d-498a-4fd7-bbf5-14bb99a4a82d"
+						},
+						{
+							"name": "isReady",
+							"item": [
+								{
+									"name": "Interwork Controller is Ready To Interwork",
+									"id": "49633b5c-74b5-4aa2-961f-f70886108db7",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjExMDAsInR5cGUiOiJCIiwiYjJiVHlwZSI6IkIiLCJpYXQiOjE2Nzk4OTc3ODcsImV4cCI6NDgzMzQ5Nzc4N30.pu1eH2iZ7VVJD4R6ZfC1BtSgh70rd6ONa5K2BNBWYSI",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{base-url}}:{{port}}/{{naver-store-url-prefix}}/interwork/:accountId/isReady",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{base-url}}"
+											],
+											"port": "{{port}}",
+											"path": [
+												"{{naver-store-url-prefix}}",
+												"interwork",
+												":accountId",
+												"isReady"
+											],
+											"variable": [
+												{
+													"key": "accountId",
+													"value": "ncp_1njkqz_02"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"id": "66ec358f-6ee3-4424-a015-63d28137a6fd",
+											"name": "Untitled Response",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/interwork/:accountId/isReady",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"interwork",
+														":accountId",
+														"isReady"
+													],
+													"variable": [
+														{
+															"key": "accountId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"access_token\": \"<string>\",\n  \"expires_in\": \"<number>\",\n  \"token_type\": \"<string>\"\n}"
+										}
+									]
+								}
+							],
+							"id": "8a9e4b1a-7146-4a9b-aee0-3d68d54e19d9"
+						},
+						{
+							"name": "최초 연동",
+							"id": "a6cd2f24-1884-455e-90c0-21a5f7056c9a",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/interwork/:accountId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"interwork",
+										":accountId"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "<string>"
+										}
+									]
+								},
+								"description": "최초 연동 생성"
+							},
+							"response": [
+								{
+									"id": "157a0b04-b33c-469a-82ec-92b853833e75",
+									"name": "연동 성공 - 토큰정보 응답",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/interwork/:accountId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"interwork",
+												":accountId"
+											],
+											"variable": [
+												{
+													"key": "accountId"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"error\": null,\n  \"data\": {\n    \"access_token\": \"<string>\",\n    \"expires_in\": \"<number>\",\n    \"token_type\": \"<string>\"\n  },\n  \"statusCode\": 201,\n  \"timestamp\": \"2023-03-28T03:07:04.309Z\"\n}"
+								},
+								{
+									"id": "656be32f-7992-47d0-974c-edfa7f2b7760",
+									"name": "accountId가 잘못 들어왔을 때",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/interwork/:accountId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"interwork",
+												":accountId"
+											],
+											"variable": [
+												{
+													"key": "accountId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": null,\n  \"error\": {\n    \"name\": \"<string>\",\n    \"code\": \"<number>\",\n    \"message\": \"<string>\"\n  },\n  \"statusCode\": {},\n  \"timestamp\": \"2023-03-28T03:07:04.309Z\"\n}"
+								}
+							]
+						}
+					],
+					"id": "accfd98e-2495-45a5-82bc-17aade10a46b"
+				},
+				{
+					"name": "setting",
+					"item": [
+						{
+							"name": "Interwork Controller update Settings",
+							"id": "2177d356-30fc-440b-80b9-6cc53035986f",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"isAutoIssue\": true,\n  \"issueTiming\": \"AFTER_DELIVERED\",\n  \"useCategory\": false,\n  \"issueIntro\": true\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/interwork/setting",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"interwork",
+										"setting"
+									]
+								}
+							},
+							"response": [
+								{
+									"id": "bdb65e5b-1373-4869-9212-b087f0a9633a",
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"description": "Added as a part of security scheme: bearer",
+												"key": "Authorization",
+												"value": "Bearer <token>"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"isAutoIssue\": true,\n  \"issueTiming\": \"AFTER_DELIVERED\",\n  \"useCategory\": false,\n  \"issueIntro\": true\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/interwork/setting",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"interwork",
+												"setting"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "<boolean>"
+								}
+							]
+						}
+					],
+					"id": "bfdca5ed-6b95-4372-bfce-badf224b1ff4"
+				},
+				{
+					"name": "category",
+					"item": [
+						{
+							"name": "Interwork Controller get Categories",
+							"id": "0d6b4213-cb3e-4b02-9414-3fdb8e5d8460",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/interwork/category",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"interwork",
+										"category"
+									]
+								}
+							},
+							"response": [
+								{
+									"id": "9b6a3605-579b-4ea7-b4a8-9449dcda2488",
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/interwork/category",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"interwork",
+												"category"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"id": "c2025389-18b4-4cd4-88fa-b4f8232db2f2"
+				},
+				{
+					"name": "Interwork Controller unlink Interwork",
+					"id": "3bf94996-e498-4877-822c-669cbe31ab0f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/interwork?reason=<string>",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"interwork"
+							],
+							"query": [
+								{
+									"description": "(Required) ",
+									"key": "reason",
+									"value": "<string>"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"id": "2d34167a-120e-4d18-a310-3ec784bb29d3",
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: bearer",
+										"key": "Authorization",
+										"value": "Bearer <token>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/interwork?reason=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"interwork"
+									],
+									"query": [
+										{
+											"description": "(Required) ",
+											"key": "reason",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<number>\",\n  \"accountId\": \"<string>\",\n  \"tokenInfo\": {\n    \"access_token\": \"<string>\",\n    \"expires_in\": \"<number>\",\n    \"token_type\": \"<string>\"\n  },\n  \"createdAt\": \"<string>\",\n  \"updatedAt\": \"2023-03-28 03:07:06.251 +00:00\",\n  \"deletedAt\": \"<string>\",\n  \"reasonForLeave\": \"<string>\",\n  \"partnerIdx\": \"<number>\",\n  \"partnerInfo\": {},\n  \"coreApiToken\": \"<string>\",\n  \"issueSetting\": {\n    \"isAutoIssue\": true,\n    \"issueTiming\": \"AFTER_DELIVERED\",\n    \"useCategory\": false,\n    \"issueIntro\": true\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Interwork Controller get Interwork",
+					"id": "b6c6474c-45fd-47f5-a962-feea93636ad1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/interwork",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"interwork"
+							]
+						}
+					},
+					"response": [
+						{
+							"id": "63600539-a6fe-4751-b4da-4d0aa1234d2f",
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: bearer",
+										"key": "Authorization",
+										"value": "Bearer <token>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/interwork",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"interwork"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<number>\",\n  \"accountId\": \"<string>\",\n  \"tokenInfo\": {\n    \"access_token\": \"<string>\",\n    \"expires_in\": \"<number>\",\n    \"token_type\": \"<string>\"\n  },\n  \"createdAt\": \"<string>\",\n  \"updatedAt\": \"2023-03-28 03:07:06.251 +00:00\",\n  \"deletedAt\": \"<string>\",\n  \"reasonForLeave\": \"<string>\",\n  \"partnerIdx\": \"<number>\",\n  \"partnerInfo\": {},\n  \"coreApiToken\": \"<string>\",\n  \"issueSetting\": {\n    \"isAutoIssue\": true,\n    \"issueTiming\": \"AFTER_DELIVERED\",\n    \"useCategory\": false,\n    \"issueIntro\": true\n  }\n}"
+						}
+					]
+				}
+			],
+			"id": "677b76e3-92d1-4383-aab7-267cc2245bee"
+		},
+		{
+			"name": "guarantee",
+			"item": [
+				{
+					"name": "Guarantee Controller start Issue Guarantee",
+					"id": "323d1ac1-6e9a-4f00-9987-590d2568d226",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/guarantee?from=<dateTime>",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"guarantee"
+							],
+							"query": [
+								{
+									"description": "(Required) ",
+									"key": "from",
+									"value": "<dateTime>"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"id": "e8d69863-222b-4df1-aa49-c8b5cd2436fc",
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/guarantee?from=<dateTime>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"guarantee"
+									],
+									"query": [
+										{
+											"description": "(Required) ",
+											"key": "from",
+											"value": "<dateTime>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"id": "92c1cb4b-160a-43d3-9cc2-cf6becf6b85f"
+		},
+		{
+			"name": "/",
+			"item": [
+				{
+					"name": "App Controller get Hello",
+					"id": "87128605-e32c-4d00-8e20-d7d1ceef1133",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"id": "9735aa7b-8acb-4211-9af0-704391900f40",
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"id": "6c420d88-4065-4487-9aa4-658168af9c88"
+		}
+	],
+	"variable": [
+		{
+			"id": "4e9d699a-6d71-482a-b925-31ad0f0bdece",
+			"key": "baseUrl",
+			"value": "/naver-store"
+		}
+	]
+}
