@@ -1,5 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDate, IsEnum, IsNumber, IsString } from "class-validator";
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
 import { eProductOrderStatus } from "src/common/enums/product-order-status.enum";
 import { NFT_STATUS, ReqGuaranteePayload } from "src/common/vircle-api.http";
@@ -18,6 +25,10 @@ export class GetAccessTokenResponse {
 
   @ApiProperty()
   token_type: "Bearer";
+
+  // TODO: Token info 와 응답 객체를 구분해줘야...
+  @ApiProperty({ type: "boolean", default: false })
+  isAlreadyExist = false;
 }
 
 export interface GetSellerChannelsResponse {

@@ -22,6 +22,7 @@ export class InterworkService {
   async initInterwork(accountId: string, { token }: TokenInfo) {
     const account = await this.interworkRepo.getInterworkByAccountId(accountId);
     if (account) {
+      account.tokenInfo.isAlreadyExist = true;
       return account.tokenInfo;
     }
     const partnership = await this.vircleCoreHttp.getPartnerInfo(token);
