@@ -48,7 +48,7 @@ function Cafe24StartRobotModal({cafe24State}: Props) {
 				<Button
 					height={60}
 					width="400px"
-					data-tracking={`'cafe24_complate_setting_click', {button_title: '설정하기'}`}
+					data-tracking={`cafe24_complate_setting_click, {'button_title': '설정하기 클릭 시 서비스 연동 상세로 진입'}`}
 					onClick={() => {
 						navigate('/b2b/interwork/cafe24');
 					}}>

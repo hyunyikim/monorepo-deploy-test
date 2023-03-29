@@ -324,7 +324,7 @@ export default function Cafe24InterWork() {
 						color="primary"
 						disabled={!value}
 						onClick={moveNext}
-						data-tracking={`cafe24_linkorder_click,{pv_title: '연동하기'}`}>
+						data-tracking={`cafe24_linkorder_click,{'button_title': '연동하기 버튼 클릭시 연동완료'}`}>
 						{confirmLoading ? (
 							<CircularProgress color="inherit" size={15} />
 						) : (

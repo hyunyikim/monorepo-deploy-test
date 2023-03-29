@@ -468,7 +468,7 @@ function Cafe24Init() {
 					</Grid>
 
 					<button
-						data-tracking={`cafe24_service_start_click,{'button_title': '연동 시작하기'}`}
+						data-tracking={`cafe24_service_start_click,{'button_title': '연동 시작하기 버튼 클릭 시 연동플로우 진입'}`}
 						onClick={handleClickCafe24LinkRequest}
 						className={classes.bigBlueBtn}>
 						연동 시작하기
@@ -716,7 +716,7 @@ function Cafe24Init() {
 					</h1>
 
 					<button
-						data-tracking={`cafe24_service_startbottom_click,{'button_title': '연동 시작하기(하단)'}`}
+						data-tracking={`cafe24_service_start_click,{'button_title': '연동 시작하기 버튼 클릭 시 연동플로우 진입(하단)'}`}
 						onClick={handleClickCafe24LinkRequest}
 						className={classes.blueBtn}>
 						연동 시작하기

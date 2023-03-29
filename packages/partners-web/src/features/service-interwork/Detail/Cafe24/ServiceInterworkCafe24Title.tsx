@@ -31,7 +31,7 @@ function ServiceInterworkCafe24Title({data: cafe24Interwork}: Props) {
 	const InstallButton = useMemo(() => {
 		return (
 			<Button
-				data-tracking={`'cafe24_stratpopupview', {pv_title: '카페24 연동시작 팝업'}`}
+				data-tracking={`cafe24_stratpopupview, {'pv_title': '카페24 연동시작 팝업'}`}
 				onClick={() => {
 					sendAmplitudeLog('cafe24_linkservicedetail_install_click', {
 						button_title:
@@ -49,7 +49,7 @@ function ServiceInterworkCafe24Title({data: cafe24Interwork}: Props) {
 			<Button
 				variant="outlined"
 				color="grey-100"
-				data-tracking={`'cafe24_linkservicedetail_clearcafe24_click', {pv_title: '연동해제'}`}
+				data-tracking={`cafe24_linkservicedetail_clearcafe24_click, {'pv_title': '연동해제'}`}
 				onClick={onOpen}>
 				연동해제
 			</Button>
@@ -197,7 +197,7 @@ const UninstallModal = ({
 					<Button
 						color="black"
 						disabled={!reason ? true : false}
-						data-tracking={`'cafe24_linkservicedetail_clearcafe24_popup_clear_click', {pv_title: '해제하기'}`}
+						data-tracking={`cafe24_linkservicedetail_clearcafe24_popup_clear_click, {'pv_title': '해제하기'}`}
 						onClick={updateLeaveReasonMutation.mutateAsync}>
 						연동해제
 					</Button>
