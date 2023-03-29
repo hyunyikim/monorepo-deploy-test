@@ -2069,22 +2069,18 @@ export function InputFormSection({
 									{brandCard.file ? (
 										<CategoryContainer
 											required={false}
-											category={
-												// 파일명 40자 넘어가면 말줄임 표기
-												brandCard.filename
-													? brandCard.filename
-															?.length > 40
-														? `${brandCard.filename?.slice(
-																0,
-																40
-														  )}...`
-														: brandCard.filename
-													: ''
-											}
+											category={brandCard.filename}
 											clickHandler={deleteCardPreview}
 											exampleIdx={177}
 											sx={{
-												width: 'calc(100% - 100px - 8px)',
+												width: 'calc(100% - 24px - 14px)',
+												'& .MuiTypography-root': {
+													display: 'block',
+													width: 'inherit',
+													whiteSpace: 'nowrap',
+													overflow: 'hidden',
+													textOverflow: 'ellipsis',
+												},
 											}}
 										/>
 									) : (
@@ -2101,7 +2097,7 @@ export function InputFormSection({
 												fontWeight: 500,
 												fontSize: '14px',
 												lineHeight: '14px',
-												width: 'calc(100% - 100px - 8px)',
+												width: '100%',
 											}}>
 											이미지 파일을 업로드 해주세요
 										</Box>
@@ -2200,30 +2196,32 @@ export function InputFormSection({
 						bottom: '0',
 						left: '0',
 						right: '0',
-						zIndex: 1,
+						zIndex: 20,
 					})}>
 					<Grid
 						container
 						justifyContent="center"
 						sx={(theme) => ({
-							padding: hasProfileLogo
-								? '12px 40px'
-								: '12px 24px 12px 40px',
 							background: 'white',
 							borderTop: '1px solid #E2E2E9',
-							marginLeft: hasProfileLogo
-								? isSidebarOpen
-									? 'auto'
-									: 0
-								: 0,
-							width: hasProfileLogo
-								? isSidebarOpen
+
+							// 개런티 설정 완료
+							...(hasProfileLogo && {
+								padding: '12px 40px',
+								marginLeft: isSidebarOpen ? 'auto' : 0,
+								width: isSidebarOpen
 									? 'calc(100% - 240px)'
-									: 'calc(100% + 72px)'
-								: 'calc(100% - 662px)',
-							[theme.breakpoints.down(1200)]: {
-								width: '100%',
-							},
+									: 'calc(100% + 72px)',
+							}),
+							// 개런티 설정 완료 전
+							...(!hasProfileLogo && {
+								padding: '12px 24px 12px 40px',
+								marginLeft: 0,
+								width: 'calc(100% - 662px)',
+								[theme.breakpoints.down(1200)]: {
+									width: '100%',
+								},
+							}),
 						})}>
 						<Grid
 							container

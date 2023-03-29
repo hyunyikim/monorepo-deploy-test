@@ -7,7 +7,7 @@ import {
 /* 대시보드 공지사항 불러오기 */
 export const getNoticeTableList = async () => {
 	const data = await fetch(
-		`https://notion-api.splitbee.io/v1/table/55a4847010be4506aa3772ba2790941b`
+		`https://notion-api.splitbee.io/v1/table/682e3b836a18477398819d45169ebf15`
 	).then((res) => res.json());
 
 	return data;
