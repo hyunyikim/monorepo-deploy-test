@@ -12,7 +12,6 @@ export const useGetMenu = () => {
 			{
 				queryKey: ['partnershipInfo', token],
 				queryFn: getPartnershipInfo,
-				suspense: true,
 			},
 			{
 				queryKey: ['repairList', token],
@@ -24,7 +23,6 @@ export const useGetMenu = () => {
 						startDate: '',
 						endDate: '',
 					}),
-				suspense: true,
 			},
 		],
 	});
