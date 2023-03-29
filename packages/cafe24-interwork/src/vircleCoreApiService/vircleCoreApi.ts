@@ -37,11 +37,9 @@ export class VircleCoreAPI {
 	}
 
 	async cancelGuarantee(token: string, reqIdx: number) {
-		const {data} = await this.httpAgent.put<Nft>(
-			'/admin/nft/cancel',
-			{
-				nft_req_idx: reqIdx.toString(),
-			},
+		const {data} = await this.httpAgent.patch<Nft>(
+			`/v1/admin/nft/cancel/${reqIdx}`,
+			{},
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,
