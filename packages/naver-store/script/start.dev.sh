@@ -55,4 +55,9 @@ echo ">[$(date)] Application Run by pm2]" >> $LOG_POINT
 
 NODE_ENV=development yarn pm2 start --name NAVER-STORE dist/src/main.js >> $LOG_POINT
 
+echo ">[$(date)] Update Postman]" >> $LOG_POINT
+
+sleep 20
+node ./update-postman.js
+
 echo "[$(date)] DONE DEPLOY]" >> $LOG_POINT

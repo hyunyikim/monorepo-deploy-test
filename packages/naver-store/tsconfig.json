@@ -20,5 +20,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["./src/**/*", "jest.config.ts"]
+  "include": ["./src/**/*", "jest.config.ts", "update-postman.js"]
 }

@@ -8,11 +8,14 @@ import { NaverStoreInterwork } from "src/interwork/entities/interwork.entity";
 export class GetAccessTokenResponse {
   @ApiProperty()
   access_token: string;
+
   @ApiProperty({
     description: "만료기간",
     example: 10800,
+    type: "number",
   })
   expires_in: number;
+
   @ApiProperty()
   token_type: "Bearer";
 }

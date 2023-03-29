@@ -41,15 +41,6 @@ export class InterworkController {
     summary: "최초 연동",
     description: "최초 연동 생성",
   })
-  // @ApiCreatedResponse({
-  //   type: GetAccessTokenResponse,
-  //   description: "연동 성공 - 토큰정보 응답",
-  //   status: HttpStatus.CREATED,
-  // })
-  // @ApiForbiddenResponse({
-  //   description: "accountId가 잘못 들어왔을 때",
-  //   type: ErrorFormat,
-  // })
   @ApiCommonOkResponse({
     type: GetAccessTokenResponse,
     description: "연동 성공 - 토큰정보 응답",
