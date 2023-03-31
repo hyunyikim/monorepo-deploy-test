@@ -292,9 +292,9 @@ export class GuaranteeService {
             // 발급된 개런티가 있었다면 취소
             if (guaranteeEntity) {
               const interworkEntity =
-                await this.interworkService.getInterworkByAccountId(
+                (await this.interworkService.getInterworkByAccountId(
                   guaranteeEntity.accountId
-                );
+                )) as NaverStoreInterwork;
               await this.cancelGuarantee(
                 guaranteeEntity.order,
                 interworkEntity
