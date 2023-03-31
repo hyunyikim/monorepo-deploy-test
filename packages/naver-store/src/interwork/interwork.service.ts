@@ -22,6 +22,9 @@ export class InterworkService {
   async initInterwork(accountId: string, { token }: TokenInfo) {
     const account = await this.interworkRepo.getInterworkByAccountId(accountId);
     if (account && !account.deletedAt) {
+      if (token !== account.coreApiToken) {
+        throw new Error("init failed - already exist account id");
+      }
       account.tokenInfo.isAlreadyExist = true;
       return account.tokenInfo;
     }
@@ -35,7 +38,10 @@ export class InterworkService {
   }
 
   async isReadyToInterwork(accountId: string) {
-    return await this.naverApi.generateToken(accountId);
+    const tokenInfo = await this.naverApi.generateToken(accountId);
+    const interwork = await this.getInterworkByAccountId(accountId);
+    tokenInfo.isAlreadyExist = !!interwork;
+    return tokenInfo;
   }
 
   async unlinkInterwork(token: TokenInfo, reason: string) {
