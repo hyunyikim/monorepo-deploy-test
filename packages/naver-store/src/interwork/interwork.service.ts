@@ -105,10 +105,9 @@ export class InterworkService {
     const interwork = await this.interworkRepo.getInterworkByPartner(
       partnerIdx
     );
-    // if (!interwork || interwork.deletedAt) {
-    //   return null;
-    //   // throw new Error("interwork not found");
-    // }
+    if (!interwork || interwork.deletedAt) {
+      throw new Error("interwork not found");
+    }
     return interwork;
   }
 
@@ -117,7 +116,7 @@ export class InterworkService {
   }
 
   async updateSetting(token: TokenInfo, setting: UpdateSettingDto) {
-    const interwork = (await this.interworkRepo.getAll())[0];
+    const interwork = await this.getInterworkByPartnerToken(token);
 
     if (!interwork) {
       throw new Error("no interwork");
