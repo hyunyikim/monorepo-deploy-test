@@ -391,7 +391,10 @@ export class Cafe24EventService {
 			}
 			return [...Array(item.quantity).keys()].map((_, idx) => ({
 				...hook,
-				item,
+				item: {
+					...item,
+					order_item_code: `${item.order_item_code}-${idx}`,
+				},
 				productInfo,
 				nftReqIdx: itemNftList[idx]?.reqIdx,
 			}));
