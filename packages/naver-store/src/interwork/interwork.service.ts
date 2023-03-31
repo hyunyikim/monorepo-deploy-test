@@ -40,7 +40,7 @@ export class InterworkService {
   async isReadyToInterwork(accountId: string) {
     const tokenInfo = await this.naverApi.generateToken(accountId);
     const interwork = await this.getInterworkByAccountId(accountId);
-    tokenInfo.isAlreadyExist = !!interwork;
+    tokenInfo.isAlreadyExist = !!interwork && !interwork.deletedAt;
     return tokenInfo;
   }
 
