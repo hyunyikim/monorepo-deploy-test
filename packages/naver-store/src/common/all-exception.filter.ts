@@ -83,8 +83,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
       error.cause = exception.cause;
       const options = exception["options"] as Record<string, any>;
       error.extra = Object.keys(options).length ? options : undefined;
-    } else {
-      // unhandled error
+    } else if (exception instanceof Error) {
+      exception.message && (error.message = exception.message);
+      exception.name && (error.name = exception.name);
+      exception.cause && (error.cause = exception.cause ?? exception);
+      // exception.stack && (error.stack = exception.stack);
     }
 
     return {

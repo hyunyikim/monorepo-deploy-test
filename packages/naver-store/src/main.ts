@@ -58,7 +58,7 @@ function addSwagger(app: INestApplication) {
           name: "Token",
           in: "header",
           description:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjEwNDYsInR5cGUiOiJCIiwiYjJiVHlwZSI6IkIiLCJpYXQiOjE2Nzg2NjM4MjMsImV4cCI6NDgzMjI2MzgyM30.k2Vm2AurofniOwyqqPiMn93oq0pTw_k5S4utYuSwO40",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjExMDAsInR5cGUiOiJCIiwiYjJiVHlwZSI6IkIiLCJpYXQiOjE2ODAyMjU1NjAsImV4cCI6NDgzMzgyNTU2MH0.UgJMIu0lysvXClUYsPY1dK3akIE3CH7apYnV8LwwUZ0",
         },
         "Token"
       );
