@@ -83,36 +83,36 @@ export class VircleCoreAPI {
 			nftState,
 		} = payload;
 		const form = new FormData();
-		form.append('request_route', 'cafe24');
-		image && form.append('product_img', image);
-		category && form.append('cate_cd', category);
-		brandIdx && form.append('brand_idx', brandIdx);
-		productName && form.append('pro_nm', productName);
-		modelNum && form.append('model_num', modelNum);
+		form.append('requestRoute', 'cafe24');
+		image && form.append('productImage', image);
+		category && form.append('categoryCode', category);
+		brandIdx && form.append('brandIdx', brandIdx);
+		productName && form.append('productName', productName);
+		modelNum && form.append('modelNumber', modelNum);
 		material && form.append('material', material);
 		size && form.append('size', size);
 		weight && form.append('weight', weight);
 		if (price !== undefined) form.append('price', price);
-		warranty && form.append('warranty_dt', warranty);
-		platformName && form.append('platform_nm', platformName);
-		orderedAt && form.append('order_dt', orderedAt);
-		orderId && form.append('ref_order_id', orderId);
-		ordererName && form.append('orderer_nm', ordererName);
-		ordererTel && form.append('orderer_tel', ordererTel);
-		nftState && form.append('nft_req_state', nftState);
+		warranty && form.append('warrantyDate', warranty);
+		platformName && form.append('storeName', platformName);
+		orderedAt && form.append('orderedAt', orderedAt);
+		orderId && form.append('refOrderId', orderId);
+		ordererName && form.append('ordererName', ordererName);
+		ordererTel && form.append('ordererTel', ordererTel);
+		nftState && form.append('nftStatus', nftState);
 
 		const {data} = await this.httpAgent.post<{
-			data: {
-				nft_req_idx: number;
-				nft_req_state: number;
-			};
-		}>('/admin/nft', form, {
+			idx: number;
+			nftStatusCode: number;
+			nftStatus: string;
+			issuerName: string;
+		}>('/v1/admin/nft', form, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 				...form.getHeaders(),
 				token,
 			},
 		});
-		return data.data;
+		return data;
 	}
 }

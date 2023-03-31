@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
 	Catch,
 	ExceptionFilter,
@@ -23,7 +24,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		const traceId: string = request['traceId'] ?? '';
 		try {
 			const errorFormat = this.createResponseFormat(traceId, exception);
-
 			// TODO: sentry 처리
 			Logger.error(JSON.stringify(errorFormat));
 
@@ -77,7 +77,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 			const options = exception['options'] as Record<string, any>;
 			error.extra = Object.keys(options).length ? options : undefined;
 		} else {
-			// unhandled error
+			error.message = exception.toString();
 		}
 
 		return {

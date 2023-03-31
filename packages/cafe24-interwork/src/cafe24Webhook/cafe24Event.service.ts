@@ -17,6 +17,7 @@ import {Readable} from 'stream';
 import {concatMap, mergeMap, of, toArray, lastValueFrom, map} from 'rxjs';
 import {
 	CAFE24_ORDER_STATUS,
+	ISSUE_TYPE,
 	orderStatus2Action,
 	WEBHOOK_ACTION,
 } from 'src/common/constant/constant';
@@ -481,9 +482,11 @@ export class Cafe24EventService {
 			: {data: null};
 
 		/**
-		 * 수동 발급=1, 자동발급=2
+		 * 수동 발급=ready, 자동발급=request
 		 */
-		const issueType = interwork.issueSetting.manually ? 1 : 2;
+		const issueType = interwork.issueSetting.manually
+			? ISSUE_TYPE.READY
+			: ISSUE_TYPE.REQUEST;
 
 		const nftReq = await this.vircleCoreApi.requestGuarantee(
 			coreApiToken,
@@ -498,15 +501,14 @@ export class Cafe24EventService {
 			)
 		);
 		this.logger.log(
-			`ORDER ITEM ID [${
-				item.order_item_code
-			}], ISSUE REQ ${JSON.stringify(nftReq)}`
+			`ORDER ITEM ID [${item.order_item_code}], ISSUE REQ ${nftReq.idx}`
 		);
+		this.logger.log(`NFT[${nftReq.idx}] ${JSON.stringify(nftReq)}`);
 
 		await this.guaranteeReqRepo
 			.putRequest({
-				reqIdx: nftReq.nft_req_idx,
-				reqState: nftReq.nft_req_state,
+				reqIdx: nftReq.idx,
+				reqState: nftReq.nftStatusCode,
 				productCode: hook.item.product_code,
 				orderItemCode: hook.item.order_item_code,
 				eventShopNo: hook.item.shop_no,
@@ -525,7 +527,7 @@ export class Cafe24EventService {
 
 		return {
 			...hook,
-			nftReqIdx: nftReq.nft_req_idx,
+			nftReqIdx: nftReq.idx,
 		};
 	}
 

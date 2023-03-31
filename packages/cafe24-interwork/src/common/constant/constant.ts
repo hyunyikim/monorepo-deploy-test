@@ -71,3 +71,8 @@ export enum INTERWORK_STATUS {
 	FAIL = 'FAIL',
 	LINKED_OTHER_PARTNERS = 'LINKED_OTHER_PARTNERS',
 }
+
+export enum ISSUE_TYPE {
+	READY = 'ready',
+	REQUEST = 'request',
+}
