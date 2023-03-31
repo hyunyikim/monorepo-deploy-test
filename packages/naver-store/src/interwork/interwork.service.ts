@@ -87,6 +87,10 @@ export class InterworkService {
     const naverStoreInterwork =
       interwork ?? (await this.getInterworkByAccountId(accountId));
 
+    if (!naverStoreInterwork) {
+      throw new Error("interwork not found");
+    }
+
     if (tokenInfo.access_token === naverStoreInterwork.accessToken) {
       return tokenInfo;
     }
@@ -101,9 +105,7 @@ export class InterworkService {
     const interwork = await this.interworkRepo.getInterworkByAccountId(
       accountId
     );
-    if (!interwork) {
-      throw new Error("interwork not found");
-    }
+
     return interwork;
   }
 
