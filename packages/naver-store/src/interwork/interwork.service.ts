@@ -40,6 +40,9 @@ export class InterworkService {
 
   async unlinkInterwork(token: TokenInfo, reason: string) {
     const interwork = await this.getInterworkByPartnerToken(token);
+    if (!interwork) {
+      throw new Error("interwork not found");
+    }
     interwork.deletedAt = DateTime.now().toSQL();
     interwork.reasonForLeave = reason;
 
@@ -102,8 +105,9 @@ export class InterworkService {
     const interwork = await this.interworkRepo.getInterworkByPartner(
       partnerIdx
     );
-    if (!interwork) {
-      throw new Error("interwork not found");
+    if (!interwork || interwork.deletedAt) {
+      return null;
+      // throw new Error("interwork not found");
     }
     return interwork;
   }

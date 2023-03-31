@@ -48,8 +48,10 @@ export interface getChangedOrderResponse {
 
 export class InterworkCategory {
   @IsNumber()
+  @ApiProperty()
   id: number;
   @IsString()
+  @ApiProperty()
   name: string;
 }
 export class ChangedOrder {

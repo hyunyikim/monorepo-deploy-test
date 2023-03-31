@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Type } from "class-transformer";
 import {
   IsArray,
@@ -32,6 +33,14 @@ export class IssueSetting {
 
   @IsArray()
   @ValidateNested({ each: true })
+  @ApiProperty({
+    example: [
+      {
+        id: "50000000",
+        name: "패션의류",
+      },
+    ],
+  })
   @Type(() => InterworkCategory)
   issueCategories: InterworkCategory[] = [];
 
