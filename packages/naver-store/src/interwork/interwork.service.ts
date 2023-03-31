@@ -21,7 +21,7 @@ export class InterworkService {
 
   async initInterwork(accountId: string, { token }: TokenInfo) {
     const account = await this.interworkRepo.getInterworkByAccountId(accountId);
-    if (account) {
+    if (account && !account.deletedAt) {
       account.tokenInfo.isAlreadyExist = true;
       return account.tokenInfo;
     }
@@ -105,10 +105,10 @@ export class InterworkService {
     const interwork = await this.interworkRepo.getInterworkByPartner(
       partnerIdx
     );
-    if (!interwork || interwork.deletedAt) {
-      return null;
-      // throw new Error("interwork not found");
-    }
+    // if (!interwork || interwork.deletedAt) {
+    //   return null;
+    //   // throw new Error("interwork not found");
+    // }
     return interwork;
   }
 
@@ -117,7 +117,7 @@ export class InterworkService {
   }
 
   async updateSetting(token: TokenInfo, setting: UpdateSettingDto) {
-    const interwork = await this.getInterworkByPartnerToken(token);
+    const interwork = (await this.interworkRepo.getAll())[0];
 
     if (!interwork) {
       throw new Error("no interwork");
