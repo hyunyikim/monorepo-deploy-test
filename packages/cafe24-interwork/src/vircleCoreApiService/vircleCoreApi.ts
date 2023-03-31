@@ -21,6 +21,7 @@ export interface GuaranteeRequestPayload {
 	weight?: string;
 	orderedAt?: string;
 	orderId?: string;
+	orderItemCode?: string;
 	image?: Readable | null;
 }
 @Injectable()
@@ -81,6 +82,7 @@ export class VircleCoreAPI {
 			ordererName,
 			ordererTel,
 			nftState,
+			orderItemCode,
 		} = payload;
 		const form = new FormData();
 		form.append('requestRoute', 'cafe24');
@@ -97,6 +99,7 @@ export class VircleCoreAPI {
 		platformName && form.append('storeName', platformName);
 		orderedAt && form.append('orderedAt', orderedAt);
 		orderId && form.append('refOrderId', orderId);
+		orderItemCode && form.append('refOrderDetailId', orderItemCode);
 		ordererName && form.append('ordererName', ordererName);
 		ordererTel && form.append('ordererTel', ordererTel);
 		nftState && form.append('nftStatus', nftState);

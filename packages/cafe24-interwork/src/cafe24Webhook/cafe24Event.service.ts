@@ -560,6 +560,7 @@ export class Cafe24EventService {
 			warranty: interwork.partnerInfo?.warrantyDate,
 			orderedAt: orderItem.ordered_date,
 			orderId: order_id,
+			orderItemCode: orderItem.order_item_code,
 			brandIdx: interwork.partnerInfo?.brand?.idx,
 			size: orderItem.volume_size ?? undefined,
 			// 중량 표시 않함 (SXLP-2352) :weight: orderItem.product_weight ?? undefined,
