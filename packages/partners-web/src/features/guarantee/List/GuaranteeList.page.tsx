@@ -3,13 +3,13 @@ import {useNavigate} from 'react-router-dom';
 import {Box, TableRow, Typography} from '@mui/material';
 
 import {useCheckboxList, useList} from '@/utils/hooks';
-import {getGuaranteeList} from '@/api/guarantee.api';
+import {getGuaranteeList} from '@/api/guarantee-v1.api';
 import {
 	GuaranteeListRequestParam,
-	GuaranteeListResponse,
 	GuaranteeListRequestSearchType,
 	ListRequestParam,
-	ListResponse,
+	ListResponseV2,
+	GuaranteeSummary,
 } from '@/@types';
 import {
 	initialSearchFilter,
@@ -33,14 +33,14 @@ import {
 	Checkbox,
 } from '@/components';
 import GuaranteeCheckboxButton from '@/features/guarantee/List/GuaranteeCheckboxButton';
-import {useGetPlatformList} from '@/stores';
+import {useGetStoreList} from '@/stores';
 
 const menu = 'guarantee';
 const menuKo = '개런티';
 
 function GuaranteeList() {
 	usePageView('guarantee_pv', '개런티목록 노출');
-	const {data: platformList} = useGetPlatformList();
+	const {data: storeList} = useGetStoreList();
 	const navigate = useNavigate();
 
 	const {
@@ -53,15 +53,15 @@ function GuaranteeList() {
 		handleSearch,
 		handleReset,
 	} = useList<
-		ListResponse<GuaranteeListResponse[]>,
+		ListResponseV2<GuaranteeSummary[]>,
 		ListRequestParam<GuaranteeListRequestSearchType> &
 			GuaranteeListRequestParam
 	>({
 		apiFunc: getGuaranteeList,
 		initialFilter: {
 			...initialSearchFilter,
-			nft_req_state: '',
-			platform: '',
+			nftStatus: '',
+			storeIdx: '',
 		},
 	});
 
@@ -76,29 +76,29 @@ function GuaranteeList() {
 	} = useCheckboxList({
 		idxList:
 			data && data?.data && data?.data?.length > 0
-				? data?.data?.map((item) => item.nft_req_idx)
+				? data?.data?.map((item) => item.idx)
 				: [],
 		handleChangeFilter,
 	});
 
 	const isNotValidCheck = useMemo(() => {
-		const nftReqState = filter?.nft_req_state;
-		if (!nftReqState || nftReqState === '9') {
+		const nftReqState = filter?.nftStatus;
+		if (!nftReqState || nftReqState === 'cancel') {
 			return true;
 		}
 		return false;
-	}, [filter.nft_req_state]);
+	}, [filter.nftStatus]);
 
 	const platformOptions = useMemo(() => {
 		const defaultOption = {
 			label: '전체',
 			value: '',
 		};
-		if (platformList) {
-			return [defaultOption, ...platformList];
+		if (storeList) {
+			return [defaultOption, ...storeList];
 		}
 		return [defaultOption];
-	}, [platformList]);
+	}, [storeList]);
 
 	return (
 		<>
@@ -109,7 +109,7 @@ function GuaranteeList() {
 					menuKo={menuKo}
 					filter={filter}
 					filterComponent={guaranteeListSearchFilter.map((item) => {
-						if (item.name === 'platform') {
+						if (item.name === 'storeIdx') {
 							return {
 								...item,
 								options: platformOptions,
@@ -129,11 +129,11 @@ function GuaranteeList() {
 				/>
 				<SearchFilterTab
 					options={groupingGuaranteeRequestStates}
-					selectedTab={filter.nft_req_state}
+					selectedTab={filter.nftStatus}
 					tabLabel={'nft request state'}
 					onChangeTab={(value) =>
 						onHandleChangeFilter({
-							nft_req_state: value,
+							nftStatus: value,
 						})
 					}
 					buttons={
@@ -186,7 +186,7 @@ function GuaranteeList() {
 						}}
 					/>
 					<GuaranteeCheckboxButton
-						nftReqState={filter.nft_req_state}
+						nftReqState={filter.nftStatus}
 						checkedItems={checkedIdxList}
 						onHandleChangeFilter={onHandleChangeFilter}
 						onResetCheckedItem={onResetCheckedItem}
@@ -233,23 +233,23 @@ function GuaranteeList() {
 									<Checkbox
 										disabled={isNotValidCheck}
 										checked={checkedIdxList.includes(
-											item.nft_req_idx
+											item.idx
 										)}
 										onChange={(e) => {
 											const checked =
 												e?.target?.checked || false;
-											const nftReqIdx = item.nft_req_idx;
+											const nftReqIdx = item.idx;
 											onCheckItem(nftReqIdx, checked);
 										}}
 									/>
 								</TableCell>
 								<TableCell>
-									{item.reg_dt
-										? item?.reg_dt.substr(0, 10)
+									{item?.registeredAt
+										? item?.registeredAt.substr(0, 10)
 										: '-'}
 								</TableCell>
 								<TableCell>
-									{item.nft_req_num ? (
+									{item.idx ? (
 										<Typography
 											variant="body3"
 											className="underline"
@@ -261,63 +261,63 @@ function GuaranteeList() {
 													}
 												);
 												if (
-													Number(item.nft_req_state) <
+													Number(item.nftStatusCode) <
 													3
 												) {
 													navigate(
-														`/b2b/guarantee/edit/${item.nft_req_idx}`
+														`/b2b/guarantee/edit/${item.idx}`
 													);
 												} else {
 													navigate(
-														`/b2b/guarantee/${item.nft_req_idx}`
+														`/b2b/guarantee/${item.idx}`
 													);
 												}
 											}}>
-											{item.nft_req_num}
+											{item.nftNumber}
 										</Typography>
 									) : (
 										'-'
 									)}
 								</TableCell>
 								<TableCell>
-									{item.platform_text
-										? item.platform_text
-										: '-'}
+									{item.storeName ? item.storeName : '-'}
 								</TableCell>
 								<TableCell>
 									<Typography
 										variant="body3"
 										className="underline"
 										onClick={() => {
-											const name = item?.orderer_nm;
-											const phone = item?.orderer_tel;
+											const name = item?.ordererName;
+											const phone = item?.ordererTel;
 											if (!name || !phone) return;
 											navigate(
 												`/b2b/customer/${name}/${phone}`
 											);
 										}}>
-										{item.orderer_nm
-											? item.orderer_nm
+										{item.ordererName
+											? item.ordererName
 											: '-'}
 									</Typography>
 								</TableCell>
 								<TableCell>
-									{item.orderer_tel
-										? formatPhoneNum(item.orderer_tel)
+									{item.ordererTel
+										? formatPhoneNum(item.ordererTel)
 										: '-'}
 								</TableCell>
 								<TableCell width="400px">
 									<Typography variant="body3">
-										[{item.brand_nm_en ?? '-'}
+										[{item.brandNameEn ?? '-'}
 										]
 										<br />
-										{item.pro_nm ? item.pro_nm : '-'}
+										{item.productName
+											? item.productName
+											: '-'}
 									</Typography>
 								</TableCell>
 								<TableCell>
 									{getGuaranteeStatusChip(
-										item.nft_req_state,
-										item.nft_req_state_text
+										item.nftStatusCode,
+										item.nftStatus
 									)}
 								</TableCell>
 							</TableRow>

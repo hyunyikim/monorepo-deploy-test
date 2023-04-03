@@ -23,7 +23,7 @@ export interface Product {
 	registeredAt?: string;
 	modifiedAt?: string;
 	deletedAt?: any;
-	brand: Brand;
+	brand: ProductBrand;
 }
 
 export interface ProductListResponse extends Omit<Product, 'customField'> {
@@ -36,7 +36,7 @@ export interface ProductDetailResponse extends Product {
 
 export type CustomField = Record<string, any>;
 
-export interface Brand {
+export interface ProductBrand {
 	idx: number;
 	name: string;
 	englishName: string;
@@ -57,6 +57,9 @@ export interface ProductRegisterRequestParam
 	warranty: string;
 	customField?: string;
 	productImage?: ImageState;
+	material?: string;
+	size?: string;
+	weight?: string;
 }
 
 export interface CooperatorProductRegisterRequestParam {
@@ -74,13 +77,13 @@ export interface ProductRegisterFormData
 	> {
 	idx: number | '';
 	brandIdx: number | '';
-	customField: CustomField;
+	customField?: CustomField;
 	brandName: string;
 	brandNameEn: string;
 }
 export interface ImageState {
 	file: File | string | null;
-	preview: string;
+	preview: string | null;
 }
 
 export type ProductGuaranteeStatus = 'ready' | 'complete' | 'cancel';
@@ -97,7 +100,7 @@ export interface ProductGuarantee {
 	productName: string;
 	ordererName: string;
 	ordererTel: string;
-	platformIdx: number;
+	storeIdx: number;
 	registeredAt: string;
 }
 

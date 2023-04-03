@@ -2,11 +2,11 @@ import {useCallback, useEffect, useMemo} from 'react';
 
 import {Stack} from '@mui/material';
 
-import {ExcelInput, GuaranteeExcelUploadFormData} from '@/@types';
+import {ExcelInput, RegisterGuaranteeRequestExcelFormData} from '@/@types';
 import {
 	useGetGuaranteeSettingCompleted,
 	useGetPartnershipInfo,
-	useGetPlatformList,
+	useGetStoreList,
 	useGetSearchBrandList,
 	useMessageDialog,
 } from '@/stores';
@@ -34,12 +34,19 @@ function GuaranteeExcelUpload() {
 	const navigate = useNavigate();
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const {data: brandList} = useGetSearchBrandList();
-	const {data: platformList} = useGetPlatformList();
-	const {data: guaranteeSettingCompleted} = useGetGuaranteeSettingCompleted();
+	const {data: storeList} = useGetStoreList();
+	const {
+		data: guaranteeSettingCompleted,
+		isLoading: isGuaranteeSettingLoading,
+	} = useGetGuaranteeSettingCompleted();
 
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
 	useEffect(() => {
+		if (isGuaranteeSettingLoading) {
+			return;
+		}
+
 		if (!guaranteeSettingCompleted) {
 			sendAmplitudeLog('guarantee_publish_popupview', {
 				pv_title: '개런티 미설정시 안내 팝업',
@@ -53,7 +60,7 @@ function GuaranteeExcelUpload() {
 				},
 			});
 		}
-	}, [guaranteeSettingCompleted]);
+	}, [guaranteeSettingCompleted, isGuaranteeSettingLoading]);
 
 	// 정보 부족 모달
 	const {
@@ -96,14 +103,16 @@ function GuaranteeExcelUpload() {
 			fields
 				?.map((field) => {
 					const fieldKey = field.key;
-					const input = GUARANTEE_EXCEL_INPUT[fieldKey] || {
+					const input = GUARANTEE_EXCEL_INPUT[
+						fieldKey as keyof RegisterGuaranteeRequestExcelFormData
+					] || {
 						// 커스텀 필드
 						type: 'text',
 						name: fieldKey,
 					};
 					// select option 동적 구성
 					if (input.type === 'select') {
-						if (input.name === 'brand_idx') {
+						if (input.name === 'brandIdx') {
 							const findBrand = (val: number) => {
 								// 브랜드명 한글/영문으로 되어있는데 그 안에서 올바른 브랜드 찾기 위한 절차
 								const cleanValue = val
@@ -130,7 +139,7 @@ function GuaranteeExcelUpload() {
 									)[0]?.label,
 							};
 						}
-						if (input.name === 'cate_cd') {
+						if (input.name === 'categoryCode') {
 							const categoryOptions =
 								partnershipData?.category.map((category) => ({
 									value: category,
@@ -150,10 +159,10 @@ function GuaranteeExcelUpload() {
 						}
 					}
 					// auto complete 동적 구성
-					if (input.name === 'platform_nm') {
+					if (input.name === 'storeName') {
 						return {
 							...input,
-							options: platformList || [],
+							options: storeList || [],
 						};
 					}
 					return input;
@@ -170,7 +179,7 @@ function GuaranteeExcelUpload() {
 		handleInit,
 		handleExcelUpload,
 		handleUpdate,
-	} = useExcelUpload<GuaranteeExcelUploadFormData>({
+	} = useExcelUpload<RegisterGuaranteeRequestExcelFormData>({
 		excelColumn: GUARANTEE_EXCEL_COLUMN,
 		excelInput: GUARANTEE_EXCEL_INPUT,
 		inputs,

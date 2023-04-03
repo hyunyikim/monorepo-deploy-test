@@ -48,7 +48,7 @@ function GuaranteeDetailCustomerInfo({data}: {data: GuaranteeDetail}) {
 				/>
 				<DetailInfoColumn
 					title="판매처"
-					value={data?.platformName || '-'}
+					value={data?.storeName || '-'}
 					fontSize={16}
 				/>
 				<DetailInfoColumn

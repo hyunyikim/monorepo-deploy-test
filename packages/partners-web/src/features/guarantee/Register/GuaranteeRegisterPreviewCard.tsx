@@ -32,7 +32,11 @@ function GuaranteeRegisterPreviewCard() {
 		const nftCustomFieldValue: Record<string, string> = {};
 		const customFields = partnershipData?.nftCustomFields;
 		if (customFields && customFields?.length) {
-			const productCustomField = previewData?.product?.customField;
+			let productCustomField = previewData?.product?.customField || null;
+			if (typeof productCustomField === 'string') {
+				productCustomField = JSON.parse(productCustomField || '{}');
+			}
+
 			customFields.forEach((field: string) => {
 				nftCustomFieldValue[field] =
 					productCustomField && productCustomField[field]
@@ -45,6 +49,7 @@ function GuaranteeRegisterPreviewCard() {
 		const warrantyDate =
 			previewData?.product?.warranty || partnershipData?.warrantyDate;
 		return {
+			// 개런티
 			brandNameEN: brandNameEn,
 			certificationBrandName,
 			warrantyDate,
@@ -57,10 +62,9 @@ function GuaranteeRegisterPreviewCard() {
 			profileImage: partnershipData?.profileImage,
 			returnInfo: partnershipData?.returnInfo,
 
-			// 개런티
-			orderDate: previewData?.order_dt || '-',
-			platformName: previewData?.platform_nm || '-',
-			orderId: previewData?.ref_order_id || '-',
+			orderDate: previewData?.orderedAt || '-',
+			storeName: previewData?.storeName || '-',
+			orderId: previewData?.refOrderId || '-',
 
 			// 상품
 			productName: previewData?.product?.name || '상품명',
@@ -72,6 +76,8 @@ function GuaranteeRegisterPreviewCard() {
 				partnershipData?.useNftProdImage === 'Y'
 					? previewData?.productImage?.preview
 					: null,
+
+			// TODO: 데이터 있는지 확인
 			nftRequestId: previewData?.nft_req_num || '000000000000',
 			nftIssueDt:
 				previewData?.nft_issue_dt || format(new Date(), DATE_FORMAT),

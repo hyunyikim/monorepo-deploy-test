@@ -4,15 +4,20 @@ import {parse} from 'qs';
 
 import {Stack} from '@mui/material';
 
-import {GauranteeDetailResponse} from '@/@types';
-import {getGuaranteeDetail} from '@/api/guarantee.api';
+import {GuaranteeDetail, ProductDetailResponse} from '@/@types';
+import {getGuaranteeDetail} from '@/api/guarantee-v1.api';
 import {PAGE_MAX_WIDTH} from '@/data';
 import {usePageView} from '@/utils';
-import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
+import {
+	useGetGuaranteeSettingCompleted,
+	useGetPartnershipInfo,
+	useMessageDialog,
+} from '@/stores';
 
 import GuaranteeRegisterForm from '@/features/guarantee/Register/GuaranteeRegisterForm';
 import GuaranteeRegisterPreviewCard from '@/features/guarantee/Register/GuaranteeRegisterPreviewCard';
-import {Button, TitleTypography} from '@/components';
+import {TitleTypography} from '@/components';
+import {getProductDetail} from '@/api/product.api';
 
 function GuaranteeRegister() {
 	usePageView('guarantee_publish_pv', '개런티발급 노출');
@@ -20,14 +25,19 @@ function GuaranteeRegister() {
 	const {search} = useLocation();
 	const navigate = useNavigate();
 	const idx = params?.idx;
+
 	const productIdx = parse(search, {
 		ignoreQueryPrefix: true,
 	})?.productIdx;
 
-	const [data, setData] = useState<GauranteeDetailResponse | null>(null);
+	const [data, setData] = useState<GuaranteeDetail | null>(null);
+	const [product, setProduct] = useState<ProductDetailResponse | null>(null);
 	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const {data: isSettingCompleted} = useGetGuaranteeSettingCompleted();
+
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
+	// 임시저장 상태 개런티 수정
 	useEffect(() => {
 		(async () => {
 			if (!idx) {
@@ -38,16 +48,25 @@ function GuaranteeRegister() {
 		})();
 	}, [idx]);
 
+	// 상품 상세에서 개런티 발급으로 넘어온 경우
+	useEffect(() => {
+		(async () => {
+			if (!productIdx) {
+				return;
+			}
+			const res = await getProductDetail(Number(productIdx));
+			setProduct(res);
+		})();
+	}, [productIdx]);
+
 	useEffect(() => {
 		const idx = partnershipInfo?.idx;
-		const profileImage = partnershipInfo?.profileImage;
-		const isSetupGuarantee = profileImage ? true : false;
 
 		// 데이터 호출 전
 		if (!idx) {
 			return;
 		}
-		if (isSetupGuarantee) {
+		if (isSettingCompleted) {
 			return;
 		}
 
@@ -60,7 +79,7 @@ function GuaranteeRegister() {
 				navigate('/setup/guarantee');
 			},
 		});
-	}, [onOpenMessageDialog, partnershipInfo]);
+	}, [onOpenMessageDialog, partnershipInfo, isSettingCompleted]);
 
 	return (
 		<Stack
@@ -87,10 +106,7 @@ function GuaranteeRegister() {
 					md: '100px',
 				}}>
 				<TitleTypography title="개런티 발급하기" />
-				<GuaranteeRegisterForm
-					initialData={data}
-					productIdx={productIdx ? Number(productIdx) : null}
-				/>
+				<GuaranteeRegisterForm initialData={data} product={product} />
 			</Stack>
 			<GuaranteeRegisterPreviewCard />
 		</Stack>

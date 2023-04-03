@@ -1,5 +1,5 @@
-import {useEffect, useMemo, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 
 import {Stack, Typography} from '@mui/material';
 
@@ -16,6 +16,7 @@ import GuaranteeDetailPreviewCard from '@/features/guarantee/Detail/GuaranteeDet
 import {TitleTypography} from '@/components';
 
 function GuaranteeDetail() {
+	const navigate = useNavigate();
 	usePageView('guarantee_detail_pv', '개런티 상세페이지 노출');
 	const params = useParams();
 	const idx = params?.idx;
@@ -27,8 +28,15 @@ function GuaranteeDetail() {
 			if (!idx) {
 				return;
 			}
-			const res = await getGuaranteeDetail(Number(idx));
-			setData(res);
+			try {
+				const res = await getGuaranteeDetail(Number(idx));
+				setData(res);
+			} catch (e) {
+				if (e?.response?.status === 404) {
+					alert('존재하지 않는 개런티입니다.');
+					navigate(-1);
+				}
+			}
 		})();
 	}, [idx]);
 

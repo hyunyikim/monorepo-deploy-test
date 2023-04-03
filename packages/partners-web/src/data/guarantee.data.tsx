@@ -1,26 +1,19 @@
-import {Column} from 'exceljs';
-import {format} from 'date-fns';
-
 import {Chip} from '@/components';
 
 import {
 	Options,
 	ListSearchFilters,
 	GuaranteeListRequestSearchType,
-	GuaranteeRequestState,
 	InputTypeList,
-	PartnershipInfoResponse,
-	GuaranteeExcelUploadFormData,
-	ExcelField,
-	ExcelInput,
+	GroupingGuaranteeListStatus,
+	RegisterGuaranteeRequest,
+	ProductRegisterFormData,
+	ImageState,
+	RegisterGuaranteeRequestExcelFormData,
+	RegisterGuaranteeStatusType,
+	RegisterGuaranteeRequestRouteType,
 } from '@/@types';
-import {CATEGORIES, DATE_FORMAT} from './common.data';
-import {
-	formatDateString,
-	formatPhoneNum,
-	isValidWebImage,
-	validateRegExp,
-} from '@/utils';
+import {getProductCustomFieldValue} from '@/data/product.data';
 
 export const NOT_OPEN_GUARANTEE_REGISTER_ALIM_TALK_NOTICE_KEY =
 	'vircle-guarantee-register-alim-talk-notice';
@@ -28,26 +21,19 @@ export const NOT_OPEN_GUARANTEE_REGISTER_ALIM_TALK_NOTICE_KEY =
 export const guaranteeListSearchTypes: Options<GuaranteeListRequestSearchType> =
 	[
 		{label: '전체', value: 'all'},
-		{label: '신청번호', value: 'nft_req_num'},
-		{label: '상품명', value: 'pro_nm'},
+		{label: '신청번호', value: 'nftNumber'},
+		{label: '상품명', value: 'name'},
 		{label: '이름', value: 'ordererName'},
 	];
 
-export const guaranteeRequestStates: Options<GuaranteeRequestState> = [
-	{value: '1', label: '신청대기'},
-	{value: '2', label: '발급신청'},
-	{value: '3', label: '승인완료'},
-	{value: '4', label: '발급완료'},
-	{value: '9', label: '발급취소'},
-];
-
 // 목록 조회를 위한 옵션, 발급신청/승인완료/발급완료 상태를 발급완료 상태 하나로 묶어놓음
-export const groupingGuaranteeRequestStates: Options<string> = [
-	{value: '', label: '전체'},
-	{value: '1,2', label: '신청대기'},
-	{value: '3,4', label: '발급완료'},
-	{value: '9', label: '발급취소'},
-];
+export const groupingGuaranteeRequestStates: Options<GroupingGuaranteeListStatus> =
+	[
+		{value: '', label: '전체'},
+		{value: 'ready', label: '신청대기'},
+		{value: 'pending,complete', label: '발급완료'},
+		{value: 'cancel', label: '발급취소'},
+	];
 
 export const guaranteeListSearchFilter: ListSearchFilters = [
 	{
@@ -62,7 +48,7 @@ export const guaranteeListSearchFilter: ListSearchFilters = [
 		component: 'searchDate',
 	},
 	{
-		name: 'platform',
+		name: 'storeIdx',
 		label: '판매처',
 		component: 'select',
 		options: [],
@@ -89,12 +75,12 @@ export const getGuaranteeStatusChip = (status: string, text: string) => {
 export const guaranteeRegisterInputList: InputTypeList = [
 	{
 		type: 'hidden',
-		name: 'nft_req_state',
+		name: 'nftStatus',
 		required: true,
 	},
 	{
 		type: 'text',
-		name: 'orderer_nm',
+		name: 'ordererName',
 		placeholder: '고객의 실명을 정확히 입력해주세요',
 		label: '이름',
 		autoComplete: 'off',
@@ -102,7 +88,7 @@ export const guaranteeRegisterInputList: InputTypeList = [
 	},
 	{
 		type: 'text',
-		name: 'orderer_tel',
+		name: 'ordererTel',
 		placeholder: '010-0000-0000',
 		label: '연락처',
 		autoComplete: 'off',
@@ -113,7 +99,7 @@ export const guaranteeRegisterInputList: InputTypeList = [
 	},
 	{
 		type: 'text',
-		name: 'order_dt',
+		name: 'orderedAt',
 		placeholder: 'YYYY-MM-DD',
 		label: '주문일자',
 		required: false,
@@ -123,322 +109,19 @@ export const guaranteeRegisterInputList: InputTypeList = [
 	},
 	{
 		type: 'autocomplete',
-		name: 'platform_nm',
+		name: 'storeName',
 		placeholder: '판매처를 입력해주세요',
 		label: '판매처',
 		required: false,
 	},
 	{
 		type: 'text',
-		name: 'ref_order_id',
+		name: 'refOrderId',
 		placeholder: '주문번호를 입력해주세요',
 		label: '주문번호',
 		required: false,
 	},
 ];
-
-export const generateGuaranteeExcelUploadColumns = (
-	fields: ExcelField<GuaranteeExcelUploadFormData>[]
-) => {
-	const requiredColumns: Array<Partial<Column>> = [];
-	const optionalColumns: Array<Partial<Column>> = [];
-	const headers: string[] = [];
-
-	fields.forEach((field) => {
-		const excelColumn = GUARANTEE_EXCEL_DOWNLOAD_FORMAT[field.key] || {
-			key: field.key,
-		};
-		if (field.required) {
-			requiredColumns.push(excelColumn);
-		} else {
-			optionalColumns.push(excelColumn);
-		}
-		headers.push(
-			GUARANTEE_EXCEL_COLUMN[field.key] || (field.key as string)
-		);
-	});
-
-	return {
-		headers,
-		requiredColumns,
-		optionalColumns,
-	};
-};
-
-export const generateGuaranteeInputs = (
-	fields: ExcelField<GuaranteeExcelUploadFormData>[]
-) => {
-	return fields
-		.map((field) => GUARANTEE_EXCEL_INPUT[field.key])
-		.filter((item) => !!item);
-};
-
-/**
- * 엑셀 컬럼 모음
- */
-export const GUARANTEE_EXCEL_COLUMN: {
-	[K in keyof GuaranteeExcelUploadFormData]: string;
-} = {
-	orderer_nm: '이름',
-	orderer_tel: '연락처',
-	warranty_dt: '보증기간',
-	brand_idx: '브랜드',
-	pro_nm: '상품명',
-	cate_cd: '카테고리',
-	price: '상품금액',
-	model_num: '모델번호',
-	material: '소재',
-	size: '사이즈',
-	weight: '중량',
-	pro_img_url: '상품이미지',
-	order_dt: '주문일자',
-	platform_nm: '판매처',
-	ref_order_id: '주문번호',
-};
-
-/**
- * 엑셀 다운로드 양식 모음
- */
-export const GUARANTEE_EXCEL_DOWNLOAD_FORMAT: {
-	[K in keyof GuaranteeExcelUploadFormData]: Partial<Column>;
-} = {
-	orderer_nm: {key: 'orderer_nm', width: 10},
-	orderer_tel: {key: 'orderer_tel', width: 20},
-	warranty_dt: {key: 'warranty_dt', width: 30},
-	brand_idx: {key: 'brand_idx', width: 15},
-	pro_nm: {key: 'pro_nm', width: 20},
-	cate_cd: {key: 'cate_cd', width: 10},
-	price: {key: 'price', width: 15, style: {numFmt: '0'}},
-	model_num: {key: 'model_num', width: 15},
-	material: {key: 'material', width: 15},
-	size: {key: 'size', width: 15},
-	weight: {key: 'weight', width: 15},
-	pro_img_url: {key: 'pro_img_url', width: 50},
-	order_dt: {key: 'order_dt', width: 12, style: {numFmt: 'yyyy-mm-dd'}},
-	platform_nm: {key: 'platform_nm', width: 12},
-	ref_order_id: {key: 'ref_order_id', width: 30},
-};
-
-/**
- * 엑셀 input 모음
- */
-export const GUARANTEE_EXCEL_INPUT: {
-	[K in keyof GuaranteeExcelUploadFormData]: ExcelInput;
-} = {
-	orderer_nm: {
-		type: 'text',
-		name: 'orderer_nm',
-		required: true,
-	},
-	orderer_tel: {
-		type: 'text',
-		name: 'orderer_tel',
-		required: true,
-		width: 140,
-		maxLength: 13,
-		parser: (val) => formatPhoneNum(val || ''),
-		renderer: formatPhoneNum,
-		validator: (val) => validateRegExp(val, 'phone'),
-	},
-	warranty_dt: {
-		type: 'text',
-		name: 'warranty_dt',
-		required: true,
-		width: 260,
-	},
-	// b2bType brand 외
-	brand_idx: {
-		type: 'select',
-		name: 'brand_idx',
-		required: true,
-	},
-	pro_nm: {
-		type: 'text',
-		name: 'pro_nm',
-		required: true,
-		width: 260,
-	},
-	// b2bType brand 외
-	cate_cd: {
-		type: 'select',
-		name: 'cate_cd',
-		required: true,
-	},
-	price: {
-		type: 'text',
-		name: 'price',
-		required: false,
-		width: 150,
-		parser: (val) => Number((val || '').toString().replace(/[^0-9]/g, '')),
-		renderer: (val) => Number(val || 0).toLocaleString(),
-		validator: (val) =>
-			!isNaN(Number((val || '').toString().replace(/,/g, ''))) &&
-			Number((val || '').toString().replace(/,/g, '')) >= 0,
-	},
-	model_num: {
-		type: 'text',
-		name: 'model_num',
-	},
-	material: {
-		type: 'text',
-		name: 'material',
-	},
-	size: {
-		type: 'text',
-		name: 'size',
-	},
-	weight: {
-		type: 'text',
-		name: 'weight',
-	},
-	pro_img_url: {
-		type: 'link',
-		name: 'pro_img_url',
-		validator: async (val) => {
-			let isValid = true;
-			if (val) {
-				isValid = validateRegExp(val, 'url');
-				if (isValid) {
-					isValid = await isValidWebImage(val);
-				}
-			}
-			return isValid;
-		},
-	},
-	order_dt: {
-		type: 'text',
-		name: 'order_dt',
-		maxLength: 10,
-		parser: (val) => formatDateString(val),
-		validator: (val) => (val ? validateRegExp(val, 'date') : true),
-	},
-	platform_nm: {type: 'autocomplete', name: 'platform_nm'},
-	ref_order_id: {type: 'text', name: 'ref_order_id', width: 200},
-};
-
-/**
- * 개런티 대량발급에 필요한 필드 조회
- */
-export const getGuaranteeExcelField = (
-	partnershipData: PartnershipInfoResponse
-): ExcelField<GuaranteeExcelUploadFormData>[] => {
-	let fields = [
-		{
-			required: true,
-			key: 'orderer_nm',
-		},
-		{
-			required: true,
-			key: 'orderer_tel',
-		},
-		{
-			required: true,
-			key: 'warranty_dt',
-		},
-	];
-
-	const isB2bTypeBrand = partnershipData.b2bType === 'brand';
-	if (!isB2bTypeBrand) {
-		fields.push({
-			required: true,
-			key: 'brand_idx',
-		});
-	}
-	fields.push({
-		required: true,
-		key: 'pro_nm',
-	});
-	if (!isB2bTypeBrand) {
-		fields.push({
-			required: true,
-			key: 'cate_cd',
-		});
-	}
-	fields.push({
-		required: false,
-		key: 'price',
-	});
-	if (partnershipData.useFieldModelNum === 'Y') {
-		fields.push({
-			required: false,
-			key: 'model_num',
-		});
-	}
-	if (partnershipData.useFieldMaterial === 'Y') {
-		fields.push({
-			required: false,
-			key: 'material',
-		});
-	}
-	if (partnershipData.useFieldSize === 'Y') {
-		fields.push({
-			required: false,
-			key: 'size',
-		});
-	}
-	if (partnershipData.useFieldWeight === 'Y') {
-		fields.push({
-			required: false,
-			key: 'weight',
-		});
-	}
-	if (partnershipData?.nftCustomFields?.length > 0) {
-		const customFields = partnershipData?.nftCustomFields.map((item) => ({
-			required: false,
-			key: item,
-		}));
-		fields.push(...customFields);
-	}
-	if (partnershipData.useNftProdImage === 'Y') {
-		fields.push({
-			required: false,
-			key: 'pro_img_url',
-		});
-	}
-	fields = [
-		...fields,
-		{
-			required: false,
-			key: 'order_dt',
-		},
-		{
-			required: false,
-			key: 'platform_nm',
-		},
-		{
-			required: false,
-			key: 'ref_order_id',
-		},
-	];
-	return fields;
-};
-
-export const getGuaranteeExcelSampleData = (
-	partnershipData: PartnershipInfoResponse
-) => {
-	return [
-		{
-			brand_idx: partnershipData?.brand?.name || '',
-			pro_nm: '샘플상품1',
-			price: 149000,
-			cate_cd: CATEGORIES[partnershipData?.category[0] || 1],
-			...(partnershipData.useFieldModelNum === 'Y' && {model_num: ''}),
-			...(partnershipData.useFieldMaterial === 'Y' && {material: ''}),
-			...(partnershipData.useFieldSize === 'Y' && {size: ''}),
-			...(partnershipData.useFieldWeight === 'Y' && {weight: ''}),
-			...partnershipData.nftCustomFields?.map((field) => ({[field]: ''})),
-			...(partnershipData.useNftProdImage === 'Y' && {
-				pro_img_url: 'https://www.example.com/sample.jpg',
-			}),
-			warranty_dt: partnershipData?.warrantyDate || '',
-			order_dt: format(new Date(), DATE_FORMAT),
-			platform_nm: '',
-			ref_order_id: '',
-			orderer_nm: '홍길동',
-			orderer_tel: '010-1234-5678',
-		},
-	];
-};
 
 export const checkNotOpenAlimtalkModal = (email?: string) => {
 	const tempSavedData = JSON.parse(
@@ -451,3 +134,181 @@ export const checkNotOpenAlimtalkModal = (email?: string) => {
 	}
 	return false;
 };
+
+export const convertRegisterGuaranteeRequestDataToFormData = ({
+	guarantee,
+	product,
+	images,
+	customFields,
+}: {
+	guarantee: RegisterGuaranteeRequest;
+	product: Partial<ProductRegisterFormData>;
+	images: ImageState[];
+	customFields?: string[];
+}) => {
+	const formData = new FormData();
+
+	// 개런티 정보 form append
+	Object.entries(guarantee).forEach(([key, value]) => {
+		const filteredValue = value ? String(value).trim() : '';
+		if (filteredValue) {
+			formData.append(key, String(filteredValue));
+		}
+	});
+
+	// 판매처가 기존에 있던 것으로 선택 되었다면, 판매처 idx만 보내줌
+	if (formData.get('storeName') && formData.get('storeIdx')) {
+		formData.delete('storeName');
+	}
+
+	// 공통 정보 form append
+	formData.append('requestRoute', 'vircle');
+
+	const isRegisterGuaranteeWithProduct = product.idx ? true : false;
+
+	// 이미 입력된 상품으로 개런티 발급
+	if (isRegisterGuaranteeWithProduct) {
+		formData.append('partnersProductIdx', String(product.idx));
+		return formData;
+	}
+
+	// 개런티 발급과 함께 상품 정보 입력
+	// 상품 정보 함께 form append
+	Object.entries(product).forEach(([key, value]) => {
+		const productFields = [
+			'brandIdx',
+			'name',
+			'price',
+			'warranty',
+			'categoryCode',
+			'code',
+			'modelNum',
+			'material',
+			'size',
+			'weight',
+		];
+
+		const filteredValue = value ? String(value).trim() : '';
+		if (productFields.includes(key) && filteredValue) {
+			if (key === 'brandIdx') {
+				formData.append('brandIdx', filteredValue);
+			}
+			if (key === 'name') {
+				formData.append('productName', filteredValue);
+			}
+			if (key === 'price') {
+				formData.append('price', filteredValue.replace(/,/g, ''));
+			}
+			if (key === 'warranty') {
+				formData.append('warrantyDate', filteredValue);
+			}
+			if (key === 'categoryCode') {
+				formData.append('categoryCode', filteredValue);
+			}
+			if (key === 'code') {
+				formData.append('code', filteredValue);
+			}
+			if (key === 'modelNum') {
+				formData.append('modelNumber', filteredValue);
+			}
+			if (key === 'material') {
+				formData.append('material', filteredValue);
+			}
+			if (key === 'size') {
+				formData.append('size', filteredValue);
+			}
+			if (key === 'weight') {
+				formData.append('weight', filteredValue);
+			}
+		}
+	});
+
+	// customFields 세팅
+	const customFieldObj = getProductCustomFieldValue(product, customFields);
+	formData.append('customField', JSON.stringify(customFieldObj));
+
+	if (images && images?.length > 0 && images[0].file) {
+		if (typeof images[0].file === 'string') {
+			formData.append('productImages[0]', images[0].file);
+		} else {
+			formData.append('productImage', images[0].file);
+		}
+	}
+	return formData;
+};
+
+export class ConvertExcelDataToRegisterGuaranteeRequest {
+	// brandIdx?: number;
+	nftStatus: RegisterGuaranteeStatusType;
+	ordererName: string;
+	ordererTel: string;
+
+	// 옵셔널 필드
+	orderedAt?: string;
+	storeName?: string;
+	storeIdx?: number | '';
+	refOrderId?: string;
+	requestRoute?: RegisterGuaranteeRequestRouteType;
+
+	constructor(data: RegisterGuaranteeRequestExcelFormData) {
+		this.nftStatus = 'request';
+		this.ordererName = data.ordererName;
+		this.ordererTel = data.ordererTel;
+		this.orderedAt = data.orderedAt;
+		this.storeName = data.storeName;
+		this.storeIdx = data.storeIdx;
+		this.refOrderId = data.refOrderId;
+		this.requestRoute = data.requestRoute;
+	}
+}
+
+export class ConvertExcelDataToRegisterProductRequest {
+	// idx?: number;
+	name: string;
+	brandIdx: number;
+	price?: string;
+	warranty: string;
+	// customField?: string;
+	productImage?: ImageState;
+	material?: string;
+	size?: string;
+	weight?: string;
+	categoryCode?: string;
+	// categoryName?: string;
+	// code?: string;
+	modelNum?: string;
+	// [key in string]?: any;
+
+	constructor(data: RegisterGuaranteeRequestExcelFormData) {
+		const {
+			productName,
+			brandIdx,
+			price,
+			warrantyDate,
+			productImage,
+			material,
+			size,
+			weight,
+			categoryCode,
+			modelNumber,
+			...rest
+		} = data;
+
+		this.name = productName as string;
+		this.brandIdx = brandIdx as number;
+		this.price = price;
+		this.warranty = warrantyDate;
+		this.productImage = {
+			file: productImage || null,
+			preview: productImage || null,
+		};
+		this.material = material;
+		this.size = size;
+		this.weight = weight;
+		this.categoryCode = categoryCode;
+		this.modelNum = modelNumber;
+
+		// custom field 위해서 나머지 필드 모두 this에 set
+		Object.assign(this, rest);
+	}
+}

@@ -7,36 +7,39 @@ import {useQueryClient} from '@tanstack/react-query';
 import {Stack} from '@mui/material';
 
 import {
-	GauranteeDetailResponse,
-	GuaranteeImageResponse,
-	GuaranteeRegisterFormData,
-	GuaranteeRegisterProductFormData,
 	ProductRegisterFormData,
-	GuaranteeRequestState,
 	ImageState,
 	AutocompleteInputType,
+	RegisterGuaranteeRequestFormData,
+	RegisterGuaranteeStatusType,
+	GuaranteeDetail,
+	ProductDetailResponse,
 } from '@/@types';
 import {guaranteeRegisterSchemaShape} from '@/utils/schema';
-import {handleChangeDataFormat, sendAmplitudeLog} from '@/utils';
+import {
+	formatPhoneNum,
+	handleChangeDataFormat,
+	sendAmplitudeLog,
+} from '@/utils';
 import {
 	checkNotOpenAlimtalkModal,
 	convertProductRegisterFormData,
-	getProductCustomFieldValue,
+	convertRegisterGuaranteeRequestDataToFormData,
 	guaranteeRegisterInputList as inputList,
 	isPlanEnterprise,
 	PAGE_MAX_WIDTH,
 	PAYMENT_MESSAGE_MODAL,
 } from '@/data';
-import {registerGuarantee, deleteGuaranteeImage} from '@/api/guarantee.api';
+import {registerGuarantee} from '@/api/guarantee-v1.api';
 import {
 	useGetPartnershipInfo,
 	useMessageDialog,
 	useGuaranteePreviewStore,
 	useGlobalLoading,
-	useGetPlatformList,
+	useGetStoreList,
 	useLoginStore,
 } from '@/stores';
-import {getProductDetail, registerProduct} from '@/api/product.api';
+import {registerProduct} from '@/api/product.api';
 import {useOpen} from '@/utils/hooks';
 import {useGetUserPricePlan} from '@/stores';
 
@@ -53,11 +56,11 @@ import GuaranteeRegisterAlimTalkNoticeModal from '@/features/guarantee/Register/
 import GuaranteeDeleteButton from '@/features/guarantee/Register/GuaranteeDeleteButton';
 
 interface Props {
-	initialData: GauranteeDetailResponse | null;
-	productIdx: number | null;
+	initialData: GuaranteeDetail | null;
+	product: ProductDetailResponse | null;
 }
 
-function GuaranteeRegisterForm({initialData, productIdx}: Props) {
+function GuaranteeRegisterForm({initialData, product}: Props) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const setGuaranteePreviewData = useGuaranteePreviewStore(
@@ -90,14 +93,13 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 	const setIsLoading = useGlobalLoading((state) => state.setIsLoading);
 
 	const {
-		watch,
 		reset,
 		getValues,
 		control,
 		handleSubmit,
 		setValue,
 		formState: {errors},
-	} = useForm<GuaranteeRegisterFormData | GuaranteeRegisterProductFormData>({
+	} = useForm<RegisterGuaranteeRequestFormData>({
 		resolver: yupResolver(guaranteeRegisterSchemaShape),
 	});
 
@@ -110,7 +112,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 		useState<boolean>(false);
 
 	// 판매처 목록(autocomplete의 옵션값)
-	const {data: platformList} = useGetPlatformList();
+	const {data: storeList} = useGetStoreList();
 
 	const isInitialRegister = useMemo(
 		() => (initialData ? false : true),
@@ -125,77 +127,76 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 		// 최초 입력
 		if (!initialData) {
 			reset({
-				orderer_nm: '',
-				orderer_tel: '',
-				order_dt: '',
-				platform_nm: '',
-				ref_order_id: '',
-				productIdx: '',
+				ordererName: '',
+				ordererTel: '',
+				orderedAt: '',
+				storeName: '',
+				refOrderId: '',
 			});
 			return;
 		}
 
 		// 임시저장 후 재입력시
-		const {data} = initialData;
 		const {
 			// 개런티
-			nft_req_idx,
-			nft_req_state,
-			orderer_nm,
-			orderer_tel,
-			order_platform_nm,
-			order_dt,
-			ref_order_id,
-			brand_idx,
-			brand_nm,
-			brand_nm_en,
+			idx,
+			ordererName,
+			ordererTel,
+			storeIdx,
+			storeName,
+			orderedAt,
+			orderNumber,
+
 			// 상품
-			productIdx,
-			pro_nm,
+			brandIdx,
+			categoryCode,
+			categoryName,
+			partnersProductIdx,
+			productName,
 			price,
-			cate_cd,
-			cate_cd_text,
-			warranty_dt,
-			model_num,
-			custom_field,
-			product_img,
-		} = data;
+			warrantyDate,
+			productImages,
+			modelNumber,
+			material,
+			size,
+			weight,
+			customField,
+			brandName,
+			brandNameEn,
+		} = initialData;
 
 		reset({
-			nft_req_idx,
-			nft_req_state: nft_req_state as Extract<
-				GuaranteeRequestState,
-				'1' | '2'
-			>,
-			orderer_nm,
-			orderer_tel,
-			order_dt,
-			platform_nm: order_platform_nm,
-			ref_order_id,
-			categoryName: cate_cd_text,
-			modelNum: model_num,
-			productIdx,
+			idx,
+			ordererName,
+			ordererTel: ordererTel ? formatPhoneNum(ordererTel) : '',
+			orderedAt: orderedAt ? orderedAt.slice(0, 10) : '',
+			storeName,
+			storeIdx: storeIdx || '',
+			refOrderId: orderNumber,
 		});
+
 		setProducts([
 			{
-				idx: productIdx || '',
-				name: pro_nm || '',
-				categoryCode: cate_cd || '',
-				categoryName: cate_cd_text || '',
-				brandIdx: brand_idx,
-				brandName: brand_nm || '',
-				brandNameEn: brand_nm_en || '',
-				modelNum: model_num || '',
+				brandIdx: brandIdx || '',
+				idx: partnersProductIdx || '',
+				name: productName || '',
+				categoryCode: categoryCode || '',
+				categoryName: categoryName || '',
+				warranty: warrantyDate || '',
+				brandName: brandName || '',
+				brandNameEn: brandNameEn || '',
 				price: price ? price.toLocaleString() : '',
-				warranty: warranty_dt || '',
-				customField: custom_field || {},
+				modelNum: modelNumber || '',
+				customField: customField || {},
+				...(customField || {}),
 			},
 		]);
-		if (product_img) {
+
+		if (productImages && productImages?.length > 0) {
 			setProductImages([
 				{
-					file: null,
-					preview: product_img,
+					file: productImages[0],
+					preview: productImages[0],
 				},
 			]);
 		}
@@ -203,56 +204,48 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 
 	// 상품 상세 페이지에서 넘어온 경우, 상품을 기본으로 세팅해줌
 	useEffect(() => {
-		if (!productIdx) {
+		if (!product) {
 			return;
 		}
-		(async () => {
-			const productData = await getProductDetail(productIdx);
-			if (!productData) {
-				return;
-			}
-			reset({
-				productIdx,
-			});
+		const {
+			idx,
+			name,
+			categoryCode,
+			categoryName,
+			brandIdx,
+			brand,
+			modelNum,
+			price,
+			warranty,
+			customField,
+			productImage,
+		} = product;
 
-			const {
+		setProducts([
+			{
 				idx,
 				name,
 				categoryCode,
 				categoryName,
 				brandIdx,
-				brand,
+				brandName: brand?.name,
+				brandNameEn: brand?.englishName,
 				modelNum,
-				price,
+				price: price ? price.toLocaleString() : '',
 				warranty,
 				customField,
-				productImage,
-			} = productData;
-			setProducts([
+				...(customField || {}),
+			},
+		]);
+		if (productImage) {
+			setProductImages([
 				{
-					idx,
-					name,
-					categoryCode,
-					categoryName,
-					brandIdx,
-					brandName: brand?.name,
-					brandNameEn: brand?.englishName,
-					modelNum,
-					price: price ? price.toLocaleString() : '',
-					warranty,
-					customField,
+					file: null,
+					preview: productImage,
 				},
 			]);
-			if (productImage) {
-				setProductImages([
-					{
-						file: null,
-						preview: productImage,
-					},
-				]);
-			}
-		})();
-	}, [productIdx]);
+		}
+	}, [product]);
 
 	const watched = useWatch({
 		control,
@@ -270,9 +263,10 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 		});
 	}, [watched, products, productImages]);
 
+	// TODO: 공통으로 분리
 	// 플랜 사용 가능 여부 체크
 	const checkPossibleUsePricePlan = useCallback(
-		(nftReqState: string) => {
+		(nftStatus: RegisterGuaranteeStatusType) => {
 			const isFreeTrial = userPlan?.pricePlan.planLevel === 0;
 			const currentDate = new Date().getTime();
 			const expireDate = userPlan?.planExpireDate
@@ -285,7 +279,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 				userPlan?.pricePlan.planType
 			);
 
-			if (nftReqState === '2') {
+			if (nftStatus === 'request') {
 				if (!isEnterprisePlan) {
 					if (expireDate) {
 						// 무료 플랜이 만료되었을때
@@ -307,24 +301,21 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 									),
 								});
 								return false;
-							} else {
-								onOpenMessageDialog({
-									...PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE,
-									buttons: (
-										<Button
-											color="black"
-											onClick={() => {
-												navigate(
-													'/b2b/payment/subscribe'
-												);
-												onCloseMessageDialog();
-											}}>
-											구독
-										</Button>
-									),
-								});
-								return false;
 							}
+							onOpenMessageDialog({
+								...PAYMENT_MESSAGE_MODAL.PLAN_SUBSCRIBE,
+								buttons: (
+									<Button
+										color="black"
+										onClick={() => {
+											navigate('/b2b/payment/subscribe');
+											onCloseMessageDialog();
+										}}>
+										구독
+									</Button>
+								),
+							});
+							return false;
 						}
 					}
 
@@ -356,10 +347,8 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 		[userPlan]
 	);
 
-	const onSubmit = (
-		data: GuaranteeRegisterFormData | GuaranteeRegisterProductFormData
-	) => {
-		if (!checkPossibleUsePricePlan(data.nft_req_state)) {
+	const onSubmit = async (data: RegisterGuaranteeRequestFormData) => {
+		if (!checkPossibleUsePricePlan(data.nftStatus)) {
 			return;
 		}
 
@@ -370,94 +359,24 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 			});
 			return;
 		}
-		const formData = new FormData();
-		const customFields = partnershipInfo?.nftCustomFields;
-		Object.keys(data).forEach((key: string) => {
-			let formValue =
-				data[
-					key as keyof (
-						| GuaranteeRegisterFormData
-						| GuaranteeRegisterProductFormData
-					)
-				];
-			let formKey = key;
-			if (formValue) {
-				if (formKey === 'platform_nm') {
-					// 판매처를 기존 데이터에서 선택했는지 or 직접 선택했는지 판단
-					const existedPlatform = platformList?.find(
-						(platform) => platform.label.trim() === formValue
-					);
-					if (existedPlatform) {
-						formKey = 'platform_idx';
-						formValue = existedPlatform.value;
-					}
-				}
-			}
-			formData.append(formKey, formValue ? String(formValue).trim() : '');
-		});
-		const product = products[0];
-		Object.keys(product).forEach((key: string) => {
-			const value = product[key as keyof ProductRegisterFormData];
-			// 상품 등록 파라미터와 개런티 발급시 이뤄지는 상품 등록 파라미터 맞추기
-			if (!value) return;
 
-			// 상품 작접 입력만 하고 저장 하지 않는 경우
-			// 상품 관련 formData 입력
-			if (!registerNewProduct && !product?.idx) {
-				if (key === 'brandIdx') {
-					formData.append('brand_idx', String(value));
-					return;
-				}
-				if (key === 'name') {
-					formData.append('pro_nm', String(value));
-					return;
-				}
-				if (key === 'price') {
-					formData.append('price', String(value).replace(/\,/g, ''));
-					return;
-				}
-				if (key === 'warranty') {
-					formData.append('warranty_dt', String(value));
-					return;
-				}
-				// 병행업체만 아래 필드 저장
-				if (partnershipInfo?.b2bType !== 'brand') {
-					if (key === 'categoryCode') {
-						formData.append('cate_cd', String(value));
-						return;
-					}
-					if (key === 'modelNum') {
-						formData.append('model_num', String(value));
-						return;
-					}
-				}
-			}
-		});
-
-		// 상품 신규등록 아닐 떄
-		if (!registerNewProduct && productImages && productImages.length > 0) {
-			productImages.forEach((image) => {
-				image?.file && formData.append('product_img', image.file);
-			});
-		}
-		const registerType =
-			data.nft_req_state === '1' ? 'temperary' : 'register';
+		const registerStatus = data.nftStatus;
 
 		// 임시저장은 팝업 없이 바로 저장
-		if (registerType === 'temperary') {
-			handleRegister(
-				registerType,
-				formData,
+		if (registerStatus === 'ready') {
+			handleRegister({
+				registerStatus,
 				registerNewProduct,
-				products[0],
+				guarantee: data,
+				product: products[0],
 				productImages,
-				customFields,
-				initialData
-			);
+				customFields: partnershipInfo?.nftCustomFields,
+				initialData,
+			});
 			return;
 		}
 
-		// 개런티 발급 확인 모달 띄우기
+		// 개런티 발급 확인 플로우
 		const openCheckRegisterMessageDialog = () => {
 			sendAmplitudeLog('guarantee_publish_complete_popupview', {
 				button_title: '개런티 발급하시겠습니까 팝업 노출',
@@ -472,15 +391,16 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 							color="black"
 							variant="contained"
 							onClick={() =>
-								handleRegister(
-									registerType,
-									formData,
+								handleRegister({
+									registerStatus,
 									registerNewProduct,
-									products[0],
+									guarantee: data,
+									product: products[0],
 									productImages,
-									customFields,
-									initialData
-								)
+									customFields:
+										partnershipInfo?.nftCustomFields,
+									initialData,
+								})
 							}
 							data-tracking={`guarantee_publish_complete_popuppublish_click,{'button_title': '개런티 발급 클릭 시 개런티 발급'}`}>
 							발급
@@ -518,92 +438,61 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 
 	const handleProductRegister = useCallback(
 		async (
-			formData: FormData,
-			registerNewProduct: boolean,
 			product: ProductRegisterFormData,
 			productImages: ImageState[],
 			customFields?: string[]
 		) => {
-			formData.delete('productIdx'); // 기존에 있던 productIdx를 지우고 다시 set
-
-			// 상품을 따로 등록
-			if (registerNewProduct) {
-				const productFormData = convertProductRegisterFormData(
-					product,
-					productImages,
-					customFields
-				);
-				const registeredProduct = await registerProduct(
-					productFormData
-				);
-				formData.append('productIdx', String(registeredProduct.idx));
-				return;
-			}
-
-			if (product.idx) {
-				formData.append('productIdx', String(product.idx));
-				return;
-			}
-
-			// 상품을 선택하지 않고 상품을 개런티와 함께 등록
-			formData.append(
-				'custom_field',
-				JSON.stringify(
-					getProductCustomFieldValue(product, customFields)
-				)
+			const productFormData = convertProductRegisterFormData(
+				product,
+				productImages,
+				customFields
 			);
-			formData.append('productIdx', '0');
-		},
-		[]
-	);
-
-	const handleDeleteGuaranteeImage = useCallback(
-		async (
-			productImages: ImageState[],
-			images?: GuaranteeImageResponse[] | null
-		) => {
-			// 상품의 이미지가 있다가 없어진 경우, 해당 api 호출
-			if (
-				images &&
-				images?.length > 0 &&
-				productImages &&
-				productImages?.length === 0
-			) {
-				images.forEach(async (image) => {
-					await deleteGuaranteeImage(image.nft_req_img_idx);
-				});
-			}
+			return await registerProduct(productFormData);
 		},
 		[]
 	);
 
 	const handleRegister = useCallback(
-		async (
-			registerType: 'temperary' | 'register',
-			formData: FormData,
-			registerNewProduct: boolean,
-			product: ProductRegisterFormData | Partial<ProductRegisterFormData>,
-			productImages: ImageState[],
-			customFields?: string[],
-			initialData?: GauranteeDetailResponse | null
-		) => {
+		async ({
+			registerStatus,
+			registerNewProduct,
+			guarantee,
+			product,
+			productImages,
+			customFields,
+			initialData,
+		}: {
+			registerStatus: RegisterGuaranteeStatusType;
+			registerNewProduct: boolean;
+			guarantee: RegisterGuaranteeRequestFormData;
+			product: Partial<ProductRegisterFormData>;
+			productImages: ImageState[];
+			customFields?: string[];
+			initialData?: GuaranteeDetail | null;
+		}) => {
 			try {
 				setIsLoading(true);
-				await handleProductRegister(
-					formData,
-					registerNewProduct,
-					product as ProductRegisterFormData,
-					productImages,
-					customFields
-				);
+				if (registerNewProduct) {
+					const registeredProduct = await handleProductRegister(
+						product as ProductRegisterFormData,
+						productImages,
+						partnershipInfo?.nftCustomFields
+					);
+					product = {
+						...product,
+						idx: registeredProduct.idx,
+					};
+				}
+				const formData = convertRegisterGuaranteeRequestDataToFormData({
+					guarantee,
+					product,
+					images: productImages,
+					customFields,
+				});
 				await registerGuarantee(formData);
-				await handleDeleteGuaranteeImage(
-					productImages,
-					initialData?.images || null
-				);
 				onOpenMessageDialog({
 					title:
-						registerType === 'register'
+						registerStatus === 'request'
 							? '개런티가 발급되었습니다.'
 							: '개런티 발급 정보를 임시저장했습니다.',
 					showBottomCloseButton: true,
@@ -612,33 +501,35 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 					},
 				});
 
-				if (registerType === 'register') {
-					sendAmplitudeLog('guarantee_publish_complete', {
+				sendAmplitudeLog(
+					registerStatus === 'ready'
+						? 'guarantee_publish_saved'
+						: 'guarantee_publish_complete',
+					{
 						button_title: '',
-					});
-				}
-				if (registerType === 'temperary') {
-					sendAmplitudeLog('guarantee_publish_saved', {
-						button_title: '',
-					});
-				}
+					}
+				);
 				queryClient.invalidateQueries({
 					queryKey: ['userPricePlan'],
 				});
 				queryClient.invalidateQueries({
-					queryKey: ['sellerList', token],
+					queryKey: ['storeList', token],
 				});
 			} catch (e: any) {
-				const message = String(e?.response?.data?.message || '');
-				const result = String(e?.response?.data?.result || '');
-				if (
-					message.includes('상품정보') &&
-					result.includes('NOT FOUND')
-				) {
+				const code = e?.response?.data?.code;
+				if (code === 'NOT_FOUND_PARTNERS_PRODUCT') {
 					onOpenError({
 						e,
 						title: '삭제된 상품입니다.',
 						message: '상품을 다시 선택하고 발급해주세요.',
+					});
+					return;
+				}
+				if (code === 'DUPLICATE_REF_ORDER') {
+					onOpenError({
+						e,
+						title: '해당 주문번호로 이미 신청된 개런티가 존재합니다.',
+						message: '주문번호를 다시 확인해주세요.',
 					});
 					return;
 				}
@@ -654,7 +545,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 		(value: Partial<ProductRegisterFormData> | null) => {
 			setProducts(value ? [value] : null);
 		},
-		[products, setProducts]
+		[]
 	);
 
 	return (
@@ -681,22 +572,22 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 									labelTitle={input.label}
 									placeholder={input.placeholder}
 									type={input.type}
-									required={input.required}
+									required={input?.required}
 									error={
 										errors[
-											name as keyof GuaranteeRegisterFormData
+											name as keyof RegisterGuaranteeRequestFormData
 										]
 									}
 									{...restInput}
 									onChange={(e) => {
-										if (name === 'orderer_tel') {
+										if (name === 'ordererTel') {
 											e.target.value =
 												handleChangeDataFormat(
 													'phoneNum',
 													e
 												);
 										}
-										if (name === 'order_dt') {
+										if (name === 'orderedAt') {
 											e.target.value =
 												handleChangeDataFormat(
 													'date',
@@ -714,13 +605,24 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 									{...(input as AutocompleteInputType)}
 									width="100%"
 									defaultOptions={
-										platformList?.map(
-											(item) => item.label
-										) || []
+										storeList?.map((item) => item.label) ||
+										[]
 									}
-									value={getValues('platform_nm') || ''}
+									value={getValues('storeName') || ''}
 									onChange={(value) => {
-										setValue('platform_nm', value);
+										setValue('storeName', value);
+
+										// 기존에 있던 판매처에서 선택된 경우, storeIdx 값 함께 전달
+										const existedPlatform = storeList?.find(
+											(platform) =>
+												platform.label.trim() === value
+										);
+										if (existedPlatform) {
+											setValue(
+												'storeIdx',
+												existedPlatform.value
+											);
+										}
 									}}
 								/>
 							);
@@ -749,9 +651,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 							isInitialRegister ? 'flex-end' : 'space-between'
 						}>
 						{!isInitialRegister && (
-							<GuaranteeDeleteButton
-								idx={initialData?.data?.nft_req_idx}
-							/>
+							<GuaranteeDeleteButton idx={initialData?.idx} />
 						)}
 						<Stack flexDirection="row" columnGap="12px">
 							<Button
@@ -760,7 +660,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 								height={48}
 								type="submit"
 								onClick={() => {
-									setValue('nft_req_state', '1');
+									setValue('nftStatus', 'ready');
 								}}
 								data-tracking={`guarantee_publish_save_click,{'button_title': '임시저장'}`}>
 								임시저장
@@ -769,7 +669,7 @@ function GuaranteeRegisterForm({initialData, productIdx}: Props) {
 								type="submit"
 								height={48}
 								onClick={() => {
-									setValue('nft_req_state', '2');
+									setValue('nftStatus', 'request');
 								}}
 								data-tracking={`guarantee_publish_complete_click,{'button_title': '개런티 발급하기 클릭'}`}>
 								개런티 발급

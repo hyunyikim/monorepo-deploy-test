@@ -33,7 +33,7 @@ function Autocomplete({
 	sx = {},
 }: Props) {
 	const [text, setText] = useState<string>('');
-	const trimedText = useMemo(() => text.trim(), [text]);
+	const trimedText = useMemo(() => (text ? text.trim() : ''), [text]);
 
 	// 값 초기화
 	useEffect(() => {

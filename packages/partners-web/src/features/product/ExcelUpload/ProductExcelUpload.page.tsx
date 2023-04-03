@@ -33,11 +33,18 @@ function ProductExcelUpload() {
 	const navigate = useNavigate();
 	const {data: partnershipData} = useGetPartnershipInfo();
 	const {data: brandList} = useGetSearchBrandList();
-	const {data: guaranteeSettingCompleted} = useGetGuaranteeSettingCompleted();
+	const {
+		data: guaranteeSettingCompleted,
+		isLoading: isGuaranteeSettingLoading,
+	} = useGetGuaranteeSettingCompleted();
 
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
 
 	useEffect(() => {
+		if (isGuaranteeSettingLoading) {
+			return;
+		}
+
 		if (!guaranteeSettingCompleted) {
 			sendAmplitudeLog('guarantee_publish_popupview', {
 				pv_title: '개런티 미설정시 안내 팝업',
@@ -51,7 +58,7 @@ function ProductExcelUpload() {
 				},
 			});
 		}
-	}, [partnershipData, guaranteeSettingCompleted]);
+	}, [partnershipData, guaranteeSettingCompleted, isGuaranteeSettingLoading]);
 
 	// 필수/옵션 필드들
 	const fields = useMemo(() => {

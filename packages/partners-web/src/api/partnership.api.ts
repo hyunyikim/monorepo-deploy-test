@@ -19,12 +19,3 @@ export const getPartnershipInfo = async () => {
 		}
 	}
 };
-
-export const getSearchBrandList = async (params = {main_yn: true}) => {
-	const res = await instance.get<{
-		data: Options<number>;
-	}>('/admin/nft/brand', {
-		params,
-	});
-	return res.data;
-};

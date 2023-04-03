@@ -5,12 +5,12 @@ import {
 	generateGuaranteeExcelUploadColumns,
 	getGuaranteeExcelSampleData,
 } from '@/data';
-import {ExcelField, GuaranteeExcelUploadFormData} from '@/@types';
+import {ExcelField, RegisterGuaranteeRequestExcelFormData} from '@/@types';
 import {downloadExcel, generateExcelFile} from '@/utils';
 import {format} from 'date-fns';
 
 interface Props {
-	fields: ExcelField<GuaranteeExcelUploadFormData>[] | undefined;
+	fields: ExcelField<RegisterGuaranteeRequestExcelFormData>[] | undefined;
 }
 
 function GuaranteeExcelFormatDownloadButton({fields}: Props) {
@@ -19,7 +19,7 @@ function GuaranteeExcelFormatDownloadButton({fields}: Props) {
 	const handleDownloadExcelFormat = async () => {
 		if (!partnershipData) return;
 		const data = generateGuaranteeExcelUploadColumns(
-			fields as ExcelField<GuaranteeExcelUploadFormData>[]
+			fields as ExcelField<RegisterGuaranteeRequestExcelFormData>[]
 		);
 		const workbook = await generateExcelFile({
 			...data,

@@ -4,7 +4,7 @@ import {
 	ExcelError,
 	ExcelField,
 	ExcelInput,
-	GuaranteeExcelUploadFormData,
+	RegisterGuaranteeRequestExcelFormData,
 } from '@/@types';
 import {GUARANTEE_EXCEL_COLUMN, GUARANTEE_EXCEL_INPUT} from '@/data';
 
@@ -16,8 +16,8 @@ import ExcelDataCell from '@/features/common/Excel/ExcelDataCell';
 
 interface Props {
 	inputs: ExcelInput[];
-	fields: ExcelField<GuaranteeExcelUploadFormData>[];
-	data: GuaranteeExcelUploadFormData[];
+	fields: ExcelField<RegisterGuaranteeRequestExcelFormData>[];
+	data: RegisterGuaranteeRequestExcelFormData[];
 	excelErrors: ExcelError | null;
 	onUpdate: (rowIdx: number, columnKey: string, value: any) => void;
 	onOpenLackExcelInformationModal: () => void;
@@ -114,9 +114,13 @@ function GuaranteeExcelUploadDataGrid({
 							<HeadTableCell
 								key={`head_${idx}`}
 								required={
-									!!GUARANTEE_EXCEL_INPUT[field.key]?.required
+									!!GUARANTEE_EXCEL_INPUT[
+										field.key as keyof RegisterGuaranteeRequestExcelFormData
+									]?.required
 								}>
-								{GUARANTEE_EXCEL_COLUMN[field.key] || field.key}
+								{GUARANTEE_EXCEL_COLUMN[
+									field.key as keyof RegisterGuaranteeRequestExcelFormData
+								] || field.key}
 							</HeadTableCell>
 						))}
 					</>
@@ -139,7 +143,10 @@ function GuaranteeExcelUploadDataGrid({
 
 							{inputs.map((input, j) => {
 								const key = input.name;
-								const value = row[key];
+								const value =
+									row[
+										key as keyof RegisterGuaranteeRequestExcelFormData
+									];
 								const isError =
 									excelErrors?.has(i) &&
 									excelErrors.get(i)?.hasOwnProperty(key);

@@ -247,7 +247,7 @@ export const getExcelErrors = (
 			rowError[columnKey] = invalid;
 		} else {
 			errors.set(rowIdx, {
-				columnKey: invalid,
+				[columnKey]: invalid,
 			});
 		}
 	} else {

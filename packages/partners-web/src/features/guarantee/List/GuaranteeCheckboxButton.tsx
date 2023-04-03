@@ -18,9 +18,10 @@ import {
 } from '@/api/guarantee-v1.api';
 import ProgressModal from '@/features/common/ProgressModal';
 import {isPlanEnterprise, PAYMENT_MESSAGE_MODAL} from '@/data';
+import {GroupingGuaranteeListStatus} from '@/@types';
 
 interface Props {
-	nftReqState: string;
+	nftReqState: GroupingGuaranteeListStatus;
 	checkedItems: number[];
 	onHandleChangeFilter: (newParam: {[key: string]: any}) => void;
 	onResetCheckedItem: () => void;
@@ -125,7 +126,7 @@ function GuaranteeCheckboxButton({
 				closeButtonValue: '확인',
 				onCloseFunc: () => {
 					onHandleChangeFilter({
-						nft_req_state: '2,3,4',
+						nftStatus: 'pending,complete',
 					});
 				},
 			});
@@ -133,7 +134,7 @@ function GuaranteeCheckboxButton({
 				queryKey: ['userPricePlan'],
 			});
 			queryClient.invalidateQueries({
-				queryKey: ['sellerList', token],
+				queryKey: ['storeList', token],
 			});
 		} catch (e: any) {
 			onOpenError();
@@ -184,7 +185,7 @@ function GuaranteeCheckboxButton({
 				closeButtonValue: '확인',
 				onCloseFunc: () => {
 					onHandleChangeFilter({
-						nft_req_state: '9',
+						nftStatus: 'cancel',
 					});
 				},
 			});
@@ -196,7 +197,7 @@ function GuaranteeCheckboxButton({
 	};
 
 	// 전체 조회, 발급취소
-	if (!nftReqState || nftReqState === '9') {
+	if (!nftReqState || nftReqState === 'cancel') {
 		return null;
 	}
 
@@ -279,7 +280,7 @@ function GuaranteeCheckboxButton({
 			/>
 			{
 				//신청대기
-				nftReqState === '1,2' && (
+				nftReqState === 'ready' && (
 					<>
 						<Button
 							variant="outlined"
@@ -386,7 +387,7 @@ function GuaranteeCheckboxButton({
 					</>
 				)
 			}
-			{nftReqState === '3,4' && (
+			{nftReqState === 'pending,complete' && (
 				<Button
 					variant="contained"
 					color="black"

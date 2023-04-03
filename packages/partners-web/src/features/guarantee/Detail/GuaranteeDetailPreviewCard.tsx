@@ -55,7 +55,7 @@ function GuaranteeDetailPreviewCard({data}: Props) {
 
 			// 개런티
 			orderDate: data?.orderedAt ? data?.orderedAt.slice(0, 10) : '-',
-			platformName: data?.platformName,
+			storeName: data?.storeName,
 			orderId: data?.orderNumber,
 
 			// 상품

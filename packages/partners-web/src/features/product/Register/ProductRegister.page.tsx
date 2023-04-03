@@ -1,12 +1,14 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
 import ProductRegisterForm from '@/features/product/Register/ProductRegisterForm';
-import {ProductDetailResponse} from '@/@types';
-import {getProductDetail} from '@/api/product.api';
 import {PAGE_MAX_WIDTH} from '@/data';
 import {usePageView} from '@/utils';
-import {useGetPartnershipInfo, useMessageDialog} from '@/stores';
+import {
+	useGetPartnershipInfo,
+	useGetProductDetail,
+	useMessageDialog,
+} from '@/stores';
 
 import {ContentWrapper, TitleTypography} from '@/components';
 
@@ -16,19 +18,9 @@ function ProductRegister() {
 	const navigate = useNavigate();
 	const idx = params?.idx;
 
-	const [data, setData] = useState<ProductDetailResponse | null>(null);
 	const {data: partnershipInfo} = useGetPartnershipInfo();
+	const {data} = useGetProductDetail(Number(idx));
 	const onOpenMessageDialog = useMessageDialog((state) => state.onOpen);
-
-	useEffect(() => {
-		(async () => {
-			if (!idx) {
-				return;
-			}
-			const res = await getProductDetail(Number(idx));
-			setData(res);
-		})();
-	}, [idx]);
 
 	useEffect(() => {
 		const idx = partnershipInfo?.idx;
@@ -63,7 +55,10 @@ function ProductRegister() {
 					formControlMode === 'register' ? '등록' : '수정'
 				}하기`}
 			/>
-			<ProductRegisterForm mode={formControlMode} initialData={data} />
+			<ProductRegisterForm
+				mode={formControlMode}
+				initialData={data || null}
+			/>
 		</ContentWrapper>
 	);
 }

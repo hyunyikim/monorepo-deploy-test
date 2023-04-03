@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-import {phoneNumberFormat} from '@/utils/regex.util';
+import {dateFormat, phoneNumberFormat} from '@/utils/regex.util';
 
 export const brandGuaranteeSchemaShape = yup.object().shape({
 	// brandName: yup.string().required(),
@@ -25,9 +25,18 @@ export const cooperatorGuaranteeSchemaShape = yup.object().shape({
 });
 
 export const guaranteeRegisterSchemaShape = yup.object().shape({
-	orderer_nm: yup.string().required('이름을 입력해주세요.'),
-	orderer_tel: yup
+	ordererName: yup.string().required('이름을 입력해주세요.'),
+	ordererTel: yup
 		.string()
 		.required('고객 연락처를 정확히 입력해주세요.')
 		.matches(phoneNumberFormat, '고객 연락처를 정확히 입력해주세요.'),
+	orderedAt: yup.string().test({
+		message: '주문일자 형식을 확인해주세요.',
+		test: (value) => {
+			if (value) {
+				return RegExp(dateFormat).test(value);
+			}
+			return true;
+		},
+	}),
 });

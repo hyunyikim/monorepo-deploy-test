@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useQueryClient} from '@tanstack/react-query';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useNavigate} from 'react-router-dom';
@@ -39,6 +40,7 @@ interface Props {
 
 function ProductRegisterForm({mode, initialData}: Props) {
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const {data: partnershipInfo} = useGetPartnershipInfo();
 	const {data: brandList} = useGetSearchBrandList();
@@ -155,6 +157,10 @@ function ProductRegisterForm({mode, initialData}: Props) {
 				});
 			} catch (e: any) {
 				onOpenError();
+			} finally {
+				queryClient.invalidateQueries({
+					queryKey: ['getProductDetail', idx],
+				});
 			}
 		},
 		[navigate]

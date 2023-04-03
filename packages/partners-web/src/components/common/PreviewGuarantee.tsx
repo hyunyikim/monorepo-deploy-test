@@ -244,7 +244,7 @@ type ValueTypes = {
 	nftCustomFieldValue?: Record<string, any> | null;
 	previewImage?: string;
 	orderDate?: string;
-	platformName?: string;
+	storeName?: string;
 	orderId?: string;
 	nftRequestId?: string;
 	nftIssueDt?: string;
@@ -738,14 +738,14 @@ function PreviewGuarantee({
 								{values?.nftIssueDt || '-'}
 							</TitleTextStyle>
 						</Grid>
-						{values?.platformName && (
+						{values?.storeName && (
 							<Grid
 								container
 								justifyContent={'space-between'}
 								alignItems="flex-start">
 								<DescTextStyle>구입처</DescTextStyle>
 								<TitleTextStyle className="text-ellipsis">
-									{values.platformName}
+									{values.storeName}
 								</TitleTextStyle>
 							</Grid>
 						)}

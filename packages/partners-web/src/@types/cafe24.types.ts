@@ -7,7 +7,7 @@ export type Cafe24ConfirmType = 'OK' | 'FAIL' | 'LINKED_OTHER_PARTNERS';
 export interface Cafe24Interwork {
 	mallId: string;
 	issueSetting: IssueSetting;
-	store: Store;
+	store: Cafe24Store;
 	partnerIdx: number;
 	partnerInfo: any;
 	joinedAt: string;
@@ -32,7 +32,7 @@ export interface IssueCategory {
 	fullNo: number[];
 }
 
-export interface Store {
+export interface Cafe24Store {
 	country: string;
 	customer_service_phone: string;
 	mall_url: string;

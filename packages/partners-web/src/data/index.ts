@@ -3,6 +3,7 @@ export * from './ui.data';
 export * from './list.data';
 export * from './menu.data';
 export * from './guarantee.data';
+export * from './guarantee.excel.data';
 export * from './product.data';
 export * from './customer.data';
 export * from './inspection.data';

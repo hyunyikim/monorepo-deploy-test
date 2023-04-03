@@ -289,7 +289,6 @@ export const convertProductRegisterFormData = (
 		if (key === 'price') {
 			value = value ? String(value).split(',').join('') : '0';
 		}
-
 		formData.append(key, String(value) || '');
 	});
 	if (customFields) {
@@ -316,7 +315,9 @@ export const getProductCustomFieldValue = (
 	const customFieldObj: Record<string, string> = {};
 	Object.keys(data).forEach((key: string) => {
 		if (customFields?.includes(key)) {
-			const value = data[key as keyof ProductRegisterFormData] || '';
+			const value = String(
+				data[key as keyof ProductRegisterFormData] || ''
+			).trim();
 
 			if (linkFormChecker(String(value))) {
 				/* 개런티 커스텀 필드에서 url형식이 들어올때 (https가 안붙으면 붙여주기) */
@@ -399,7 +400,7 @@ export const getProductRegisterFormDataForReset = (
 		code: code || '',
 		modelNum: modelNum || '',
 		...(!isB2bTypeBrand && {brandIdx: brandIdx}),
-		...customField,
+		...customField, // object 형태로 있던 커스텀 필드를 spread 해서 set
 	};
 
 	// 기존 등록된 상품의 이미지가 있거나(상품 수정), 상품의 이미지가 파일 형태로 존재 하거나(개런티 발급에서 상품 입력 후 수정)

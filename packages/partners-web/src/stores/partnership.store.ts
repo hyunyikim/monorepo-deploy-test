@@ -1,6 +1,6 @@
 import {useQuery} from '@tanstack/react-query';
 
-import {getPartnershipInfo, getSearchBrandList} from '@/api/partnership.api';
+import {getPartnershipInfo} from '@/api/partnership.api';
 import {useLoginStore} from '@/stores/auth.store';
 
 export const useGetPartnershipInfo = () => {
@@ -19,14 +19,5 @@ export const useGetGuaranteeSettingCompleted = () => {
 		select: (data) => {
 			return data?.profileImage ? true : false;
 		},
-	});
-};
-
-export const useGetSearchBrandList = () => {
-	const token = useLoginStore().token;
-	return useQuery({
-		queryKey: ['searchBrandList', token],
-		queryFn: () => (token ? getSearchBrandList({main_yn: true}) : null),
-		retryOnMount: false,
 	});
 };

@@ -105,10 +105,3 @@ export const getPaymentHistoryDetail = async (orderId: string) => {
 export const cancelPricePlan = async () => {
 	return await bearerTokenInstance.patch('/payment/v1/billing/cancel');
 };
-
-/**
- * 무료 플랜 신청
- */
-export const registerFreePlan = async (data: RegisterFreePlanRequestParam) => {
-	return await bearerTokenInstance.post('/payment/v1/billing/free', data);
-};

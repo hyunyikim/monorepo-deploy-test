@@ -1,10 +1,9 @@
 import {useMemo, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Button} from '@/components';
-import {ExcelError, GuaranteeExcelUploadFormData} from '@/@types';
+import {ExcelError, RegisterGuaranteeRequestExcelFormData} from '@/@types';
 import {
 	useGetPartnershipInfo,
-	useGetPlatformList,
 	useGetUserPricePlan,
 	useGlobalLoading,
 	useIsPlanOnSubscription,
@@ -14,12 +13,17 @@ import {
 } from '@/stores';
 import ProgressModal from '@/features/common/ProgressModal';
 import {useOpen} from '@/utils/hooks';
-import {registerBulkGuarantee} from '@/api/guarantee.api';
-import {customFieldsToJSONString, PAYMENT_MESSAGE_MODAL} from '@/data';
+import {registerGuarantee} from '@/api/guarantee-v1.api';
+import {
+	ConvertExcelDataToRegisterGuaranteeRequest,
+	ConvertExcelDataToRegisterProductRequest,
+	convertRegisterGuaranteeRequestDataToFormData,
+	PAYMENT_MESSAGE_MODAL,
+} from '@/data';
 import {useQueryClient} from '@tanstack/react-query';
 
 interface Props {
-	gridData: GuaranteeExcelUploadFormData[] | null;
+	gridData: RegisterGuaranteeRequestExcelFormData[] | null;
 	errors: ExcelError | null;
 }
 
@@ -32,7 +36,6 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 	const onCloseMessageDialog = useMessageDialog((state) => state.onClose);
 
 	const {data: partnershipData} = useGetPartnershipInfo();
-	const {data: platformList} = useGetPlatformList();
 	const {data: userPricePlan} = useGetUserPricePlan();
 	const {data: isOnSubscription} = useIsPlanOnSubscription();
 	const {data: isTrialPlan} = useIsUserUsedTrialPlan();
@@ -56,36 +59,31 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 		onCloseMessageDialog();
 		setRequestCount(0);
 		onOpenRegisterGuaranteeListModal();
+
+		const customFields = partnershipData?.nftCustomFields || [];
 		for (let i = 0; i < gridData.length; i++) {
 			try {
-				const customFields = partnershipData?.nftCustomFields || [];
-				let tempData = {...gridData[i]};
-				tempData = {
-					...tempData,
-					custom_field:
-						customFieldsToJSONString<GuaranteeExcelUploadFormData>(
-							tempData,
-							customFields
-						),
+				// RegisterGuaranteeRequestExcelFormData 타입으로 입력된 데이터를
+				// Guarantee, Product 타입으로 분리
+				const tempData: RegisterGuaranteeRequestExcelFormData = {
+					...gridData[i],
 				};
-				// custom field key 삭제
-				customFields.forEach((customField) => {
-					delete tempData[customField];
+				// 대량발급은 무조건 임시저장 아닌 발급 상태
+				const tempGuarantee =
+					new ConvertExcelDataToRegisterGuaranteeRequest(tempData);
+				const tempProduct =
+					new ConvertExcelDataToRegisterProductRequest(tempData);
+
+				const formData = convertRegisterGuaranteeRequestDataToFormData({
+					guarantee: tempGuarantee,
+					product: tempProduct,
+					images: tempProduct.productImage
+						? [tempProduct.productImage]
+						: [],
+					customFields,
 				});
 
-				// platform_nm or platform_idx 둘 중 하나 선택		TODO: 로직 공통화 시키기
-				const platformName = tempData?.platform_nm || '';
-				if (platformName) {
-					const existedPlatform = platformList?.find(
-						(platform) =>
-							platform.label.trim() === platformName.trim()
-					);
-					if (existedPlatform) {
-						tempData['platform_idx'] = existedPlatform.value;
-						delete tempData['platform_nm'];
-					}
-				}
-				await registerBulkGuarantee([tempData]);
+				await registerGuarantee(formData);
 				setRequestCount((prev) => prev + 1);
 			} catch (e) {
 				failCount += 1;
@@ -95,7 +93,7 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 			queryKey: ['userPricePlan'],
 		});
 		queryClient.invalidateQueries({
-			queryKey: ['sellerList', token],
+			queryKey: ['storeList', token],
 		});
 
 		// delay
@@ -124,6 +122,9 @@ function GuaranteeExcelSubmit({gridData, errors}: Props) {
 			showBottomCloseButton: true,
 			closeButtonValue: '확인',
 			onCloseFunc: () => {
+				if (failCount === totalCount) {
+					return;
+				}
 				navigate('/b2b/guarantee');
 			},
 		});
