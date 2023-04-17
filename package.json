@@ -8,5 +8,8 @@
   "main": "index.js",
   "repository": "https://github.com/hyunyikim/monorepo-deploy-test.git",
   "author": "hyunyikim <hailey@mass-adoption.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  }
 }

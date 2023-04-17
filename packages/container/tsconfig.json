@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "esModuleInterop": true
+  }
+}
+
+// {
+//   "extends": "../../tsconfig.json",
+//   "compilerOptions": {
+//     "jsx": "react-jsx",
+//     "baseUrl": "."
+//   },
+//   "include": ["src/**/*"]
+// }
+
+// {
+// 	"extends": "../../tsconfig.json",
+// 	"compilerOptions": {
+// 		"jsx": "react-jsx",
+// 		"jsxImportSource": "@emotion/react",
+// 		"baseUrl": ".",
+// 		"paths": {
+// 			"@/*": ["./src/*"]
+// 		},
+// 		"plugins": [
+// 			{
+// 				"name": "typescript-styled-plugin",
+// 				"tags": ["styled", "css"]
+// 			}
+// 		]
+// 	},
+// 	"include": ["src/**/*"]
+// }

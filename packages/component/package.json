@@ -1,4 +1,12 @@
 {
-  "name": "component",
-  "packageManager": "yarn@3.5.0"
+  "name": "@monorepo-deploy-test/component",
+  "packageManager": "yarn@3.5.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.12.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
 }
