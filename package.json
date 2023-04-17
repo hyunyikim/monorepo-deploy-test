@@ -1,0 +1,12 @@
+{
+  "name": "monorepo-deploy-test",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/hyunyikim/monorepo-deploy-test.git",
+  "author": "hyunyikim <hailey@mass-adoption.com>",
+  "license": "MIT"
+}
