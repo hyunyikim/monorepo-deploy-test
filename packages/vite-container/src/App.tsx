@@ -1,11 +1,8 @@
-import { useState } from "react";
 import { Typography, createTheme, ThemeProvider } from "@mui/material";
 import { red } from "@mui/material/colors";
-import { CustomTypography } from "@monorepo-deploy-test/component/src";
+import { CustomTypography } from "@monorepo-deploy-test/component";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   const theme = createTheme({
     palette: {
       primary: {
@@ -16,7 +13,6 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <h1>Hello from React!!!</h1>
       <Typography color="primary.main">hello world</Typography>
       <CustomTypography />
     </ThemeProvider>
