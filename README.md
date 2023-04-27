@@ -3,7 +3,7 @@
 ### run pacakge container (based on webpack)
 
 ```
- yarn workspace @monorepo-deploy-test/container start
+ yarn workspace @monorepo-deploy-test/container dev
 ```
 
 ### run pacakge vite-container (based on vite)
