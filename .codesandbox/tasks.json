@@ -1,0 +1,15 @@
+{
+  "$schema": "https://codesandbox.io/schemas/tasks.json",
+  "tasks": {
+    "run-dev-project-a": {
+      "name": "start react project based on webpack",
+      "command": "yarn workspace @monorepo-deploy-test/container dev --port 3001",
+      "runAtStart": true
+    },
+    "run-dev-project-b": {
+      "name": "start react project based on vite",
+      "command": "yarn workspace @monorepo-deploy-test/vite-container dev",
+      "runAtStart": true
+    }
+  }
+}
